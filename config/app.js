@@ -1,7 +1,7 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import AuthRoutes from '../src/routers/auth.routes.js';
+import AuthRoutes from '../src/routes/messageRoutes.js';
 // import setInterval from './pinging.js';
 
 const app = express();
