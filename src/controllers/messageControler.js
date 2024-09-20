@@ -6,6 +6,7 @@ export const receiveMessage = async (req, res) => {
     const { From: from, Body: body } = req.body;
     
     try {
+        // Guardar el nuevo mensaje en la base de datos
         const newMessage = new Message({
             from,
             body,
@@ -13,9 +14,17 @@ export const receiveMessage = async (req, res) => {
             createdAt: new Date(),
         });
         await newMessage.save();
+
+        // Mensaje de respuesta automática
         const responseMessage = '🎉 ¡Hola!\n\nTu pedido está en la lista de espera.🕒\n\nTe avisaremos cuando esté listo.';
-        res.send(responseMessage);
+        
+        // Envía la respuesta automática usando el servicio de Twilio
+        await sendWhatsAppMessage(from, responseMessage);
+
+        // Responde a Twilio con un código 200
+        res.status(200).send('<Response></Response>');
     } catch (error) {
+        console.error('Error al recibir el mensaje:', error);
         res.status(500).send('Error al guardar el mensaje');
     }
 };
