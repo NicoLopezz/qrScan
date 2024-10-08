@@ -13,17 +13,20 @@ const __dirname = dirname(__filename);
 // Ruta para recibir mensajes de Twilio
 router.post('/webhook', autenthication.reciveMessage);
 
-// Ruta para servir el archivo index.html
+// Ruta para servir el archivo index
 router.get('/index', (req, res) => {
     res.sendFile(path.join(__dirname, '../../public/index.html'));
 });
 
-// Ruta para servir el archivo index.html
+// Ruta para servir el QR
 router.get('/dashboard', (req, res) => {
     res.sendFile(path.join(__dirname, '../../public/dashboard.html'));
 });
 
 // Ruta para notificar al usuario cuando su pedido esté listo
-router.post('/notify', autenthication.notifyUser);
+router.post('/readyPickUp', autenthication.notifyUserForPickUp);
+
+// // Ruta para notificar al usuario cuando su pedido esté listo
+// router.post('/', autenthication.notifyUserForPickUp);
 
 export default router;
