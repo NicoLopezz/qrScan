@@ -26,6 +26,9 @@ router.get('/dashboard', (req, res) => {
 // Ruta para notificar al usuario cuando su pedido esté listo
 router.post('/readyPickUp', autenthication.notifyUserForPickUp);
 
+// Ruta para notificar al usuario cuando su pedido esté listo
+router.post('/confirmPickedUp', autenthication.notifyUserPickedUp);
+
 // // Ruta para notificar al usuario cuando su pedido esté listo
 // router.post('/', autenthication.notifyUserForPickUp);
 

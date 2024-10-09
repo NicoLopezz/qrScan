@@ -1,5 +1,6 @@
 const socket = io(); // Conexión al servidor de WebSockets
 
+// Función para mover el tag a la sección de "Tags con pedido"
 function moveToOrder(element) {
   const orderedContainer = document.getElementById('ordered-tags');
   
@@ -31,6 +32,7 @@ function moveToOrder(element) {
   sortTags(orderedContainer);
 }
 
+// Función para mover el tag a la sección de "Tags pendientes de retiro"
 function moveToPending(element) {
   const pendingContainer = document.getElementById('pending-tags');
   
@@ -48,12 +50,12 @@ function moveToPending(element) {
 
   // Añadir el tag clonado a la lista de "Tags pendientes de retiro"
   pendingContainer.appendChild(clonedElement);
-  console.log("tag movido!")
+  console.log("Tag movido a 'Tags pendientes de retiro'");
 
   // Obtener el número de tag para enviarlo al servidor
   const tagNumber = parseInt(clonedElement.getAttribute('data-number'));
 
-  // Enviar una solicitud POST al servidor para notificar al usuario
+  // Enviar una solicitud POST al servidor para notificar al usuario que el pedido está listo
   fetch('/api/readyPickUp', {
     method: 'POST',
     headers: {
@@ -80,7 +82,7 @@ function moveToPending(element) {
   sortTags(pendingContainer);
 }
 
-
+// Función para mover el tag de "Tags pendientes de retiro" a "Tags libres"
 function moveToFree(element) {
   const freeContainer = document.getElementById('free-tags');
   
@@ -88,6 +90,7 @@ function moveToFree(element) {
   const clonedElement = element.cloneNode(true);
   clonedElement.classList.add('pop-in');
 
+  // Agregar evento para mover de nuevo el tag a "Tags con pedido"
   clonedElement.onclick = function () {
     moveToOrder(clonedElement);
   };
@@ -99,12 +102,34 @@ function moveToFree(element) {
   const tagNumber = parseInt(clonedElement.getAttribute('data-number'));
   insertInOrder(freeContainer, clonedElement, tagNumber);
 
+  // Enviar una solicitud POST al servidor para confirmar que el pedido fue recogido
+  fetch('/api/confirmPickedUp', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ tagNumber })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.error) {
+      console.error('Error al confirmar la recogida del pedido:', data.error);
+    } else {
+      console.log('Confirmación de recogida enviada:', data.message);
+    }
+  })
+  .catch(error => console.error('Error en la solicitud:', error));
+
   // Eliminar la clase de animación después de que termine
   setTimeout(() => {
     clonedElement.classList.remove('pop-in');
   }, 500); // Duración de la animación pop-in
+
+  // Reordenar los elementos en la lista de "Tags libres"
+  sortTags(freeContainer);
 }
 
+// Función para ordenar los tags en el contenedor
 function sortTags(container) {
   const tagsArray = Array.from(container.children);
   tagsArray.sort((a, b) => a.getAttribute('data-number') - b.getAttribute('data-number'));
@@ -112,6 +137,7 @@ function sortTags(container) {
   tagsArray.forEach(tag => container.appendChild(tag));
 }
 
+// Función para insertar el tag en el orden correcto en "Tags libres"
 function insertInOrder(container, element, tagNumber) {
   const tagsArray = Array.from(container.children);
   let inserted = false;

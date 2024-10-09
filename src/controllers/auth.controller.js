@@ -97,35 +97,37 @@ async function notifyUserForPickUp(req, res) {
     }
 }
 
-// async function notifyUser(req, res) {
-//     const { tagNumber } = req.body;
+async function notifyUserPickedUp(req, res) {
+    const { tagNumber } = req.body;
 
-//     try {
-//         // Buscar el mensaje relacionado con el tagNumber en la base de datos
-//         const message = await Message.findOne({ tagNumber, status: 'en espera' });
+    try {
+        // Buscar el mensaje relacionado con el tagNumber en la base de datos
+        const message = await Message.findOne({ tagNumber, status: 'a confirmar retiro' });
         
-//         if (message) {
-//             // Enviar notificación de que el pedido está listo al número de teléfono asociado
-//             const phoneNumber = message.from;  // Obtener el número de teléfono
-//             await sendWhatsAppMessage(`whatsapp:${phoneNumber}`, '🎉 ¡Tu pedido está listo para ser retirado! 😊');
+        if (message) {
+            // Enviar notificación de que el pedido está listo al número de teléfono asociado
+            const phoneNumber = message.from;  // Obtener el número de teléfono
+            await sendWhatsAppMessage(`whatsapp:${phoneNumber}`, '🎉 Nos inforaron que confirmaste el pedido, es asi? 😊 1:si, gracias 2:no,pero estoy en eso');
 
-//             // Actualizar el estado del pedido a 'completado'
-//             await Message.updateOne({ tagNumber }, { status: 'confirmar retiro' });
+            // Actualizar el estado del pedido a 'completado'
+            await Message.updateOne({ tagNumber }, { status: 'retirado' });
 
-//             res.json({ message: 'Notificación enviada y estado actualizado' });
-//         } else {
-//             res.status(404).json({ error: 'No se encontró el pedido para este número de tag' });
-//         }
-//     } catch (error) {
-//         console.error('Error al notificar al usuario:', error.message);
-//         res.status(500).json({ error: 'Error al notificar al usuario' });
-//     }
-// }
+            res.json({ message: 'Notificación enviada y estado actualizado' });
+        } else {
+            res.status(404).json({ error: 'No se encontró el pedido para este número de tag' });
+        }
+    } catch (error) {
+        console.error('Error al notificar al usuario:', error.message);
+        res.status(500).json({ error: 'Error al notificar al usuario' });
+    }
+}
+
 
 
 // Exportar los métodos
 export const methods = {
     reciveMessage,
     notifyUserForPickUp,
+    notifyUserPickedUp,
     // notifyUser,
 };
