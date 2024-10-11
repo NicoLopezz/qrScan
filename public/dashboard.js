@@ -1,134 +1,201 @@
 const socket = io(); // Conexión al servidor de WebSockets
 
-// Función para mover el tag a la sección de "Tags con pedido"
-function moveToOrder(element) {
-  const orderedContainer = document.getElementById('ordered-tags');
-  
-  // Clonar el elemento y añadir la clase de animación pop-in
-  const clonedElement = element.cloneNode(true);
-  clonedElement.classList.add('pop-in');
-  
-  // Agregar un evento para mover a "Tags pendientes de retiro"
-  clonedElement.onclick = function () {
-    moveToPending(clonedElement);
+// Función para remover cualquier cuadro de confirmación activo
+function removeAllConfirmationBoxes() {
+  const activeConfirmationBoxes = document.querySelectorAll('.confirmation-box');
+  activeConfirmationBoxes.forEach(box => box.remove());
+}
+
+// Función para mostrar el cuadro de confirmación sobre un tag
+function showConfirmation(element, action) {
+  // Eliminar cualquier cuadro de confirmación activo
+  removeAllConfirmationBoxes();
+
+  // Crear el cuadro de confirmación
+  const confirmationBox = document.createElement('div');
+  confirmationBox.classList.add('confirmation-box');
+
+  // Botón "Sí"
+  const yesButton = document.createElement('button');
+  yesButton.innerText = 'Sí';
+  yesButton.onclick = function () {
+    action(); // Realiza la acción que se pase como argumento (mover el tag)
+    confirmationBox.remove(); // Elimina el cuadro de confirmación
+    document.removeEventListener('click', handleClickOutside); // Eliminamos el listener global
   };
 
-  // Eliminar el elemento de la sección de tags libres
-  element.remove();
+  // Botón "No"
+  const noButton = document.createElement('button');
+  noButton.innerText = 'No';
+  noButton.classList.add('no');
+  noButton.onclick = function (event) {
+    event.stopPropagation(); // Evitamos que el listener global también se ejecute
+    confirmationBox.remove(); // Elimina el cuadro de confirmación sin hacer nada
+    document.removeEventListener('click', handleClickOutside); // Eliminamos el listener global
+  };
 
-  // Añadir el tag clonado a la lista de "Tags con pedido"
-  orderedContainer.appendChild(clonedElement);
+  // Añadir los botones al cuadro de confirmación
+  confirmationBox.appendChild(yesButton);
+  confirmationBox.appendChild(noButton);
 
-  // Enviar el número del tag al servidor a través de WebSockets
-  const tagNumber = parseInt(clonedElement.getAttribute('data-number'));
-  socket.emit('tagSelected', tagNumber); // Emitir el número del tag al servidor
-  
-  // Eliminar la clase de animación después de que termine
+  // Posicionar el cuadro sobre el tag
+  element.style.position = 'relative'; // Aseguramos que el tag sea el contenedor relativo
+  element.appendChild(confirmationBox); // Añadir el cuadro de confirmación al tag
+
+  // Listener global para eliminar el cuadro si haces clic fuera del cuadro o del tag
+  const handleClickOutside = (event) => {
+    if (!element.contains(event.target) && !confirmationBox.contains(event.target)) {
+      confirmationBox.remove(); // Si haces clic fuera del cuadro o el tag, se elimina
+      document.removeEventListener('click', handleClickOutside); // Eliminamos el listener
+    }
+  };
+
+  // Añadimos un listener que detecte clics fuera del cuadro
   setTimeout(() => {
-    clonedElement.classList.remove('pop-in');
-  }, 500); // Duración de la animación pop-in
+    document.addEventListener('click', handleClickOutside);
+  }, 0); // Usamos un pequeño delay para evitar que el mismo clic que activa la confirmación la cierre
+}
 
-  // Reordenar los elementos en la lista de "Tags con pedido"
-  sortTags(orderedContainer);
+// Función para mover el tag a la sección de "Tags con pedido"
+function moveToOrder(element) {
+  showConfirmation(element, () => {
+    const orderedContainer = document.getElementById('ordered-tags');
+    
+    // Eliminar cualquier cuadro de confirmación activo
+    removeAllConfirmationBoxes();
+    
+    // Clonar el elemento y añadir la clase de animación pop-in
+    const clonedElement = element.cloneNode(true);
+    clonedElement.classList.add('pop-in');
+    
+    // Agregar un evento para mover a "Tags pendientes de retiro"
+    clonedElement.onclick = function () {
+      moveToPending(clonedElement);
+    };
+
+    // Eliminar el elemento de la sección de tags libres
+    element.remove();
+
+    // Añadir el tag clonado a la lista de "Tags con pedido"
+    orderedContainer.appendChild(clonedElement);
+
+    // Enviar el número del tag al servidor a través de WebSockets
+    const tagNumber = parseInt(clonedElement.getAttribute('data-number'));
+    socket.emit('tagSelected', tagNumber); // Emitir el número del tag al servidor
+    
+    // Eliminar la clase de animación después de que termine
+    setTimeout(() => {
+      clonedElement.classList.remove('pop-in');
+    }, 500); // Duración de la animación pop-in
+
+    // Reordenar los elementos en la lista de "Tags con pedido"
+    sortTags(orderedContainer);
+  });
 }
 
 // Función para mover el tag a la sección de "Tags pendientes de retiro"
 function moveToPending(element) {
-  const pendingContainer = document.getElementById('pending-tags');
-  console.log("ENTRE ACA2 tag movido a pendiente!!")
-  
-  // Clonar el elemento y añadir la clase de animación pop-in
-  const clonedElement = element.cloneNode(true);
-  clonedElement.classList.add('pop-in');
-  
-  // Agregar un evento para devolverlo a "Tags libres"
-  clonedElement.onclick = function () {
-    moveToFree(clonedElement);
-  };
+  showConfirmation(element, () => {
+    const pendingContainer = document.getElementById('pending-tags');
+    
+    // Eliminar cualquier cuadro de confirmación activo
+    removeAllConfirmationBoxes();
+    
+    // Clonar el elemento y añadir la clase de animación pop-in
+    const clonedElement = element.cloneNode(true);
+    clonedElement.classList.add('pop-in');
+    
+    // Agregar un evento para devolverlo a "Tags libres"
+    clonedElement.onclick = function () {
+      moveToFree(clonedElement);
+    };
 
-  // Eliminar el tag de "Tags con pedido"
-  element.remove();
+    // Eliminar el tag de "Tags con pedido"
+    element.remove();
 
-  // Añadir el tag clonado a la lista de "Tags pendientes de retiro"
-  pendingContainer.appendChild(clonedElement);
-  console.log("Tag movido a 'Tags pendientes de retiro'");
+    // Añadir el tag clonado a la lista de "Tags pendientes de retiro"
+    pendingContainer.appendChild(clonedElement);
 
-  // Obtener el número de tag para enviarlo al servidor
-  const tagNumber = parseInt(clonedElement.getAttribute('data-number'));
-  
+    // Enviar el número de tag al servidor para notificar al usuario que el pedido está listo
+    const tagNumber = parseInt(clonedElement.getAttribute('data-number'));
 
-  // Enviar una solicitud POST al servidor para notificar al usuario que el pedido está listo
-  fetch('/api/readyPickUp', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ tagNumber })
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.error) {
-      console.error('Error al notificar al usuario:', data.error);
-    } else {
-      console.log('Notificación enviada:', data.message);
-    }
-  })
-  .catch(error => console.error('Error en la solicitud:', error));
+    fetch('/api/readyPickUp', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ tagNumber })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        console.error('Error al notificar al usuario:', data.error);
+      } else {
+        console.log('Notificación enviada:', data.message);
+      }
+    })
+    .catch(error => console.error('Error en la solicitud:', error));
 
-  // Eliminar la clase de animación después de que termine
-  setTimeout(() => {
-    clonedElement.classList.remove('pop-in');
-  }, 500); // Duración de la animación pop-in
+    // Eliminar la clase de animación después de que termine
+    setTimeout(() => {
+      clonedElement.classList.remove('pop-in');
+    }, 500); // Duración de la animación pop-in
 
-  // Reordenar los elementos en la lista de "Tags pendientes de retiro"
-  sortTags(pendingContainer);
+    // Reordenar los elementos en la lista de "Tags pendientes de retiro"
+    sortTags(pendingContainer);
+  });
 }
 
 // Función para mover el tag de "Tags pendientes de retiro" a "Tags libres"
 function moveToFree(element) {
-  const freeContainer = document.getElementById('free-tags');
-  
-  // Clonar el elemento y añadir la clase de animación pop-in
-  const clonedElement = element.cloneNode(true);
-  clonedElement.classList.add('pop-in');
+  showConfirmation(element, () => {
+    const freeContainer = document.getElementById('free-tags');
+    
+    // Eliminar cualquier cuadro de confirmación activo
+    removeAllConfirmationBoxes();
+    
+    // Clonar el elemento y añadir la clase de animación pop-in
+    const clonedElement = element.cloneNode(true);
+    clonedElement.classList.add('pop-in');
 
-  // Agregar evento para mover de nuevo el tag a "Tags con pedido"
-  clonedElement.onclick = function () {
-    moveToOrder(clonedElement);
-  };
+    // Agregar evento para mover de nuevo el tag a "Tags con pedido"
+    clonedElement.onclick = function () {
+      moveToOrder(clonedElement);
+    };
 
-  // Eliminar el tag de "Tags pendientes de retiro"
-  element.remove();
+    // Eliminar el tag de "Tags pendientes de retiro"
+    element.remove();
 
-  // Insertar el tag clonado en la lista de "Tags libres" en el orden correcto
-  const tagNumber = parseInt(clonedElement.getAttribute('data-number'));
-  insertInOrder(freeContainer, clonedElement, tagNumber);
+    // Insertar el tag clonado en la lista de "Tags libres" en el orden correcto
+    const tagNumber = parseInt(clonedElement.getAttribute('data-number'));
+    insertInOrder(freeContainer, clonedElement, tagNumber);
 
-  // Enviar una solicitud POST al servidor para confirmar que el pedido fue recogido
-  fetch('/api/confirmPickedUp', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ tagNumber })
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.error) {
-      console.error('Error al confirmar la recogida del pedido:', data.error);
-    } else {
-      console.log('Confirmación de recogida enviada:', data.message);
-    }
-  })
-  .catch(error => console.error('Error en la solicitud:', error));
+    // Enviar una solicitud POST al servidor para confirmar que el pedido fue recogido
+    fetch('/api/confirmPickedUp', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ tagNumber })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        console.error('Error al confirmar la recogida del pedido:', data.error);
+      } else {
+        console.log('Confirmación de recogida enviada:', data.message);
+      }
+    })
+    .catch(error => console.error('Error en la solicitud:', error));
 
-  // Eliminar la clase de animación después de que termine
-  setTimeout(() => {
-    clonedElement.classList.remove('pop-in');
-  }, 500); // Duración de la animación pop-in
+    // Eliminar la clase de animación después de que termine
+    setTimeout(() => {
+      clonedElement.classList.remove('pop-in');
+    }, 500); // Duración de la animación pop-in
 
-  // Reordenar los elementos en la lista de "Tags libres"
-  sortTags(freeContainer);
+    // Reordenar los elementos en la lista de "Tags libres"
+    sortTags(freeContainer);
+  });
 }
 
 // Función para ordenar los tags en el contenedor

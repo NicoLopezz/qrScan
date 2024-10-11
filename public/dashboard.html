@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tags con Animación</title>
   <link rel="stylesheet" href="/style/dashboard.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400;600;800&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="container">
@@ -14,9 +15,9 @@
         <!-- 50 cuadros libres -->
         <script>
           for (let i = 1; i <= 50; i++) {
-            document.write(`<div class="grid-item" data-number="${i}" onclick="moveToOrder(this)">Tag ${i}</div>`);
+            document.write(`<div class="grid-item" data-number="${i}" onclick="moveToOrder(this)">${i}</div>`);
           }
-        </script>
+        </script>x
       </div>
     </div>
 
