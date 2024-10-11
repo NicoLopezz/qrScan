@@ -74,7 +74,7 @@ async function reciveMessage(req, res) {
 
 async function notifyUserForPickUp(req, res) {
     const { tagNumber } = req.body;
-
+    console.log("FETCH DE RETIRO!")
     try {
         // Buscar el mensaje relacionado con el tagNumber en la base de datos
         const message = await Message.findOne({ tagNumber, status: 'en espera' });

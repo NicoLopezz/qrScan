@@ -10,25 +10,27 @@ body {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 100px; /* Borde amplio superior */
-  min-height: 100vh;
+  padding: 5vh 5vw; /* Borde que ajusta el espacio alrededor del contenedor */
+  height: 100vh;
+  overflow: hidden; /* Evita el desbordamiento de la pantalla */
 }
 
 .container {
   display: flex;
-  width: 90%;
+  width: 100%;
   justify-content: space-between;
-  flex-wrap: wrap;
   gap: 20px; /* Espacio entre secciones */
+  height: calc(100vh - 10vh); /* La altura se ajusta al viewport restando el padding */
 }
 
 .tags-section {
-  flex: 1; /* Ajuste para que las secciones ocupen espacio equitativo */
+  flex: 1;
   padding: 20px;
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  overflow-y: auto; /* Scroll solo en el eje vertical */
+  height: 100%;
 }
 
 h2 {
@@ -40,20 +42,20 @@ h2 {
 
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); /* Se ajustan las columnas dinámicamente */
   gap: 10px;
 }
 
 .grid-item {
+  border-radius: 10px;
   background-color: #7a65ab;
   color: white;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 80px;
-  border-radius: 8px;
   cursor: pointer;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 4px 5px 5px rgb(0 0 0 / 42%);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -67,7 +69,7 @@ h2 {
 }
 
 #pending-tags .grid-item {
-  background-color: #f39c12; /* Color para "pendientes de retiro" */
+  background-color: #f39c12;
 }
 
 .pop-in {
@@ -89,6 +91,7 @@ h2 {
   .container {
     flex-direction: column;
     align-items: center;
+    height: calc(100vh - 10vh);
   }
 
   .tags-section {
@@ -96,7 +99,11 @@ h2 {
     margin-bottom: 20px;
   }
 
+  .grid-container {
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  }
+
   .grid-item {
-    height: 60px; /* Ajuste para pantallas pequeñas */
+    height: 60px;
   }
 }

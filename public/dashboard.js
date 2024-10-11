@@ -35,6 +35,7 @@ function moveToOrder(element) {
 // Función para mover el tag a la sección de "Tags pendientes de retiro"
 function moveToPending(element) {
   const pendingContainer = document.getElementById('pending-tags');
+  console.log("ENTRE ACA2 tag movido a pendiente!!")
   
   // Clonar el elemento y añadir la clase de animación pop-in
   const clonedElement = element.cloneNode(true);
@@ -54,6 +55,7 @@ function moveToPending(element) {
 
   // Obtener el número de tag para enviarlo al servidor
   const tagNumber = parseInt(clonedElement.getAttribute('data-number'));
+  
 
   // Enviar una solicitud POST al servidor para notificar al usuario que el pedido está listo
   fetch('/api/readyPickUp', {
