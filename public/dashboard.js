@@ -34,6 +34,8 @@ function showConfirmation(element, action) {
     document.removeEventListener('click', handleClickOutside); // Eliminamos el listener global
   };
 
+  
+
   // Añadir los botones al cuadro de confirmación
   confirmationBox.appendChild(yesButton);
   confirmationBox.appendChild(noButton);

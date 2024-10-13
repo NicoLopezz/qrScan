@@ -1,7 +1,11 @@
 import Message from '../models/messageModel.js';
 import { sendWhatsAppMessage } from '../services/twilioService.js';
+import { sendWhatsAppTemplateMessage } from '../services/twilioService.js';
 import dayjs from 'dayjs'; // Recomendado para manejar fechas
 
+
+//FUNCION MODULAR!
+// Función principal que maneja los diferentes casos según el contenido del mensaje
 // Recibir y guardar mensaje
 async function reciveMessage(req, res) {
     const { From: fromWithPrefix, Body: body } = req.body;
@@ -14,62 +18,111 @@ async function reciveMessage(req, res) {
     // Quitar el prefijo 'whatsapp:' del número de teléfono
     const from = fromWithPrefix.replace('whatsapp:', '');
 
-    // Extraer el tagNumber del cuerpo del mensaje
-    const tagNumberMatch = body.match(/número de tag: (\d+)/); // Busca el número de tag en el mensaje
-    const tagNumber = tagNumberMatch ? parseInt(tagNumberMatch[1], 10) : null;
-
-    console.log("Número de tag extraído:", tagNumber);
-
-
-    // Validar que se haya extraído el número de tag correctamente
-    if (!tagNumber) {
-        return res.status(400).send('No se encontró el número de tag en el mensaje');
-    }
-
     try {
         // Responder inmediatamente a Twilio para evitar duplicados
         res.status(200).send('<Response></Response>');
 
-        // Formatear la fecha en formato deseado (hora:minuto:segundo día/mes/año)
-        const fecha = dayjs().format('HH:mm:ss DD/MM/YYYY');
+        // Determinar el caso según el contenido del mensaje
+        switch (true) {
+            case /número de tag: \d+/i.test(body):
+                // Caso 1: Mensaje contiene un número de tag
+                await handleTagMessage(body, from);
+                break;
 
-        // Buscar si ya existe un documento para este número de teléfono
-        let messageDoc = await Message.findOne({ from });
+            case /sí|ya lo tengo/i.test(body.toLowerCase()):
+                // Caso 2: Mensaje de confirmación de retiro
+                await handleConfirmationMessage(from, body);
+                break;
 
-        if (messageDoc) {
-            // Si el número ya existe, agrega el nuevo mensaje al arreglo 'mensajes'
-            messageDoc.mensajes.push({ body, fecha });
-            messageDoc.status = 'en espera';  // Actualizar el estado si es necesario
-            messageDoc.tagNumber = tagNumber; // Actualizar el tagNumber si es necesario
-            console.log("Número de tag extraído!!!1:", tagNumber);
-
-            await messageDoc.save();  // Aquí estamos guardando el documento actualizado
-        } else {
-            // Si no existe, crea un nuevo documento con el número, el estado, el tag y el primer mensaje
-            messageDoc = new Message({
-                from,  // Guarda solo el número de teléfono sin 'whatsapp:'
-                status: 'en espera', // Estado inicial del pedido
-                tagNumber: tagNumber,  // Guarda el número de tag asociado
-                mensajes: [{ body, fecha }]
-            });
+            default:
+                console.log("Mensaje no reconocido. Contenido del mensaje:", body);
+                break;
         }
 
-        // Guardar el documento (sea actualizado o nuevo)
-        console.log("Número de tag extraído:!!!@2", tagNumber);
-
-        await messageDoc.save();
-
-        // Mensaje de respuesta automática
-        const responseMessage = '🎉 ¡Hola!\n\nTu pedido está en la lista de espera.🕒\n\nTe avisaremos cuando esté listo.';
-        
-        // Envía la respuesta automática usando el servicio de Twilio
-        await sendWhatsAppMessage(fromWithPrefix, responseMessage);
-
     } catch (error) {
-        console.error('Error al recibir el mensaje:', error.message);
+        console.error('Error al procesar el mensaje:', error.message);
         res.status(500).send('Error al procesar el mensaje');
     }
 }
+
+// Manejar el mensaje cuando el cliente envía un número de tag
+async function handleTagMessage(body, from) {
+    const tagNumberMatch = body.match(/número de tag: (\d+)/); // Extraer el número de tag
+    const tagNumber = tagNumberMatch ? parseInt(tagNumberMatch[1], 10) : null;
+    const fecha = dayjs().format('HH:mm:ss DD/MM/YYYY');
+
+    if (tagNumber !== null) {
+        let messageDoc = await Message.findOne({ from });
+
+        if (messageDoc) {
+            // Si ya existe, actualiza el documento con el nuevo tag y mensaje
+            messageDoc.mensajes.push({ body, fecha });
+            messageDoc.tagNumber = tagNumber;
+            messageDoc.estadoPorBarra = 'en espera';
+            await messageDoc.save();
+            console.log("Número de tag guardado:", tagNumber);
+        } else {
+            // Si no existe, crea un nuevo documento con el tag y el número de teléfono
+            messageDoc = new Message({
+                from,
+                estadoPorBarra: 'en espera',
+                tagNumber: tagNumber,
+                mensajes: [{ body, fecha }]
+            });
+            await messageDoc.save();
+            console.log("Nuevo pedido guardado con tag:", tagNumber);
+        }
+
+        // Enviar respuesta automática al cliente
+        const responseMessage = '🎉 ¡Hola!\n\nTu pedido está en la lista de espera.🕒\n\nTe avisaremos cuando esté listo.';
+        await sendWhatsAppMessage(`whatsapp:${from}`, responseMessage);
+    } else {
+        console.log("No se pudo extraer un número de tag del mensaje.");
+    }
+}
+
+// Manejar el mensaje de confirmación de retiro (cuando el cliente responde "sí, ya lo tengo")
+async function handleConfirmationMessage(from, body) {
+    const fecha = dayjs().format('HH:mm:ss DD/MM/YYYY');
+    const messageDoc = await Message.findOne({ from, estadoPorBarra: 'retiro confirmado' });
+
+    if (messageDoc && messageDoc.tagNumber) {
+        // Guardar el mensaje de confirmación en el array 'mensajes'
+        messageDoc.mensajes.push({ body, fecha });
+        messageDoc.confirmacionPorCliente = true;  // Confirmar el retiro
+        messageDoc.estadoPorBarra = 'retiro confirmado';  // Cambiar el estado a retiro confirmado
+        await messageDoc.save();
+        console.log("Pedido confirmado como retirado para el tag:", messageDoc.tagNumber);
+
+        // Puedes enviar una respuesta automática si lo deseas
+        const confirmationMessage = '🎉 ¡Gracias! Tu pedido ha sido confirmado como retirado.';
+        await sendWhatsAppMessage(`whatsapp:${from}`, confirmationMessage);
+    } else {
+        console.error("No se encontró un pedido con tag asociado para confirmar el retiro.");
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 async function notifyUserForPickUp(req, res) {
@@ -77,7 +130,7 @@ async function notifyUserForPickUp(req, res) {
     console.log("FETCH DE RETIRO!")
     try {
         // Buscar el mensaje relacionado con el tagNumber en la base de datos
-        const message = await Message.findOne({ tagNumber, status: 'en espera' });
+        const message = await Message.findOne({ tagNumber, estadoPorBarra: 'en espera' });
         
         if (message) {
             // Enviar notificación de que el pedido está listo al número de teléfono asociado
@@ -85,7 +138,7 @@ async function notifyUserForPickUp(req, res) {
             await sendWhatsAppMessage(`whatsapp:${phoneNumber}`, '🎉 ¡Tu pedido está listo para ser retirado! 😊');
 
             // Actualizar el estado del pedido a 'completado'
-            await Message.updateOne({ tagNumber }, { status: 'a confirmar retiro' });
+            await Message.updateOne({ tagNumber }, { estadoPorBarra: 'a confirmar retiro' });
 
             res.json({ message: 'Notificación enviada y estado actualizado' });
         } else {
@@ -102,15 +155,16 @@ async function notifyUserPickedUp(req, res) {
 
     try {
         // Buscar el mensaje relacionado con el tagNumber en la base de datos
-        const message = await Message.findOne({ tagNumber, status: 'a confirmar retiro' });
+        const message = await Message.findOne({ tagNumber, estadoPorBarra: 'a confirmar retiro' });
         
         if (message) {
             // Enviar notificación de que el pedido está listo al número de teléfono asociado
             const phoneNumber = message.from;  // Obtener el número de teléfono
-            await sendWhatsAppMessage(`whatsapp:${phoneNumber}`, '🎉 Nos inforaron que confirmaste el pedido, es asi? 😊 1:si, gracias 2:no,pero estoy en eso');
+            await sendWhatsAppTemplateMessage(`whatsapp:${phoneNumber}`, ['1', '2' , '3']);
+            
 
             // Actualizar el estado del pedido a 'completado'
-            await Message.updateOne({ tagNumber }, { status: 'retirado' });
+            await Message.updateOne({ tagNumber }, { estadoPorBarra: 'retiro confirmado' });
 
             res.json({ message: 'Notificación enviada y estado actualizado' });
         } else {
@@ -121,6 +175,8 @@ async function notifyUserPickedUp(req, res) {
         res.status(500).json({ error: 'Error al notificar al usuario' });
     }
 }
+
+
 
 
 
