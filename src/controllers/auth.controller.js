@@ -1,6 +1,5 @@
-import Message from '../models/messageModel.js';
-import { sendWhatsAppMessage } from '../services/twilioService.js';
-import { sendWhatsAppTemplateMessage } from '../services/twilioService.js';
+import Cliente from '../models/clienteModel.js';  // Nuevo modelo Cliente con historialPedidos
+import { sendWhatsAppMessage, sendWhatsAppTemplateMessage } from '../services/twilioService.js';
 import dayjs from 'dayjs'; // Recomendado para manejar fechas
 
 
@@ -52,25 +51,31 @@ async function handleTagMessage(body, from) {
     const fecha = dayjs().format('HH:mm:ss DD/MM/YYYY');
 
     if (tagNumber !== null) {
-        let messageDoc = await Message.findOne({ from });
+        let clienteDoc = await Cliente.findOne({ from });
 
-        if (messageDoc) {
-            // Si ya existe, actualiza el documento con el nuevo tag y mensaje
-            messageDoc.mensajes.push({ body, fecha });
-            messageDoc.tagNumber = tagNumber;
-            messageDoc.estadoPorBarra = 'en espera';
-            await messageDoc.save();
-            console.log("Número de tag guardado:", tagNumber);
-        } else {
-            // Si no existe, crea un nuevo documento con el tag y el número de teléfono
-            messageDoc = new Message({
-                from,
+        if (clienteDoc) {
+            // Si ya existe el cliente, agregar el nuevo pedido al historial
+            clienteDoc.historialPedidos.push({
+                tagNumber,
+                fechaPedido: fecha,
                 estadoPorBarra: 'en espera',
-                tagNumber: tagNumber,
                 mensajes: [{ body, fecha }]
             });
-            await messageDoc.save();
-            console.log("Nuevo pedido guardado con tag:", tagNumber);
+            await clienteDoc.save();
+            console.log("Pedido guardado para el cliente con tag:", tagNumber);
+        } else {
+            // Si no existe, crea un nuevo cliente con el primer pedido en el historial
+            clienteDoc = new Cliente({
+                from,
+                historialPedidos: [{
+                    tagNumber,
+                    fechaPedido: fecha,
+                    estadoPorBarra: 'en espera',
+                    mensajes: [{ body, fecha }]
+                }]
+            });
+            await clienteDoc.save();
+            console.log("Nuevo cliente y pedido guardado con tag:", tagNumber);
         }
 
         // Enviar respuesta automática al cliente
@@ -84,63 +89,56 @@ async function handleTagMessage(body, from) {
 // Manejar el mensaje de confirmación de retiro (cuando el cliente responde "sí, ya lo tengo")
 async function handleConfirmationMessage(from, body) {
     const fecha = dayjs().format('HH:mm:ss DD/MM/YYYY');
-    const messageDoc = await Message.findOne({ from, estadoPorBarra: 'retiro confirmado' });
+    
+    // Buscar el cliente y su historial de pedidos
+    const clienteDoc = await Cliente.findOne({ from });
 
-    if (messageDoc && messageDoc.tagNumber) {
-        // Guardar el mensaje de confirmación en el array 'mensajes'
-        messageDoc.mensajes.push({ body, fecha });
-        messageDoc.confirmacionPorCliente = true;  // Confirmar el retiro
-        messageDoc.estadoPorBarra = 'retiro confirmado';  // Cambiar el estado a retiro confirmado
-        await messageDoc.save();
-        console.log("Pedido confirmado como retirado para el tag:", messageDoc.tagNumber);
+    if (clienteDoc) {
+        // Buscar el pedido en el historial que esté en estado "a confirmar retiro" y que no haya sido confirmado
+        const pedido = clienteDoc.historialPedidos.find(p => p.confirmacionPorCliente === false);
+        
+        if (pedido) {
+            // Guardar el mensaje de confirmación y actualizar el estado del pedido
+            pedido.mensajes.push({ body, fecha }); // Agregar el mensaje de confirmación
+            // pedido.estadoPorBarra = 'retiro confirmado';  // Cambiar el estado a retiro confirmado
+            pedido.confirmacionPorCliente = true;         // Marcar como confirmado por el cliente
+            await clienteDoc.save();
+            console.log("Pedido confirmado como retirado para el tag:", pedido.tagNumber);
 
-        // Puedes enviar una respuesta automática si lo deseas
-        const confirmationMessage = '🎉 ¡Gracias! Tu pedido ha sido confirmado como retirado.';
-        await sendWhatsAppMessage(`whatsapp:${from}`, confirmationMessage);
+            // Enviar respuesta automática de confirmación
+            const confirmationMessage = '🎉 ¡Gracias! Tu pedido ha sido confirmado como retirado.';
+            await sendWhatsAppMessage(`whatsapp:${from}`, confirmationMessage);
+        } else {
+            console.error("No se encontró un pedido en estado 'a confirmar retiro' o ya ha sido confirmado.HABDLE!!");
+        }
     } else {
-        console.error("No se encontró un pedido con tag asociado para confirmar el retiro.");
+        console.error("No se encontró un cliente con el número:", from);
     }
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// Notificar que el pedido está listo para ser retirado
 async function notifyUserForPickUp(req, res) {
     const { tagNumber } = req.body;
     console.log("FETCH DE RETIRO!")
     try {
-        // Buscar el mensaje relacionado con el tagNumber en la base de datos
-        const message = await Message.findOne({ tagNumber, estadoPorBarra: 'en espera' });
-        
-        if (message) {
-            // Enviar notificación de que el pedido está listo al número de teléfono asociado
-            const phoneNumber = message.from;  // Obtener el número de teléfono
-            await sendWhatsAppMessage(`whatsapp:${phoneNumber}`, '🎉 ¡Tu pedido está listo para ser retirado! 😊');
+        // Buscar el cliente que tiene el pedido en espera
+        const cliente = await Cliente.findOne({ "historialPedidos.tagNumber": tagNumber, "historialPedidos.estadoPorBarra": 'en espera' });
 
-            // Actualizar el estado del pedido a 'completado'
-            await Message.updateOne({ tagNumber }, { estadoPorBarra: 'a confirmar retiro' });
+        if (cliente) {
+            // Encontrar el pedido dentro del historial de pedidos
+            const pedido = cliente.historialPedidos.find(p => p.tagNumber === tagNumber && p.estadoPorBarra === 'en espera');
 
-            res.json({ message: 'Notificación enviada y estado actualizado' });
+            if (pedido) {
+                // Enviar notificación de que el pedido está listo
+                await sendWhatsAppMessage(`whatsapp:${cliente.from}`, '🎉 ¡Tu pedido está listo para ser retirado! 😊');
+
+                // Actualizar el estado del pedido a "a confirmar retiro"
+                pedido.estadoPorBarra = 'a confirmar retiro';
+                await cliente.save();
+
+                res.json({ message: 'Notificación enviada y estado actualizado' });
+            }
         } else {
             res.status(404).json({ error: 'No se encontró el pedido para este número de tag' });
         }
@@ -150,23 +148,28 @@ async function notifyUserForPickUp(req, res) {
     }
 }
 
+// Notificar que el pedido fue confirmado como retirado
 async function notifyUserPickedUp(req, res) {
     const { tagNumber } = req.body;
 
     try {
-        // Buscar el mensaje relacionado con el tagNumber en la base de datos
-        const message = await Message.findOne({ tagNumber, estadoPorBarra: 'a confirmar retiro' });
-        
-        if (message) {
-            // Enviar notificación de que el pedido está listo al número de teléfono asociado
-            const phoneNumber = message.from;  // Obtener el número de teléfono
-            await sendWhatsAppTemplateMessage(`whatsapp:${phoneNumber}`, ['1', '2' , '3']);
-            
+        // Buscar el cliente que tiene el pedido en "a confirmar retiro"
+        const cliente = await Cliente.findOne({ "historialPedidos.tagNumber": tagNumber, "historialPedidos.estadoPorBarra": 'a confirmar retiro' });
 
-            // Actualizar el estado del pedido a 'completado'
-            await Message.updateOne({ tagNumber }, { estadoPorBarra: 'retiro confirmado' });
+        if (cliente) {
+            // Encontrar el pedido dentro del historial de pedidos
+            const pedido = cliente.historialPedidos.find(p => p.tagNumber === tagNumber && p.estadoPorBarra === 'a confirmar retiro');
 
-            res.json({ message: 'Notificación enviada y estado actualizado' });
+            if (pedido) {
+                // Enviar notificación de confirmación al cliente
+                await sendWhatsAppTemplateMessage(`whatsapp:${cliente.from}`, ['1', '2', '3']);
+
+                // Actualizar el estado del pedido a "retiro confirmado"
+                pedido.estadoPorBarra = 'retiro confirmado';
+                await cliente.save();
+
+                res.json({ message: 'Notificación enviada y estado actualizado' });
+            }
         } else {
             res.status(404).json({ error: 'No se encontró el pedido para este número de tag' });
         }
@@ -175,15 +178,10 @@ async function notifyUserPickedUp(req, res) {
         res.status(500).json({ error: 'Error al notificar al usuario' });
     }
 }
-
-
-
-
 
 // Exportar los métodos
 export const methods = {
     reciveMessage,
     notifyUserForPickUp,
     notifyUserPickedUp,
-    // notifyUser,
 };
