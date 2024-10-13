@@ -120,7 +120,6 @@ function moveToPending(element) {
 
     // Enviar el número de tag al servidor para notificar al usuario que el pedido está listo
     const tagNumber = parseInt(clonedElement.getAttribute('data-number'));
-
     fetch('/api/readyPickUp', {
       method: 'POST',
       headers: {

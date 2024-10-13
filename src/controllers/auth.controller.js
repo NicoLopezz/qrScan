@@ -53,26 +53,25 @@ async function handleTagMessage(body, from) {
     if (tagNumber !== null) {
         let clienteDoc = await Cliente.findOne({ from });
 
+        const nuevoPedido = {
+            tagNumber,
+            fechaPedido: fecha,            // Fecha cuando se hizo el pedido
+            estadoPorBarra: 'en espera',    // Estado inicial del pedido
+            confirmacionPorCliente: false,  // El cliente aún no ha confirmado el retiro
+            mensajes: [{ body, fecha }],    // Mensajes iniciales
+            fechaRetiro: null               // No hay fecha de retiro hasta que se confirme
+        };
+
         if (clienteDoc) {
             // Si ya existe el cliente, agregar el nuevo pedido al historial
-            clienteDoc.historialPedidos.push({
-                tagNumber,
-                fechaPedido: fecha,
-                estadoPorBarra: 'en espera',
-                mensajes: [{ body, fecha }]
-            });
+            clienteDoc.historialPedidos.push(nuevoPedido);
             await clienteDoc.save();
             console.log("Pedido guardado para el cliente con tag:", tagNumber);
         } else {
             // Si no existe, crea un nuevo cliente con el primer pedido en el historial
             clienteDoc = new Cliente({
                 from,
-                historialPedidos: [{
-                    tagNumber,
-                    fechaPedido: fecha,
-                    estadoPorBarra: 'en espera',
-                    mensajes: [{ body, fecha }]
-                }]
+                historialPedidos: [nuevoPedido]  // Guardar el primer pedido
             });
             await clienteDoc.save();
             console.log("Nuevo cliente y pedido guardado con tag:", tagNumber);
@@ -100,7 +99,8 @@ async function handleConfirmationMessage(from, body) {
         if (pedido) {
             // Guardar el mensaje de confirmación y actualizar el estado del pedido
             pedido.mensajes.push({ body, fecha }); // Agregar el mensaje de confirmación
-            // pedido.estadoPorBarra = 'retiro confirmado';  // Cambiar el estado a retiro confirmado
+            // pedido.fechaRetiro = fecha;            // Actualizar con la fecha y hora del retiro
+            pedido.estadoPorBarra = 'retiro confirmado';  // Cambiar el estado a retiro confirmado
             pedido.confirmacionPorCliente = true;         // Marcar como confirmado por el cliente
             await clienteDoc.save();
             console.log("Pedido confirmado como retirado para el tag:", pedido.tagNumber);
@@ -109,7 +109,7 @@ async function handleConfirmationMessage(from, body) {
             const confirmationMessage = '🎉 ¡Gracias! Tu pedido ha sido confirmado como retirado.';
             await sendWhatsAppMessage(`whatsapp:${from}`, confirmationMessage);
         } else {
-            console.error("No se encontró un pedido en estado 'a confirmar retiro' o ya ha sido confirmado.HABDLE!!");
+            console.error("No se encontró un pedido en estado 'a confirmar retiro' o ya ha sido confirmado.");
         }
     } else {
         console.error("No se encontró un cliente con el número:", from);
@@ -119,6 +119,7 @@ async function handleConfirmationMessage(from, body) {
 
 // Notificar que el pedido está listo para ser retirado
 async function notifyUserForPickUp(req, res) {
+    const fecha = dayjs().format('HH:mm:ss DD/MM/YYYY');
     const { tagNumber } = req.body;
     console.log("FETCH DE RETIRO!")
     try {
@@ -128,6 +129,7 @@ async function notifyUserForPickUp(req, res) {
         if (cliente) {
             // Encontrar el pedido dentro del historial de pedidos
             const pedido = cliente.historialPedidos.find(p => p.tagNumber === tagNumber && p.estadoPorBarra === 'en espera');
+            pedido.fechaRetiro = fecha;            // Actualizar con la fecha y hora del retiro
 
             if (pedido) {
                 // Enviar notificación de que el pedido está listo
