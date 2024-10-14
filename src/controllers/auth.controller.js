@@ -1,6 +1,10 @@
 import Cliente from '../models/clienteModel.js';  // Nuevo modelo Cliente con historialPedidos
+import Admin from '../models/adminModel.js';  // Nuevo modelo Cliente con historialPedidos
 import { sendWhatsAppMessage, sendWhatsAppTemplateMessage } from '../services/twilioService.js';
 import dayjs from 'dayjs'; // Recomendado para manejar fechas
+// import connectToLocalDB from '../database.js';
+import mongoose from 'mongoose';
+
 
 
 //FUNCION MODULAR!--case
@@ -142,11 +146,6 @@ async function handleBajaRequest(from) {
     }
 }
 
-
-
-
-
-
 async function notifyUserForPickUp(req, res) {
     const fechaRetiro = new Date();  // Fecha actual cuando el pedido es retirado
     const { tagNumber } = req.body;
@@ -215,10 +214,6 @@ async function notifyUserForPickUp(req, res) {
     }
 }
 
-
-
-
-
 //--------------> funcion para el mensaje final!
 // Notificar que el pedido fue confirmado como retirado
 async function notifyUserPickedUp(req, res) {
@@ -251,9 +246,99 @@ async function notifyUserPickedUp(req, res) {
     }
 }
 
+
+async function newLocal(req, res){
+
+    const { email, localNumber, nameRef, password } = req.body;
+    try {
+        // Aquí podrías agregar una lógica para encriptar la contraseña
+        const newAdmin = new Admin({
+            email,
+            localNumber,
+            nameRef,
+            password
+        });
+
+        await newAdmin.save();
+        res.status(201).json({ message: 'Administrador agregado con éxito' });
+    } catch (error) {
+        console.error('Error al agregar administrador:', error.message);
+        res.status(500).json({ error: 'Error al agregar administrador' });
+    }
+};
+
+
+
+async function login(req, res) {
+    const { email, password } = req.body;
+
+    try {
+        const admin = await Admin.findOne({ email });
+
+        if (!admin) {
+            return res.status(401).json({ error: "Usuario no encontrado" });
+        }
+
+        const isPasswordValid = password === admin.password; // Comparación directa
+        if (!isPasswordValid) {
+            return res.status(401).json({ error: "Contraseña incorrecta" });
+        }
+
+        // Guardar el localNumber en una cookie
+        const localNumber = admin.localNumber;
+        res.cookie('localNumber', localNumber, { httpOnly: true });
+
+        res.status(200).json({ message: "Inicio de sesión exitoso", localNumber });
+    } catch (error) {
+        console.error("Error al iniciar sesión:", error);
+        res.status(500).json({ error: "Error al iniciar sesión" });
+    }
+}
+
+
+async function changeDbDashboard(req, res) {
+    // Leer el localNumber desde la cookie
+    console.log(req.cookies); // Para verificar si localNumber está presente
+
+    const localNumber = req.cookies.localNumber;
+
+    if (!localNumber) {
+    return res.status(400).json({ error: "No se encontró el número de local" });
+}
+
+    if (!localNumber) {
+        return res.status(403).json({ error: 'No autorizado. Faltan credenciales.' });
+    }
+
+    try {
+        // Cambiar la conexión a la base de datos específica del local
+        const dbName = `Local_${localNumber}`;
+        const newDbConnection = mongoose.connection.useDb(dbName); // Cambia la base de datos
+
+        // Ahora puedes hacer consultas a la base de datos de ese local
+        const clientes = await newDbConnection.collection('clientes').find().toArray();
+        // res.status(200).json({ message: `Conectado a la base de datos ${dbName}`, clientes });
+        console.log('Database is connected to:' , newDbConnection.dbName);
+
+    } catch (error) {
+        console.error('Error al acceder al dashboard:', error);
+        res.status(500).json({ error: 'Error al acceder al dashboard' });
+    }
+}
+
+
+
+
+
+//funcion para un nuevo local:
+
+
 // Exportar los métodos
 export const methods = {
     reciveMessage,
     notifyUserForPickUp,
     notifyUserPickedUp,
+    newLocal,
+    login,
+    changeDbDashboard,
 };

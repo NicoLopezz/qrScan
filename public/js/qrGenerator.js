@@ -23,6 +23,7 @@ $(document).ready(function () {
         generateQRCode(tagNumber);
     });
 
+    
     // Inicialmente generar el QR sin un tag (opcional)
     generateQRCode(''); // Genera un QR vacío o genérico al inicio
 });

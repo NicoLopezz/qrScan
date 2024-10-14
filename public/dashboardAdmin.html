@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Moderno</title>
+    <link rel="stylesheet" href="/style/dahsboardAdmin.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <h2>Logo</h2>
+            </div>
+            <ul class="menu">
+                <li><a href="#" class="active">Home</a></li>
+                <li><a href="#">Order History</a></li>
+                <li><a href="#">Payment History</a></li>
+                <li><a href="#">Activity</a></li>
+                <li><a href="#">Meals</a></li>
+            </ul>
+            <div class="bottom-menu">
+                <a href="#">Get Help</a>
+                <a href="#">Settings</a>
+                <a href="#">Log Out</a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header>
+                <h1>Bienvenido, <span>Lopez Nicolas</span></h1>
+                <div class="profile">
+                    <img src="profile-image.png" alt="Profile Picture">
+                    <p>Mahmudul Hasan</p>
+                </div>
+            </header>
+
+            <section class="stats">
+                <div class="card">
+                    <h3>256</h3>
+                    <p>Pedidos del día</p>
+                </div>
+                <div class="card">
+                    <h3>2260</h3>
+                    <p>Nuevos Clientes</p>
+                </div>
+                <div class="card">
+                    <h3>3730</h3>
+                    <p>Tiempo de entrega</p>
+                </div>
+                <div class="card">
+                    <h3>3730</h3>
+                    <p>Puntuación</p>
+                </div>
+                <div class="card">
+                    <h3>3730</h3>
+                    <p>Horas pico</p>
+                </div>
+                <div class="card">
+                    <h3>3730</h3>
+                    <p>Clientes Frecuentes</p>
+                </div>
+            </section>
+
+            <section class="charts">
+                <div class="chart">
+                    <h3>Total Details</h3>
+                    <canvas id="totalDetailsChart"></canvas>
+                </div>
+                <div class="chart">
+                    <h3>Total Details</h3>
+                    <canvas id="totalDetailsChart2"></canvas>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/js/dashboardAdmin.js"></script>
+</body>
+</html>

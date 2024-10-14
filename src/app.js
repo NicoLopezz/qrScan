@@ -3,9 +3,14 @@ import cors from 'cors';
 import { createServer } from 'http'; // Necesario para crear el servidor de HTTP con Socket.IO
 import { Server as SocketServer } from 'socket.io'; // Importar Socket.IO
 import AuthRoutes from './routes/auth.routes.js';
+import cookieParser from 'cookie-parser';
 
+
+
+// Agregar middleware cookie-parser para gestionar cookies
 // Inicializa Express
 const app = express();
+app.use(cookieParser());
 
 // Configura el servidor HTTP para usar Socket.IO
 const httpServer = createServer(app); // Crea el servidor HTTP
@@ -48,7 +53,7 @@ io.on('connection', (socket) => {
 });
 
 // Configura el puerto y levanta el servidor
-const PORT = process.env.PORT || 300;
+const PORT = process.env.PORT || 3000;
 httpServer.listen(PORT, () => {
   console.log(`Servidor escuchando en el puerto ${PORT}`);
 });
