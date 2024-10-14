@@ -17,6 +17,7 @@ const pedidoSchema = new mongoose.Schema({
 });
 
 const clienteSchema = new mongoose.Schema({
+  solicitudBaja:{ type: Boolean, default: false },
   from: { type: String, required: true },
   historialPedidos: [pedidoSchema],
   promedioTiempo: { type: Number }  // En segundos

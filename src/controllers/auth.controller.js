@@ -3,9 +3,7 @@ import { sendWhatsAppMessage, sendWhatsAppTemplateMessage } from '../services/tw
 import dayjs from 'dayjs'; // Recomendado para manejar fechas
 
 
-//FUNCION MODULAR!
-// Función principal que maneja los diferentes casos según el contenido del mensaje
-// Recibir y guardar mensaje
+//FUNCION MODULAR!--case
 async function reciveMessage(req, res) {
     const { From: fromWithPrefix, Body: body } = req.body;
 
@@ -32,6 +30,11 @@ async function reciveMessage(req, res) {
                 // Caso 2: Mensaje de confirmación de retiro
                 await handleConfirmationMessage(from, body);
                 break;
+            
+            case /Baja/i.test(body.toLowerCase()):
+                // Caso 2: Mensaje de confirmación de retiro
+                await handleBajaRequest(from, body);
+                break;    
 
             default:
                 console.log("Mensaje no reconocido. Contenido del mensaje:", body);
@@ -118,6 +121,31 @@ async function handleConfirmationMessage(from, body) {
     }
 }
 
+async function handleBajaRequest(from) {
+    try {
+        let clienteDoc = await Cliente.findOne({ from });
+
+        if (clienteDoc) {
+            // Actualizar la solicitud de baja a true
+            clienteDoc.solicitudBaja = true;
+            await clienteDoc.save();
+            console.log("Solicitud de baja registrada para el cliente:", from);
+
+            // Enviar una confirmación al cliente
+            const responseMessage = '🚨 ¡Tu solicitud de baja ha sido procesada! Si no fue intencionada, contacta al soporte. 📞';
+            await sendWhatsAppMessage(`whatsapp:${from}`, responseMessage);
+        } else {
+            console.log("No se encontró un cliente con este número para registrar la baja.");
+        }
+    } catch (error) {
+        console.error('Error al procesar la solicitud de baja:', error.message);
+    }
+}
+
+
+
+
+
 
 async function notifyUserForPickUp(req, res) {
     const fechaRetiro = new Date();  // Fecha actual cuando el pedido es retirado
@@ -186,17 +214,6 @@ async function notifyUserForPickUp(req, res) {
         res.status(500).json({ error: 'Error al notificar al usuario' });
     }
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
