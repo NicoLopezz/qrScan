@@ -48,18 +48,19 @@ async function reciveMessage(req, res) {
 async function handleTagMessage(body, from) {
     const tagNumberMatch = body.match(/número de tag: (\d+)/); // Extraer el número de tag
     const tagNumber = tagNumberMatch ? parseInt(tagNumberMatch[1], 10) : null;
-    const fecha = dayjs().format('HH:mm:ss DD/MM/YYYY');
+    const fechaPedido = new Date();  // Usar Date para obtener la fecha actual como un objeto de tipo Date
 
     if (tagNumber !== null) {
         let clienteDoc = await Cliente.findOne({ from });
 
         const nuevoPedido = {
             tagNumber,
-            fechaPedido: fecha,            // Fecha cuando se hizo el pedido
-            estadoPorBarra: 'en espera',    // Estado inicial del pedido
-            confirmacionPorCliente: false,  // El cliente aún no ha confirmado el retiro
-            mensajes: [{ body, fecha }],    // Mensajes iniciales
-            fechaRetiro: null               // No hay fecha de retiro hasta que se confirme
+            fechaPedido,            // Guardar la fecha actual como Date
+            estadoPorBarra: 'en espera',    
+            confirmacionPorCliente: false,  
+            mensajes: [{ body, fecha: fechaPedido }],    // Usar la fecha como Date en mensajes
+            fechaRetiro: null,             
+            tiempoEspera: 0
         };
 
         if (clienteDoc) {
@@ -71,7 +72,8 @@ async function handleTagMessage(body, from) {
             // Si no existe, crea un nuevo cliente con el primer pedido en el historial
             clienteDoc = new Cliente({
                 from,
-                historialPedidos: [nuevoPedido]  // Guardar el primer pedido
+                historialPedidos: [nuevoPedido],  // Guardar el primer pedido
+                promedioTiempo: null
             });
             await clienteDoc.save();
             console.log("Nuevo cliente y pedido guardado con tag:", tagNumber);
@@ -117,11 +119,11 @@ async function handleConfirmationMessage(from, body) {
 }
 
 
-// Notificar que el pedido está listo para ser retirado
 async function notifyUserForPickUp(req, res) {
-    const fecha = dayjs().format('HH:mm:ss DD/MM/YYYY');
+    const fechaRetiro = new Date();  // Fecha actual cuando el pedido es retirado
     const { tagNumber } = req.body;
-    console.log("FETCH DE RETIRO!")
+
+    console.log("FETCH DE RETIRO!");
     try {
         // Buscar el cliente que tiene el pedido en espera
         const cliente = await Cliente.findOne({ "historialPedidos.tagNumber": tagNumber, "historialPedidos.estadoPorBarra": 'en espera' });
@@ -129,9 +131,22 @@ async function notifyUserForPickUp(req, res) {
         if (cliente) {
             // Encontrar el pedido dentro del historial de pedidos
             const pedido = cliente.historialPedidos.find(p => p.tagNumber === tagNumber && p.estadoPorBarra === 'en espera');
-            pedido.fechaRetiro = fecha;            // Actualizar con la fecha y hora del retiro
 
             if (pedido) {
+                // Actualizar con la fecha y hora del retiro
+                pedido.fechaRetiro = fechaRetiro; 
+
+                // Calcular la diferencia en milisegundos
+                const diferenciaMs = fechaRetiro - pedido.fechaPedido;
+                
+                // Convertir la diferencia en segundos
+                const segundos = Math.floor(diferenciaMs / 1000); 
+
+                // Almacenar el tiempo de espera en segundos
+                pedido.tiempoEspera = segundos;
+
+                console.log("Tiempo de espera en segundos:", pedido.tiempoEspera);
+
                 // Enviar notificación de que el pedido está listo
                 await sendWhatsAppMessage(`whatsapp:${cliente.from}`, '🎉 ¡Tu pedido está listo para ser retirado! 😊');
 
@@ -139,7 +154,29 @@ async function notifyUserForPickUp(req, res) {
                 pedido.estadoPorBarra = 'a confirmar retiro';
                 await cliente.save();
 
+                // Calcular el promedio de tiempo de espera para **todos** los pedidos
+                const totalPedidos = cliente.historialPedidos.length;
+                const totalTiempoEspera = cliente.historialPedidos.reduce((total, p) => total + p.tiempoEspera, 0);
+
+                // Calcular el promedio del tiempo de espera
+                const promedioTiempo = totalTiempoEspera / totalPedidos;
+
+                // Guardar el promedio en el cliente
+                cliente.promedioTiempo = promedioTiempo;
+
+                // Convertir el promedio a horas, minutos y segundos
+                const horasPromedio = Math.floor(promedioTiempo / 3600);
+                const minutosPromedio = Math.floor((promedioTiempo % 3600) / 60);
+                const segundosPromedio = Math.floor(promedioTiempo % 60);
+
+                console.log(`Promedio de espera: ${horasPromedio} horas, ${minutosPromedio} minutos y ${segundosPromedio} segundos`);
+
+                // Guardar nuevamente el cliente con el promedio actualizado
+                await cliente.save();
+
                 res.json({ message: 'Notificación enviada y estado actualizado' });
+            } else {
+                res.status(404).json({ error: 'No se encontró el pedido en estado "en espera"' });
             }
         } else {
             res.status(404).json({ error: 'No se encontró el pedido para este número de tag' });
@@ -150,6 +187,22 @@ async function notifyUserForPickUp(req, res) {
     }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//--------------> funcion para el mensaje final!
 // Notificar que el pedido fue confirmado como retirado
 async function notifyUserPickedUp(req, res) {
     const { tagNumber } = req.body;

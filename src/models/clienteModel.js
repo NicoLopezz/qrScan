@@ -6,23 +6,22 @@ const mensajeSchema = new mongoose.Schema({
   fecha: { type: String, required: true }
 });
 
-// Esquema para cada pedido dentro del historial de pedidos del cliente
 const pedidoSchema = new mongoose.Schema({
-  tagNumber: { type: Number, required: true },           
-  fechaPedido: { type: String, required: true },         
-  fechaRetiro: { type: String },                         
-  tiempoTotal: { type: String },                         
+  tagNumber: { type: Number, required: true },
+  fechaPedido: { type: Date, required: true },         
+  fechaRetiro: { type: Date },                         
+  tiempoEspera: { type: Number },   // En segundos
   estadoPorBarra: { type: String, default: 'en espera' }, 
-  confirmacionPorCliente: { type: Boolean, default: false }, // <--- Cambiado aquí
-  mensajes: [mensajeSchema]                              
+  confirmacionPorCliente: { type: Boolean, default: false },
+  mensajes: [mensajeSchema]
 });
 
-// Esquema principal del cliente
 const clienteSchema = new mongoose.Schema({
-  from: { type: String, required: true },                // Número de teléfono del cliente
-  historialPedidos: [pedidoSchema],                      // Historial de pedidos realizados por el cliente
-  promedioTiempo: { type: String },                      // Promedio de tiempo entre pedido y retiro
+  from: { type: String, required: true },
+  historialPedidos: [pedidoSchema],
+  promedioTiempo: { type: Number }  // En segundos
 });
+
 
 // Exportar el modelo con el nombre pluralizado 'clientes'
 export default mongoose.model('Clientes', clienteSchema, 'clientes');
