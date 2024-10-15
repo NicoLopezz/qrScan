@@ -6,6 +6,7 @@ const mensajeSchema = new mongoose.Schema({
   fecha: { type: String, required: true }
 });
 
+// Esquema para los pedidos
 const pedidoSchema = new mongoose.Schema({
   tagNumber: { type: Number, required: true },
   fechaPedido: { type: Date, required: true },         
@@ -16,13 +17,12 @@ const pedidoSchema = new mongoose.Schema({
   mensajes: [mensajeSchema]
 });
 
+// Esquema para los clientes
 const clienteSchema = new mongoose.Schema({
-  solicitudBaja:{ type: Boolean, default: false },
+  solicitudBaja: { type: Boolean, default: false },
   from: { type: String, required: true },
   historialPedidos: [pedidoSchema],
   promedioTiempo: { type: Number }  // En segundos
 });
 
-
-// Exportar el modelo con el nombre pluralizado 'clientes'
-export default mongoose.model('Clientes', clienteSchema, 'clientes');
+export default mongoose.model('Cliente', clienteSchema, 'clientes');

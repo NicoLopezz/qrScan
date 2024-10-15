@@ -2,15 +2,13 @@ document.getElementById('adminForm').addEventListener('submit', async function(e
     event.preventDefault(); // Evitar que el formulario se envíe automáticamente
 
     const email = document.getElementById('email').value;
-    const localNumber = document.getElementById('localNumber').value;
-    const nameRef = document.getElementById('nameRef').value;
     const password = document.getElementById('password').value;
+    const localName = document.getElementById('nameRef').value;
 
     const data = {
         email,
-        localNumber,
-        nameRef,
-        password
+        password,
+        localName
     };
 
     try {

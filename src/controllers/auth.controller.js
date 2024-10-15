@@ -2,8 +2,9 @@ import Cliente from '../models/clienteModel.js';  // Nuevo modelo Cliente con hi
 import Admin from '../models/adminModel.js';  // Nuevo modelo Cliente con historialPedidos
 import { sendWhatsAppMessage, sendWhatsAppTemplateMessage } from '../services/twilioService.js';
 import dayjs from 'dayjs'; // Recomendado para manejar fechas
+import { faker } from '@faker-js/faker';
+
 // import connectToLocalDB from '../database.js';
-import mongoose from 'mongoose';
 
 
 
@@ -247,25 +248,133 @@ async function notifyUserPickedUp(req, res) {
 }
 
 
-async function newLocal(req, res){
+async function newLocal(req, res) {
+    const { email, password, localName } = req.body;
 
-    const { email, localNumber, nameRef, password } = req.body;
     try {
-        // Aquí podrías agregar una lógica para encriptar la contraseña
+    //     // Generar datos aleatorios para usuario, cliente y pago
+    //     const randomUser = {
+    //       name: faker.person.fullName(),  // Nombre aleatorio para el usuario
+    //       password: faker.internet.password(),
+    //       permiso: 'user'
+    //     };
+    
+    //     const randomClient = {
+    //       solicitudBaja: false,
+    //       from: faker.internet.email(),
+    //       historialPedidos: [{
+    //         tagNumber: faker.number.int({ min: 100, max: 999 }),
+    //         fechaPedido: faker.date.recent(),
+    //         fechaRetiro: faker.date.recent(),
+    //         tiempoEspera: faker.number.int({ min: 5, max: 120 }),  // Tiempo de espera en minutos
+    //         estadoPorBarra: 'completado',
+    //         confirmacionPorCliente: true,
+    //         mensajes: [
+    //           { body: faker.lorem.sentence(), fecha: faker.date.recent().toISOString() },
+    //           { body: faker.lorem.sentence(), fecha: faker.date.recent().toISOString() }
+    //         ]
+    //       }],
+    //       promedioTiempo: faker.number.int({ min: 10, max: 60 })
+    //     };
+    
+    //     const randomPayment = {
+    //       fecha: faker.date.recent(),
+    //       monto: faker.number.int({ min: 10, max: 1000 }),
+    //       metodo: faker.finance.transactionType()
+    //     };
+    
+    //     // Crear el nuevo administrador con un usuario, cliente y pago generados aleatoriamente
+    //     const newAdmin = new Admin({
+    //       email,
+    //       password,
+    //       localName,
+    //       localNumber: +54112312333,
+    //       usuarios: [randomUser],
+    //       clientes: [randomClient],
+    //       pagos: [randomPayment],
+    //       facturacion: {
+    //         cbu: faker.finance.accountNumber(),
+    //         medioDePago: faker.finance.creditCardIssuer(),
+    //         alias: faker.finance.iban()
+    //       },
+    //       tipoDeLicencia: 'premium',  // Tipo de licencia "premium"
+    //       horariosDeOperacion: '8 a 17hs'  // Horario de operación predefinido
+    //     });
+    
+      
+
+        // ESTO ES LO REAL!!!!------->
+        // Crear un nuevo administrador con solo los campos iniciales
         const newAdmin = new Admin({
             email,
-            localNumber,
-            nameRef,
-            password
+            password,
+            localName,  // Almacena solo lo necesario por ahora
+
         });
 
+        // Guardar en la base de datos
         await newAdmin.save();
         res.status(201).json({ message: 'Administrador agregado con éxito' });
     } catch (error) {
         console.error('Error al agregar administrador:', error.message);
         res.status(500).json({ error: 'Error al agregar administrador' });
     }
-};
+}
+
+async function getLocales (req, res) {
+    try {
+      const locales = await Admin.find();
+      res.status(200).json(locales);
+    } catch (error) {
+      console.error('Error al obtener locales:', error.message);
+      res.status(500).json({ error: 'Error al obtener locales' });
+    }
+  };
+
+
+  async function cargarLocales() {
+    try {
+      const response = await fetch(apiUrl);  // Llamada a la API del servidor
+      const locales = await response.json();
+      const tarjetasContainer = document.getElementById('tarjetas-container');
+      tarjetasContainer.innerHTML = '';  // Limpiar tarjetas anteriores
+  
+      locales.forEach(local => {
+        const tarjeta = document.createElement('div');
+        tarjeta.className = 'card';
+        tarjeta.innerHTML = `
+          <h2>${local.localName}</h2>
+          <p>Email: ${local.email}</p>
+          <p>Permiso: ${local.permiso}</p>
+          <p>Fecha de Alta: ${new Date(local.fechaDeAlta).toLocaleDateString()}</p>
+        `;
+        tarjeta.onclick = () => mostrarDetalles(local._id);
+        tarjetasContainer.appendChild(tarjeta);
+      });
+    } catch (error) {
+      console.error('Error al cargar los locales:', error);
+    }
+  }
+
+// Función para obtener los detalles completos de un local
+async function getLocalDetails (req, res) {
+    const { id } = req.params;
+    
+    try {
+      const local = await Admin.findById(id);  // Buscamos el local por su ID
+      if (!local) {
+        return res.status(404).json({ error: 'Local no encontrado' });
+      }
+  
+      res.status(200).json(local);  // Devolver los detalles completos del local
+    } catch (error) {
+      console.error('Error al obtener los detalles del local:', error);
+      res.status(500).json({ error: 'Error al obtener los detalles del local' });
+    }
+  };
+  
+
+
 
 
 
@@ -296,35 +405,35 @@ async function login(req, res) {
 }
 
 
-async function changeDbDashboard(req, res) {
-    // Leer el localNumber desde la cookie
-    console.log(req.cookies); // Para verificar si localNumber está presente
+// async function changeDbDashboard(req, res) {
+//     // Leer el localNumber desde la cookie
+//     console.log(req.cookies); // Para verificar si localNumber está presente
 
-    const localNumber = req.cookies.localNumber;
+//     const localNumber = req.cookies.localNumber;
 
-    if (!localNumber) {
-    return res.status(400).json({ error: "No se encontró el número de local" });
-}
+//     if (!localNumber) {
+//     return res.status(400).json({ error: "No se encontró el número de local" });
+// }
 
-    if (!localNumber) {
-        return res.status(403).json({ error: 'No autorizado. Faltan credenciales.' });
-    }
+//     if (!localNumber) {
+//         return res.status(403).json({ error: 'No autorizado. Faltan credenciales.' });
+//     }
 
-    try {
-        // Cambiar la conexión a la base de datos específica del local
-        const dbName = `Local_${localNumber}`;
-        const newDbConnection = mongoose.connection.useDb(dbName); // Cambia la base de datos
+//     try {
+//         // Cambiar la conexión a la base de datos específica del local
+//         const dbName = `Local_${localNumber}`;
+//         const newDbConnection = mongoose.connection.useDb(dbName); // Cambia la base de datos
 
-        // Ahora puedes hacer consultas a la base de datos de ese local
-        const clientes = await newDbConnection.collection('clientes').find().toArray();
-        // res.status(200).json({ message: `Conectado a la base de datos ${dbName}`, clientes });
-        console.log('Database is connected to:' , newDbConnection.dbName);
+//         // Ahora puedes hacer consultas a la base de datos de ese local
+//         const clientes = await newDbConnection.collection('clientes').find().toArray();
+//         // res.status(200).json({ message: `Conectado a la base de datos ${dbName}`, clientes });
+//         console.log('Database is connected to:' , newDbConnection.dbName);
 
-    } catch (error) {
-        console.error('Error al acceder al dashboard:', error);
-        res.status(500).json({ error: 'Error al acceder al dashboard' });
-    }
-}
+//     } catch (error) {
+//         console.error('Error al acceder al dashboard:', error);
+//         res.status(500).json({ error: 'Error al acceder al dashboard' });
+//     }
+// }
 
 
 
@@ -340,5 +449,8 @@ export const methods = {
     notifyUserPickedUp,
     newLocal,
     login,
-    changeDbDashboard,
+    getLocales,
+    cargarLocales,
+    getLocalDetails
+    // changeDbDashboard,
 };

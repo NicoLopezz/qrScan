@@ -1,59 +1,111 @@
-const ctx1 = document.getElementById('totalDetailsChart').getContext('2d');
-const totalDetailsChart = new Chart(ctx1, {
-    type: 'line',
-    data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-        datasets: [{
-            label: 'Total Meals',
-            data: [50, 60, 70, 80, 90, 100],
-            borderColor: '#7a65ab',
-            fill: false,
-            tension: 0.1
-        },
-        {
-            label: 'Total Expense',
-            data: [30, 40, 50, 60, 70, 80],
-            borderColor: '#c62270',
-            fill: false,
-            tension: 0.1
-        }]
-    },
-    options: {
-        responsive: true,
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        }
-    }
-});
+const apiUrl = '/api/locales';  // Ruta para obtener los locales
+const newLocalUrl = 'api/newLocal';  // Ruta para agregar un nuevo local
 
-const ctx2 = document.getElementById('totalDetailsChart2').getContext('2d');
-const totalDetailsChart2 = new Chart(ctx2, {
-    type: 'line',
-    data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-        datasets: [{
-            label: 'Total Meals',
-            data: [40, 50, 60, 70, 80, 90],
-            borderColor: '#7a65ab',
-            fill: false,
-            tension: 0.1
-        },
-        {
-            label: 'Total Expense',
-            data: [20, 30, 40, 50, 60, 70],
-            borderColor: '#c62270',
-            fill: false,
-            tension: 0.1
-        }]
-    },
-    options: {
-        responsive: true,
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        }
+// Modificar la función cargarLocales para agregar el evento click a cada tarjeta
+async function cargarLocales() {
+    try {
+      const response = await fetch(apiUrl);  // Llamada a la API del servidor
+      const locales = await response.json();
+      const tarjetasContainer = document.getElementById('tarjetas-container');
+      tarjetasContainer.innerHTML = '';  // Limpiar tarjetas anteriores
+  
+      locales.forEach(local => {
+        const tarjeta = document.createElement('div');
+        tarjeta.className = 'card';
+        tarjeta.innerHTML = `
+          <h2>${local.localName}</h2>
+          <p>Email: ${local.email}</p>
+          <p>Permiso: ${local.permiso}</p>
+          <p>Fecha de Alta: ${new Date(local.fechaDeAlta).toLocaleDateString()}</p>
+        `;
+        // Al hacer clic en la tarjeta, se llama a la función mostrarDetalles pasando el local._id
+        tarjeta.onclick = () => mostrarDetalles(local._id);
+        tarjetasContainer.appendChild(tarjeta);
+      });
+    } catch (error) {
+      console.error('Error al cargar los locales:', error);
     }
-});
+  }
+  
+
+// Función para mostrar los detalles del local seleccionado
+async function mostrarDetalles(localId) {
+    try {
+      console.log(`Obteniendo detalles para el local con ID: ${localId}`);  // Verificar que el ID está siendo pasado correctamente
+      const response = await fetch(`/api/locales/${localId}`);  // Llamada a la API para obtener los detalles
+      if (!response.ok) {
+        throw new Error('Error en la respuesta del servidor');
+      }
+      const local = await response.json();
+  
+      // Mostrar los detalles del local en un modal o en un contenedor en la página
+      const detallesContainer = document.getElementById("detalles-container");
+      detallesContainer.innerHTML = `
+        <h2>${local.localName}</h2>
+        <p>Email: ${local.email}</p>
+        <p>Permiso: ${local.permiso}</p>
+        <p>Fecha de Alta: ${new Date(local.fechaDeAlta).toLocaleDateString()}</p>
+        <p>Usuarios: ${local.usuarios.length}</p>
+        <p>Clientes: ${local.clientes.length}</p>
+        <p>Pagos: ${local.pagos.length}</p>
+      `;
+    } catch (error) {
+      console.error('Error al obtener los detalles del local:', error);
+    }
+  }
+  
+
+// Función para mostrar y ocultar el formulario de alta de locales
+function toggleForm() {
+  const form = document.getElementById("alta-local");
+  const toggleBtn = document.getElementById("toggleFormBtn");
+
+  if (form.style.display === "none") {
+    form.style.display = "block";
+    toggleBtn.textContent = "Ocultar Formulario";
+  } else {
+    form.style.display = "none";
+    toggleBtn.textContent = "Mostrar Formulario";
+  }
+}
+
+// Función para manejar el envío del formulario de alta de nuevo local
+async function handleFormSubmit(event) {
+  event.preventDefault();  // Evitar el comportamiento por defecto del formulario
+
+  const emailLocal = document.getElementById('emailLocal').value;
+  const passwordLocal = document.getElementById('passwordLocal').value;
+  const nombreLocal = document.getElementById('nombreLocal').value;
+
+  const newLocalData = {
+    email: emailLocal,
+    password: passwordLocal,
+    localName: nombreLocal
+  };
+
+  try {
+    const response = await fetch('/api/newLocal', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newLocalData)
+    });
+
+    if (response.ok) {
+      console.log('Nuevo local agregado con éxito');
+      cargarLocales();  // Recargar los locales para mostrar el nuevo
+      document.getElementById("form-alta").reset();  // Limpiar el formulario
+    } else {
+      console.error('Error al agregar el nuevo local');
+    }
+  } catch (error) {
+    console.error('Error al enviar el formulario:', error);
+  }
+}
+
+// Asignar la función de manejo de envío al formulario
+document.getElementById('form-alta').addEventListener('submit', handleFormSubmit);
+
+// Ejecutar la función cargarLocales cuando la página se carga
+window.onload = cargarLocales;

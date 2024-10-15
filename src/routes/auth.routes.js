@@ -34,35 +34,26 @@ router.get('/index', (req, res) => {
 
 
 
-router.get("/dashboardAdmin", async (req, res) => {
-    try {
-        await autenthication.changeDbDashboard(req);
-        res.sendFile(path.join(__dirname, '../..', '/public/dashboardAdmin.html'));  // Envía solo una respuesta
-    } catch (error) {
-        console.error("Error al actualizar los movimientos:", error);
-        res.status(500).send("Error al actualizar los movimientos");
-    }
+// Ruta para servir el archivo HTML del dashboard admin
+router.get('/dashboardAdmin', (req, res) => {
+    res.sendFile(path.join(__dirname, '../../public/dashboardAdmin.html'));
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
+// Nueva ruta para obtener los locales (API)
+router.get('/locales', autenthication.getLocales);
 
 // Ruta para servir el formulario de nuevo local
 router.get('/newLocal', (req, res) => {
     res.sendFile(path.join(__dirname, '../../public/register.html'));
 });
-// Ruta para notificar al usuario cuando su pedido esté listo
 router.post('/newLocal', autenthication.newLocal);
+
+// Ruta para obtener los detalles de un local específico
+router.get('/locales/:id', autenthication.getLocalDetails);
+
+
+
+
 
 // Ruta para servir el formulario de nuevo local
 router.get('/login', (req, res) => {
