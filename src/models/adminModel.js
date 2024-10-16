@@ -38,7 +38,7 @@ const adminSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   localName: { type: String, required: true },
-  localNumber: { type: Number, default: null },  // Valor por defecto null si no se proporciona
+  localNumber: { type: Number, default: 14155238886 },  // Valor por defecto null si no se proporciona
   tagSelected: { type: Number, default: 0 },  // Asegúrate de que este campo esté definido
   usuarios: { type: [usuarioSchema], default: [] },  // Inicializar como array vacío
   clientes: { type: [clienteSchema], default: [] },  // Inicializar como array vacío

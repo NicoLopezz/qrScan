@@ -4,43 +4,60 @@ import dayjs from 'dayjs'; // Recomendado para manejar fechas
 import { faker } from '@faker-js/faker';
 
 
-//FUNCION MODULAR!--case
 async function reciveMessage(req, res) {
-    const { From: fromWithPrefix, Body: body } = req.body;
+    const { From: fromWithPrefix, Body: body, To: toWithPrefix } = req.body;
 
-    // Validar que los datos lleguen correctamente
-    if (!fromWithPrefix || !body) {
-        return res.status(400).send('Faltan datos necesarios en la solicitud');
-    }
-
-    // Quitar el prefijo 'whatsapp:' del número de teléfono
+    // Eliminar el prefijo 'whatsapp:' de los números y el '+'
     const from = fromWithPrefix.replace('whatsapp:', '');
+    const to = toWithPrefix.replace('whatsapp:', '').replace('+', ''); // Eliminar el '+'
 
     try {
-        // Responder inmediatamente a Twilio para evitar duplicados
+        // Responder inmediatamente a Twilio
         res.status(200).send('<Response></Response>');
 
-        // Determinar el caso según el contenido del mensaje
-        switch (true) {
-            case /número de tag: \d+/i.test(body):
-                // Caso 1: Mensaje contiene un número de tag
-                await handleTagMessage(body, from);
-                break;
+        // Buscar el local en función del número de WhatsApp de destino (To)
+        const localAdmin = await Admin.findOne({ localNumber: to });
 
-            case /sí|ya lo tengo/i.test(body.toLowerCase()):
-                // Caso 2: Mensaje de confirmación de retiro
-                await handleConfirmationMessage(from, body);
-                break;
-            
-            case /Baja/i.test(body.toLowerCase()):
-                // Caso 2: Mensaje de confirmación de retiro
-                await handleBajaRequest(from, body);
-                break;    
-
-            default:
-                console.log("Mensaje no reconocido. Contenido del mensaje:", body);
-                break;
+        if (!localAdmin) {
+            console.log(`No se encontró un local para el número de WhatsApp: ${to}`);
+            return;
         }
+
+        // Buscar si el cliente ya está en el arreglo de clientes
+        let cliente = localAdmin.clientes.find(c => c.from === from);
+
+        const fechaPedido = new Date();  // Fecha actual como un objeto de tipo Date
+        const nuevoPedido = {
+            tagNumber: parseInt(body.match(/número de tag: (\d+)/)[1], 10), // Extraer número de tag del mensaje
+            fechaPedido,
+            estadoPorBarra: 'en espera',
+            confirmacionPorCliente: false,
+            mensajes: [{ body, fecha: fechaPedido }],
+            fechaRetiro: null,
+            tiempoEspera: 0
+        };
+
+        if (!cliente) {
+            // Si el cliente no está en el arreglo, agregarlo como nuevo cliente
+            localAdmin.clientes.push({
+                from,
+                solicitudBaja: false,
+                historialPedidos: [nuevoPedido],
+                promedioTiempo: null  // Puedes calcular este valor más adelante
+            });
+            console.log(`Nuevo cliente agregado con el número: ${from}`);
+        } else {
+            // Si el cliente ya existe, agregar el nuevo pedido a su historial
+            cliente.historialPedidos.push(nuevoPedido);
+            console.log(`Nuevo pedido agregado al cliente con el número: ${from}`);
+        }
+
+        // Guardar los cambios en la base de datos
+        await localAdmin.save();
+
+        // Enviar respuesta automática al cliente
+        const responseMessage = '🎉 ¡Hola!\n\nTu pedido está en la lista de espera.🕒\n\nTe avisaremos cuando esté listo.';
+        await sendWhatsAppMessage(`whatsapp:${from}`, responseMessage);
 
     } catch (error) {
         console.error('Error al procesar el mensaje:', error.message);
@@ -48,39 +65,59 @@ async function reciveMessage(req, res) {
     }
 }
 
-// Manejar el mensaje cuando el cliente envía un número de tag
+
+
 async function handleTagMessage(body, from) {
-    const tagNumberMatch = body.match(/número de tag: (\d+)/); // Extraer el número de tag
+    const tagNumberMatch = body.match(/número de tag: (\d+)/); // Extraer el número de tag del mensaje
     const tagNumber = tagNumberMatch ? parseInt(tagNumberMatch[1], 10) : null;
-    const fechaPedido = new Date();  // Usar Date para obtener la fecha actual como un objeto de tipo Date
+    const fechaPedido = new Date();  // Fecha actual como un objeto de tipo Date
+
+    console.log("Valor de from recibido:", from);  // Verificar el valor de "from" recibido
 
     if (tagNumber !== null) {
-        let clienteDoc = await Cliente.findOne({ from });
+        // Buscar el documento de Admin donde el campo clientes.from sea igual al número de teléfono o email
+        let adminDoc = await Admin.findOne({
+            $or: [
+                { "clientes.from": from },  // Buscar por número de teléfono
+                { "clientes.email": from }  // O por email (si decides almacenar ambos)
+            ]
+        });
 
-        const nuevoPedido = {
-            tagNumber,
-            fechaPedido,            // Guardar la fecha actual como Date
-            estadoPorBarra: 'en espera',    
-            confirmacionPorCliente: false,  
-            mensajes: [{ body, fecha: fechaPedido }],    // Usar la fecha como Date en mensajes
-            fechaRetiro: null,             
-            tiempoEspera: 0
-        };
-
-        if (clienteDoc) {
-            // Si ya existe el cliente, agregar el nuevo pedido al historial
-            clienteDoc.historialPedidos.push(nuevoPedido);
-            await clienteDoc.save();
-            console.log("Pedido guardado para el cliente con tag:", tagNumber);
+        if (!adminDoc) {
+            console.log("No se encontró el documento de Admin con el cliente.");
         } else {
-            // Si no existe, crea un nuevo cliente con el primer pedido en el historial
-            clienteDoc = new Cliente({
-                from,
-                historialPedidos: [nuevoPedido],  // Guardar el primer pedido
-                promedioTiempo: null
-            });
-            await clienteDoc.save();
-            console.log("Nuevo cliente y pedido guardado con tag:", tagNumber);
+            console.log("Documento de Admin encontrado:", adminDoc);
+
+            // Crear un nuevo pedido con los detalles proporcionados
+            const nuevoPedido = {
+                tagNumber,
+                fechaPedido,            // Guardar la fecha actual como Date
+                estadoPorBarra: 'en espera',    
+                confirmacionPorCliente: false,  
+                mensajes: [{ body, fecha: fechaPedido }],    // Usar la fecha como Date en los mensajes
+                fechaRetiro: null,             
+                tiempoEspera: 0
+            };
+
+            // Verificar si el cliente ya existe en el arreglo de clientes
+            let cliente = adminDoc.clientes.find(c => c.from === from || c.email === from);
+
+            if (cliente) {
+                // Si el cliente ya existe, agregar el nuevo pedido al historial de pedidos
+                cliente.historialPedidos.push(nuevoPedido);
+            } else {
+                // Si el cliente no existe, agregar un nuevo cliente con el primer pedido en su historial
+                adminDoc.clientes.push({
+                    from,  // Guardar correo o número de teléfono en el campo "from"
+                    solicitudBaja: false,  // Valor predeterminado
+                    historialPedidos: [nuevoPedido],  // Añadir el nuevo pedido
+                    promedioTiempo: null  // Puedes calcular este valor más adelante
+                });
+            }
+
+            // Guardar los cambios en el documento de Admin
+            await adminDoc.save();
+            console.log("Cliente y pedido guardado en el documento de Admin con tag:", tagNumber);
         }
 
         // Enviar respuesta automática al cliente
@@ -90,7 +127,6 @@ async function handleTagMessage(body, from) {
         console.log("No se pudo extraer un número de tag del mensaje.");
     }
 }
-
 // Manejar el mensaje de confirmación de retiro (cuando el cliente responde "sí, ya lo tengo")
 async function handleConfirmationMessage(from, body) {
     const fecha = dayjs().format('HH:mm:ss DD/MM/YYYY');
@@ -281,7 +317,7 @@ async function newLocal(req, res) {
           email,
           password,
           localName,
-          localNumber: +23232323,
+          localNumber: 14155238886,
           usuarios: [randomUser],
           clientes: [randomClient],
           pagos: [randomPayment],
