@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/style/dashboardLocalAdmin.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Order History</a></li>
+                    <li><a href="#">Payment History</a></li>
+                    <li><a href="#">Activity</a></li>
+                    <li><a href="#">Meals</a></li>
+                    <li><a href="#">Get Help</a></li>
+                    <li><a href="#">Settings</a></li>
+                    <li><a href="#">Log Out</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="dashboard-header">
+                <h1>Bienvenido! <span>Lopez Nicolas</span></h1>
+                <div class="header-actions">
+                    <button class="search-button">🔍</button>
+                    <div class="user-profile">
+                        <img src="user-image.jpg" alt="Usuario">
+                        <span>Mahmudul Hasan</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Tarjetas -->
+            <section class="summary-cards">
+                <div class="card">
+                    <h3>256</h3>
+                    <p>Pedidos del día</p>
+                </div>
+                <div class="card">
+                    <h3>2260</h3>
+                    <p>Nuevos Clientes</p>
+                </div>
+                <div class="card">
+                    <h3>3730</h3>
+                    <p>Tiempo de entrega</p>
+                </div>
+                <div class="card">
+                    <h3>3730</h3>
+                    <p>Puntuación</p>
+                </div>
+                <div class="card">
+                    <h3>3730</h3>
+                    <p>Horas pico</p>
+                </div>
+                <div class="card">
+                    <h3>3730</h3>
+                    <p>Clientes Frecuentes</p>
+                </div>
+            </section>
+
+            <!-- Gráficos -->
+            <section class="charts">
+                <div class="chart" id="chart1"></div>
+                <div class="chart" id="chart2"></div>
+            </section>
+        </main>
+    </div>
+    <script src="scripts.js"></script>
+</body>
+</html>

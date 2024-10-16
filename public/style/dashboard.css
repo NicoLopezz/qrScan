@@ -15,6 +15,7 @@ body {
   overflow: hidden; /* Evita el desbordamiento de la pantalla */
 }
 
+
 .container {
   display: flex;
   width: 100%;

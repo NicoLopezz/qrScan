@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 // Esquema para los subusuarios
 const usuarioSchema = new mongoose.Schema({
-  name: { type: String, default: '' },  // Valor por defecto vacío
+  email: { type: String, default: '' },  // Valor por defecto vacío
   password: { type: String, default: '' },  // Valor por defecto vacío
   permiso: { type: String, default: 'user' }  // Permiso de subusuarios
 });
@@ -39,6 +39,7 @@ const adminSchema = new mongoose.Schema({
   password: { type: String, required: true },
   localName: { type: String, required: true },
   localNumber: { type: Number, default: null },  // Valor por defecto null si no se proporciona
+  tagSelected: { type: Number, default: 0 },  // Asegúrate de que este campo esté definido
   usuarios: { type: [usuarioSchema], default: [] },  // Inicializar como array vacío
   clientes: { type: [clienteSchema], default: [] },  // Inicializar como array vacío
   pagos: { type: [pagoSchema], default: [] },  // Inicializar como array vacío

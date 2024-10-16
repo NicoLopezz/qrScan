@@ -1,4 +1,3 @@
-import Cliente from '../models/clienteModel.js';  // Nuevo modelo Cliente con historialPedidos
 import Admin from '../models/adminModel.js';  // Nuevo modelo Cliente con historialPedidos
 import { sendWhatsAppMessage, sendWhatsAppTemplateMessage } from '../services/twilioService.js';
 import dayjs from 'dayjs'; // Recomendado para manejar fechas
@@ -252,65 +251,65 @@ async function newLocal(req, res) {
     const { email, password, localName } = req.body;
 
     try {
-    //     // Generar datos aleatorios para usuario, cliente y pago
-    //     const randomUser = {
-    //       name: faker.person.fullName(),  // Nombre aleatorio para el usuario
-    //       password: faker.internet.password(),
-    //       permiso: 'user'
-    //     };
+        // Generar datos aleatorios para usuario, cliente y pago
+        const randomUser = {
+          name: faker.person.fullName(),  // Nombre aleatorio para el usuario
+          password: faker.internet.password(),
+          permiso: 'user'
+        };
     
-    //     const randomClient = {
-    //       solicitudBaja: false,
-    //       from: faker.internet.email(),
-    //       historialPedidos: [{
-    //         tagNumber: faker.number.int({ min: 100, max: 999 }),
-    //         fechaPedido: faker.date.recent(),
-    //         fechaRetiro: faker.date.recent(),
-    //         tiempoEspera: faker.number.int({ min: 5, max: 120 }),  // Tiempo de espera en minutos
-    //         estadoPorBarra: 'completado',
-    //         confirmacionPorCliente: true,
-    //         mensajes: [
-    //           { body: faker.lorem.sentence(), fecha: faker.date.recent().toISOString() },
-    //           { body: faker.lorem.sentence(), fecha: faker.date.recent().toISOString() }
-    //         ]
-    //       }],
-    //       promedioTiempo: faker.number.int({ min: 10, max: 60 })
-    //     };
+        const randomClient = {
+          solicitudBaja: false,
+          from: faker.internet.email(),
+          historialPedidos: [{
+            tagNumber: faker.number.int({ min: 100, max: 999 }),
+            fechaPedido: faker.date.recent(),
+            fechaRetiro: faker.date.recent(),
+            tiempoEspera: faker.number.int({ min: 5, max: 120 }),  // Tiempo de espera en minutos
+            estadoPorBarra: 'completado',
+            confirmacionPorCliente: true,
+            mensajes: [
+              { body: faker.lorem.sentence(), fecha: faker.date.recent().toISOString() },
+              { body: faker.lorem.sentence(), fecha: faker.date.recent().toISOString() }
+            ]
+          }],
+          promedioTiempo: faker.number.int({ min: 10, max: 60 })
+        };
     
-    //     const randomPayment = {
-    //       fecha: faker.date.recent(),
-    //       monto: faker.number.int({ min: 10, max: 1000 }),
-    //       metodo: faker.finance.transactionType()
-    //     };
+        const randomPayment = {
+          fecha: faker.date.recent(),
+          monto: faker.number.int({ min: 10, max: 1000 }),
+          metodo: faker.finance.transactionType()
+        };
     
-    //     // Crear el nuevo administrador con un usuario, cliente y pago generados aleatoriamente
-    //     const newAdmin = new Admin({
-    //       email,
-    //       password,
-    //       localName,
-    //       localNumber: +54112312333,
-    //       usuarios: [randomUser],
-    //       clientes: [randomClient],
-    //       pagos: [randomPayment],
-    //       facturacion: {
-    //         cbu: faker.finance.accountNumber(),
-    //         medioDePago: faker.finance.creditCardIssuer(),
-    //         alias: faker.finance.iban()
-    //       },
-    //       tipoDeLicencia: 'premium',  // Tipo de licencia "premium"
-    //       horariosDeOperacion: '8 a 17hs'  // Horario de operación predefinido
-    //     });
+        // Crear el nuevo administrador con un usuario, cliente y pago generados aleatoriamente
+        const newAdmin = new Admin({
+          email,
+          password,
+          localName,
+          localNumber: +23232323,
+          usuarios: [randomUser],
+          clientes: [randomClient],
+          pagos: [randomPayment],
+          facturacion: {
+            cbu: faker.finance.accountNumber(),
+            medioDePago: faker.finance.creditCardIssuer(),
+            alias: faker.finance.iban()
+          },
+          tipoDeLicencia: 'premium',  // Tipo de licencia "premium"
+          horariosDeOperacion: '8 a 17hs'  // Horario de operación predefinido
+        });
     
       
 
-        // ESTO ES LO REAL!!!!------->
-        // Crear un nuevo administrador con solo los campos iniciales
-        const newAdmin = new Admin({
-            email,
-            password,
-            localName,  // Almacena solo lo necesario por ahora
+        // // ESTO ES LO REAL!!!!------->
+        // // Crear un nuevo administrador con solo los campos iniciales
+        // const newAdmin = new Admin({
+        //     email,
+        //     password,
+        //     localName,  // Almacena solo lo necesario por ahora
 
-        });
+        // });
 
         // Guardar en la base de datos
         await newAdmin.save();
@@ -374,75 +373,187 @@ async function getLocalDetails (req, res) {
   };
   
 
-
-
-
-
-async function login(req, res) {
+  async function login(req, res) {
     const { email, password } = req.body;
+  
+    // Esto cambia solo si es producción o desarrollo.
+    // Por el tema de las cookies y el protocolo HTTPS
+    const produccion = false;
+  
+    try {
+      // Buscar si el email corresponde a un admin
+      const admin = await Admin.findOne({ email });
+  
+      if (admin) {
+        // Si es un admin, verificamos si la contraseña es válida
+        const isPasswordValid = password === admin.password; // Comparación directa, asegúrate de usar hashing en producción
+        if (!isPasswordValid) {
+          return res.status(401).json({ error: "Contraseña incorrecta" });
+        }
+  
+        // Admin válido, guardar el localNumber y el _id en una cookie
+        const localNumber = admin.localNumber;
+        const adminId = admin._id; // Obtener el _id del admin
+  
+        // Guardar cookies
+        res.cookie('localNumber', localNumber, { httpOnly: produccion });
+        res.cookie('username', email, { httpOnly: produccion });
+        res.cookie('adminId', adminId.toString(), { httpOnly: produccion });
+  
+        return res.status(200).json({ message: "Inicio de sesión exitoso (Admin)", localNumber, permiso: admin.permiso });
+      }
+  
+      // Si no es un admin, buscar si el email corresponde a un usuario dentro de los locales
+      const adminConUsuario = await Admin.findOne({
+        'usuarios.email': email, // Busca en la lista de usuarios dentro de los locales
+      });
+  
+      if (!adminConUsuario) {
+        return res.status(401).json({ error: "Usuario no encontrado" });
+      }
+  
+      // Verificamos si la contraseña coincide con el usuario encontrado
+      const usuario = adminConUsuario.usuarios.find(u => u.email === email);
+      const isPasswordValid = password === usuario.password; // Comparación directa, asegúrate de usar hashing en producción
+      if (!isPasswordValid) {
+        return res.status(401).json({ error: "Contraseña incorrecta" });
+      }
+  
+      // Usuario válido, guardar el localNumber y el _id del admin en una cookie
+      const localNumber = adminConUsuario.localNumber;
+      const adminId = adminConUsuario._id; // Obtener el _id del admin (no cambia)
+  
+      // Guardar cookies
+      res.cookie('localNumber', localNumber, { httpOnly: produccion });
+      res.cookie('username', email, { httpOnly: produccion });
+      res.cookie('adminId', adminId.toString(), { httpOnly: produccion }); // Guardar el ID del admin
+  
+      return res.status(200).json({ message: "Inicio de sesión exitoso (Usuario)", localNumber, user: usuario, permiso: usuario.permiso });
+  
+    } catch (error) {
+      console.error("Error al iniciar sesión:", error);
+      res.status(500).json({ error: "Error al iniciar sesión" });
+    }
+  }
+  
+
+  async function updateQr(req, res) {
+    console.log("ENTRE DENTRO DE UPDATE!!");
+    const idLocal = req.params.idLocal; // ID del local
+    const { tagSelected } = req.body; // Nuevo valor del tag
+  
+    console.log("ID Local:", idLocal);  // Verificar si el ID es correcto
+    console.log("Tag seleccionado enviado:", tagSelected);  // Verificar si el tag enviado es el correcto
+  
+    try {
+      // Recuperar el documento antes de la actualización
+      const admin = await Admin.findById(idLocal);
+      console.log("Documento antes de la actualización:", admin);  // Verifica el estado antes de la actualización
+  
+      if (!admin) {
+        return res.status(404).json({ error: 'Admin/local no encontrado' });
+      }
+  
+      // Actualizar el campo tagSelected
+      admin.tagSelected = tagSelected;
+      console.log("Tag seleccionado después de la actualización:", admin.tagSelected);  // Verificar si el campo se actualizó
+  
+      // Guardar el documento actualizado
+      await admin.save();
+  
+      // Verificar si el documento se guardó correctamente
+      const updatedAdmin = await Admin.findById(idLocal);
+      console.log("Documento después de la actualización:", updatedAdmin);  // Verifica el estado después de guardar
+  
+      res.status(200).json({
+        message: "Tag seleccionado actualizado",
+        localName: updatedAdmin.localName,
+        tagSelected: updatedAdmin.tagSelected
+      });
+    } catch (error) {
+      console.error('Error al actualizar el tag seleccionado:', error);
+      res.status(500).json({ error: 'Error al actualizar el tag seleccionado' });
+    }
+  }
+  
+// async function updateQr(req, res) {
+//     console.log("ENTRE DENTRO DE UPDATE!!");
+//     const idLocal = req.params.idLocal; // ID del local
+//     const { tagSelected } = req.body; // Nuevo valor del tag
+  
+//     try {
+//       // Actualizar el campo tagSelected directamente con findByIdAndUpdate
+//       const updatedAdmin = await Admin.findByIdAndUpdate(
+//         idLocal,
+//         { tagSelected: tagSelected }, // Solo actualizamos este campo
+//         { new: true } // Esto asegura que obtengamos el documento actualizado
+//       );
+  
+//       if (!updatedAdmin) {
+//         return res.status(404).json({ error: 'Admin/local no encontrado' });
+//       }
+  
+//       res.status(200).json({
+//         message: `Tag seleccionado actualizado para el local: ${updatedAdmin.localName}`,
+//         localName: updatedAdmin.localName,
+//         tagSelected: updatedAdmin.tagSelected // Devolvemos el tag actualizado
+//       });
+//     } catch (error) {
+//       console.error('Error al actualizar el tag seleccionado:', error);
+//       res.status(500).json({ error: 'Error al actualizar el tag seleccionado' });
+//     }
+//   }
+  
+
+// Función de validación genérica
+async function validateUser(req, res, next) {
+    const username = req.cookies.username; // Obtenemos el username de la cookie
+
+    if (!username) {
+        return res.status(401).send('No estás autorizado para acceder a esta página');
+    }
 
     try {
-        const admin = await Admin.findOne({ email });
+        // Primero, buscamos si el username (email) es un admin
+        const admin = await Admin.findOne({ email: username });
 
-        if (!admin) {
-            return res.status(401).json({ error: "Usuario no encontrado" });
+        if (admin) {
+            // Si es un admin, continuar
+            req.user = admin; // Pasamos la información del admin a req.user
+            req.isAdmin = true; // Indicamos que es admin
+            return next();
         }
 
-        const isPasswordValid = password === admin.password; // Comparación directa
-        if (!isPasswordValid) {
-            return res.status(401).json({ error: "Contraseña incorrecta" });
+        // Si no es un admin, buscamos si es un usuario dentro de un admin (local)
+        const adminConUsuario = await Admin.findOne({
+            'usuarios.email': username, // Busca en la lista de usuarios dentro de los locales
+        });
+
+        if (!adminConUsuario) {
+            return res.status(403).send('Usuario no autorizado o no encontrado');
         }
 
-        // Guardar el localNumber en una cookie
-        const localNumber = admin.localNumber;
-        res.cookie('localNumber', localNumber, { httpOnly: true });
+        // Usuario encontrado dentro de la lista de usuarios de un admin
+        const usuario = adminConUsuario.usuarios.find(u => u.email === username);
 
-        res.status(200).json({ message: "Inicio de sesión exitoso", localNumber });
+        if (!usuario) {
+            return res.status(403).send('Usuario no autorizado o no encontrado');
+        }
+
+        // Si todo está bien, pasamos los datos del usuario a `req.user`
+        req.user = usuario; // Datos del usuario dentro del local
+        req.admin = adminConUsuario; // También pasamos los datos del admin (local) al que pertenece
+        req.isAdmin = false; // No es un admin, es un usuario
+        next();
+
     } catch (error) {
-        console.error("Error al iniciar sesión:", error);
-        res.status(500).json({ error: "Error al iniciar sesión" });
+        console.error('Error al validar al usuario:', error);
+        res.status(500).send('Error en el servidor');
     }
 }
 
 
-// async function changeDbDashboard(req, res) {
-//     // Leer el localNumber desde la cookie
-//     console.log(req.cookies); // Para verificar si localNumber está presente
 
-//     const localNumber = req.cookies.localNumber;
-
-//     if (!localNumber) {
-//     return res.status(400).json({ error: "No se encontró el número de local" });
-// }
-
-//     if (!localNumber) {
-//         return res.status(403).json({ error: 'No autorizado. Faltan credenciales.' });
-//     }
-
-//     try {
-//         // Cambiar la conexión a la base de datos específica del local
-//         const dbName = `Local_${localNumber}`;
-//         const newDbConnection = mongoose.connection.useDb(dbName); // Cambia la base de datos
-
-//         // Ahora puedes hacer consultas a la base de datos de ese local
-//         const clientes = await newDbConnection.collection('clientes').find().toArray();
-//         // res.status(200).json({ message: `Conectado a la base de datos ${dbName}`, clientes });
-//         console.log('Database is connected to:' , newDbConnection.dbName);
-
-//     } catch (error) {
-//         console.error('Error al acceder al dashboard:', error);
-//         res.status(500).json({ error: 'Error al acceder al dashboard' });
-//     }
-// }
-
-
-
-
-
-//funcion para un nuevo local:
-
-
-// Exportar los métodos
 export const methods = {
     reciveMessage,
     notifyUserForPickUp,
@@ -451,6 +562,8 @@ export const methods = {
     login,
     getLocales,
     cargarLocales,
-    getLocalDetails
+    getLocalDetails,
+    updateQr,
+    validateUser
     // changeDbDashboard,
 };

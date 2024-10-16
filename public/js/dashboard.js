@@ -1,4 +1,9 @@
-const socket = io(); // Conexión al servidor de WebSockets
+// Función para leer cookies
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+}
 
 // Función para remover cualquier cuadro de confirmación activo
 function removeAllConfirmationBoxes() {
@@ -62,14 +67,47 @@ function showConfirmation(element, action) {
 function moveToOrder(element) {
   showConfirmation(element, () => {
     const orderedContainer = document.getElementById('ordered-tags');
-    
-    // Eliminar cualquier cuadro de confirmación activo
-    removeAllConfirmationBoxes();
-    
+
     // Clonar el elemento y añadir la clase de animación pop-in
     const clonedElement = element.cloneNode(true);
     clonedElement.classList.add('pop-in');
-    
+
+    // Recuperar el adminId de la cookie
+    const adminId = getCookie('adminId');
+    if (!adminId) {
+      console.error("No se encontró el adminId en la cookie");
+      return;
+    }
+    console.log("Admin ID desde la cookie:", adminId);
+
+    // Añadir el tag clonado a la lista de "Tags con pedido"
+    orderedContainer.appendChild(clonedElement);
+
+    // Obtener el número del tag del elemento clonado
+    const tagNumber = parseInt(clonedElement.getAttribute('data-number'));
+    if (isNaN(tagNumber)) {
+      console.error("El número de tag es inválido o undefined");
+      return;
+    }
+    console.log("Tag seleccionado:", tagNumber);
+
+    // Ejecutar el fetch incluyendo el adminId en el body de la petición
+    fetch(`/api/updateQr/${adminId}`, { // adminId es el ID del local o admin desde la cookie
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tagSelected: tagNumber }) // tagNumber es el tag seleccionado
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Respuesta del servidor:', data);
+      })
+      .catch(error => {
+        console.error('Error en la petición:', error);
+      });
+
+    // Eliminar cualquier cuadro de confirmación activo
+    removeAllConfirmationBoxes();
+
     // Agregar un evento para mover a "Tags pendientes de retiro"
     clonedElement.onclick = function () {
       moveToPending(clonedElement);
@@ -78,13 +116,6 @@ function moveToOrder(element) {
     // Eliminar el elemento de la sección de tags libres
     element.remove();
 
-    // Añadir el tag clonado a la lista de "Tags con pedido"
-    orderedContainer.appendChild(clonedElement);
-
-    // Enviar el número del tag al servidor a través de WebSockets
-    const tagNumber = parseInt(clonedElement.getAttribute('data-number'));
-    socket.emit('tagSelected', tagNumber); // Emitir el número del tag al servidor
-    
     // Eliminar la clase de animación después de que termine
     setTimeout(() => {
       clonedElement.classList.remove('pop-in');
@@ -94,6 +125,7 @@ function moveToOrder(element) {
     sortTags(orderedContainer);
   });
 }
+
 
 // Función para mover el tag a la sección de "Tags pendientes de retiro"
 function moveToPending(element) {

@@ -18,27 +18,6 @@ router.get('/index', (req, res) => {
     res.sendFile(path.join(__dirname, '../../public/index.html'));
 });
 
-
-// //ruta para ver el tablero
-// router.get('/dashboard', (req, res) => {
-//     res.sendFile(path.join(__dirname, '../../public/dashboard.html'));
-// });
-
-// //ruta para ver el tablero
-// router.get('/dashboardAdmin', (req, res) => {
-//     res.sendFile(path.join(__dirname, '../../public/dashboardAdmin.html'));
-// });
-
-
-
-
-
-
-// Ruta para servir el archivo HTML del dashboard admin
-router.get('/dashboardAdmin', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../public/dashboardAdmin.html'));
-});
-
 // Nueva ruta para obtener los locales (API)
 router.get('/locales', autenthication.getLocales);
 
@@ -63,6 +42,25 @@ router.get('/login', (req, res) => {
 router.post('/login', autenthication.login);
 
 
+
+
+// Ruta para servir el formulario de nuevo local
+router.get('/dashboardLocalAdmin/:user', autenthication.validateUser, (req, res) => {
+    res.sendFile(path.join(__dirname, '../../public/dashboardLocalAdmin.html'));
+});
+//ruta para ver el tablero
+router.get('/dashboar/:user',autenthication.validateUser, (req, res) => {
+    res.sendFile(path.join(__dirname, '../../public/dashboard.html'));
+});
+
+// Ruta para servir el archivo HTML del dashboard admin
+router.get('/dashboardAdmin', (req, res) => {
+    res.sendFile(path.join(__dirname, '../../public/dashboardAdmin.html'));
+});
+
+
+
+router.post('/updateQr/:idLocal', autenthication.updateQr);
 
 // Ruta para notificar al usuario cuando su pedido esté listo
 router.post('/readyPickUp', autenthication.notifyUserForPickUp);

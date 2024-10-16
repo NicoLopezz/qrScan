@@ -1,4 +1,3 @@
-// login.js
 document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("loginForm").addEventListener("submit", async function(event) {
         event.preventDefault();  // Evita que el formulario se envíe de forma predeterminada.
@@ -19,10 +18,18 @@ document.addEventListener("DOMContentLoaded", function() {
             const data = await response.json();
 
             if (response.ok) {
-                // Redirigir al dashboard si el inicio de sesión es exitoso
-                // window.location.href = `/dashboard?email=${email}`;
-                window.location.href = `/api/dashboardAdmin`;
+                // Obtener el username de la cookie y decodificarlo
+                let username = getCookie("username");
+                username = decodeURIComponent(username);  // Decodifica caracteres especiales como '%40' a '@'
+                console.log("Permiso recibido: ", data.permiso); // Verifica el valor del permiso
 
+
+                // Redirigir según el permiso del usuario
+                if (data.permiso === "Admin") {
+                    window.location.href = `/api/dashboardLocalAdmin/${username}`;
+                } else if (data.permiso === "user") {
+                    window.location.href = `/api/dashboar/${username}`;
+                }
             } else {
                 // Mostrar el error en pantalla
                 alert(data.error || "Error al iniciar sesión. Verifica tus credenciales.");
@@ -32,4 +39,11 @@ document.addEventListener("DOMContentLoaded", function() {
             alert("Hubo un problema al iniciar sesión. Inténtalo de nuevo.");
         }
     });
+
+    // Función para obtener el valor de una cookie por su nombre
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
 });
