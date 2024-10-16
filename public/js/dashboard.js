@@ -63,7 +63,6 @@ function showConfirmation(element, action) {
   }, 0); // Usamos un pequeño delay para evitar que el mismo clic que activa la confirmación la cierre
 }
 
-// Función para mover el tag a la sección de "Tags con pedido"
 function moveToOrder(element) {
   showConfirmation(element, () => {
     const orderedContainer = document.getElementById('ordered-tags');
@@ -92,7 +91,7 @@ function moveToOrder(element) {
     console.log("Tag seleccionado:", tagNumber);
 
     // Ejecutar el fetch incluyendo el adminId en el body de la petición
-    fetch(`/api/updateQr/${adminId}`, { // adminId es el ID del local o admin desde la cookie
+    fetch(`/api/updateTagSelected/${adminId}`, { // adminId es el ID del local o admin desde la cookie
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ tagSelected: tagNumber }) // tagNumber es el tag seleccionado
@@ -100,6 +99,16 @@ function moveToOrder(element) {
       .then(response => response.json())
       .then(data => {
         console.log('Respuesta del servidor:', data);
+
+        // Usar la URL de WhatsApp generada para actualizar el QR
+        const whatsappUrl = data.whatsappUrl;
+
+        // Actualizar el QR con la nueva URL
+        const qr = new QRious({
+          element: document.getElementById('qrcode'),
+          value: whatsappUrl,  // Usar la URL generada de WhatsApp
+          size: 200
+        });
       })
       .catch(error => {
         console.error('Error en la petición:', error);

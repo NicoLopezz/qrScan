@@ -3,9 +3,6 @@ import { sendWhatsAppMessage, sendWhatsAppTemplateMessage } from '../services/tw
 import dayjs from 'dayjs'; // Recomendado para manejar fechas
 import { faker } from '@faker-js/faker';
 
-// import connectToLocalDB from '../database.js';
-
-
 
 //FUNCION MODULAR!--case
 async function reciveMessage(req, res) {
@@ -214,8 +211,6 @@ async function notifyUserForPickUp(req, res) {
     }
 }
 
-//--------------> funcion para el mensaje final!
-// Notificar que el pedido fue confirmado como retirado
 async function notifyUserPickedUp(req, res) {
     const { tagNumber } = req.body;
 
@@ -245,7 +240,6 @@ async function notifyUserPickedUp(req, res) {
         res.status(500).json({ error: 'Error al notificar al usuario' });
     }
 }
-
 
 async function newLocal(req, res) {
     const { email, password, localName } = req.body;
@@ -371,7 +365,6 @@ async function getLocalDetails (req, res) {
       res.status(500).json({ error: 'Error al obtener los detalles del local' });
     }
   };
-  
 
   async function login(req, res) {
     const { email, password } = req.body;
@@ -396,9 +389,9 @@ async function getLocalDetails (req, res) {
         const adminId = admin._id; // Obtener el _id del admin
   
         // Guardar cookies
-        res.cookie('localNumber', localNumber, { httpOnly: produccion });
-        res.cookie('username', email, { httpOnly: produccion });
-        res.cookie('adminId', adminId.toString(), { httpOnly: produccion });
+        res.cookie('localNumber', localNumber, { httpOnly: produccion , sameSite: 'Lax' });
+        res.cookie('username', email, { httpOnly: produccion , sameSite: 'Lax'});
+        res.cookie('adminId', adminId.toString(), { httpOnly: produccion , sameSite: 'Lax'});
   
         return res.status(200).json({ message: "Inicio de sesión exitoso (Admin)", localNumber, permiso: admin.permiso });
       }
@@ -424,9 +417,9 @@ async function getLocalDetails (req, res) {
       const adminId = adminConUsuario._id; // Obtener el _id del admin (no cambia)
   
       // Guardar cookies
-      res.cookie('localNumber', localNumber, { httpOnly: produccion });
-      res.cookie('username', email, { httpOnly: produccion });
-      res.cookie('adminId', adminId.toString(), { httpOnly: produccion }); // Guardar el ID del admin
+      res.cookie('localNumber', localNumber, { httpOnly: produccion , sameSite: 'Lax'});
+      res.cookie('username', email, { httpOnly: produccion ,sameSite: 'Lax' });
+      res.cookie('adminId', adminId.toString(), { httpOnly: produccion , sameSite: 'Lax'}); // Guardar el ID del admin
   
       return res.status(200).json({ message: "Inicio de sesión exitoso (Usuario)", localNumber, user: usuario, permiso: usuario.permiso });
   
@@ -436,8 +429,7 @@ async function getLocalDetails (req, res) {
     }
   }
   
-
-  async function updateQr(req, res) {
+  async function updateTagSelected(req, res) {
     console.log("ENTRE DENTRO DE UPDATE!!");
     const idLocal = req.params.idLocal; // ID del local
     const { tagSelected } = req.body; // Nuevo valor del tag
@@ -475,35 +467,6 @@ async function getLocalDetails (req, res) {
       res.status(500).json({ error: 'Error al actualizar el tag seleccionado' });
     }
   }
-  
-// async function updateQr(req, res) {
-//     console.log("ENTRE DENTRO DE UPDATE!!");
-//     const idLocal = req.params.idLocal; // ID del local
-//     const { tagSelected } = req.body; // Nuevo valor del tag
-  
-//     try {
-//       // Actualizar el campo tagSelected directamente con findByIdAndUpdate
-//       const updatedAdmin = await Admin.findByIdAndUpdate(
-//         idLocal,
-//         { tagSelected: tagSelected }, // Solo actualizamos este campo
-//         { new: true } // Esto asegura que obtengamos el documento actualizado
-//       );
-  
-//       if (!updatedAdmin) {
-//         return res.status(404).json({ error: 'Admin/local no encontrado' });
-//       }
-  
-//       res.status(200).json({
-//         message: `Tag seleccionado actualizado para el local: ${updatedAdmin.localName}`,
-//         localName: updatedAdmin.localName,
-//         tagSelected: updatedAdmin.tagSelected // Devolvemos el tag actualizado
-//       });
-//     } catch (error) {
-//       console.error('Error al actualizar el tag seleccionado:', error);
-//       res.status(500).json({ error: 'Error al actualizar el tag seleccionado' });
-//     }
-//   }
-  
 
 // Función de validación genérica
 async function validateUser(req, res, next) {
@@ -552,6 +515,30 @@ async function validateUser(req, res, next) {
     }
 }
 
+async function qrScanUpdate(req, res) {
+    const adminId = req.params.localId;
+    console.log("EL ADMIN QUE SE ESTA BUSCANDO CON EL QR ES: " + adminId);
+
+    try {
+        const admin = await Admin.findById(adminId);  // Busca el admin en la base de datos
+        if (!admin) {
+            return res.status(404).send('Admin no encontrado');
+        }
+
+        // Obtener el tagSelected y construir la URL de WhatsApp
+        const tagSelected = admin.tagSelected;
+        const whatsappNumber = 14155238886;  // Número de WhatsApp
+        const message = `Ya realicé mi pedido, número de tag: ${tagSelected}`;
+        const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+
+        // Redirigir automáticamente a la URL de WhatsApp
+        res.redirect(whatsappUrl);
+    } catch (error) {
+        console.error('Error al obtener el admin:', error);
+        res.status(500).send('Error al procesar el QR');
+    }
+}
+
 
 
 export const methods = {
@@ -563,7 +550,8 @@ export const methods = {
     getLocales,
     cargarLocales,
     getLocalDetails,
-    updateQr,
-    validateUser
+    updateTagSelected,
+    validateUser,
+    qrScanUpdate
     // changeDbDashboard,
 };

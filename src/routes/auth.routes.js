@@ -14,8 +14,8 @@ const __dirname = dirname(__filename);
 router.post('/webhook', autenthication.reciveMessage);
 
 // Ruta para servir el archivo index
-router.get('/index', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../public/index.html'));
+router.get('/qrScan', (req, res) => {
+    res.sendFile(path.join(__dirname, '../../public/qrScan.html'));
 });
 
 // Nueva ruta para obtener los locales (API)
@@ -29,6 +29,8 @@ router.post('/newLocal', autenthication.newLocal);
 
 // Ruta para obtener los detalles de un local específico
 router.get('/locales/:id', autenthication.getLocalDetails);
+
+
 
 
 
@@ -60,7 +62,7 @@ router.get('/dashboardAdmin', (req, res) => {
 
 
 
-router.post('/updateQr/:idLocal', autenthication.updateQr);
+router.post('/updateTagSelected/:idLocal', autenthication.updateTagSelected);
 
 // Ruta para notificar al usuario cuando su pedido esté listo
 router.post('/readyPickUp', autenthication.notifyUserForPickUp);
@@ -70,5 +72,10 @@ router.post('/confirmPickedUp', autenthication.notifyUserPickedUp);
 
 // // Ruta para notificar al usuario cuando su pedido esté listo
 // router.post('/', autenthication.notifyUserForPickUp);
+
+  
+router.get('/qrScanUpdate/:localId',autenthication.qrScanUpdate, (req, res) => {
+    res.send('QR Scan Update Endpoint');
+});
 
 export default router;

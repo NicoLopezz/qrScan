@@ -18,6 +18,7 @@ async function cargarLocales() {
           <p>Permiso: ${local.permiso}</p>
           <p>Fecha de Alta: ${new Date(local.fechaDeAlta).toLocaleDateString()}</p>
           <p>TagSelected: ${local.tagSelected}</p>
+          <p>local Id: ${local._id}</p>
         `;
         // Al hacer clic en la tarjeta, se llama a la función mostrarDetalles pasando el local._id
         tarjeta.onclick = () => mostrarDetalles(local._id);
