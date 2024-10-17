@@ -1,55 +1,113 @@
-/* styles.css */
+/* login.css */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
 body {
-    font-family: 'Montserrat', sans-serif;
-    background-color: #f4f4f9;
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    background-image: url('/img/fondoLogin.jpg');
+    background-size: cover;
 }
 
 .login-container {
-    background-color: #fff;
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-    width: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
 }
 
-.login-container h2 {
-    color: #7a65ab;
+.login-box {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    width: 320px;
+    text-align: center;
+}
+
+h2 {
+    margin-bottom: 20px;
+    color: #e91e63;
+}
+
+.social-login {
+    display: flex;
+    justify-content: space-around;
     margin-bottom: 20px;
 }
 
+.social-btn {
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.facebook-btn {
+    background-color: #3b5998;
+}
+
+.github-btn {
+    background-color: #333;
+}
+
+.google-btn {
+    background-color: #db4437;
+}
+
 .input-group {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
-.input-group label {
-    display: block;
-    margin-bottom: 5px;
-    color: #252525;
-}
-
-.input-group input {
+input[type="email"],
+input[type="password"] {
     width: 100%;
     padding: 10px;
-    border-radius: 5px;
     border: 1px solid #ccc;
-    font-size: 16px;
+    border-radius: 5px;
 }
 
-button {
-    background-color: #7a65ab;
+.remember-me {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.remember-me label {
+    margin-left: 8px;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #e91e63;
     color: white;
-    padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    width: 100%;
     font-size: 16px;
 }
 
-button:hover {
-    background-color: #c8aff2;
+.signup-text {
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.signup-text a {
+    color: #e91e63;
+    text-decoration: none;
+}
+
+.signup-text a:hover {
+    text-decoration: underline;
 }

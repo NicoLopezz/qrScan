@@ -10,6 +10,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 
+
+
+router.get("/", async (req, res) => { 
+    res.sendFile(path.join(__dirname, '../../public/index.html'));
+});
 // Ruta para recibir mensajes de Twilio
 router.post('/webhook', autenthication.reciveMessage);
 
@@ -38,7 +43,7 @@ router.get('/locales/:id', autenthication.getLocalDetails);
 
 // Ruta para servir el formulario de nuevo local
 router.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../public/login.html'));
+    res.sendFile(path.join(__dirname, '../../public/index.html'));
 });
 // Ruta para notificar al usuario cuando su pedido esté listo
 router.post('/login', autenthication.login);
