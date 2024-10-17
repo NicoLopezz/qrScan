@@ -35,21 +35,12 @@ router.post('/newLocal', autenthication.newLocal);
 // Ruta para obtener los detalles de un local específico
 router.get('/locales/:id', autenthication.getLocalDetails);
 
-
-
-
-
-
-
 // Ruta para servir el formulario de nuevo local
 router.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../public/index.html'));
+    res.sendFile(path.join(__dirname, '../../public/login.html'));
 });
 // Ruta para notificar al usuario cuando su pedido esté listo
 router.post('/login', autenthication.login);
-
-
-
 
 // Ruta para servir el formulario de nuevo local
 router.get('/dashboardLocalAdmin/:user', autenthication.validateUser, (req, res) => {
