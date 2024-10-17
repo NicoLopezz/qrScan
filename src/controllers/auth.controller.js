@@ -23,12 +23,35 @@ async function reciveMessage(req, res) {
             return;
         }
 
-        // Buscar si el cliente ya está en el arreglo de clientes
-        let cliente = localAdmin.clientes.find(c => c.from === from);
+        // Verificar el contenido del mensaje recibido para determinar qué tipo de mensaje es
+        if (body.toLowerCase().includes('número de tag')) {
+            await handleTagMessage(body, from, localAdmin);
+        } else if (body.toLowerCase().includes('ya lo tengo')) {
+            await handleConfirmationMessage(from, body);
+        } else if (body.toLowerCase().includes('baja')) {
+            await handleBajaRequest(from);
+        } else {
+            console.log('Mensaje no reconocido:', body);
+        }
 
-        const fechaPedido = new Date();  // Fecha actual como un objeto de tipo Date
+    } catch (error) {
+        console.error('Error al procesar el mensaje:', error.message);
+        res.status(500).send('Error al procesar el mensaje');
+    }
+}
+
+// Manejar mensajes de pedidos con tags
+async function handleTagMessage(body, from, localAdmin) {
+    const tagNumberMatch = body.match(/número de tag: (\d+)/); // Extraer el número de tag del mensaje
+    const tagNumber = tagNumberMatch ? parseInt(tagNumberMatch[1], 10) : null;
+    const fechaPedido = new Date();  // Fecha actual como un objeto de tipo Date
+
+    if (tagNumber !== null) {
+        console.log(`Procesando tag ${tagNumber} para ${from}`);
+
+        // Crear un nuevo pedido
         const nuevoPedido = {
-            tagNumber: parseInt(body.match(/número de tag: (\d+)/)[1], 10), // Extraer número de tag del mensaje
+            tagNumber,
             fechaPedido,
             estadoPorBarra: 'en espera',
             confirmacionPorCliente: false,
@@ -37,156 +60,116 @@ async function reciveMessage(req, res) {
             tiempoEspera: 0
         };
 
+        // Buscar si el cliente ya existe en el local
+        let cliente = localAdmin.clientes.find(c => c.from === from);
+
         if (!cliente) {
-            // Si el cliente no está en el arreglo, agregarlo como nuevo cliente
+            // Si el cliente no existe, agregarlo
             localAdmin.clientes.push({
                 from,
                 solicitudBaja: false,
                 historialPedidos: [nuevoPedido],
-                promedioTiempo: null  // Puedes calcular este valor más adelante
+                promedioTiempo: null
             });
-            console.log(`Nuevo cliente agregado con el número: ${from}`);
+            console.log(`Nuevo cliente agregado: ${from}`);
         } else {
             // Si el cliente ya existe, agregar el nuevo pedido a su historial
             cliente.historialPedidos.push(nuevoPedido);
-            console.log(`Nuevo pedido agregado al cliente con el número: ${from}`);
+            console.log(`Nuevo pedido agregado para el cliente: ${from}`);
         }
 
         // Guardar los cambios en la base de datos
         await localAdmin.save();
-
-        // Enviar respuesta automática al cliente
-        const responseMessage = '🎉 ¡Hola!\n\nTu pedido está en la lista de espera.🕒\n\nTe avisaremos cuando esté listo.';
-        await sendWhatsAppMessage(`whatsapp:${from}`, responseMessage);
-
-    } catch (error) {
-        console.error('Error al procesar el mensaje:', error.message);
-        res.status(500).send('Error al procesar el mensaje');
-    }
-}
-
-
-
-async function handleTagMessage(body, from) {
-    const tagNumberMatch = body.match(/número de tag: (\d+)/); // Extraer el número de tag del mensaje
-    const tagNumber = tagNumberMatch ? parseInt(tagNumberMatch[1], 10) : null;
-    const fechaPedido = new Date();  // Fecha actual como un objeto de tipo Date
-
-    console.log("Valor de from recibido:", from);  // Verificar el valor de "from" recibido
-
-    if (tagNumber !== null) {
-        // Buscar el documento de Admin donde el campo clientes.from sea igual al número de teléfono o email
-        let adminDoc = await Admin.findOne({
-            $or: [
-                { "clientes.from": from },  // Buscar por número de teléfono
-                { "clientes.email": from }  // O por email (si decides almacenar ambos)
-            ]
-        });
-
-        if (!adminDoc) {
-            console.log("No se encontró el documento de Admin con el cliente.");
-        } else {
-            console.log("Documento de Admin encontrado:", adminDoc);
-
-            // Crear un nuevo pedido con los detalles proporcionados
-            const nuevoPedido = {
-                tagNumber,
-                fechaPedido,            // Guardar la fecha actual como Date
-                estadoPorBarra: 'en espera',    
-                confirmacionPorCliente: false,  
-                mensajes: [{ body, fecha: fechaPedido }],    // Usar la fecha como Date en los mensajes
-                fechaRetiro: null,             
-                tiempoEspera: 0
-            };
-
-            // Verificar si el cliente ya existe en el arreglo de clientes
-            let cliente = adminDoc.clientes.find(c => c.from === from || c.email === from);
-
-            if (cliente) {
-                // Si el cliente ya existe, agregar el nuevo pedido al historial de pedidos
-                cliente.historialPedidos.push(nuevoPedido);
-            } else {
-                // Si el cliente no existe, agregar un nuevo cliente con el primer pedido en su historial
-                adminDoc.clientes.push({
-                    from,  // Guardar correo o número de teléfono en el campo "from"
-                    solicitudBaja: false,  // Valor predeterminado
-                    historialPedidos: [nuevoPedido],  // Añadir el nuevo pedido
-                    promedioTiempo: null  // Puedes calcular este valor más adelante
-                });
-            }
-
-            // Guardar los cambios en el documento de Admin
-            await adminDoc.save();
-            console.log("Cliente y pedido guardado en el documento de Admin con tag:", tagNumber);
-        }
-
-        // Enviar respuesta automática al cliente
-        const responseMessage = '🎉 ¡Hola!\n\nTu pedido está en la lista de espera.🕒\n\nTe avisaremos cuando esté listo.';
-        await sendWhatsAppMessage(`whatsapp:${from}`, responseMessage);
-    } else {
-        console.log("No se pudo extraer un número de tag del mensaje.");
-    }
-}
-// Manejar el mensaje de confirmación de retiro (cuando el cliente responde "sí, ya lo tengo")
-async function handleConfirmationMessage(from, body) {
-    const fecha = dayjs().format('HH:mm:ss DD/MM/YYYY');
-    
-    // Buscar el cliente y su historial de pedidos
-    const clienteDoc = await Cliente.findOne({ from });
-
-    if (clienteDoc) {
-        // Buscar el pedido en el historial que esté en estado "a confirmar retiro" y que no haya sido confirmado
-        const pedido = clienteDoc.historialPedidos.find(p => p.confirmacionPorCliente === false);
         
-        if (pedido) {
-            // Guardar el mensaje de confirmación y actualizar el estado del pedido
-            pedido.mensajes.push({ body, fecha }); // Agregar el mensaje de confirmación
-            // pedido.fechaRetiro = fecha;            // Actualizar con la fecha y hora del retiro
-            pedido.estadoPorBarra = 'retiro confirmado';  // Cambiar el estado a retiro confirmado
-            pedido.confirmacionPorCliente = true;         // Marcar como confirmado por el cliente
-            await clienteDoc.save();
-            console.log("Pedido confirmado como retirado para el tag:", pedido.tagNumber);
-
-            // Enviar respuesta automática de confirmación
-            const confirmationMessage = '🎉 ¡Gracias! Tu pedido ha sido confirmado como retirado.';
-            await sendWhatsAppMessage(`whatsapp:${from}`, confirmationMessage);
-        } else {
-            console.error("No se encontró un pedido en estado 'a confirmar retiro' o ya ha sido confirmado.");
-        }
+        // Enviar respuesta automática al cliente
+        const responseMessage = '🎉 ¡Hola!\n\nTu pedido está en la lista de espera.🕒\n\nTe avisaremos cuando esté listo.';
+        await sendWhatsAppMessage(`whatsapp:${from}`, responseMessage);
     } else {
-        console.error("No se encontró un cliente con el número:", from);
+        console.log('No se encontró un número de tag en el mensaje.');
     }
 }
 
-async function handleBajaRequest(from) {
-    try {
-        let clienteDoc = await Cliente.findOne({ from });
+// Manejar confirmación de retiro de pedidos
+async function handleConfirmationMessage(from, body) {
+    const fecha = new Date();  // Fecha actual como un objeto de tipo Date
 
-        if (clienteDoc) {
-            // Actualizar la solicitud de baja a true
-            clienteDoc.solicitudBaja = true;
-            await clienteDoc.save();
-            console.log("Solicitud de baja registrada para el cliente:", from);
+    // Buscar al cliente en la base de datos
+    const admin = await Admin.findOne({ "clientes.from": from });
+
+    if (admin) {
+        // Buscar el cliente y su historial de pedidos
+        let cliente = admin.clientes.find(c => c.from === from);
+
+        if (cliente) {
+            // Buscar el pedido en espera de confirmación
+            const pedido = cliente.historialPedidos.find(p => p.confirmacionPorCliente === false);
+            if (pedido) {
+                // Confirmar el retiro del pedido
+                pedido.mensajes.push({ body, fecha });
+                pedido.fechaRetiro = fecha;
+                pedido.estadoPorBarra = 'retiro confirmado';
+                pedido.confirmacionPorCliente = true;
+
+                await admin.save();
+                console.log(`Pedido confirmado como retirado para el cliente: ${from}`);
+
+                // Enviar respuesta automática de confirmación
+                const confirmationMessage = '🎉 ¡Gracias! Tu pedido ha sido confirmado como retirado.';
+                await sendWhatsAppMessage(`whatsapp:${from}`, confirmationMessage);
+            } else {
+                console.log('No se encontró un pedido en estado a confirmar retiro.');
+            }
+        } else {
+            console.log('Cliente no encontrado.');
+        }
+    } else {
+        console.log('No se encontró el cliente en la base de datos.');
+    }
+}
+
+// Manejar solicitudes de baja
+async function handleBajaRequest(from) {
+    const admin = await Admin.findOne({ "clientes.from": from });
+
+    if (admin) {
+        let cliente = admin.clientes.find(c => c.from === from);
+        if (cliente) {
+            cliente.solicitudBaja = true;
+            await admin.save();
+            console.log(`Solicitud de baja registrada para el cliente: ${from}`);
 
             // Enviar una confirmación al cliente
-            const responseMessage = '🚨 ¡Tu solicitud de baja ha sido procesada! Si no fue intencionada, contacta al soporte. 📞';
+            const responseMessage = '🚨 ¡Tu solicitud de baja ha sido procesada!';
             await sendWhatsAppMessage(`whatsapp:${from}`, responseMessage);
         } else {
-            console.log("No se encontró un cliente con este número para registrar la baja.");
+            console.log('No se encontró el cliente para procesar la solicitud de baja.');
         }
-    } catch (error) {
-        console.error('Error al procesar la solicitud de baja:', error.message);
+    } else {
+        console.log('No se encontró el cliente en la base de datos.');
     }
 }
+
 
 async function notifyUserForPickUp(req, res) {
     const fechaRetiro = new Date();  // Fecha actual cuando el pedido es retirado
+    const idLocal = req.params.idLocal; // ID del local pasado por la cookie
     const { tagNumber } = req.body;
 
-    console.log("FETCH DE RETIRO!");
+    console.log("ID Local:", idLocal);  // Verificar si el ID es correcto
+    console.log("Tag seleccionado enviado:", tagNumber);  // Verificar si el tag enviado es correcto
+
     try {
-        // Buscar el cliente que tiene el pedido en espera
-        const cliente = await Cliente.findOne({ "historialPedidos.tagNumber": tagNumber, "historialPedidos.estadoPorBarra": 'en espera' });
+        // Buscar el local en función del idLocal
+        const localAdmin = await Admin.findById(idLocal);
+
+        if (!localAdmin) {
+            return res.status(404).json({ error: 'No se encontró el local' });
+        }
+
+        // Buscar el cliente que tiene el pedido en espera en función del número de tag
+        const cliente = localAdmin.clientes.find(cliente => 
+            cliente.historialPedidos.some(p => p.tagNumber === tagNumber && p.estadoPorBarra === 'en espera')
+        );
 
         if (cliente) {
             // Encontrar el pedido dentro del historial de pedidos
@@ -194,13 +177,13 @@ async function notifyUserForPickUp(req, res) {
 
             if (pedido) {
                 // Actualizar con la fecha y hora del retiro
-                pedido.fechaRetiro = fechaRetiro; 
+                pedido.fechaRetiro = fechaRetiro;
 
                 // Calcular la diferencia en milisegundos
                 const diferenciaMs = fechaRetiro - pedido.fechaPedido;
-                
+
                 // Convertir la diferencia en segundos
-                const segundos = Math.floor(diferenciaMs / 1000); 
+                const segundos = Math.floor(diferenciaMs / 1000);
 
                 // Almacenar el tiempo de espera en segundos
                 pedido.tiempoEspera = segundos;
@@ -212,9 +195,11 @@ async function notifyUserForPickUp(req, res) {
 
                 // Actualizar el estado del pedido a "a confirmar retiro"
                 pedido.estadoPorBarra = 'a confirmar retiro';
-                await cliente.save();
 
-                // Calcular el promedio de tiempo de espera para **todos** los pedidos
+                // Guardar el estado actualizado del pedido en el cliente
+                await localAdmin.save();
+
+                // Calcular el promedio de tiempo de espera para todos los pedidos de este cliente
                 const totalPedidos = cliente.historialPedidos.length;
                 const totalTiempoEspera = cliente.historialPedidos.reduce((total, p) => total + p.tiempoEspera, 0);
 
@@ -231,15 +216,15 @@ async function notifyUserForPickUp(req, res) {
 
                 console.log(`Promedio de espera: ${horasPromedio} horas, ${minutosPromedio} minutos y ${segundosPromedio} segundos`);
 
-                // Guardar nuevamente el cliente con el promedio actualizado
-                await cliente.save();
+                // Guardar nuevamente el local con el promedio actualizado
+                await localAdmin.save();
 
                 res.json({ message: 'Notificación enviada y estado actualizado' });
             } else {
                 res.status(404).json({ error: 'No se encontró el pedido en estado "en espera"' });
             }
         } else {
-            res.status(404).json({ error: 'No se encontró el pedido para este número de tag' });
+            res.status(404).json({ error: 'No se encontró el cliente con este número de tag en estado "en espera"' });
         }
     } catch (error) {
         console.error('Error al notificar al usuario:', error.message);
@@ -249,33 +234,54 @@ async function notifyUserForPickUp(req, res) {
 
 async function notifyUserPickedUp(req, res) {
     const { tagNumber } = req.body;
+    const localNumber = req.cookies.localNumber; // Aquí obtenemos el localNumber desde la cookie
+
+    if (!localNumber) {
+        return res.status(400).json({ error: 'No se proporcionó el número de local (localNumber) en la cookie' });
+    }
 
     try {
-        // Buscar el cliente que tiene el pedido en "a confirmar retiro"
-        const cliente = await Cliente.findOne({ "historialPedidos.tagNumber": tagNumber, "historialPedidos.estadoPorBarra": 'a confirmar retiro' });
+        // Buscar el admin por su número de local (localNumber)
+        const admin = await Admin.findOne({ localNumber });
+
+        if (!admin) {
+            return res.status(404).json({ error: 'No se encontró el local/admin con ese número' });
+        }
+
+        // Buscar el cliente que tiene un pedido con el estado "a confirmar retiro" y el número de tag correspondiente
+        const cliente = admin.clientes.find(c =>
+            c.historialPedidos.some(p => p.tagNumber === tagNumber && p.estadoPorBarra === 'a confirmar retiro')
+        );
 
         if (cliente) {
             // Encontrar el pedido dentro del historial de pedidos
-            const pedido = cliente.historialPedidos.find(p => p.tagNumber === tagNumber && p.estadoPorBarra === 'a confirmar retiro');
+            const pedido = cliente.historialPedidos.find(p =>
+                p.tagNumber === tagNumber && p.estadoPorBarra === 'a confirmar retiro'
+            );
 
             if (pedido) {
                 // Enviar notificación de confirmación al cliente
+                console.log(`Enviando notificación de retiro confirmado al cliente con el número: ${cliente.from}`);
                 await sendWhatsAppTemplateMessage(`whatsapp:${cliente.from}`, ['1', '2', '3']);
 
                 // Actualizar el estado del pedido a "retiro confirmado"
                 pedido.estadoPorBarra = 'retiro confirmado';
-                await cliente.save();
+                await admin.save();
 
-                res.json({ message: 'Notificación enviada y estado actualizado' });
+                // Responder con éxito
+                res.json({ message: 'Notificación enviada y estado actualizado a "retiro confirmado"' });
+            } else {
+                res.status(404).json({ error: 'No se encontró un pedido con el estado "a confirmar retiro" para este número de tag' });
             }
         } else {
-            res.status(404).json({ error: 'No se encontró el pedido para este número de tag' });
+            res.status(404).json({ error: 'No se encontró un cliente para este número de tag' });
         }
     } catch (error) {
         console.error('Error al notificar al usuario:', error.message);
         res.status(500).json({ error: 'Error al notificar al usuario' });
     }
 }
+
 
 async function newLocal(req, res) {
     const { email, password, localName } = req.body;
@@ -476,8 +482,6 @@ async function getLocalDetails (req, res) {
     try {
       // Recuperar el documento antes de la actualización
       const admin = await Admin.findById(idLocal);
-      console.log("Documento antes de la actualización:", admin);  // Verifica el estado antes de la actualización
-  
       if (!admin) {
         return res.status(404).json({ error: 'Admin/local no encontrado' });
       }
@@ -490,9 +494,7 @@ async function getLocalDetails (req, res) {
       await admin.save();
   
       // Verificar si el documento se guardó correctamente
-      const updatedAdmin = await Admin.findById(idLocal);
-      console.log("Documento después de la actualización:", updatedAdmin);  // Verifica el estado después de guardar
-  
+      const updatedAdmin = await Admin.findById(idLocal);  
       res.status(200).json({
         message: "Tag seleccionado actualizado",
         localName: updatedAdmin.localName,

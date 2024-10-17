@@ -98,11 +98,9 @@ function moveToOrder(element) {
     })
       .then(response => response.json())
       .then(data => {
-        console.log('Respuesta del servidor:', data);
-
+        // console.log('Respuesta del servidor:', data);
         // Usar la URL de WhatsApp generada para actualizar el QR
         const whatsappUrl = data.whatsappUrl;
-
         // Actualizar el QR con la nueva URL
         const qr = new QRious({
           element: document.getElementById('qrcode'),
@@ -135,7 +133,6 @@ function moveToOrder(element) {
   });
 }
 
-
 // Función para mover el tag a la sección de "Tags pendientes de retiro"
 function moveToPending(element) {
   showConfirmation(element, () => {
@@ -161,7 +158,17 @@ function moveToPending(element) {
 
     // Enviar el número de tag al servidor para notificar al usuario que el pedido está listo
     const tagNumber = parseInt(clonedElement.getAttribute('data-number'));
-    fetch('/api/readyPickUp', {
+
+
+        // Recuperar el adminId de la cookie
+        const adminId = getCookie('adminId');
+        if (!adminId) {
+          console.error("No se encontró el adminId en la cookie");
+          return;
+        }
+        console.log("Admin ID desde la cookie:", adminId);
+
+    fetch(`/api/readyPickUp/${adminId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -171,6 +178,7 @@ function moveToPending(element) {
     .then(response => response.json())
     .then(data => {
       if (data.error) {
+        console.log("MENSAJE ANTES DEL ERROR:" + tagNumber)
         console.error('Error al notificar al usuario:', data.error);
       } else {
         console.log('Notificación enviada:', data.message);
@@ -212,8 +220,14 @@ function moveToFree(element) {
     const tagNumber = parseInt(clonedElement.getAttribute('data-number'));
     insertInOrder(freeContainer, clonedElement, tagNumber);
 
+    const adminId2 = getCookie('adminId');
+    if (!adminId2) {
+      console.error("No se encontró el adminId en la cookie");
+      return;
+    }
+    console.log("Admin ID desde la cookie:", adminId2);
     // Enviar una solicitud POST al servidor para confirmar que el pedido fue recogido
-    fetch('/api/confirmPickedUp', {
+    fetch(`/api/confirmPickedUp/${adminId2}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

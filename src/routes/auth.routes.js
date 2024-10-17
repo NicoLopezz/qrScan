@@ -65,10 +65,10 @@ router.get('/dashboardAdmin', (req, res) => {
 router.post('/updateTagSelected/:idLocal', autenthication.updateTagSelected);
 
 // Ruta para notificar al usuario cuando su pedido esté listo
-router.post('/readyPickUp', autenthication.notifyUserForPickUp);
+router.post('/readyPickUp/:idLocal', autenthication.notifyUserForPickUp);
 
 // Ruta para notificar al usuario que su pedido fue retirado
-router.post('/confirmPickedUp', autenthication.notifyUserPickedUp);
+router.post('/confirmPickedUp/:idLocal', autenthication.notifyUserPickedUp);
 
 // // Ruta para notificar al usuario cuando su pedido esté listo
 // router.post('/', autenthication.notifyUserForPickUp);
