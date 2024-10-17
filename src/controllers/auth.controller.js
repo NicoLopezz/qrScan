@@ -323,7 +323,7 @@ async function newLocal(req, res) {
           email,
           password,
           localName,
-          localNumber: 14155238886,
+          localNumber: 18643651639,
           usuarios: [randomUser],
           clientes: [randomClient],
           pagos: [randomPayment],
@@ -565,7 +565,7 @@ async function qrScanUpdate(req, res) {
 
         // Obtener el tagSelected y construir la URL de WhatsApp
         const tagSelected = admin.tagSelected;
-        const whatsappNumber = 14155238886;  // Número de WhatsApp
+        const whatsappNumber = 18643651639;  // Número de WhatsApp
         const message = `Ya realicé mi pedido, número de tag: ${tagSelected}`;
         const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 
