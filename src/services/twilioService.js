@@ -19,7 +19,7 @@ export const sendWhatsAppMessage = async (to, body) => {
         console.log(`Enviando mensaje a: ${to}`);
         await client.messages.create({
             body,
-            from: 'whatsapp:+14155238886', // Asegúrate de usar el número correcto (sandbox o producción)
+            from: 'whatsapp:+18643651639', // Asegúrate de usar el número correcto (sandbox o producción)
             to: `${to}`, 
         });
         console.log(`Mensaje enviado a ${to}`);
@@ -34,7 +34,7 @@ export const sendWhatsAppTemplateMessage = async (to, templateParams) => {
         console.log(`Enviando mensaje a: ${to}`);
 
         await client.messages.create({
-            from: 'whatsapp:+14155238886', // Número de WhatsApp de Twilio (sandbox o producción)
+            from: 'whatsapp:+18643651639', // Número de WhatsApp de Twilio (sandbox o producción)
             to: `${to}`,           // El número de WhatsApp del destinatario, con el formato correcto
             contentSid: 'HX2128ee0f7561acec9cf339335d7e9fb5', // El SID de la plantilla
             contentVariables: JSON.stringify({
