@@ -1,119 +1,233 @@
-* {
+/* Fondo de toda la página */
+body, html {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+    height: 100%;
+    font-family: 'Montserrat', sans-serif;
 }
 
-body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f9f9fc;
-}
-
-.dashboard-container {
-    display: flex;
-    min-height: 100vh;
-}
-
-.sidebar {
-    background-color: #4d4b9f;
-    color: white;
-    width: 250px;
+/* Contenedor principal que contiene todo el contenido */
+.content-container {
+    background-color: #f3f3f3;
     padding: 20px;
+    border-radius: 15px;
+    max-width: 1200px;
+    margin: 40px auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-left: 260px;
+    /* padding-top: 80px; */
+    margin-top: 95px;
+}
+
+/* Estilo para la barra superior */
+.topBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    position: fixed;
+    top: -75px;
+    left: 0;
+    width: calc(100% - 260px);
+    margin-left: 260px;
+    z-index: 1000;
+    transition: opacity 0.3s ease; /* Transición suave para el cambio de opacidad */
+}
+
+
+/* Estilo para el contenedor de la hora y la fecha */
+.date-time-container {
+    text-align: right; /* Alinea a la derecha */
+    font-size: 14px;
+}
+
+.date-time-container p {
+    margin: 0; /* Elimina el margen */
+    color: #000; /* Color del texto */
+    font-weight: bold;
+}
+
+/* Ajusta el tamaño de la hora */
+#time {
+    font-size: 18px;
+}
+
+/* Ajusta el tamaño de la fecha */
+#date {
+    font-size: 14px;
+    color: #6b6b6b; /* Color gris para la fecha */
+}
+
+/* Ajustes al texto del h1 */
+.topBar h1 {
+    margin: 0; /* Elimina el margen del h1 */
+    padding: 0; /* Elimina el padding del h1 */
+    font-size: 24px; /* Ajusta el tamaño del texto */
+    color: #000000; /* Color del texto */
+}
+
+/* Sidebar */
+.sidebar {
+    width: 220px;
+    background-color: #efefef;
+    height: 95vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    color: #6b00ad;
+    display: flex;
+    flex-direction: column;
+    border-radius: 40px;
+    margin: 10px;
+}
+
+.sidebar .logo {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.sidebar .logo img {
+    width: 65%;
 }
 
 .sidebar nav ul {
     list-style: none;
+    padding: 0;
 }
 
+/* Estilos normales de los elementos de la lista del menú lateral */
 .sidebar nav ul li {
-    margin: 20px 0;
-}
-
-.sidebar nav ul li a {
-    color: white;
-    text-decoration: none;
-}
-
-.main-content {
-    flex-grow: 1;
     padding: 20px;
-}
-
-.dashboard-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.dashboard-header h1 {
-    font-size: 24px;
-    font-weight: bold;
-}
-
-.dashboard-header span {
-    color: #6d6bd1;
-}
-
-.header-actions {
+    font-size: 18px;
     display: flex;
     align-items: center;
+    color: #585858;
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Transiciones suaves para el fondo y el tamaño */
 }
 
-.header-actions .search-button {
-    background: none;
-    border: none;
+.sidebar nav ul li i {
+    margin-right: 15px;
     font-size: 20px;
-    cursor: pointer;
-    margin-right: 20px;
 }
 
-.user-profile {
-    display: flex;
-    align-items: center;
+/* Efecto hover */
+.sidebar nav ul li:hover {
+    background-color: #ffffff;
+    color: #6b00ad;
+    border-radius: 10px;
+    transform: scale(1.05); /* Incrementa ligeramente el tamaño del elemento */
 }
 
-.user-profile img {
-    border-radius: 50%;
-    width: 40px;
-    margin-right: 10px;
-}
-
-.summary-cards {
+/* Tarjetas */
+/* Tarjetas (cards) */
+.cards {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
-    margin-top: 20px;
+    margin-bottom: 40px;
+    width: 100%;
+    justify-items: center;
+    align-items: center;
 }
 
 .card {
-    background-color: #f3f4ff;
+    background-color: #fff;
     padding: 20px;
+    border-radius: 15px;
     text-align: center;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.card h3 {
-    font-size: 28px;
-    color: #6d6bd1;
-}
-
-.card p {
-    font-size: 14px;
-    color: #777;
-}
-
-.charts {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     display: flex;
-    gap: 20px;
+    flex-direction: column; /* Organiza los elementos en una columna */
+    justify-content: center;
+    align-items: center;
+    gap: 10px; /* Espacio entre el ícono, texto y número */
+}
+
+.icon-container {
+    background-color: #d9d6f6;
+    border-radius: 20%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: -35px;
+    margin-bottom: 0px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.icon-container i {
+    color: #6b00ad;
+    font-size: 24px;
+}
+
+.card-content h3 {
+    font-size: 18px;
+    color: #000; /* Color del texto del título */
+    margin: 0;
+}
+
+.card-number {
+    font-size: 50px;
+    color: #ff914d;
+    font-weight: bold;
+    margin-top: -5px;
+    margin-bottom: -15px;
+}
+
+/* Gráficos y Contadores */
+.charts-and-counter {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
     margin-top: 20px;
 }
 
-.chart {
-    background-color: white;
-    flex: 1;
+.charts {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    width: 500px;
+}
+
+.counter-card {
+    background-color: #fff;
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    height: 300px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 28%;
+}
+
+/* Tabla */
+.table-section {
+    margin-top: 40px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+table th, table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+table th {
+    background-color: #6b00ad;
+    color: white;
+}
+
+table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+table tr:hover {
+    background-color: #f1f1f1;
 }

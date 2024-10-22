@@ -5,73 +5,126 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link rel="stylesheet" href="/style/dashboardLocalAdmin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="dashboard-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <nav>
-                <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">Order History</a></li>
-                    <li><a href="#">Payment History</a></li>
-                    <li><a href="#">Activity</a></li>
-                    <li><a href="#">Meals</a></li>
-                    <li><a href="#">Get Help</a></li>
-                    <li><a href="#">Settings</a></li>
-                    <li><a href="#">Log Out</a></li>
-                </ul>
-            </nav>
-        </aside>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <header class="dashboard-header">
-                <h1>Bienvenido! <span>Lopez Nicolas</span></h1>
-                <div class="header-actions">
-                    <button class="search-button">🔍</button>
-                    <div class="user-profile">
-                        <img src="user-image.jpg" alt="Usuario">
-                        <span>Mahmudul Hasan</span>
+<!-- Menú lateral -->
+<div id="sidebar" class="sidebar">
+    <div class="logo">
+        <img src="/img/LogoVioletaFondoBlanco.png" alt="Horizon Logo">
+    </div>
+    <nav>
+        <ul>
+            <li class="menu-item" data-section="dashboard">
+                <i class="fas fa-home"></i> Dashboard
+            </li>
+            <li class="menu-item" data-section="tables">
+                <i class="fas fa-table"></i> Tables
+            </li>
+            <li class="menu-item" data-section="sign-up">
+                <i class="fas fa-user-plus"></i> Log out
+            </li>
+            <li class="menu-item" data-section="profile">
+                <i class="fas fa-user"></i> Users
+            </li>
+        </ul>
+    </nav>
+</div>
+
+
+<div class="content-container topBar">
+    <h1>Bienvenido, Lopez Nicolas</h1>
+    <!-- Contenedor para la hora y la fecha -->
+    <div class="date-time-container">
+        <p id="time"></p> <!-- Aquí se mostrará la hora -->
+        <p id="date"></p> <!-- Aquí se mostrará la fecha -->
+    </div>
+</div>
+
+
+</div>
+
+
+<!-- Contenedor principal del contenido -->
+<div class="content-container">
+    <div class="main-content">
+        <div id="home" class="section active">
+         
+            <!-- Tarjetas -->
+            <div class="cards">
+                <div class="card">
+                    <div class="icon-container">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="titleCard">Pedidos del día</h3>
+                        <p class="card-number">256</p>
                     </div>
                 </div>
-            </header>
+                <div class="card">
+                    <div class="icon-container">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Nuevos Clientes</h3>
+                        <p class="card-number">2260</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="icon-container">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Tiempo de entrega</h3>
+                        <p class="card-number">3730</p>
+                    </div>
+                </div>
+            </div>
 
-            <!-- Tarjetas -->
-            <section class="summary-cards">
-                <div class="card">
-                    <h3>256</h3>
-                    <p>Pedidos del día</p>
+            <!-- Gráficos y Contadores -->
+            <div class="charts-and-counter">
+                <div class="charts">
+                    <canvas id="chart1"></canvas>
+                    <canvas id="chart2"></canvas>
                 </div>
-                <div class="card">
-                    <h3>2260</h3>
-                    <p>Nuevos Clientes</p>
-                </div>
-                <div class="card">
-                    <h3>3730</h3>
-                    <p>Tiempo de entrega</p>
-                </div>
-                <div class="card">
-                    <h3>3730</h3>
-                    <p>Puntuación</p>
-                </div>
-                <div class="card">
-                    <h3>3730</h3>
-                    <p>Horas pico</p>
-                </div>
-                <div class="card">
-                    <h3>3730</h3>
-                    <p>Clientes Frecuentes</p>
-                </div>
-            </section>
+            </div>
 
-            <!-- Gráficos -->
-            <section class="charts">
-                <div class="chart" id="chart1"></div>
-                <div class="chart" id="chart2"></div>
-            </section>
-        </main>
+            <!-- Tabla -->
+            <div class="table-section">
+                <h2>Listado de Usuarios</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Teléfono</th>
+                            <th>Mensajes</th>
+                            <th>Puntuación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Juan Pérez</td>
+                            <td>+123456789</td>
+                            <td>10</td>
+                            <td>5</td>
+                        </tr>
+                        <tr>
+                            <td>María García</td>
+                            <td>+987654321</td>
+                            <td>15</td>
+                            <td>4.8</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-    <script src="scripts.js"></script>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/js/dashboardAdminLocal.js"></script>
+
 </body>
 </html>

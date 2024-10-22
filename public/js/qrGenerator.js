@@ -20,6 +20,7 @@ $(document).ready(function() {
     console.log("adminId obtenido de la cookie: " + adminId);
 
     // Generar la URL del QR con el adminId
+    /api/qrScan
     const qrCodeUrl = `https://www.pickuptime.io/api/qrScanUpdate/${adminId}`;
 
     // Generar el QR con el adminId en la URL

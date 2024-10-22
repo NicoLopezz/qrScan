@@ -563,6 +563,8 @@ async function qrScanUpdate(req, res) {
             return res.status(404).send('Admin no encontrado');
         }
 
+
+        
         // Obtener el tagSelected y construir la URL de WhatsApp
         const tagSelected = admin.tagSelected;
         const whatsappNumber = 14155238886;  // Número de WhatsApp
