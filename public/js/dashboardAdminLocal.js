@@ -96,3 +96,62 @@ window.addEventListener('scroll', function() {
         topBar.style.opacity = '1'; // Sin transparencia cuando no hay scroll
     }
 });
+
+// Escuchar clic en los elementos del menú lateral
+document.querySelectorAll('.menu-item').forEach(item => {
+    item.addEventListener('click', function() {
+        // Obtener el valor del atributo data-section
+        const sectionId = this.getAttribute('data-section');
+
+        // Ocultar todas las secciones
+        document.querySelectorAll('.section').forEach(section => {
+            section.classList.remove('active');
+        });
+
+        // Mostrar la sección seleccionada
+        document.getElementById(`section-${sectionId}`).classList.add('active');
+    });
+});
+
+// Navegación por secciones
+document.querySelectorAll('.menu-item').forEach(item => {
+    item.addEventListener('click', function() {
+        const sectionId = this.getAttribute('data-section');
+        document.querySelectorAll('.section').forEach(section => {
+            section.classList.remove('active');
+        });
+        document.getElementById(`section-${sectionId}`).classList.add('active');
+    });
+});
+
+// FAQ: Mostrar y ocultar las respuestas
+document.querySelectorAll('.faq-question').forEach(question => {
+    question.addEventListener('click', function() {
+        const answer = this.nextElementSibling;
+        const icon = this.querySelector('i');
+        if (answer.style.display === 'block') {
+            answer.style.display = 'none';
+            icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+        } else {
+            answer.style.display = 'block';
+            icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+        }
+    });
+});
+
+// Actualizar hora y fecha en tiempo real
+function updateTime() {
+    const now = new Date();
+    const time = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+    const date = now.toLocaleDateString('es-ES');
+    document.getElementById('time').textContent = time;
+    document.getElementById('date').textContent = date;
+}
+setInterval(updateTime, 1000);
+
+document.querySelectorAll('.faq-question').forEach(question => {
+    question.addEventListener('click', function() {
+        const parent = this.parentElement;
+        parent.classList.toggle('active');
+    });
+});
