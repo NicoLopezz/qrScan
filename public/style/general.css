@@ -1,0 +1,28 @@
+/* Fondo de toda la página */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* Contenedor principal que contiene todo el contenido */
+.content-container {
+    background-color: #f3f3f3;
+    padding: 25px;
+    border-radius: 15px;
+    max-width: 80%;
+    margin: 40px auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-left: 260px;
+    margin-top: 95px;
+}
+
+/* Estilo de la sección */
+.section {
+    display: none; /* Ocultamos todas las secciones por defecto */
+}
+
+.section.active {
+    display: block; /* Mostramos la sección activa */
+}

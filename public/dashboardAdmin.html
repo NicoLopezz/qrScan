@@ -14,23 +14,73 @@
     <!-- Botón para mostrar/ocultar el formulario -->
     <button id="toggleFormBtn" onclick="toggleForm()">Mostrar Formulario</button>
 
-    <!-- Formulario de alta de locales (inicialmente oculto) -->
     <section id="alta-local" class="form-section" style="display: none;">
       <h2>Alta Nuevo Local</h2>
       <form id="form-alta">
-        <label for="email">Email:</label>
+        <!-- Datos del Local -->
+        <label for="email">Email (Requerido):</label>
         <input type="email" id="emailLocal" name="email" required>
-
-        <label for="password">Contraseña:</label>
+    
+        <label for="password">Contraseña (Requerido):</label>
         <input type="password" id="passwordLocal" name="password" required>
-
-        <label for="nameRef">Nombre del Local:</label>
+    
+        <label for="localName">Nombre del Local (Requerido):</label>
         <input type="text" id="nombreLocal" name="localName" required>
-
+    
+        <label for="localNumber">Teléfono del Local (Opcional):</label>
+        <input type="tel" id="telefonoLocal" name="localNumber" placeholder="Edite Later">
+    
+        <!-- Información de Facturación -->
+        <h3>Información de Facturación (Opcional)</h3>
+        <label for="cbu">CBU (Opcional):</label>
+        <input type="text" id="cbu" name="facturacion.cbu" placeholder="Edite Later">
+    
+        <label for="medioDePago">Medio de Pago (Opcional):</label>
+        <input type="text" id="medioDePago" name="facturacion.medioDePago" placeholder="Edite Later">
+    
+        <label for="alias">Alias (Opcional):</label>
+        <input type="text" id="alias" name="facturacion.alias" placeholder="Edite Later">
+    
+        <!-- Otros Datos -->
+        <h3>Otros Datos (Opcional)</h3>
+        <label for="tipoDeLicencia">Tipo de Licencia (Opcional):</label>
+        <input type="text" id="tipoDeLicencia" name="tipoDeLicencia" placeholder="Edite Later">
+    
+        <label for="horariosDeOperacion">Horarios de Operación (Opcional):</label>
+        <input type="text" id="horariosDeOperacion" name="horariosDeOperacion" placeholder="Edite Later">
+    
+        <!-- Datos del Usuario (Opcionales) -->
+        <h3>Datos del Usuario (Opcional)</h3>
+        <label for="nombreUsuario">Nombre Usuario (Opcional):</label>
+        <input type="text" id="nombreUsuario" name="usuario.nombre" placeholder="Edite Later">
+    
+        <label for="telefonoUsuario">Teléfono Usuario (Opcional):</label>
+        <input type="tel" id="telefonoUsuario" name="usuario.telefono" placeholder="Edite Later">
+    
+        <label for="correoPrincipal">Correo Principal (Opcional):</label>
+        <input type="email" id="correoPrincipal" name="usuario.correo" placeholder="Edite Later">
+    
+        <label for="direccion">Dirección (Opcional):</label>
+        <input type="text" id="direccion" name="usuario.direccion" placeholder="Edite Later">
+    
+        <!-- Información Adicional -->
+        <label for="passActual">Pass actual (Opcional):</label>
+        <input type="password" id="passActual" name="passwordActual" placeholder="Edite Later">
+    
+        <label for="planContratado">Plan Contratado (Opcional):</label>
+        <input type="text" id="planContratado" name="planContratado" placeholder="Edite Later">
+    
+        <label for="fechaRenovacion">Fecha de renovación (Opcional):</label>
+        <input type="date" id="fechaRenovacion" name="fechaRenovacion">
+    
+        <label for="mensajesRestantes">Mensajes Restantes (Opcional):</label>
+        <input type="text" id="mensajesRestantes" name="mensajesRestantes" placeholder="Edite Later">
+    
         <button type="submit" class="submit-btn">Dar de alta</button>
       </form>
       <p id="message"></p>
     </section>
+    
 
     <!-- Contenedor de tarjetas -->
     <div id="tarjetas-container" class="card-container">

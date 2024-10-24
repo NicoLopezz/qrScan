@@ -9,49 +9,55 @@ const usuarioSchema = new mongoose.Schema({
 
 // Esquema para los clientes
 const clienteSchema = new mongoose.Schema({
-  solicitudBaja: { type: Boolean, default: false },
-  from: { type: String, required: true },
+  solicitudBaja: { type: Boolean, default: false },  // Si el cliente ha solicitado la baja
+  from: { type: String, required: true },  // Información del cliente (número de teléfono, etc.)
   historialPedidos: [{
-    tagNumber: { type: Number, default: null },
-    fechaPedido: { type: Date, default: null },
-    fechaRetiro: { type: Date, default: null },
-    tiempoEspera: { type: Number, default: 0 },  // En segundos
-    estadoPorBarra: { type: String, default: '' },
-    confirmacionPorCliente: { type: Boolean, default: false },
+    tagNumber: { type: Number, default: null },  // Número de tag asociado al pedido
+    fechaPedido: { type: Date, default: null },  // Fecha en la que se realizó el pedido
+    fechaRetiro: { type: Date, default: null },  // Fecha en la que se retiró el pedido
+    tiempoEspera: { type: Number, default: 0 },  // Tiempo de espera en segundos
+    estadoPorBarra: { type: String, default: '' },  // Estado del pedido por parte del bar
+    confirmacionPorCliente: { type: Boolean, default: false },  // Confirmación del cliente
     mensajes: [{
-      body: { type: String, default: '' },
-      fecha: { type: String, default: '' }
+      body: { type: String, default: '' },  // Mensaje enviado
+      fecha: { type: String, default: '' }  // Fecha del mensaje
     }]
   }],
-  promedioTiempo: { type: Number, default: 0 }
+  promedioTiempo: { type: Number, default: 0 }  // Promedio del tiempo de espera en segundos
 });
 
 // Esquema para los pagos
 const pagoSchema = new mongoose.Schema({
-  fecha: { type: Date, default: null },
-  monto: { type: Number, default: 0 },
-  metodo: { type: String, default: '' }
+  fecha: { type: Date, default: null },  // Fecha del pago
+  monto: { type: Number, default: 0 },  // Monto del pago
+  metodo: { type: String, default: '' }  // Método de pago utilizado
+});
+
+// Esquema para la facturación
+const facturacionSchema = new mongoose.Schema({
+  cbu: { type: String, default: '' },  // Clave Bancaria Uniforme (CBU)
+  medioDePago: { type: String, default: '' },  // Medio de pago (tarjeta, etc.)
+  alias: { type: String, default: '' }  // Alias de la cuenta bancaria
 });
 
 // Esquema para el administrador del local
 const adminSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  localName: { type: String, required: true },
-  localNumber: { type: Number, default: 14155238886 },  // Valor por defecto null si no se proporciona
-  tagSelected: { type: Number, default: 0 },  // Asegúrate de que este campo esté definido
-  usuarios: { type: [usuarioSchema], default: [] },  // Inicializar como array vacío
-  clientes: { type: [clienteSchema], default: [] },  // Inicializar como array vacío
-  pagos: { type: [pagoSchema], default: [] },  // Inicializar como array vacío
-  facturacion: {
-    cbu: { type: String, default: '' },
-    medioDePago: { type: String, default: '' },
-    alias: { type: String, default: '' }
-  },
-  tipoDeLicencia: { type: String, default: '' },
-  fechaDeAlta: { type: Date, default: Date.now },  // Fecha por defecto: ahora
-  horariosDeOperacion: { type: String, default: '' },
-  permiso: { type: String, default: 'Admin' }
+  email: { type: String, required: true, unique: true },  // Email del administrador (único)
+  password: { type: String, required: true },  // Contraseña del administrador
+  localName: { type: String, required: true },  // Nombre del local
+  localNumber: { type: Number, default: 14155238886 },  // Teléfono del local (valor por defecto)
+  tagSelected: { type: Number, default: 0 },  // Número de tag seleccionado
+  usuarios: { type: [usuarioSchema], default: [] },  // Subusuarios del administrador (array vacío por defecto)
+  clientes: { type: [clienteSchema], default: [] },  // Clientes asociados al local (array vacío por defecto)
+  pagos: { type: [pagoSchema], default: [] },  // Registro de pagos (array vacío por defecto)
+  facturacion: { type: facturacionSchema, default: {} },  // Información de facturación (subesquema)
+  tipoDeLicencia: { type: String, default: '' },  // Tipo de licencia (básico, premium, etc.)
+  fechaDeAlta: { type: Date, default: Date.now },  // Fecha de alta del administrador (por defecto: ahora)
+  fechaRenovacion: { type: Date, default: null },  // Fecha de renovación de la licencia
+  mensajesRestantes: { type: String, default: '0/500' },  // Mensajes restantes (por ejemplo: "34/500")
+  horariosDeOperacion: { type: String, default: '' },  // Horarios de operación del local
+  permiso: { type: String, default: 'Admin' },  // Permiso del administrador (por defecto: Admin)
+  passwordActual: { type: String, default: '' }  // Contraseña actual del administrador (opcional)
 });
 
 // Exportar el modelo 'Admin'

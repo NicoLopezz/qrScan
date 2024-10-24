@@ -4,7 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <link rel="stylesheet" href="/style/dashboardLocalAdmin.css">
+    <!-- Font Awesome y Google Fonts -->
+    <link rel="stylesheet" href="/style/topBar.css">
+    <link rel="stylesheet" href="/style/general.css">
+    <link rel="stylesheet" href="/style/sidebar.css">
+    <link rel="stylesheet" href="/style/dashboard2.css">
+    <link rel="stylesheet" href="/style/faq.css">
+    <link rel="stylesheet" href="/style/mensajes.css">
+    <link rel="stylesheet" href="/style/profile.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&display=swap" rel="stylesheet">
 </head>
@@ -20,8 +27,11 @@
             <li class="menu-item" data-section="dashboard">
                 <i class="fas fa-home"></i> Dashboard
             </li>
-            <li class="menu-item" data-section="tables">
-                <i class="fas fa-table"></i> Tables
+            <li class="menu-item mensajes" data-section="mensajes">
+                <i class="fas fa-table"></i> Mensajes
+                <ul class="submenu">
+                    <li><a href="#">Manage Mensajes</a></li>
+                </ul>
             </li>
             <li class="menu-item" data-section="users">
                 <i class="fas fa-user-plus"></i> Users
@@ -187,47 +197,145 @@
             </div>
         </div>
 
-<!-- Sección FAQ -->
-<div id="section-faq" class="section">
-    <h2>Preguntas Frecuentes</h2>
-    <div class="faq-container">
-        <div class="faq-item">
-            <div class="faq-question">
-                <span>¿Cómo puedo crear un nuevo usuario?</span>
-                <i class="fas fa-chevron-down"></i>
-            </div>
-            <div class="faq-answer">
-                <p>Para crear un nuevo usuario, dirígete a la sección "Users" y completa el formulario con el email, contraseña y rol del nuevo usuario.</p>
+        <!-- Sección FAQ -->
+        <div id="section-faq" class="section">
+            <h2>Preguntas Frecuentes</h2>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>¿Cómo puedo crear un nuevo usuario?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Para crear un nuevo usuario, dirígete a la sección "Users" y completa el formulario con el email, contraseña y rol del nuevo usuario.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>¿Cómo puedo cambiar mi contraseña?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Puedes cambiar tu contraseña desde la sección "Profile".</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>¿Cómo puedo ver las estadísticas?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Las estadísticas están disponibles en la sección "Dashboard". Allí puedes ver gráficos y detalles de los usuarios.</p>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="faq-item">
-            <div class="faq-question">
-                <span>¿Cómo puedo cambiar mi contraseña?</span>
-                <i class="fas fa-chevron-down"></i>
+<!-- Sección Profile -->
+<div id="section-profile" class="section">
+    <div id="profile-section-container">
+      
+      <!-- Columna izquierda: Información del Usuario -->
+      <div class="profile-column left-column">
+        <div class="rect-image">
+            <div class="rectangle">
+              <h1>General</h1>
             </div>
-            <div class="faq-answer">
-                <p>Puedes cambiar tu contraseña desde la sección "Profile".</p>
+          </div>
+        <ul class="user-info">
+          <li><strong>Nombre Usuario:</strong> Juan Pérez</li>
+          <li><strong>Teléfono / Local:</strong> +54 9 11 1234 5678</li>
+          <li><strong>Nombre:</strong> Bar La Esquina</li>
+          <li><strong>Teléfono app:</strong> +54 9 11 8765 4321</li>
+          <li><strong>Correo Principal:</strong> juan.perez@example.com</li>
+          <li><strong>Dirección:</strong> Av. Siempre Viva 123, Buenos Aires</li>
+          <li><strong>Correo Principal:</strong> contacto@laesquina.com</li>
+          <li><strong>Pass actual:</strong> •••••••••</li>
+        </ul>
+      </div>
+      
+      <!-- Columna central: Plan Contratado -->
+      <div class="profile-column center-column">
+        <div class="rect-image">
+            <div class="rectangle">
+              <h1>Plan</h1>
+            </div>
+          </div>
+        <ul class="plan-info">
+          <li><strong>Plan Contratado:</strong> Premium</li>
+          <li><strong>Fecha de renovación:</strong> 24/11/2024</li>
+          <li><strong>Mensajes restantes:</strong> 34/500</li>
+        </ul>
+      </div>
+  
+      <!-- Columna derecha: Información de Facturación -->
+      <div class="profile-column right-column">
+        <div class="rect-image">
+            <div class="rectangle">
+              <h1>Facturacion</h1>
+            </div>
+          </div>
+        <ul class="billing-info">
+          <li><strong>CBU:</strong> 0123456789012345678901</li>
+          <li><strong>Alias:</strong> mi.alias.bancario</li>
+          <li><strong>Medio de Pago:</strong> Tarjeta de Crédito</li>
+        </ul>
+      </div>
+    
+    </div>
+  </div>
+  
+        <!-- Sección Mensajes -->
+        <div id="section-mensajes" class="section">
+            <div class="whatsapp-simulator-box">
+                <!-- Barra lateral izquierda -->
+                <div class="whatsapp-sidebar">
+                    <div class="whatsapp-sidebar-header">
+                        <img src="/img/logo3d.PNG" alt="Perfil" class="whatsapp-profile-pic-sidebar">
+                        <input type="text" placeholder="Buscar o empezar un nuevo chat" class="whatsapp-search-bar">
+                    </div>
+                    <ul id="clientList">
+                        <!-- Se llenará dinámicamente con clientes -->
+                        <li>
+                            <div class="client-info">
+                                <span class="client-name">Cliente 1</span>
+                                <span class="client-number">+1 (555) 123-4567</span>
+                            </div>
+                        </li>
+                        <!-- Puedes agregar más clientes si lo deseas -->
+                    </ul>
+                </div>
+
+                <!-- Panel principal (Área de chat) -->
+                <div class="whatsapp-chat-panel">
+                    <div class="whatsapp-chat-header">
+                        <img src="/img/userIcon.png" alt="Foto de perfil" id="profilePic">
+                        <div class="whatsapp-header-info">
+                            <span id="phoneNumber">Selecciona un cliente</span>
+                            <span class="whatsapp-status">En línea</span>
+                        </div>
+                    </div>
+                    <div id="chatHistory" class="whatsapp-chat-history">
+                        <!-- Mensajes se llenarán dinámicamente -->
+                    </div>
+                    <div class="whatsapp-chat-footer">
+                        <img src="emoji-icon.png" alt="Emoji" class="whatsapp-footer-icon">
+                        <input type="text" id="messageInput" placeholder="Escribe un mensaje..." class="whatsapp-message-input">
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="faq-item">
-            <div class="faq-question">
-                <span>¿Cómo puedo ver las estadísticas?</span>
-                <i class="fas fa-chevron-down"></i>
-            </div>
-            <div class="faq-answer">
-                <p>Las estadísticas están disponibles en la sección "Dashboard". Allí puedes ver gráficos y detalles de los usuarios.</p>
-            </div>
-        </div>
+
     </div>
 </div>
 
-
-    </div>
-</div>
-
+<!-- Cargar los gráficos y el JavaScript principal -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="/js/dashboardAdminLocal.js"></script>
-<script src="/js/custom.js"></script> <!-- Archivo JS separado -->
+    <script src="/js/charts.js"></script>
+    <script src="/js/faq.js"></script>
+    <script src="/js/sidebar.js"></script>
+    <script src="/js/chat.js"></script>
+    <script src="/js/dateTime.js"></script>
+    <script src="/js/topBar.js"></script>
 
 </body>
 </html>

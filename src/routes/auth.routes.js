@@ -11,12 +11,14 @@ const __dirname = dirname(__filename);
 
 
 
-
+//proximamente
 router.get("/", async (req, res) => { 
     res.sendFile(path.join(__dirname, '../../public/index.html'));
 });
+
 // Ruta para recibir mensajes de Twilio
 router.post('/webhook', autenthication.reciveMessage);
+
 
 // Ruta para servir el archivo index
 router.get('/qrScan', (req, res) => {

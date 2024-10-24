@@ -1,0 +1,74 @@
+
+/* Estilos para la sección de preguntas frecuentes (FAQ) */
+.faq-container {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+    padding: 20px;
+}
+
+.faq-item {
+    border-bottom: 1px solid #eaeaea;
+    padding: 15px 0;
+    transition: all 0.2s ease;
+}
+
+.faq-item:last-child {
+    border-bottom: none;
+}
+
+.faq-question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    transition: color 0.2s ease;
+}
+
+.faq-question:hover {
+    color: #6b00ad;
+}
+
+/* Estilo inicial de las respuestas ocultas */
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease, opacity 0.5s ease;
+    padding: 0;
+    opacity: 0;
+    visibility: hidden;  /* Asegura que no se vea la respuesta hasta que se abra */
+}
+
+.faq-answer p {
+    margin: 0;
+    padding: 10px 0;
+    color: #555;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+/* Estilo cuando se abre la respuesta */
+.faq-item.active .faq-answer {
+    max-height: 500px;
+    opacity: 1;
+    visibility: visible;
+}
+
+.faq-item.active .faq-question {
+    color: #6b00ad;
+}
+
+/* Rotación suave de la flecha */
+.faq-question i {
+    transition: transform 0.2s ease;
+    transform: rotate(0deg); /* Flecha hacia abajo inicialmente */
+}
+
+.faq-item.active .faq-question i {
+    transform: rotate(180deg); /* Flecha hacia arriba */
+}
+
