@@ -9,9 +9,8 @@
 
 .whatsapp-simulator-box {
     display: flex;
-    width: 90%;
-    max-width: 1200px;
-    height: 90vh;
+    max-width: 800px;
+    height: 80vh;
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
@@ -20,6 +19,7 @@
 
 /* Barra lateral */
 .whatsapp-sidebar {
+    padding: 10px;
     width: 30%;
     background-color: #ededed;
     display: flex;
@@ -44,11 +44,11 @@
 
 .whatsapp-search-bar {
     flex-grow: 1;
-    padding: 10px;
+    padding: 5px;
     border-radius: 20px;
     border: none;
     background-color: #f6f6f6;
-    font-size: 14px;
+    font-size: 10px;
     color: #666;
 }
 
@@ -74,6 +74,7 @@ li:hover {
 .client-info {
     display: flex;
     flex-direction: column;
+    padding: 10px;
 }
 
 .client-name {

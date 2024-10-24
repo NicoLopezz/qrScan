@@ -28,10 +28,7 @@
                 <i class="fas fa-home"></i> Dashboard
             </li>
             <li class="menu-item mensajes" data-section="mensajes">
-                <i class="fas fa-table"></i> Mensajes
-                <ul class="submenu">
-                    <li><a href="#">Manage Mensajes</a></li>
-                </ul>
+                <i class="fas fa-table"></i> Mensajes            
             </li>
             <li class="menu-item" data-section="users">
                 <i class="fas fa-user-plus"></i> Users
@@ -49,8 +46,9 @@
     </nav>
 </div>
 
+
 <!-- Barra superior -->
-<div class="content-container topBar">
+<div class="topBar">
     <h1>Bienvenido, Lopez Nicolas</h1>
     <div class="date-time-container">
         <p id="time"></p>
@@ -238,7 +236,7 @@
       <div class="profile-column left-column">
         <div class="rect-image">
             <div class="rectangle">
-              <h1>General</h1>
+              <h1 class="titleBox">General</h1>
             </div>
           </div>
         <ul class="user-info">
@@ -257,7 +255,7 @@
       <div class="profile-column center-column">
         <div class="rect-image">
             <div class="rectangle">
-              <h1>Plan</h1>
+              <h1 class="titleBox">Plan</h1>
             </div>
           </div>
         <ul class="plan-info">
@@ -269,9 +267,9 @@
   
       <!-- Columna derecha: Información de Facturación -->
       <div class="profile-column right-column">
-        <div class="rect-image">
+        <div class="rect-image"> 
             <div class="rectangle">
-              <h1>Facturacion</h1>
+              <h1 class="titleBox">Facturacion</h1>
             </div>
           </div>
         <ul class="billing-info">
@@ -291,7 +289,7 @@
                 <div class="whatsapp-sidebar">
                     <div class="whatsapp-sidebar-header">
                         <img src="/img/logo3d.PNG" alt="Perfil" class="whatsapp-profile-pic-sidebar">
-                        <input type="text" placeholder="Buscar o empezar un nuevo chat" class="whatsapp-search-bar">
+                        <input type="text" placeholder="Buscar..." class="whatsapp-search-bar">
                     </div>
                     <ul id="clientList">
                         <!-- Se llenará dinámicamente con clientes -->

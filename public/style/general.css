@@ -1,14 +1,26 @@
-/* Fondo de toda la página */
+/* general.css (archivo principal) */
+:root {
+    --primary-color: #6b00ad;
+    --secondary-color: #ff914d;
+    --background-color: #f3f3f3;
+    --text-color: #000000;
+    --text-muted-color: #6b6b6b;
+    --white-color: #fdfdfd;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Otros estilos globales */
 body, html {
     margin: 0;
     padding: 0;
     height: 100%;
     font-family: 'Montserrat', sans-serif;
+    background-color: rgb(231 231 231);
 }
 
 /* Contenedor principal que contiene todo el contenido */
 .content-container {
-    background-color: #f3f3f3;
+    background-color: var(--white-color);
     padding: 25px;
     border-radius: 15px;
     max-width: 80%;

@@ -4,16 +4,17 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    background-color: #ffffff;
+    background-color: var(--white-color);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     position: fixed;
-    top: -85px;
+    top: 0;
     left: 0;
-    width: calc(100% - 260px);
+    width: 80%;
     margin-left: 260px;
     z-index: 1000;
     transition: opacity 0.2s ease;
+    margin-top: 10px;
 }
 
 /* Estilo para el contenedor de la hora y la fecha */
