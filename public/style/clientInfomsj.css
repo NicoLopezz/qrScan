@@ -1,0 +1,53 @@
+/* Cuadro de información del cliente */
+.client-info-box {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 7px 12px 15px 9px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    max-width: 300px;
+}
+
+.client-info-box h3 {
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: #333;
+    text-align: center;
+}
+
+.cardM{
+    margin-top: 20%;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 9px 9px 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+
+.client-details {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.client-details th {
+    text-align: left;
+    padding: 8px;
+    font-weight: bold;
+    color: #555;
+}
+
+.client-details td {
+    text-align: right;
+    padding: 8px;
+    color: #333;
+}
+
+.stars {
+    color: #ffcc00; /* Color de las estrellas */
+}

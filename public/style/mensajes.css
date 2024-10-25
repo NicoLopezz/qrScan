@@ -1,5 +1,46 @@
 /* Sección de mensajes (WhatsApp Web Simulador) */ 
 
+/* Estilo normal del botón enviar (verde) */
+#sendButton {
+    background-color: #25D366; /* Verde */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* Estilo cuando se seleccionan múltiples clientes (violeta) */
+#sendButton.multiple-selected {
+    background-color: #6b00ad; /* Violeta fuerte */
+    color: white;
+}
+
+
+.section-mensajes{
+    display: grid;
+    grid-template-columns: 62% 1fr;
+    gap: 50px;
+    justify-items: center;
+}
+
+
+/* Estilo para los clientes cuando están seleccionados */
+.selected-client {
+    background-color: #e1d4f9; /* Color violeta claro */
+    font-weight: bold;
+}
+
+/* Efecto hover, pero no debe sobrescribir al seleccionado */
+.client-item:hover {
+    background-color: #f0f0f0; /* Color cuando se pasa el ratón */
+}
+
+/* Si el cliente está seleccionado, debe mantener el color de selección aunque se haga hover */
+.client-item.selected-client:hover {
+    background-color: #e1d4f9; /* Mantén el color violeta claro cuando está seleccionado y se pasa el ratón */
+}
+
 .whatsapp-simulator-box * {
     margin: 0;
     padding: 0;
@@ -9,12 +50,12 @@
 
 .whatsapp-simulator-box {
     display: flex;
-    max-width: 800px;
     height: 80vh;
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     background-color: #fff;
+    width: 100%;
 }
 
 /* Barra lateral */
@@ -42,14 +83,37 @@
     margin-right: 10px;
 }
 
+/* Estilo para la barra de búsqueda */
 .whatsapp-search-bar {
-    flex-grow: 1;
-    padding: 5px;
+    width: 100%;
+    padding: 5px 10px;
     border-radius: 20px;
     border: none;
     background-color: #f6f6f6;
-    font-size: 10px;
+    font-size: 14px;
     color: #666;
+    position: relative;
+    box-sizing: border-box;
+}
+
+/* Estilo para la cruz de limpiar el campo */
+.clear-search {
+    display: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #888;
+    font-size: 18px;
+}
+
+.clear-search:hover {
+    color: #555;
+}
+
+.whatsapp-sidebar-header {
+    position: relative;
 }
 
 ul {
@@ -199,4 +263,77 @@ li:hover {
     border: none;
     background-color: #fff;
     font-size: 14px;
+}
+
+/* Estilo por defecto del botón de Enviar (verde) */
+.whatsapp-send-button {
+    background-color: #25D366; /* Color verde de WhatsApp */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    margin-left: 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.whatsapp-send-button:hover {
+    background-color: #20b259; /* Un tono más oscuro al pasar el ratón */
+}
+
+/* Cambiar el color del botón cuando se seleccionan múltiples clientes (violeta fuerte) */
+.whatsapp-send-button.multiple-selected {
+    background-color: #6b00ad; /* Color violeta fuerte */
+    color: white; /* Texto en blanco */
+}
+
+.whatsapp-send-button.multiple-selected:hover {
+    background-color: #550085; /* Un tono más oscuro de violeta al pasar el mouse */
+}
+
+/* Estilos para el cliente */
+.client-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+}
+
+.client-item:hover {
+    background-color: #f0f0f0;
+}
+
+/* Estilos para el checkbox */
+.client-checkbox {
+    margin-right: 10px;
+}
+
+/* Cliente seleccionado */
+.selected-client {
+    background-color: #e1d4f9; /* Color violeta claro */
+}
+
+.selected-client .client-info {
+    font-weight: bold;
+}
+
+/* Estilos para los botones de selección */
+.select-buttons {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+}
+
+.select-button {
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.select-button:hover {
+    background-color: #e0e0e0;
 }
