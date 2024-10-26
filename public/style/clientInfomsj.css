@@ -5,7 +5,8 @@
     border-radius: 10px;
     box-shadow: 7px 12px 15px 9px rgba(0, 0, 0, 0.1);
     margin-top: 20px;
-    max-width: 300px;
+    width: 92%;
+    height: 55%;
 }
 
 .client-info-box h3 {
@@ -50,4 +51,8 @@
 
 .stars {
     color: #ffcc00; /* Color de las estrellas */
+}
+
+.right-mess-colum{
+    width: 400px;
 }

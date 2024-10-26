@@ -26,10 +26,11 @@ document.addEventListener("DOMContentLoaded", () => {
         clearSearch.style.display = searchInput.value ? 'inline' : 'none';
     });
 
-    // Manejar el clic en cada cliente para cargar el chat
+    // Manejar el clic en cada cliente para cargar el chat y la información
     function handleClientClick(client) {
-        setCurrentClient(client);
-        loadChat(client);
+        setCurrentClient(client); // Establecer el cliente actual
+        loadChat(client); // Cargar el historial de chat del cliente
+        loadClientData(client); // Cargar la información del cliente en la caja de datos
     }
 
     // Enviar mensaje al hacer clic en el botón
@@ -56,3 +57,20 @@ document.addEventListener("DOMContentLoaded", () => {
         deselectAllClients();
     });
 });
+
+// Función para cargar la información del cliente en la caja de datos
+function loadClientData(client) {
+    document.getElementById('client-name').textContent = client.name;
+    document.getElementById('client-phone').textContent = client.number;
+    document.getElementById('client-score').textContent = client.score || '8.5/10';
+    document.getElementById('client-loyalty').innerHTML = generateStars(client.visits || 3);
+    document.getElementById('client-address').textContent = client.address || '123 Calle Falsa';
+    document.getElementById('client-local').textContent = client.local || 'Bar de Juan';
+    document.getElementById('client-resent').textContent = client.resent || '25/11/2024';
+}
+
+// Función para generar estrellas de fidelidad
+function generateStars(visits) {
+    let stars = '⭐'.repeat(visits) + '☆'.repeat(5 - visits);
+    return `<span class="stars">${stars}</span>`;
+}
