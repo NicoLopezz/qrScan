@@ -22,7 +22,7 @@ router.post('/webhook', autenthication.reciveMessage);
 
 // Ruta para servir el archivo index
 router.get('/qrScan', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../public/qrScan.html'));
+    res.sendFile(path.join(__dirname, '../../public/pages/qrScan.html'));
 });
 
 // Nueva ruta para obtener los locales (API)
@@ -30,7 +30,7 @@ router.get('/locales', autenthication.getLocales);
 
 // Ruta para servir el formulario de nuevo local
 router.get('/newLocal', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../public/register.html'));
+    res.sendFile(path.join(__dirname, '../../public/pages/register.html'));
 });
 router.post('/newLocal', autenthication.newLocal);
 
@@ -39,25 +39,24 @@ router.get('/locales/:id', autenthication.getLocalDetails);
 
 // Ruta para servir el formulario de nuevo local
 router.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../public/login.html'));
+    res.sendFile(path.join(__dirname, '../../public/pages/login.html'));
 });
 // Ruta para notificar al usuario cuando su pedido esté listo
 router.post('/login', autenthication.login);
 
 // Ruta para servir el formulario de nuevo local
 router.get('/dashboardLocalAdmin/:user', autenthication.validateUser, (req, res) => {
-    res.sendFile(path.join(__dirname, '../../public/dashboardLocalAdmin.html'));
+    res.sendFile(path.join(__dirname, '../../public/pages/dashboardAdmin.html'));
 });
 //ruta para ver el tablero
 router.get('/dashboar/:user',autenthication.validateUser, (req, res) => {
-    res.sendFile(path.join(__dirname, '../../public/dashboard.html'));
+    res.sendFile(path.join(__dirname, '../../public/pages/dashboard.html'));
 });
 
 // Ruta para servir el archivo HTML del dashboard admin
 router.get('/dashboardAdmin', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../public/dashboardAdmin.html'));
+    res.sendFile(path.join(__dirname, '../../public/pages/dashboardSuperAdmin.html'));
 });
-
 
 
 router.post('/updateTagSelected/:idLocal', autenthication.updateTagSelected);
@@ -68,10 +67,6 @@ router.post('/readyPickUp/:idLocal', autenthication.notifyUserForPickUp);
 // Ruta para notificar al usuario que su pedido fue retirado
 router.post('/confirmPickedUp/:idLocal', autenthication.notifyUserPickedUp);
 
-// // Ruta para notificar al usuario cuando su pedido esté listo
-// router.post('/', autenthication.notifyUserForPickUp);
-
-  
 router.get('/qrScanUpdate/:localId',autenthication.qrScanUpdate, (req, res) => {
     res.send('QR Scan Update Endpoint');
 });
