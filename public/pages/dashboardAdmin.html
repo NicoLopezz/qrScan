@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <!-- Font Awesome y Google Fonts -->
-    <link rel="stylesheet" href="/style/topBar.css">
-    <link rel="stylesheet" href="/style/general.css">
-    <link rel="stylesheet" href="/style/sidebar.css">
-    <link rel="stylesheet" href="/style/dashboard2.css">
-    <link rel="stylesheet" href="/style/faq.css">
-    <link rel="stylesheet" href="/style/mensajes.css">
-    <link rel="stylesheet" href="/style/clientInfomsj.css">
-    <link rel="stylesheet" href="/style/profile.css">
+    <link rel="stylesheet" href="/style/dashboardAdmin/topBar.css">
+    <link rel="stylesheet" href="/style/dashboardAdmin/general.css">
+    <link rel="stylesheet" href="/style/dashboardAdmin/sidebar.css">
+    <link rel="stylesheet" href="/style/dashboardAdmin/dashboard2.css">
+    <link rel="stylesheet" href="/style/dashboardAdmin/faq.css">
+    <link rel="stylesheet" href="/style/dashboardAdmin/mensajes.css">
+    <link rel="stylesheet" href="/style/dashboardAdmin/clientInfomsj.css">
+    <link rel="stylesheet" href="/style/dashboardAdmin/profile.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&display=swap" rel="stylesheet">
 </head>
@@ -41,8 +41,10 @@
                 <i class="fas fa-user"></i> Profile
             </li>
             <li class="menu-item" data-section="logout">
-                <i class="fas fa-sign-out-alt"></i> LogOut
-            </li>
+                <a href="../login" class="no-decoration">
+                    <i class="fas fa-sign-out-alt"></i>LogOut
+                </a>
+            </li>            
         </ul>
     </nav>
 </div>
@@ -50,7 +52,7 @@
 
 <!-- Barra superior -->
 <div class="topBar">
-    <h1>Bienvenido,</h1>
+    <h1>Nombre Del Local: <span id="localName"></span></h1>
     <div class="date-time-container">
         <p id="time"></p>
         <p id="date"></p>
@@ -69,8 +71,8 @@
                         <i class="fas fa-box"></i>
                     </div>
                     <div class="card-content">
-                        <h3 class="titleCard">Pedidos del día</h3>
-                        <p class="card-number">256</p>
+                        <h3 class="titleCard">Total De pedidos</h3>
+                        <p id="totalPedidos" class="card-number">0</p>
                     </div>
                 </div>
                 <div class="card">
@@ -79,7 +81,7 @@
                     </div>
                     <div class="card-content">
                         <h3>Nuevos Clientes</h3>
-                        <p class="card-number">2260</p>
+                        <p id="clientCount" class="card-number">0</p>
                     </div>
                 </div>
                 <div class="card">
@@ -107,26 +109,16 @@
                         <tr>
                             <th>Nombre</th>
                             <th>Teléfono</th>
-                            <th>Mensajes</th>
+                            <th>Pedidos</th>
                             <th>Puntuación</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>Juan Pérez</td>
-                            <td>+123456789</td>
-                            <td>10</td>
-                            <td>5</td>
-                        </tr>
-                        <tr>
-                            <td>María García</td>
-                            <td>+987654321</td>
-                            <td>15</td>
-                            <td>4.8</td>
-                        </tr>
+                    <tbody id="clientTableBody">
+                        <!-- Las filas de clientes se cargarán aquí dinámicamente -->
                     </tbody>
                 </table>
             </div>
+            
         </div>
 
         <!-- Sección para crear un usuario -->
@@ -391,13 +383,11 @@
 
 <!-- Cargar los gráficos y el JavaScript principal -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="/js/charts.js"></script>
-    <script src="/js/faq.js"></script>
-    <script src="/js/sidebar.js"></script>
-    <!-- <script src="/js/chat.js"></script> -->
-    <script src="/js/dateTime.js"></script>
-
-
+    <script src="/js/dashboardAdmin/charts.js"></script>
+    <script src="/js/dashboardAdmin/faq.js"></script>
+    <script src="/js/dashboardAdmin/sidebar.js"></script>
+    <script src="/js/dashboardAdmin/dateTime.js"></script>
+    <script src="/js/dashboardAdmin/showData.js"></script>
     <script type="module" src="/js/messages/main.js"></script>
 
 

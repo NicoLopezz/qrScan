@@ -579,6 +579,24 @@ async function qrScanUpdate(req, res) {
     }
 }
 
+async function catchDbData(req, res) {
+  const adminId = req.params.adminId; // Actualiza para recibir adminId
+  try {
+    const admin = await Admin.findById(adminId); // Busca por ID
+    
+    if (admin) {
+      return res.status(200).json({ message: 'Información del usuario', data: admin });
+    } else {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+  } catch (error) {
+    console.error("Error al acceder a la base de datos:", error);
+    return res.status(500).json({ message: 'Error interno del servidor' });
+  }
+}
+
+
+
 
 
 export const methods = {
@@ -592,6 +610,7 @@ export const methods = {
     getLocalDetails,
     updateTagSelected,
     validateUser,
-    qrScanUpdate
+    qrScanUpdate,
+    catchDbData
     // changeDbDashboard,
 };

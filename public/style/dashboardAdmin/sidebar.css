@@ -18,6 +18,16 @@
     padding: 20px 0;
 }
 
+.no-decoration {
+    color: inherit;          /* Usa el color del padre (el <li>) */
+    text-decoration: none;   /* Quita el subrayado */
+}
+
+.no-decoration:hover {
+    color: inherit;          /* Mantiene el color en hover */
+}
+
+
 .sidebar .logo img {
     width: 65%;
 }
