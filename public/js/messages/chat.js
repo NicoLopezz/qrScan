@@ -1,5 +1,3 @@
-import { clients } from './clients.js'; // Importar el array de clientes
-
 // Variable para almacenar el cliente actual
 let currentClient = null;
 
@@ -13,27 +11,39 @@ export function loadChat(client) {
     const chatHistory = document.getElementById('chatHistory');
     chatHistory.innerHTML = ''; // Limpiar el historial de chat anterior
     const phoneNumber = document.getElementById('phoneNumber');
-    phoneNumber.textContent = client.number; // Mostrar el número del cliente
+    phoneNumber.textContent = client.from || client.number; // Mostrar el número del cliente
 
-    // Recorrer y mostrar los mensajes del historial del cliente
-    client.messages.forEach(message => {
-        const div = document.createElement('div');
-        div.classList.add('whatsapp-message', message.type === 'sent' ? 'whatsapp-sent' : 'whatsapp-received');
-        div.innerHTML = `
-            ${message.text}
-            <span class="whatsapp-message-time">${message.time}</span>
-        `;
-        chatHistory.appendChild(div);
+    // Recorrer cada pedido en historialPedidos y mostrar todos los mensajes
+    client.historialPedidos.forEach(pedido => {
+        pedido.mensajes.forEach(message => {
+            const div = document.createElement('div');
+            div.classList.add(
+                'whatsapp-message',
+                message.type === 'sent' ? 'whatsapp-sent' : 'whatsapp-received'
+            );
+
+            // Formatear la fecha para que sea legible
+            const messageDate = new Date(message.fecha).toLocaleDateString('es-ES', {
+                day: '2-digit', month: '2-digit', year: 'numeric',
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
+            });
+
+            div.innerHTML = `
+                ${message.body}
+                <span class="whatsapp-message-time">${messageDate}</span>
+            `;
+            chatHistory.appendChild(div);
+        });
     });
 
     // Desplazar hacia abajo el historial de chat para ver los últimos mensajes
     chatHistory.scrollTop = chatHistory.scrollHeight;
 }
 
-// Función para enviar mensaje a un cliente o a varios clientes seleccionados (difusión)
+
 export function sendMessage() {
     const messageText = document.getElementById('messageInput').value;
-    const currentTime = new Date().toLocaleString('es-ES');
+    const currentTime = new Date().toISOString();
 
     if (messageText.trim() === '') {
         return; // No enviar si el mensaje está vacío
@@ -44,18 +54,18 @@ export function sendMessage() {
 
     if (selectedTotal === 0 && currentClient) {
         // Si no hay clientes seleccionados, enviar al cliente actual
-        const newMessage = { text: messageText, type: 'sent', time: currentTime };
-        currentClient.messages.push(newMessage); // Agregar el mensaje al historial del cliente actual
+        const newMessage = { body: messageText, fecha: currentTime, type: 'sent' };
+        currentClient.historialPedidos[0].mensajes.push(newMessage); // Agregar el mensaje al historial del cliente actual
         loadChat(currentClient); // Recargar el historial de chat del cliente actual
     } else if (selectedTotal >= 1) {
         // Si hay uno o más clientes seleccionados, enviar el mensaje a ellos (difusión)
         selectedCheckboxes.forEach(checkbox => {
             const selectedClientNumber = checkbox.closest('li').querySelector('.client-number').textContent;
-            const selectedClient = clients.find(client => client.number === selectedClientNumber);
+            const selectedClient = clients.find(client => client.from === selectedClientNumber);
 
             if (selectedClient) {
-                const newMessage = { text: messageText, type: 'sent', time: currentTime };
-                selectedClient.messages.push(newMessage); // Agregar el mensaje al historial del cliente seleccionado
+                const newMessage = { body: messageText, fecha: currentTime, type: 'sent' };
+                selectedClient.historialPedidos[0].mensajes.push(newMessage); // Agregar el mensaje al historial del cliente seleccionado
             }
         });
 
@@ -71,4 +81,3 @@ export function sendMessage() {
     // Actualizar el contador de clientes seleccionados después de enviar el mensaje
     updateSelectedCount();
 }
-

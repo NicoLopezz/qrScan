@@ -64,24 +64,6 @@ function getCookie(name) {
         clientCountElement.textContent = userInfo.clientes.length;
     }
 
-    // Calcular y mostrar total de pedidos del día
-    const totalPedidosElement = document.getElementById("totalPedidos");
-    let totalPedidos = 0;
-
-    if (Array.isArray(userInfo.clientes)) {
-        userInfo.clientes.forEach(cliente => {
-            if (Array.isArray(cliente.historialPedidos)) {
-                totalPedidos += cliente.historialPedidos.length;
-            }
-        });
-    }
-
-    if (totalPedidosElement) {
-        totalPedidosElement.textContent = totalPedidos;
-    } else {
-        console.error("No se encontró el elemento para mostrar el total de pedidos.");
-    }
-
     // Cargar clientes en la tabla
     const clientTableBody = document.getElementById("clientTableBody");
     clientTableBody.innerHTML = ""; // Limpiar el contenido previo
@@ -107,7 +89,7 @@ function getCookie(name) {
 
             // Puntuación
             const scoreCell = document.createElement("td");
-            scoreCell.textContent = "N/A";
+            scoreCell.textContent = cliente.from || "No-Disponible";
             row.appendChild(scoreCell);
 
             clientTableBody.appendChild(row);
@@ -116,5 +98,4 @@ function getCookie(name) {
         console.error("El listado de clientes no es un array.");
     }
 }
-
 
