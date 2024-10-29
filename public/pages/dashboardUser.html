@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <!-- Font Awesome y Google Fonts -->
+    <link rel="stylesheet" href="/style/dashboardAdmin/topBar.css">
+    <link rel="stylesheet" href="/style/dashboardAdmin/general.css">
+    <link rel="stylesheet" href="/style/dashboardAdmin/sidebar.css">
+    <link rel="stylesheet" href="/style/dashboardAdmin/dashboard2.css">
+    <link rel="stylesheet" href="/style/dashboardAdmin/faq.css">
+    <link rel="stylesheet" href="/style/dashboardAdmin/clientInfomsj.css">
+    <link rel="stylesheet" href="/style/dashboardAdmin/profile.css">
+    <link rel="stylesheet" href="/style/dashboardUser/reservas.css">
+    <link rel="stylesheet" href="/style/dashboardUser/dashboardUser.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- Menú lateral -->
+<div id="sidebar" class="sidebar">
+    <div class="logo">
+        <img src="/img/LogoVioletaFondoBlanco.png" alt="Horizon Logo">
+    </div>
+    <nav>
+        <ul>
+            <li class="menu-item" data-section="dashboard">
+                <i class="fas fa-home"></i>Dashboard
+            </li>
+            <li class="menu-item" data-section="pedidos">
+                <i class="fas fa-home"></i>Pedidos
+            </li>
+            <li class="menu-item mensajes" data-section="mensajes">
+                <i class="fas fa-table"></i> Reservas            
+            </li>
+            <li class="menu-item" data-section="faq">
+                <i class="fas fa-question-circle"></i> FAQ
+            </li>
+            <li class="menu-item" data-section="logout">
+                <a href="../login" class="no-decoration">
+                    <i class="fas fa-sign-out-alt"></i>LogOut
+                </a>
+            </li>            
+        </ul>
+    </nav>
+</div>
+
+
+<!-- Barra superior -->
+<div class="topBar">
+    <h1>Nombre Del Local: <span id="localName"></span></h1>
+    <div class="date-time-container">
+        <p id="time"></p>
+        <p id="date"></p>
+    </div>
+</div>
+
+<!-- Contenedor principal del contenido -->
+<div class="content-container">
+    <div class="main-content">
+
+        <!-- Sección Dashboard (activa por defecto) -->
+        <div id="section-dashboard" class="section active">
+            <div class="cards">
+                <div class="card">
+                    <div class="icon-container">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="titleCard">Total De pedidos</h3>
+                        <p id="totalPedidos" class="card-number">0</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="icon-container">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Nuevos Clientes</h3>
+                        <p id="clientCount" class="card-number">0</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="icon-container">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Tiempo de entrega</h3>
+                        <p class="card-number">3730</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-and-counter">
+                <div class="charts">
+                    <canvas id="chart1"></canvas>
+                    <canvas id="chart2"></canvas>
+                </div>
+            </div>
+
+            <div class="table-section">
+                <h2>Listado de Usuarios</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Teléfono</th>
+                            <th>Pedidos</th>
+                            <th>Puntuación</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clientTableBody">
+                        <!-- Las filas de clientes se cargarán aquí dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+            
+        </div>
+
+        <!-- Seccion de pedidos -->
+        <div id="section-pedidos" class="section">
+  <div class="container">
+    <div class="tags-section">
+      <h2>Tags libres</h2>
+      <div class="grid-container" id="free-tags">
+        <!-- 50 cuadros libres -->
+        <script>
+          for (let i = 1; i <= 50; i++) {
+            document.write(`<div class="grid-item" data-number="${i}" onclick="moveToOrder(this)">${i}</div>`);
+          }
+        </script>
+      </div>
+    </div>
+
+    <div class="tags-section">
+      <h2>Tags con pedido</h2>
+      <div class="grid-container" id="ordered-tags">
+        <!-- Los cuadros seleccionados aparecerán aquí -->
+      </div>
+    </div>
+
+    <div class="tags-section">
+      <h2>Tags pendientes de retiro</h2>
+      <div class="grid-container" id="pending-tags">
+        <!-- Los cuadros seleccionados aparecerán aquí -->
+      </div>
+    </div>
+  </div>
+        </div>
+
+        <!-- Sección Reservas -->
+        <div id="section-mensajes" class="section">
+            <div class="container">
+                <!-- Tabla de Datos -->
+                <div class="tabla">
+                    <h3>Clientes</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Comensales</th>
+                                <th>Observación</th>
+                                <th>Cuenta Regresiva</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaClientes">
+                            <!-- Filas de datos se agregarán dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+        
+                <!-- Tarjeta del Cliente Seleccionado -->
+                <div class="tarjeta">
+                    <h3 id="nombreCliente">Nombre del Cliente</h3>
+                    <p id="comensales">Comensales: --</p>
+                    <p id="observacion">Observación: --</p>
+                    <button id="btnIniciar" onclick="iniciarCuentaRegresiva()">Iniciar Cuenta Regresiva</button>
+                    <button id="btnReiniciar" onclick="reiniciarCuentaRegresiva()">Reiniciar</button>
+                    <div class="contador" id="contadorCirculo">
+                        <span id="tiempoRestante">5:00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección FAQ -->
+        <div id="section-faq" class="section">
+            <h2>Preguntas Frecuentes</h2>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>¿Cómo puedo crear un nuevo usuario?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Para crear un nuevo usuario, dirígete a la sección "Users" y completa el formulario con el email, contraseña y rol del nuevo usuario.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>¿Cómo puedo cambiar mi contraseña?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Puedes cambiar tu contraseña desde la sección "Profile".</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>¿Cómo puedo ver las estadísticas?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Las estadísticas están disponibles en la sección "Dashboard". Allí puedes ver gráficos y detalles de los usuarios.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección Profile -->
+        <div id="section-profile" class="section">
+        <div id="profile-section-container">
+      
+            <!-- Columna izquierda: Información del Usuario -->
+        <div class="profile-column left-column">
+         <div class="rect-image">
+            <div class="rectangle">
+              <h1 class="titleBox">General</h1>
+            </div>
+          </div>
+        <ul class="user-info">
+          <li><strong>Nombre Usuario:</strong> Juan Pérez</li>
+          <li><strong>Teléfono / Local:</strong> +54 9 11 1234 5678</li>
+          <li><strong>Nombre:</strong> Bar La Esquina</li>
+          <li><strong>Teléfono app:</strong> +54 9 11 8765 4321</li>
+          <li><strong>Correo Principal:</strong> juan.perez@example.com</li>
+          <li><strong>Dirección:</strong> Av. Siempre Viva 123, Buenos Aires</li>
+          <li><strong>Correo Principal:</strong> contacto@laesquina.com</li>
+          <li><strong>Pass actual:</strong> •••••••••</li>
+        </ul>
+      </div>
+      
+      <!-- Columna central: Plan Contratado -->
+      <div class="profile-column center-column">
+        <div class="rect-image">
+            <div class="rectangle">
+              <h1 class="titleBox">Plan</h1>
+            </div>
+          </div>
+        <ul class="plan-info">
+          <li><strong>Plan Contratado:</strong> Premium</li>
+          <li><strong>Fecha de renovación:</strong> 24/11/2024</li>
+          <li><strong>Mensajes restantes:</strong> 34/500</li>
+        </ul>
+      </div>
+  
+      <!-- Columna derecha: Información de Facturación -->
+      <div class="profile-column right-column">
+        <div class="rect-image"> 
+            <div class="rectangle">
+              <h1 class="titleBox">Facturacion</h1>
+            </div>
+          </div>
+        <ul class="billing-info">
+          <li><strong>CBU:</strong> 0123456789012345678901</li>
+          <li><strong>Alias:</strong> mi.alias.bancario</li>
+          <li><strong>Medio de Pago:</strong> Tarjeta de Crédito</li>
+        </ul>
+      </div>
+    
+    </div>
+        </div>
+  
+        
+
+    </div>
+</div>
+
+<!-- Cargar los gráficos y el JavaScript principal -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/js/dashboardAdmin/charts.js"></script>
+    <script src="/js/dashboardAdmin/faq.js"></script>
+    <script src="/js/dashboardAdmin/sidebar.js"></script>
+    <script src="/js/dashboardAdmin/dateTime.js"></script>
+    <script src="/js/dashboardAdmin/showData.js"></script>
+    <script src="/js/dashboardUser/reservas.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrious/dist/qrious.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/dashboardUser/dashboardUser.js"></script>
+    <script type="module" src="/js/messages/main.js"></script>
+    
+
+
+</body>
+</html>

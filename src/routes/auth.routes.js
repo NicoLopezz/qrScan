@@ -31,17 +31,27 @@ router.get('/login', (req, res) => {
 });
 router.post('/login', autenthication.login);
 
+
+//Ruta para el usuario Administrador
 router.get('/dashboardLocalAdmin/:user', autenthication.validateUser, (req, res) => {
     res.sendFile(path.join(__dirname, '../../public/pages/dashboardAdmin.html'));
 });
 
+
+
+
+
 // Ruta para agregar un mensaje desde el dashboard local admin
 router.post('/dashboardLocalAdmin/:adminId/addMessage', autenthication.addMessage);
 
-// Ruta para el tablero general
+
+//Ruta para el usuario estandar.
 router.get('/dashboar/:user', autenthication.validateUser, (req, res) => {
-    res.sendFile(path.join(__dirname, '../../public/pages/dashboard.html'));
+    res.sendFile(path.join(__dirname, '../../public/pages/dashboardUser.html'));
 });
+
+
+
 
 // Ruta para el dashboard del super administrador
 router.get('/dashboardAdmin', (req, res) => {
