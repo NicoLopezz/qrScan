@@ -7,7 +7,6 @@ const usuarioSchema = new mongoose.Schema({
   permiso: { type: String, default: 'user' }  // Permiso de subusuarios
 });
 
-// Esquema para los clientes
 const clienteSchema = new mongoose.Schema({
   solicitudBaja: { type: Boolean, default: false },  // Si el cliente ha solicitado la baja
   from: { type: String, required: true },  // Información del cliente (número de teléfono, etc.)
@@ -23,7 +22,12 @@ const clienteSchema = new mongoose.Schema({
       fecha: { type: String, default: '' }  // Fecha del mensaje
     }]
   }],
-  promedioTiempo: { type: Number, default: 0 }  // Promedio del tiempo de espera en segundos
+  promedioTiempo: { type: Number, default: 0 },  // Promedio del tiempo de espera en segundos
+  mensajesEnviados: [{
+    fecha: { type: String, required: true },  // Fecha del mensaje (e.g., "2024-10-28")
+    // hora: { type: String, required: true },   // Hora del mensaje (e.g., "13:00:00")
+    body: { type: String, required: true }    // Contenido del mensaje
+  }]
 });
 
 // Esquema para los pagos

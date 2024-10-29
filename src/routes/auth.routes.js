@@ -3,71 +3,58 @@ import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { methods as autenthication } from "../controllers/auth.controller.js";
 
-
-// Obtener __dirname en contexto de módulos ES
 const router = express.Router();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-
-
-//proximamente
+// Ruta principal
 router.get("/", async (req, res) => { 
     res.sendFile(path.join(__dirname, '../../public/index.html'));
 });
 
-// Ruta para recibir mensajes de Twilio
+// Rutas relacionadas con la funcionalidad de Twilio
 router.post('/webhook', autenthication.reciveMessage);
 
-
-// Ruta para servir el archivo index
+// Rutas de archivos estáticos
 router.get('/qrScan', (req, res) => {
     res.sendFile(path.join(__dirname, '../../public/pages/qrScan.html'));
 });
 
-// Nueva ruta para obtener los locales (API)
+// Rutas de la API para los locales
 router.get('/locales', autenthication.getLocales);
-
-// Ruta para servir el formulario de nuevo local
-router.get('/newLocal', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../public/pages/register.html'));
-});
 router.post('/newLocal', autenthication.newLocal);
-
-// Ruta para obtener los detalles de un local específico
 router.get('/locales/:id', autenthication.getLocalDetails);
 
-// Ruta para servir el formulario de nuevo local
+// Rutas para login y dashboard
 router.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, '../../public/pages/login.html'));
 });
-// Ruta para notificar al usuario cuando su pedido esté listo
 router.post('/login', autenthication.login);
 
-// Ruta para servir el formulario de nuevo local
 router.get('/dashboardLocalAdmin/:user', autenthication.validateUser, (req, res) => {
     res.sendFile(path.join(__dirname, '../../public/pages/dashboardAdmin.html'));
 });
-//ruta para ver el tablero
-router.get('/dashboar/:user',autenthication.validateUser, (req, res) => {
+
+// Ruta para agregar un mensaje desde el dashboard local admin
+router.post('/dashboardLocalAdmin/:adminId/addMessage', autenthication.addMessage);
+
+// Ruta para el tablero general
+router.get('/dashboar/:user', autenthication.validateUser, (req, res) => {
     res.sendFile(path.join(__dirname, '../../public/pages/dashboard.html'));
 });
 
-// Ruta para servir el archivo HTML del dashboard admin
+// Ruta para el dashboard del super administrador
 router.get('/dashboardAdmin', (req, res) => {
     res.sendFile(path.join(__dirname, '../../public/pages/dashboardSuperAdmin.html'));
 });
 
-
+// Rutas de acciones específicas en pedidos
 router.post('/updateTagSelected/:idLocal', autenthication.updateTagSelected);
-
-// Ruta para notificar al usuario cuando su pedido esté listo
 router.post('/readyPickUp/:idLocal', autenthication.notifyUserForPickUp);
-
-// Ruta para notificar al usuario que su pedido fue retirado
 router.post('/confirmPickedUp/:idLocal', autenthication.notifyUserPickedUp);
 
-router.get('/qrScanUpdate/:localId',autenthication.qrScanUpdate, (req, res) => {
+// Ruta para actualización de QR
+router.get('/qrScanUpdate/:localId', autenthication.qrScanUpdate, (req, res) => {
     res.send('QR Scan Update Endpoint');
 });
 

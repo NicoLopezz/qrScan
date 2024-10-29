@@ -2,6 +2,12 @@ import Admin from '../models/adminModel.js';  // Nuevo modelo Cliente con histor
 import { sendWhatsAppMessage, sendWhatsAppTemplateMessage } from '../services/twilioService.js';
 import dayjs from 'dayjs'; // Recomendado para manejar fechas
 import { faker } from '@faker-js/faker';
+// import Cliente from '../models/cliente.model.js'; // Ajusta la ruta si es necesario
+
+
+
+
+
 
 
 async function reciveMessage(req, res) {
@@ -296,7 +302,7 @@ async function newLocal(req, res) {
     
         const randomClient = {
           solicitudBaja: false,
-          from: faker.internet.email(),
+          from: faker.phone.number('+54 9 ### ### ####'),  // Número de teléfono aleatorio con formato argentino
           historialPedidos: [{
             tagNumber: faker.number.int({ min: 100, max: 999 }),
             fechaPedido: faker.date.recent(),
@@ -309,7 +315,13 @@ async function newLocal(req, res) {
               { body: faker.lorem.sentence(), fecha: faker.date.recent().toISOString() }
             ]
           }],
-          promedioTiempo: faker.number.int({ min: 10, max: 60 })
+          promedioTiempo: faker.number.int({ min: 10, max: 60 }),
+            // Generar 5 mensajes aleatorios para el campo `mensajesEnviados`
+          mensajesEnviados: Array.from({ length: 5 }, () => ({
+          fecha: faker.date.recent().toISOString(),
+          body: faker.lorem.sentence()  // Contenido del mensaje
+  }))
+          
         };
     
         const randomPayment = {
@@ -597,6 +609,44 @@ async function catchDbData(req, res) {
 
 
 
+export async function addMessage(req, res) {
+  const { adminId } = req.params; // ID del admin/local
+  const { body } = req.body; // Mensaje a agregar, incluyendo `to`, `body`, `fecha`, `hora`
+
+  try {
+      // Encuentra el admin/local por su ID
+      const admin = await Admin.findById(adminId);
+
+      if (!admin) {
+          return res.status(404).json({ message: 'Admin/local no encontrado.' });
+      }
+
+      // Encuentra el cliente en la lista de `clientes` cuyo `from` coincida con `to` en el mensaje
+      const client = admin.clientes.find(c => c.from === body.to);
+
+      if (!client) {
+          return res.status(404).json({ message: 'Cliente no encontrado.' });
+      }
+
+      // Agrega el nuevo mensaje al array `mensajesEnviados` del cliente
+      client.mensajesEnviados.push({
+          body: body.body,
+          fecha: body.fecha,
+          hora: body.hora
+      });
+
+      // Guarda los cambios en la base de datos
+      await admin.save();
+
+      res.status(200).json({ message: 'Mensaje guardado exitosamente.' });
+  } catch (error) {
+      console.error('Error al guardar el mensaje:', error);
+      res.status(500).json({ message: 'Error al guardar el mensaje.' });
+  }
+}
+
+
+
 
 
 export const methods = {
@@ -611,6 +661,6 @@ export const methods = {
     updateTagSelected,
     validateUser,
     qrScanUpdate,
-    catchDbData
-    // changeDbDashboard,
+    catchDbData,
+    addMessage
 };
