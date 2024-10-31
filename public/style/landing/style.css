@@ -103,7 +103,7 @@ p.lead {
 }
 
 .btn {
-    font-size: 12px;
+    font-size: 18px;
     font-weight: 400;
     text-transform: uppercase;
     padding: 0.375rem 1.35rem;
@@ -113,6 +113,37 @@ p.lead {
 .btn-outline-light:hover {
     color: #d6619c;
 }
+
+.iconNovedades img{
+    width: 60px;
+}
+
+.pulse-btn {
+    animation: pulse 2s infinite; /* Efecto de latido */
+    transition: transform 0.3s, background-color 0.3s;
+}
+
+.section-title small{
+    font-size: 20px;
+}
+
+/* Efecto de latido */
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+/* Efecto al pasar el mouse */
+.pulse-btn:hover {
+    transform: scale(1.15); /* Aumenta el tamaño en el hover */
+    background-color: #ff914d; /* Cambia el color en el hover */
+    color: #ffffff; /* Cambia el color del texto en el hover */
+}
+
 
 .btn-primary {
     border-radius: 3px;
@@ -280,6 +311,12 @@ p.lead {
     height: auto;
 } */
 
+/* Archivo CSS personalizado */
+.container {
+    max-width: 1500px; /* Ajusta el valor como necesites */
+}
+
+
 .container.grid-layout {
     display: grid;
     grid-template-columns: 45% 55%;
@@ -293,6 +330,7 @@ p.lead {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    margin-bottom: 200px;
 }
 
 .img-holder {
@@ -302,7 +340,7 @@ p.lead {
 .img-fluid2 {
     max-width: 100%;
     height: auto;
-    width: 95%;
+    width: 75%;
 }
 
 
@@ -352,7 +390,7 @@ p.lead {
     .navbar-expand-lg .navbar-nav .nav-link {
         padding-right: 1rem;
         padding-left: 1rem;
-        font-size: 14px;
+        font-size: 18px;
     }
 
     .navbar-nav>.nav-item>.nav-link.active:after {
@@ -377,7 +415,7 @@ p.lead {
 }
 
 .img-fluid1 {
-    width: 80px;
+    width: 120px;
 }
 
 /* HERO
@@ -408,7 +446,7 @@ header {
     height: 0;
     /* padding-bottom: 33%; */
     /* overflow: hidden; */
-    margin-bottom: 78%;
+    margin-bottom: 75%;
 }
 
 @media (max-width:1200px) {
