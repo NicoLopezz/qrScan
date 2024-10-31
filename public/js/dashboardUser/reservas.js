@@ -18,10 +18,13 @@ const observacion = document.getElementById('observacion');
 const tiempoRestanteElem = document.getElementById('tiempoRestante');
 
 let intervalos = {};
-let clienteSeleccionado = null; // Guardará el ID del cliente seleccionado
+let clienteSeleccionado = null;
 
-// Inicializar filas de la tabla y temporizadores de cada cliente
 clientes.forEach(cliente => {
+    agregarFilaTabla(cliente);
+});
+
+function agregarFilaTabla(cliente) {
     const row = document.createElement('tr');
     row.id = `cliente-row-${cliente.id}`;
     row.innerHTML = `<td>${cliente.nombre}</td>
@@ -31,14 +34,11 @@ clientes.forEach(cliente => {
     row.addEventListener('click', () => seleccionarCliente(cliente.id));
     tablaClientes.appendChild(row);
 
-    const tiempoGuardado = localStorage.getItem(`cliente-${cliente.id}-tiempoRestante`);
     intervalos[cliente.id] = { 
-        tiempoRestante: tiempoGuardado ? parseInt(tiempoGuardado) : 300,
+        tiempoRestante: 300,
         intervalo: null 
     };
-
-    if (tiempoGuardado) actualizarTiempoTabla(cliente.id, intervalos[cliente.id].tiempoRestante);
-});
+}
 
 function seleccionarCliente(clienteId) {
     clienteSeleccionado = clienteId;
@@ -54,9 +54,7 @@ function seleccionarCliente(clienteId) {
 
 function iniciarCuentaRegresiva() {
     const clienteId = clienteSeleccionado;
-    if (!clienteId) return;
-
-    if (intervalos[clienteId].intervalo) return;
+    if (!clienteId || intervalos[clienteId].intervalo) return;
 
     intervalos[clienteId].intervalo = setInterval(() => {
         if (intervalos[clienteId].tiempoRestante > 0) {
@@ -100,17 +98,27 @@ function actualizarTiempoTabla(clienteId, tiempo) {
     tiempoElem.textContent = `${minutos}:${segundos < 10 ? '0' : ''}${segundos}`;
 }
 
-window.addEventListener('load', () => {
-    clientes.forEach(cliente => {
-        const tiempoGuardado = localStorage.getItem(`cliente-${cliente.id}-tiempoRestante`);
-        if (tiempoGuardado) {
-            intervalos[cliente.id].tiempoRestante = parseInt(tiempoGuardado);
+function agregarCliente() {
+    const nombre = document.getElementById('inputNombre').value;
+    const comensales = parseInt(document.getElementById('inputComensales').value);
+    const observacion = document.getElementById('inputObservacion').value;
 
-            actualizarTiempoTabla(cliente.id, intervalos[cliente.id].tiempoRestante);
+    if (nombre && comensales && observacion) {
+        const nuevoCliente = {
+            id: clientes.length + 1,
+            nombre,
+            comensales,
+            observacion
+        };
 
-            if (intervalos[cliente.id].tiempoRestante > 0) {
-                iniciarCuentaRegresiva(cliente.id);
-            }
-        }
-    });
-});
+        clientes.push(nuevoCliente);
+        agregarFilaTabla(nuevoCliente);
+
+        // Limpiar los campos de entrada
+        document.getElementById('inputNombre').value = '';
+        document.getElementById('inputComensales').value = '';
+        document.getElementById('inputObservacion').value = '';
+    } else {
+        alert("Por favor, completa todos los campos.");
+    }
+}
