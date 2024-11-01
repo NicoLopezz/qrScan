@@ -127,6 +127,27 @@ p.lead {
     font-size: 20px;
 }
 
+.carousel-images {
+    position: relative;
+    width: 100%;
+    height: auto;
+}
+
+.carousel-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 70%;
+    height: auto;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.carousel-image.active {
+    opacity: 1;
+}
+
+
 /* Efecto de latido */
 @keyframes pulse {
     0%, 100% {

@@ -109,4 +109,24 @@ $(function() {
         });
     }
 
+
+    
+
 }); /* End Fn */
+
+function showImage(imageNumber) {
+    // Oculta todas las imágenes
+    const images = document.querySelectorAll(".carousel-image");
+    images.forEach(image => image.classList.remove("active"));
+
+    // Muestra la imagen correspondiente
+    const activeImage = document.getElementById(`image${imageNumber}`);
+    activeImage.classList.add("active");
+}
+
+
+
+
+
+console.log("Archivo JavaScript cargado correctamente");
+
