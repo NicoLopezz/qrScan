@@ -1,5 +1,5 @@
 const apiUrl = '/api/locales';  // Ruta para obtener los locales
-const newLocalUrl = 'api/newLocal';  // Ruta para agregar un nuevo local
+const newLocalUrl = '/api/newLocal';  // Ruta para agregar un nuevo local
 const deleteLocalUrl = '/api/deleteLocal'; // Ruta para eliminar un local
 
 // Modificar la función cargarLocales para agregar el evento click a cada tarjeta
@@ -31,31 +31,102 @@ async function cargarLocales() {
     }
 }
 
-// Función para mostrar los detalles del local seleccionado
 async function mostrarDetalles(localId) {
     try {
-        console.log(`Obteniendo detalles para el local con ID: ${localId}`);  // Verificar que el ID está siendo pasado correctamente
-        const response = await fetch(`/api/locales/${localId}`);  // Llamada a la API para obtener los detalles
+        const response = await fetch(`/api/locales/${localId}`);
         if (!response.ok) {
             throw new Error('Error en la respuesta del servidor');
         }
         const local = await response.json();
-    
-        // Mostrar los detalles del local en un modal o en un contenedor en la página
+
         const detallesContainer = document.getElementById("detalles-container");
         detallesContainer.innerHTML = `
-            <h2>${local.localName}</h2>
-            <p>Email: ${local.email}</p>
-            <p>Permiso: ${local.permiso}</p>
-            <p>Fecha de Alta: ${new Date(local.fechaDeAlta).toLocaleDateString()}</p>
-            <p>Usuarios: ${local.usuarios.length}</p>
-            <p>Clientes: ${local.clientes.length}</p>
-            <p>Pagos: ${local.pagos.length}</p>
+            <h2>Detalles del Local: ${local.localName}</h2>
+            <p><strong>Email:</strong> ${local.email}</p>
+            <p><strong>Permiso:</strong> ${local.permiso}</p>
+            <p><strong>Fecha de Alta:</strong> ${new Date(local.fechaDeAlta).toLocaleDateString()}</p>
+            <p><strong>Tipo de Licencia:</strong> ${local.tipoDeLicencia}</p>
+            <p><strong>Fecha de Renovación:</strong> ${local.fechaRenovacion ? new Date(local.fechaRenovacion).toLocaleDateString() : 'No definida'}</p>
+            <p><strong>Mensajes Restantes:</strong> ${local.mensajesRestantes}</p>
+            <p><strong>Horarios de Operación:</strong> ${local.horariosDeOperacion}</p>
+
+            <div class="collapsible-section">
+                <h3 onclick="toggleSection(this)">Información de Facturación</h3>
+                <div class="collapsible-content">
+                    <p><strong>CBU:</strong> ${local.facturacion.cbu || 'No definido'}</p>
+                    <p><strong>Medio de Pago:</strong> ${local.facturacion.medioDePago || 'No definido'}</p>
+                    <p><strong>Alias:</strong> ${local.facturacion.alias || 'No definido'}</p>
+                </div>
+            </div>
+
+            <div class="collapsible-section">
+                <h3 onclick="toggleSection(this)">Usuarios</h3>
+                <div class="collapsible-content">
+                    <ul>
+                        ${local.usuarios.map(usuario => `<li>Email: ${usuario.email}, Permiso: ${usuario.permiso}</li>`).join('')}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="collapsible-section">
+                <h3 onclick="toggleSection(this)">Clientes</h3>
+                <div class="collapsible-content">
+                    <ul>
+                        ${local.clientes.map(cliente => `
+                            <li>Teléfono: ${cliente.from}
+                                <div class="collapsible-section">
+                                    <h4 onclick="toggleSection(this)">Historial de Pedidos</h4>
+                                    <div class="collapsible-content">
+                                        <ul>
+                                            ${cliente.historialPedidos.map(pedido => `
+                                                <li>Tag: ${pedido.tagNumber}, Fecha Pedido: ${pedido.fechaPedido ? new Date(pedido.fechaPedido).toLocaleDateString() : 'No definida'}, Estado: ${pedido.estadoPorBarra}</li>
+                                            `).join('')}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="collapsible-section">
+                <h3 onclick="toggleSection(this)">Reservas</h3>
+                <div class="collapsible-content">
+                    <ul>
+                        ${local.reservas.map(reserva => `<li>Teléfono: ${reserva.from}, Solicitud de Baja: ${reserva.solicitudBaja}</li>`).join('')}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="collapsible-section">
+                <h3 onclick="toggleSection(this)">Pagos</h3>
+                <div class="collapsible-content">
+                    <ul>
+                        ${local.pagos.map(pago => `
+                            <li>Fecha: ${new Date(pago.fecha).toLocaleDateString()}, Monto: ${pago.monto}, Método: ${pago.metodo}</li>
+                        `).join('')}
+                    </ul>
+                </div>
+            </div>
         `;
     } catch (error) {
         console.error('Error al obtener los detalles del local:', error);
     }
 }
+
+
+function toggleSection(element) {
+    const content = element.nextElementSibling;
+    if (content.style.display === "none" || content.style.display === "") {
+        content.style.display = "block";
+        element.parentElement.classList.add("active");
+    } else {
+        content.style.display = "none";
+        element.parentElement.classList.remove("active");
+    }
+}
+
 
 // Función para mostrar y ocultar el formulario de alta de locales
 function toggleForm() {
@@ -86,7 +157,7 @@ async function handleFormSubmit(event) {
     };
 
     try {
-        const response = await fetch('/api/newLocal', {
+        const response = await fetch(newLocalUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

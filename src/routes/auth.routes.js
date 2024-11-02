@@ -39,8 +39,6 @@ router.get('/dashboardLocalAdmin/:user', autenthication.validateUser, (req, res)
 
 
 
-
-
 // Ruta para agregar un mensaje desde el dashboard local admin
 router.post('/dashboardLocalAdmin/:adminId/addMessage', autenthication.addMessage);
 
@@ -49,8 +47,6 @@ router.post('/dashboardLocalAdmin/:adminId/addMessage', autenthication.addMessag
 router.get('/dashboar/:user', autenthication.validateUser, (req, res) => {
     res.sendFile(path.join(__dirname, '../../public/pages/dashboardUser.html'));
 });
-
-
 
 
 // Ruta para el dashboard del super administrador

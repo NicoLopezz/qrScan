@@ -35,6 +35,11 @@
             <li class="menu-item mensajes" data-section="mensajes">
                 <i class="fas fa-table"></i> Reservas            
             </li>
+            <li class="menu-item" data-section="qr">
+                <a href="../qrScan" class="no-decoration">
+                    <i class="fas fa-question-circle"></i> Ver QR
+                </a>
+            </li>
             <li class="menu-item" data-section="faq">
                 <i class="fas fa-question-circle"></i> FAQ
             </li>
@@ -42,7 +47,7 @@
                 <a href="../login" class="no-decoration">
                     <i class="fas fa-sign-out-alt"></i>LogOut
                 </a>
-            </li>            
+            </li>                 
         </ul>
     </nav>
 </div>
@@ -178,7 +183,7 @@
                     <input type="text" id="inputObservacion" placeholder="Observación" required>
                     <button id="btnAgregar" onclick="agregarCliente()">Agregar Cliente</button>
                 </div>
-                
+
                 <!-- Tarjeta del Cliente Seleccionado -->
                 <div class="tarjeta">
                     <h3 id="nombreCliente">Nombre del Cliente</h3>

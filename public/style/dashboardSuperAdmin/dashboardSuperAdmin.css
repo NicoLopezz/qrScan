@@ -124,3 +124,25 @@ input {
     font-size: 1.2rem;
     color: #555;
 }
+
+.collapsible-section h3, .collapsible-section h4 {
+    cursor: pointer;
+    background-color: #f1f1f1;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+.collapsible-content {
+    display: none;
+    padding: 10px;
+    border-left: 3px solid #ccc;
+    margin-left: 15px;
+    background-color: #fafafa;
+    border-radius: 5px;
+}
+
+.collapsible-section.active .collapsible-content {
+    display: block;
+}

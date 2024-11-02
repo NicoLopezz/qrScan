@@ -50,18 +50,20 @@ const adminSchema = new mongoose.Schema({
   password: { type: String, required: true },  // Contraseña del administrador
   localName: { type: String, required: true },  // Nombre del local
   localNumber: { type: Number, default: 14155238886 },  // Teléfono del local (valor por defecto)
-  tagSelected: { type: Number, default: 0 },  // Número de tag seleccionado
+  fechaDeAlta: { type: Date, default: Date.now },  // Fecha de alta del administrador (por defecto: ahora)
   usuarios: { type: [usuarioSchema], default: [] },  // Subusuarios del administrador (array vacío por defecto)
-  clientes: { type: [clienteSchema], default: [] },  // Clientes asociados al local (array vacío por defecto)
   pagos: { type: [pagoSchema], default: [] },  // Registro de pagos (array vacío por defecto)
   facturacion: { type: facturacionSchema, default: {} },  // Información de facturación (subesquema)
   tipoDeLicencia: { type: String, default: '' },  // Tipo de licencia (básico, premium, etc.)
-  fechaDeAlta: { type: Date, default: Date.now },  // Fecha de alta del administrador (por defecto: ahora)
   fechaRenovacion: { type: Date, default: null },  // Fecha de renovación de la licencia
   mensajesRestantes: { type: String, default: '0/500' },  // Mensajes restantes (por ejemplo: "34/500")
   horariosDeOperacion: { type: String, default: '' },  // Horarios de operación del local
   permiso: { type: String, default: 'Admin' },  // Permiso del administrador (por defecto: Admin)
-  passwordActual: { type: String, default: '' }  // Contraseña actual del administrador (opcional)
+  passwordActual: { type: String, default: '' },  // Contraseña actual del administrador (opcional)
+  tagSelected: { type: Number, default: 0 },  // Número de tag seleccionado
+  clientes: { type: [clienteSchema], default: [] },  // Clientes asociados al local (array vacío por defecto)
+  reservas: { type: [clienteSchema], default: [] },  // Reservas similares a los clientes (array vacío por defecto)
+
 });
 
 // Exportar el modelo 'Admin'

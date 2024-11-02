@@ -1,37 +1,144 @@
-<!-- login.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Mobland - Mobile App Landing Page Template">
+    <meta name="keywords" content="HTML5, bootstrap, mobile, app, landing, ios, android, responsive">
+    <meta name="facebook-domain-verification" content="9tbzfz2pxmcffm8pyobvys4in43gwd" />
     <link rel="stylesheet" href="/style/login/login.css">
+    <base href="/">
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500" rel="stylesheet">
+    <link rel="stylesheet" href="/style/landing/bootstrap.min.css">
+    <link rel="stylesheet" href="/style/landing/themify-icons.css">
+    <link rel="stylesheet" href="/style/landing/owl.carousel.min.css">
+    <link href="/style/landing/style.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos adicionales para la disposición de columnas */
+        .container.grid-layout {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 5rem;
+        }
+        .text-content, .img-holder, .login-container {
+            flex: 1;
+            padding: 20px;
+        }
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .login-box {
+            width: 100%;
+            max-width: 300px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        /* Ajuste de imagen para mantener proporciones */
+        .img-holder img {
+            height: auto;
+        }
+
+        .img-holder{
+            max-width: 100%;
+            margin-bottom: 25%;
+        }
+
+        .container{
+            max-width: 2500px;
+        }
+
+       .img-fluid2 {
+            max-width: 100%;
+            height: auto;
+            width: 110%;            
+        }
+
+        .text-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin-bottom: 0px;
+        }
+    </style>
 </head>
-<body>
-    <div class="login-container">
-        <div class="login-box">
-            <h2>Sign in</h2>
-            <div class="social-login">
-                <button class="social-btn facebook-btn">f</button>
-                <button class="social-btn github-btn">g</button>
-                <button class="social-btn google-btn">G</button>
+
+<body data-spy="scroll" data-target="#navbar" data-offset="30">
+    <!-- Nav Menu -->
+    <div class="nav-menu fixed-top">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <nav class="navbar navbar-dark navbar-expand-lg">
+                        <a class="navbar-brand" href="index.html"><img src="img/logoConLetras.png" class="img-fluid1" alt="logo"></a>
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar"
+                            aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbar">
+                            <ul class="navbar-nav ml-auto">
+                                <li class="nav-item"><a class="nav-link" href="#conocenos">CONOCENOS</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#gallery">QUIERO MI PICK UP TIME</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#faq">FAQ</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#contact">CONTACTO</a></li>
+                                <li class="nav-item"><a href="./" class="btn btn-outline-light my-3 my-sm-0 ml-lg-3">BACK HOME</a></li>
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
             </div>
-            <form id="loginForm">
-                <div class="input-group">
-                    <input type="email" id="email" name="email" placeholder="Email" required>
-                </div>
-                <div class="input-group">
-                    <input type="password" id="password" name="password" placeholder="Password" required>
-                </div>
-                <div class="remember-me">
-                    <input type="checkbox" id="rememberMe">
-                    <label for="rememberMe">Remember me</label>
-                </div>
-                <button type="submit" class="submit-btn">Sign in</button>
-            </form>
-            <p class="signup-text">Don't have an account? <a href="#">Sign up</a></p>
         </div>
     </div>
+
+    <header class="bg-gradient" id="home">
+        <div class="container grid-layout">
+            <!-- Texto -->
+            <div class="text-content">
+                <h1>Un software <br><span class="dynamic-words">intuitivo</span></h1>
+                <p class="tagline">Con Pick Up Time vas a poder gestionar y potenciar tu negocio</p>
+            </div>
+            
+            <!-- Login -->
+            <div class="login-container">
+                <div class="login-box">
+                    <div class="social-login">
+                        <button class="social-btn facebook-btn">f</button>
+                        <button class="social-btn github-btn">g</button>
+                        <button class="social-btn google-btn">G</button>
+                    </div>
+                    <form id="loginForm">
+                        <div class="input-group">
+                            <input type="email" id="email" name="email" placeholder="Email" required>
+                        </div>
+                        <div class="input-group">
+                            <input type="password" id="password" name="password" placeholder="Password" required>
+                        </div>
+                        <div class="remember-me">
+                            <input type="checkbox" id="rememberMe">
+                            <label for="rememberMe">Remember me</label>
+                        </div>
+                        <button type="submit" class="submit-btn">Sign in</button>
+                    </form>
+                    <p class="signup-text">Don't have an account? <a href="#">Sign up</a></p>
+                </div>
+            </div>
+
+            <!-- Imagen -->
+            <div class="img-holder">
+                <img src="./img/devices5.png" alt="phone" class="img-fluid2">
+            </div>
+        </div>
+    </header>
+
     <script src="/js/login/login.js"></script>
 </body>
+
 </html>
