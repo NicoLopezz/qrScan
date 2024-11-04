@@ -206,62 +206,50 @@ async function reciveMessage(req, res) {
 
 
 
-async function handleReservaMessage(body, from) {
-  try {
-    // Expresiones regulares para extraer los datos
-    const nombreMatch = body.match(/Hola!\s*(\w+)/);
-    const comensalesMatch = body.match(/reserva para (\d+) comensales/);
-    const observacionMatch = body.match(/observación: "(.*)"/);
-    const codigoMatch = body.match(/Código:\s*([a-zA-Z0-9]{5})/);
+async function handleReservaMessage(body, from, localAdmin) {
+  // Extraer nombre, comensales, observación y código del mensaje
+  const nombreMatch = body.match(/Hola!\s*(\w+),/);
+  const comensalesMatch = body.match(/para (\d+) comensales/);
+  const observacionMatch = body.match(/observación:\s*"([^"]*)"/);
+  const codigoMatch = body.match(/Código:\s*(\w+)/);
 
-    // Extraer los valores encontrados o establecerlos como null si no se encuentran
-    const nombre = nombreMatch ? nombreMatch[1] : null;
-    const comensales = comensalesMatch ? parseInt(comensalesMatch[1]) : null;
-    const observacion = observacionMatch ? observacionMatch[1] : null;
-    const codigo = codigoMatch ? codigoMatch[1] : null;
+  const nombre = nombreMatch ? nombreMatch[1] : null;
+  const comensales = comensalesMatch ? parseInt(comensalesMatch[1]) : null;
+  const observacion = observacionMatch ? observacionMatch[1] : null;
+  const codigo = codigoMatch ? codigoMatch[1] : null;
 
-    // Extraer solo el número de teléfono (sin el prefijo 'whatsapp:')
-    const phoneNumber = from.replace('whatsapp:', '');
+  console.log("Datos extraídos:", { nombre, comensales, observacion, codigo });
 
-    // Imprimir los datos extraídos para depuración
-    console.log("Datos extraídos:", { nombre, comensales, observacion, codigo });
-
-    // Verificar si todos los datos fueron extraídos correctamente
-    if (!nombre || !comensales || !observacion || !codigo) {
-      console.error("No se pudo extraer el nombre, los comensales, la observación o el código del mensaje.");
-      return;
-    }
-
-    // Buscar el admin en la base de datos
-    const admin = await Admin.findOne({ "reservas.nombre": nombre });
-
-    if (!admin) {
-      console.log("No se encontró un local con el nombre proporcionado.");
-      return;
-    }
-
-    // Encontrar la reserva específica en la lista de reservas
-    const reserva = admin.reservas.find(reserva =>
-      reserva.nombre === nombre && reserva._id.toString().endsWith(codigo)
-    );
-
-    if (reserva) {
-      // Actualizar el estado de textConfirmation a true y asignar el número de teléfono en el campo `from`
-      reserva.textConfirmation = "true";
-      reserva.from = phoneNumber;
-      await admin.save();
-      console.log(`Reserva actualizada para ${nombre} con código ${codigo}. Número asignado: ${phoneNumber}`);
-
-      // Enviar respuesta automática de confirmación al cliente
-      const responseMessage = '🎉 Gracias por confirmar la reserva!\n\nTe avisaremos cuando sea hora de venir, mientras segui disfrutando del complejo 🥂🕺😃.';
-      await sendWhatsAppMessage(`whatsapp:${phoneNumber}`, responseMessage); // Añadir prefijo 'whatsapp:'
-      console.log("Mensaje de confirmación enviado al cliente.");
-    } else {
-      console.log("No se encontró la reserva específica en el documento del admin.");
-    }
-  } catch (error) {
-    console.error("Error al manejar el mensaje de reserva:", error.message);
+  if (!nombre || !comensales || !observacion || !codigo) {
+    console.error("No se pudo extraer el nombre, los comensales, la observación o el código del mensaje.");
+    return;
   }
+
+  // Buscar la reserva en el admin
+  const reserva = localAdmin.reservas.find(r =>
+    r.nombre === nombre &&
+    r.comensales === comensales &&
+    r.observacion === observacion &&
+    r._id.toString().endsWith(codigo)
+  );
+
+  if (!reserva) {
+    console.error("No se encontró la reserva específica en el documento del admin.");
+    console.log("Reservas disponibles en el documento del admin:", localAdmin.reservas);
+    return;
+  }
+
+  // Actualizar el estado y guardar el número de teléfono
+  reserva.textConfirmation = true;
+  reserva.from = from.replace('whatsapp:', ''); // Guardar solo el número sin el prefijo
+
+  await localAdmin.save();
+
+  console.log(`Reserva actualizada para ${nombre} con código ${codigo}. Número asignado: ${reserva.from}`);
+
+  // Enviar mensaje de confirmación
+  const responseMessage = '🎉 Gracias por confirmar la reserva!\n\nTe avisaremos cuando sea hora de venir, mientras sigue disfrutando del complejo 🥂🕺😃.';
+  await sendWhatsAppMessage(`whatsapp:${from}`, responseMessage);
 }
 
 

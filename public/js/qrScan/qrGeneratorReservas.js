@@ -21,7 +21,7 @@ $(document).ready(function() {
 
     // Generar la URL del QR con el adminId
     // /api/qrScan
-    const qrCodeUrl = `https://www.pickuptime.io/api/qrScanUpdateResevas/${adminId}`;
+    const qrCodeUrl = `https://www.pickuptime.io/api/qrScanUpdateReservas/${adminId}`;
     // const qrCodeUrl = `http://localhost:3000/api/qrScanUpdateReservas/${adminId}`;
 
     // Generar el QR con el adminId en la URL
