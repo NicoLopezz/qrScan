@@ -178,13 +178,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 function generarQR() {
-    // Obtener el cliente seleccionado (asegúrate de tener su ID guardado de alguna manera, por ejemplo en `clienteSeleccionado`)
     if (!clienteSeleccionado) {
         console.error("No hay un cliente seleccionado.");
         return;
     }
 
-    // Enviar solicitud al servidor para actualizar el campo `selected` a true
     fetch(`/api/reservas/${clienteSeleccionado}/updateSelected`, {
         method: 'PATCH',
         headers: {
@@ -196,13 +194,24 @@ function generarQR() {
     .then(data => {
         if (data.success) {
             console.log("Cliente seleccionado actualizado correctamente.");
-            // Aquí puedes también proceder a generar el QR, si es necesario
+            mostrarNotificacionQR();
         } else {
             console.error("Error al actualizar el cliente seleccionado.");
         }
     })
     .catch(error => console.error("Error en la solicitud:", error));
 }
+
+function mostrarNotificacionQR() {
+    const notification = document.getElementById("qrNotification");
+    notification.style.display = "block";
+
+    // Oculta la notificación después de unos segundos
+    setTimeout(() => {
+        notification.style.display = "none";
+    }, 3000); // Ocultar después de 3 segundos
+}
+
 
 
 
