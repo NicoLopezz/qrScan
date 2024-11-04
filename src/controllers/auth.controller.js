@@ -157,99 +157,11 @@ async function getLocalDetails(req, res) {
 
 
 async function reciveMessage(req, res) {
-  // Imprime todo el req.body para verificar su contenido
-  console.log("Contenido completo de req.body:", req.body);
-
-  const { From: fromWithPrefix, Body: body, To: toWithPrefix } = req.body;
-
-  // Eliminar el prefijo 'whatsapp:' de los números y el '+'
-  const from = fromWithPrefix ? fromWithPrefix.replace('whatsapp:', '') : null;
-  const to = toWithPrefix ? toWithPrefix.replace('whatsapp:', '').replace('+', '') : null;
-
-  try {
-    // Responder inmediatamente a Twilio
-    res.status(200).send('<Response></Response>');
-
-    // Verificar si recibimos el contenido del mensaje
-    if (!body) {
-      console.error("El contenido del mensaje (Body) está vacío o no se encuentra.");
-      return;
-    }
-
-    // Buscar el local en función del número de WhatsApp de destino (To)
-    const localAdmin = await Admin.findOne({ localNumber: to });
-
-    if (!localAdmin) {
-      console.log(`No se encontró un local para el número de WhatsApp: ${to}`);
-      return;
-    }
-
-    // Verificar si el mensaje contiene la palabra "reserva"
-    if (body.toLowerCase().includes('reserva')) {
-      // Llama a una función específica para manejar mensajes de "reserva"
-      await handleReservaMessage(body, from);
-    } else if (body.toLowerCase().includes('número de tag')) {
-      await handleTagMessage(body, from);
-    } else if (body.toLowerCase().includes('ya lo tengo')) {
-      await handleConfirmationMessage(from, body);
-    } else if (body.toLowerCase().includes('baja')) {
-      await handleBajaRequest(from);
-    } else {
-      console.log('Mensaje no reconocido:', body);
-    }
-
-  } catch (error) {
-    console.error('Error al procesar el mensaje:', error.message);
-    res.status(500).send('Error al procesar el mensaje');
-  }
 }
 
 
 
 async function handleReservaMessage(body, from, localAdmin) {
-  // Extraer nombre, comensales, observación y código del mensaje
-  const nombreMatch = body.match(/Hola!\s*(\w+),/);
-  const comensalesMatch = body.match(/para (\d+) comensales/);
-  const observacionMatch = body.match(/observación:\s*"([^"]*)"/);
-  const codigoMatch = body.match(/Código:\s*(\w+)/);
-
-  const nombre = nombreMatch ? nombreMatch[1] : null;
-  const comensales = comensalesMatch ? parseInt(comensalesMatch[1]) : null;
-  const observacion = observacionMatch ? observacionMatch[1] : null;
-  const codigo = codigoMatch ? codigoMatch[1] : null;
-
-  console.log("Datos extraídos:", { nombre, comensales, observacion, codigo });
-
-  if (!nombre || !comensales || !observacion || !codigo) {
-    console.error("No se pudo extraer el nombre, los comensales, la observación o el código del mensaje.");
-    return;
-  }
-
-  // Buscar la reserva en el admin
-  const reserva = localAdmin.reservas.find(r =>
-    r.nombre === nombre &&
-    r.comensales === comensales &&
-    r.observacion === observacion &&
-    r._id.toString().endsWith(codigo)
-  );
-
-  if (!reserva) {
-    console.error("No se encontró la reserva específica en el documento del admin.");
-    console.log("Reservas disponibles en el documento del admin:", localAdmin.reservas);
-    return;
-  }
-
-  // Actualizar el estado y guardar el número de teléfono
-  reserva.textConfirmation = true;
-  reserva.from = from.replace('whatsapp:', ''); // Guardar solo el número sin el prefijo
-
-  await localAdmin.save();
-
-  console.log(`Reserva actualizada para ${nombre} con código ${codigo}. Número asignado: ${reserva.from}`);
-
-  // Enviar mensaje de confirmación
-  const responseMessage = '🎉 Gracias por confirmar la reserva!\n\nTe avisaremos cuando sea hora de venir, mientras sigue disfrutando del complejo 🥂🕺😃.';
-  await sendWhatsAppMessage(`whatsapp:${from}`, responseMessage);
 }
 
 
