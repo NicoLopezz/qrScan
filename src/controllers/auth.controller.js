@@ -208,54 +208,62 @@ async function reciveMessage(req, res) {
 
 // Función para manejar mensajes de "reserva"
 
-async function handleReservaMessage(body, from) {
+async function handleReservaMessage(body, fromWithPrefix) {
   try {
-    // Expresiones regulares para extraer los datos
-    const nombreMatch = body.match(/Hola!\s*(\w+)/);
-    const comensalesMatch = body.match(/reserva para (\d+) comensales/);
-    const observacionMatch = body.match(/observación: "(.*)"/);
-    const codigoMatch = body.match(/Código:\s*([a-zA-Z0-9]{5})/);
+      // Extrae los datos del mensaje recibido
+      const nombre = body.match(/Hola! (\w+),/)[1];
+      const comensales = parseInt(body.match(/reserva para (\d+) comensales/)[1]);
+      const observacion = body.match(/observación: "([^"]*)"/)[1];
+      const codigo = body.match(/Código: (\w{5})/)[1];
 
-    // Extraer los valores encontrados o establecerlos como null si no se encuentran
-    const nombre = nombreMatch ? nombreMatch[1] : null;
-    const comensales = comensalesMatch ? parseInt(comensalesMatch[1]) : null;
-    const observacion = observacionMatch ? observacionMatch[1] : null;
-    const codigo = codigoMatch ? codigoMatch[1] : null;
+      // Extraer solo el número de teléfono, eliminando el prefijo 'whatsapp:'
+      const from = fromWithPrefix.replace('whatsapp:', '');
+      console.log("Datos extraídos:", { nombre, comensales, observacion, codigo });
 
-    // Imprimir los datos extraídos para depuración
-    console.log("Datos extraídos:", { nombre, comensales, observacion, codigo });
+      // Buscar el admin en la base de datos que tenga una reserva con los criterios
+      const admin = await Admin.findOne({
+          'reservas.nombre': nombre,
+          'reservas.comensales': comensales,
+          'reservas.observacion': observacion,
+          'reservas.selected': true
+      });
 
-    // Verificar si todos los datos fueron extraídos correctamente
-    if (!nombre || !comensales || !observacion || !codigo) {
-      console.error("No se pudo extraer el nombre, los comensales, la observación o el código del mensaje.");
-      return;
-    }
+      if (admin) {
+          console.log("Admin encontrado:", admin._id);
 
-    // Buscar el admin en la base de datos
-    const admin = await Admin.findOne({ "reservas.nombre": nombre });
+          // Filtrar la reserva específica dentro de `admin.reservas`
+          const reserva = admin.reservas.find(reserva =>
+              reserva.nombre === nombre &&
+              reserva.comensales === comensales &&
+              reserva.observacion === observacion &&
+              reserva.selected === true &&
+              reserva._id.toString().endsWith(codigo)
+          );
 
-    if (!admin) {
-      console.log("No se encontró un local con el nombre proporcionado.");
-      return;
-    }
+          if (reserva) {
+              // Actualizar los campos solicitados
+              reserva.textConfirmation = true;
+              reserva.selected = false; // Cambiar `selected` a false
+              reserva.from = from; // Cargar el número de teléfono sin el prefijo
+              
+              // Guardar los cambios en la base de datos
+              await admin.save();
 
-    // Encontrar la reserva específica en la lista de reservas
-    const reserva = admin.reservas.find(reserva =>
-      reserva.nombre === nombre && reserva._id.toString().endsWith(codigo)
-    );
-
-    if (reserva) {
-      // Actualizar el estado de textConfirmation a true
-      reserva.textConfirmation = "true";
-      await admin.save();
-      console.log(`Reserva actualizada para ${nombre} con código ${codigo}.`);
-    } else {
-      console.log("No se encontró la reserva específica en el documento del admin.");
-    }
+              // Enviar un mensaje de confirmación al cliente
+              const responseMessage = "🎉 Gracias por confirmar la reserva!\n\nTe avisaremos cuando sea hora de venir, mientras sigue disfrutando del complejo 🥂🕺😃.";
+              await sendWhatsAppMessage(`whatsapp:${from}`, responseMessage);
+              console.log("Reserva confirmada y mensaje de confirmación enviado al cliente.");
+          } else {
+              console.log("No se encontró la reserva específica en el documento del admin.");
+          }
+      } else {
+          console.log("No se encontró ningún admin con una reserva coincidente.");
+      }
   } catch (error) {
-    console.error("Error al manejar el mensaje de reserva:", error.message);
+      console.error("Error al manejar el mensaje de reserva:", error);
   }
 }
+
 
 
 
