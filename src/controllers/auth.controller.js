@@ -156,19 +156,25 @@ async function getLocalDetails(req, res) {
 };
 
 
-
-//<-- FUNCIONES PARA GESTIONAR LOS MENSAJES-->
-//FUNCION PARA GESTIONAR LA RESPUESTAS DEL CLIENTE---->
 async function reciveMessage(req, res) {
+  // Imprime todo el req.body para verificar su contenido
+  console.log("Contenido completo de req.body:", req.body);
+
   const { From: fromWithPrefix, Body: body, To: toWithPrefix } = req.body;
 
   // Eliminar el prefijo 'whatsapp:' de los números y el '+'
-  const from = fromWithPrefix.replace('whatsapp:', '');
-  const to = toWithPrefix.replace('whatsapp:', '').replace('+', ''); // Eliminar el '+'
+  const from = fromWithPrefix ? fromWithPrefix.replace('whatsapp:', '') : null;
+  const to = toWithPrefix ? toWithPrefix.replace('whatsapp:', '').replace('+', '') : null;
 
   try {
     // Responder inmediatamente a Twilio
     res.status(200).send('<Response></Response>');
+
+    // Verificar si recibimos el contenido del mensaje
+    if (!body) {
+      console.error("El contenido del mensaje (Body) está vacío o no se encuentra.");
+      return;
+    }
 
     // Buscar el local en función del número de WhatsApp de destino (To)
     const localAdmin = await Admin.findOne({ localNumber: to });
@@ -178,8 +184,11 @@ async function reciveMessage(req, res) {
       return;
     }
 
-    // Verificar el contenido del mensaje recibido para determinar qué tipo de mensaje es
-    if (body.toLowerCase().includes('número de tag')) {
+    // Verificar si el mensaje contiene la palabra "reserva"
+    if (body.toLowerCase().includes('reserva')) {
+      // Llama a una función específica para manejar mensajes de "reserva"
+      await handleReservaMessage(body, from, localAdmin);
+    } else if (body.toLowerCase().includes('número de tag')) {
       await handleTagMessage(body, from, localAdmin);
     } else if (body.toLowerCase().includes('ya lo tengo')) {
       await handleConfirmationMessage(from, body);
@@ -194,6 +203,63 @@ async function reciveMessage(req, res) {
     res.status(500).send('Error al procesar el mensaje');
   }
 }
+
+
+
+// Función para manejar mensajes de "reserva"
+
+async function handleReservaMessage(body, from) {
+  try {
+    // Expresiones regulares para extraer los datos
+    const nombreMatch = body.match(/Hola!\s*(\w+)/);
+    const comensalesMatch = body.match(/reserva para (\d+) comensales/);
+    const observacionMatch = body.match(/observación: "(.*)"/);
+    const codigoMatch = body.match(/Código:\s*([a-zA-Z0-9]{5})/);
+
+    // Extraer los valores encontrados o establecerlos como null si no se encuentran
+    const nombre = nombreMatch ? nombreMatch[1] : null;
+    const comensales = comensalesMatch ? parseInt(comensalesMatch[1]) : null;
+    const observacion = observacionMatch ? observacionMatch[1] : null;
+    const codigo = codigoMatch ? codigoMatch[1] : null;
+
+    // Imprimir los datos extraídos para depuración
+    console.log("Datos extraídos:", { nombre, comensales, observacion, codigo });
+
+    // Verificar si todos los datos fueron extraídos correctamente
+    if (!nombre || !comensales || !observacion || !codigo) {
+      console.error("No se pudo extraer el nombre, los comensales, la observación o el código del mensaje.");
+      return;
+    }
+
+    // Buscar el admin en la base de datos
+    const admin = await Admin.findOne({ "reservas.nombre": nombre });
+
+    if (!admin) {
+      console.log("No se encontró un local con el nombre proporcionado.");
+      return;
+    }
+
+    // Encontrar la reserva específica en la lista de reservas
+    const reserva = admin.reservas.find(reserva =>
+      reserva.nombre === nombre && reserva._id.toString().endsWith(codigo)
+    );
+
+    if (reserva) {
+      // Actualizar el estado de textConfirmation a true
+      reserva.textConfirmation = "true";
+      await admin.save();
+      console.log(`Reserva actualizada para ${nombre} con código ${codigo}.`);
+    } else {
+      console.log("No se encontró la reserva específica en el documento del admin.");
+    }
+  } catch (error) {
+    console.error("Error al manejar el mensaje de reserva:", error.message);
+  }
+}
+
+
+
+
 
 //FUNCION PARA GESTIONAR EN BASE A LA RESPUESTA CON EL TAG N:---->
 async function handleTagMessage(body, from, localAdmin) {
@@ -498,6 +564,12 @@ async function updateTagSelected(req, res) {
 }
 
 
+
+
+
+
+
+
 //<-- FUNCIONES PARA GESTIONAR EL LOGIN DEL USUARIO-->
 //FUNCION PARA HACER LOGIN DEL USUARIO---->
 async function login(req, res) {
@@ -610,6 +682,10 @@ async function validateUser(req, res, next) {
   }
 }
 
+
+
+
+
 // Función para validar el QR y redirigir a WhatsApp
 async function qrScanUpdate(req, res) {
   const adminId = req.params.localId;
@@ -647,17 +723,10 @@ async function qrScanUpdate(req, res) {
     res.status(500).send('Error al procesar el QR');
   }
 }
-
-
-
-
 // Función para validar el QR y redirigir a WhatsApp
 async function qrScanUpdateReservas(req, res) {
   const adminId = req.params.localId;
   console.log("EL ADMIN QUE SE ESTA BUSCANDO CON EL QR ES: " + adminId);
-
-  // Obtener el nombre del usuario desde la cookie
-  const username = req.cookies.username || "Usuario desconocido";
 
   try {
     // Buscar el admin en la base de datos
@@ -667,11 +736,22 @@ async function qrScanUpdateReservas(req, res) {
       return res.status(404).send('Admin no encontrado');
     }
 
-    // Obtener los datos del cliente enviados en el body
-    const { nombre, comensales, observacion } = req.body;
+    // Buscar la reserva donde selected sea true
+    const reservaSeleccionada = admin.reservas.find(reserva => reserva.selected === true);
+
+    if (!reservaSeleccionada) {
+      console.error("No se encontró ninguna reserva seleccionada.");
+      return res.status(404).send('No se encontró ninguna reserva seleccionada');
+    }
+
+    // Obtener los datos de la reserva seleccionada
+    const { nombre, comensales, observacion, _id } = reservaSeleccionada;
+
+    // Extraer los últimos 5 caracteres del ObjectId
+    const code = _id.toString().slice(-5);
 
     // Construir el mensaje personalizado
-    const message = `Por favor, ${nombre}, confirme el pedido de reserva de ${comensales} comensales con la siguiente observación: *${observacion}*`;
+    const message = `Hola! ${nombre}, vamos a validar la reserva para ${comensales} comensales, con la observación: "${observacion}". Código: ${code}`;
 
     // Construir la URL de WhatsApp con el mensaje detallado
     const whatsappNumber = 14155238886;  // Número de WhatsApp (puedes reemplazarlo según corresponda)
@@ -685,6 +765,8 @@ async function qrScanUpdateReservas(req, res) {
     res.status(500).send('Error al procesar el QR');
   }
 }
+
+
 async function getReservas(req, res) {
   const { adminId } = req.params;
 
@@ -721,6 +803,30 @@ async function agregarCliente(req, res) {
       res.status(500).json({ success: false, error: 'Error al agregar cliente' });
   }
 }
+
+
+async function actualizarSelectedCliente(req, res) {
+  const clienteId = req.params.clienteId;
+
+  try {
+      // Encuentra el cliente dentro del array de reservas y actualiza el campo 'selected'
+      const admin = await Admin.findOneAndUpdate(
+          { "reservas._id": clienteId }, // Busca dentro del array de reservas
+          { $set: { "reservas.$.selected": true } }, // Actualiza el campo selected a true
+          { new: true }
+      );
+
+      if (!admin) {
+          return res.status(404).json({ success: false, message: 'Cliente no encontrado' });
+      }
+
+      res.json({ success: true, message: 'Cliente actualizado correctamente', admin });
+  } catch (error) {
+      console.error('Error al actualizar el cliente:', error);
+      res.status(500).json({ success: false, message: 'Error al actualizar el cliente' });
+  }
+}
+
 
 
 
@@ -805,4 +911,5 @@ export const methods = {
   qrScanUpdateReservas,
   getReservas,
   agregarCliente,
+  actualizarSelectedCliente,
 };

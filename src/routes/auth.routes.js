@@ -19,6 +19,11 @@ router.post('/webhook', autenthication.reciveMessage);
 router.get('/qrScan', (req, res) => {
     res.sendFile(path.join(__dirname, '../../public/pages/qrScan.html'));
 });
+// Rutas de archivos estáticos
+router.get('/qrScanReservas', (req, res) => {
+    res.sendFile(path.join(__dirname, '../../public/pages/qrScanReservas.html'));
+});
+
 
 // Rutas de la API para los locales
 router.get('/locales', autenthication.getLocales);
@@ -65,10 +70,19 @@ router.get('/qrScanUpdate/:localId', autenthication.qrScanUpdate, (req, res) => 
 });
 
 
-// Ruta para actualización de QR
-router.get('/qrScanUpdateReservas/:localId', autenthication.qrScanUpdateReservas, (req, res) => {
-    res.send('QR Scan Update Endpoint');
-});
+
+//RUTA PARA OBTENER LA INFO DE LA RESERVA A GESTIONAR.
+router.get('/qrScanUpdateReservas/:localId', autenthication.qrScanUpdateReservas);
+
+
+
+
+
+router.patch('/reservas/:clienteId/updateSelected', autenthication.actualizarSelectedCliente);
+
+
+
+
 
 // Endpoint para obtener reservas de un administrador
 router.get('/admins/:adminId/reservas', autenthication.getReservas);

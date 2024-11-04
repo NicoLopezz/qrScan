@@ -24,7 +24,7 @@ async function cargarReservas() {
         reservas.forEach(reserva => {
             agregarFilaTabla(reserva);
 
-            // Cargar tiempo restante desde localStorage
+            // Cargar tiempo restante desde localStorage o asignar 5 minutos por defecto
             const tiempoRestante = localStorage.getItem(`cliente-${reserva._id}-tiempoRestante`);
             intervalos[reserva._id] = {
                 tiempoRestante: tiempoRestante ? parseInt(tiempoRestante) : 300, // 5 minutos si no está en localStorage
@@ -53,6 +53,14 @@ function agregarFilaTabla(reserva) {
     // Agregar evento de clic para cargar datos en la tarjeta
     row.addEventListener('click', () => seleccionarCliente(reserva._id));
     tablaClientes.appendChild(row);
+
+    // Inicializar el temporizador en el objeto intervalos si no existe
+    if (!intervalos[reserva._id]) {
+        intervalos[reserva._id] = {
+            tiempoRestante: 300,
+            intervalo: null
+        };
+    }
 }
 
 // Función para seleccionar un cliente y mostrar sus detalles en la tarjeta sin iniciar automáticamente la cuenta regresiva
@@ -131,7 +139,6 @@ function actualizarTiempoTabla(clienteId, tiempo) {
     tiempoElem.textContent = `${minutos}:${segundos < 10 ? '0' : ''}${segundos}`;
 }
 
-// Función para agregar un nuevo cliente y actualizar la tabla
 function agregarCliente() {
     const nombre = document.getElementById('inputNombre').value;
     const comensales = parseInt(document.getElementById('inputComensales').value);
@@ -146,9 +153,12 @@ function agregarCliente() {
     .then(data => {
         if (data.success) {
             alert("Cliente agregado con éxito");
-            const nuevoCliente = { _id: data.id, nombre, comensales, observacion };
-            reservas.push(nuevoCliente); // Agregar al array de reservas
-            agregarFilaTabla(nuevoCliente); // Agregar la fila en la tabla
+
+            // Guardar la sección actual en localStorage antes de recargar
+            localStorage.setItem('currentSection', 'section-mensajes'); // Cambia 'section-mensajes' a la sección deseada
+
+            // Recargar la página
+            location.reload();
         } else {
             alert("Error al agregar cliente");
         }
@@ -156,8 +166,48 @@ function agregarCliente() {
     .catch(error => console.error("Error:", error));
 }
 
-// Hacer que agregarCliente esté disponible globalmente
-window.agregarCliente = agregarCliente;
+// Restaurar la sección activa al cargar la página
+document.addEventListener('DOMContentLoaded', () => {
+    const currentSection = localStorage.getItem('currentSection');
+    if (currentSection) {
+        document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
+        document.getElementById(currentSection).classList.add('active');
+        localStorage.removeItem('currentSection'); // Limpiar para futuras cargas
+    }
+});
+
+
+function generarQR() {
+    // Obtener el cliente seleccionado (asegúrate de tener su ID guardado de alguna manera, por ejemplo en `clienteSeleccionado`)
+    if (!clienteSeleccionado) {
+        console.error("No hay un cliente seleccionado.");
+        return;
+    }
+
+    // Enviar solicitud al servidor para actualizar el campo `selected` a true
+    fetch(`/api/reservas/${clienteSeleccionado}/updateSelected`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ selected: true })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log("Cliente seleccionado actualizado correctamente.");
+            // Aquí puedes también proceder a generar el QR, si es necesario
+        } else {
+            console.error("Error al actualizar el cliente seleccionado.");
+        }
+    })
+    .catch(error => console.error("Error en la solicitud:", error));
+}
+
+
 
 // Llamar a la función para cargar las reservas al cargar la página
 document.addEventListener('DOMContentLoaded', cargarReservas);
+
+// Hacer que agregarCliente esté disponible globalmente
+window.agregarCliente = agregarCliente;
