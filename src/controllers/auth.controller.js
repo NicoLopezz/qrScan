@@ -7,12 +7,11 @@ import { faker } from '@faker-js/faker';
 
 
 //<-- FUNCIONES PARA GESTIONAR LOCALES-->
-//FUNCION PARA CREAR UN NUEVO LOCAL---->
 async function newLocal(req, res) {
   const { email, password, localName } = req.body;
 
   try {
-    // Generar datos aleatorios para usuario, cliente y pago
+    // Generar datos aleatorios para usuario y cliente
     const randomUser = {
       name: faker.person.fullName(),  // Nombre aleatorio para el usuario
       password: faker.internet.password(),
@@ -35,12 +34,10 @@ async function newLocal(req, res) {
         ]
       }],
       promedioTiempo: faker.number.int({ min: 10, max: 60 }),
-      // Generar 5 mensajes aleatorios para el campo `mensajesEnviados`
       mensajesEnviados: Array.from({ length: 5 }, () => ({
         fecha: faker.date.recent().toISOString(),
         body: faker.lorem.sentence()  // Contenido del mensaje
       }))
-
     };
 
     const randomPayment = {
@@ -48,6 +45,33 @@ async function newLocal(req, res) {
       monto: faker.number.int({ min: 10, max: 1000 }),
       metodo: faker.finance.transactionType()
     };
+
+    // Generar 5 reservas aleatorias
+    const randomReservations = Array.from({ length: 5 }, () => ({
+      solicitudBaja: false,
+      from: faker.phone.number('+54 9 ### ### ####'),
+      historialPedidos: [{
+        tagNumber: faker.number.int({ min: 100, max: 999 }),
+        fechaPedido: faker.date.recent(),
+        fechaRetiro: faker.date.recent(),
+        tiempoEspera: faker.number.int({ min: 5, max: 120 }),
+        estadoPorBarra: 'completado',
+        confirmacionPorCliente: true,
+        mensajes: [
+          { body: faker.lorem.sentence(), fecha: faker.date.recent().toISOString() },
+          { body: faker.lorem.sentence(), fecha: faker.date.recent().toISOString() }
+        ]
+      }],
+      promedioTiempo: faker.number.int({ min: 10, max: 60 }),
+      mensajesEnviados: Array.from({ length: 5 }, () => ({
+        fecha: faker.date.recent().toISOString(),
+        body: faker.lorem.sentence()
+      })),
+      nombre: faker.person.fullName(),         // Nombre aleatorio
+      comensales: faker.number.int({ min: 1, max: 10 }), // Número aleatorio de comensales
+      observacion: faker.lorem.sentence(),      // Observación aleatoria
+      mesaId: faker.number.int({ min: 1, max: 20 })      // ID de mesa aleatorio
+    }));
 
     // Crear el nuevo administrador con un usuario, cliente y pago generados aleatoriamente
     const newAdmin = new Admin({
@@ -63,21 +87,10 @@ async function newLocal(req, res) {
         medioDePago: faker.finance.creditCardIssuer(),
         alias: faker.finance.iban()
       },
-      tipoDeLicencia: 'premium',  // Tipo de licencia "premium"
-      horariosDeOperacion: '8 a 17hs',   // Horario de operación predefinido
-      reservas: [randomClient],
+      tipoDeLicencia: 'premium',
+      horariosDeOperacion: '8 a 17hs',
+      reservas: randomReservations // Añadir las 5 reservas aleatorias generadas
     });
-
-
-
-    // // ESTO ES LO REAL!!!!------->
-    // // Crear un nuevo administrador con solo los campos iniciales
-    // const newAdmin = new Admin({
-    //     email,
-    //     password,
-    //     localName,  // Almacena solo lo necesario por ahora
-
-    // });
 
     // Guardar en la base de datos
     await newAdmin.save();
@@ -87,6 +100,7 @@ async function newLocal(req, res) {
     res.status(500).json({ error: 'Error al agregar administrador' });
   }
 }
+
 
 //FUNCION PARA TRAER INFO DE UN LOCAL---->
 async function getLocales(req, res) {
@@ -484,8 +498,6 @@ async function updateTagSelected(req, res) {
 }
 
 
-
-
 //<-- FUNCIONES PARA GESTIONAR EL LOGIN DEL USUARIO-->
 //FUNCION PARA HACER LOGIN DEL USUARIO---->
 async function login(req, res) {
@@ -639,6 +651,84 @@ async function qrScanUpdate(req, res) {
 
 
 
+// Función para validar el QR y redirigir a WhatsApp
+async function qrScanUpdateReservas(req, res) {
+  const adminId = req.params.localId;
+  console.log("EL ADMIN QUE SE ESTA BUSCANDO CON EL QR ES: " + adminId);
+
+  // Obtener el nombre del usuario desde la cookie
+  const username = req.cookies.username || "Usuario desconocido";
+
+  try {
+    // Buscar el admin en la base de datos
+    const admin = await Admin.findById(adminId);
+    if (!admin) {
+      console.error("Admin/local no encontrado con el ID:", adminId);
+      return res.status(404).send('Admin no encontrado');
+    }
+
+    // Obtener los datos del cliente enviados en el body
+    const { nombre, comensales, observacion } = req.body;
+
+    // Construir el mensaje personalizado
+    const message = `Por favor, ${nombre}, confirme el pedido de reserva de ${comensales} comensales con la siguiente observación: *${observacion}*`;
+
+    // Construir la URL de WhatsApp con el mensaje detallado
+    const whatsappNumber = 14155238886;  // Número de WhatsApp (puedes reemplazarlo según corresponda)
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+
+    // Redirigir instantáneamente al cliente a la URL de WhatsApp
+    res.redirect(whatsappUrl);
+
+  } catch (error) {
+    console.error('Error al obtener el admin:', error);
+    res.status(500).send('Error al procesar el QR');
+  }
+}
+async function getReservas(req, res) {
+  const { adminId } = req.params;
+
+  try {
+    const admin = await Admin.findById(adminId).select('reservas');
+    if (!admin) {
+      return res.status(404).json({ error: 'Admin no encontrado' });
+    }
+    res.json(admin.reservas);
+  } catch (error) {
+    console.error('Error al obtener las reservas:', error);
+    res.status(500).json({ error: 'Error al obtener las reservas' });
+  }
+}
+async function agregarCliente(req, res) {
+  const { nombre, comensales, observacion } = req.body;
+
+  try {
+      // Lógica para agregar el cliente
+      const adminId = req.cookies.adminId; // Obtener el ID del admin desde la cookie, si aplica
+      const admin = await Admin.findById(adminId);
+
+      if (!admin) {
+          return res.status(404).json({ error: 'Admin no encontrado' });
+      }
+
+      // Agregar el cliente a la lista de reservas o clientes
+      admin.reservas.push({ nombre, comensales, observacion });
+      await admin.save();
+
+      res.status(201).json({ success: true, message: 'Cliente agregado con éxito' });
+  } catch (error) {
+      console.error('Error al agregar cliente:', error);
+      res.status(500).json({ success: false, error: 'Error al agregar cliente' });
+  }
+}
+
+
+
+
+
+
+
+
 // //FUNCION PARA VALIDAR EL QR---->
 async function catchDbData(req, res) {
   const adminId = req.params.adminId; // Actualiza para recibir adminId
@@ -655,7 +745,6 @@ async function catchDbData(req, res) {
     return res.status(500).json({ message: 'Error interno del servidor' });
   }
 }
-
 
 //<-- FUNCIONES PARA GESTIONAR EL DASHBOARD DEL USUARIO-->
 //FUNCION PARA AGREGAR EL MENSAJE EN LA DB---->
@@ -712,5 +801,8 @@ export const methods = {
   validateUser,
   qrScanUpdate,
   catchDbData,
-  addMessage
+  addMessage,
+  qrScanUpdateReservas,
+  getReservas,
+  agregarCliente,
 };

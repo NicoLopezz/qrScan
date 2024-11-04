@@ -64,4 +64,19 @@ router.get('/qrScanUpdate/:localId', autenthication.qrScanUpdate, (req, res) => 
     res.send('QR Scan Update Endpoint');
 });
 
+
+// Ruta para actualización de QR
+router.get('/qrScanUpdateReservas/:localId', autenthication.qrScanUpdateReservas, (req, res) => {
+    res.send('QR Scan Update Endpoint');
+});
+
+// Endpoint para obtener reservas de un administrador
+router.get('/admins/:adminId/reservas', autenthication.getReservas);
+router.post('/admins/agregarCliente', autenthication.agregarCliente);
+
+
+
+
+
+
 export default router;
