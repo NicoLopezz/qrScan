@@ -207,17 +207,35 @@ async function reciveMessage(req, res) {
 
 
 // Función para manejar mensajes de "reserva"
-
 async function handleReservaMessage(body, fromWithPrefix) {
   try {
-      // Extrae los datos del mensaje recibido
-      const nombre = body.match(/Hola! (\w+),/)[1];
-      const comensales = parseInt(body.match(/reserva para (\d+) comensales/)[1]);
-      const observacion = body.match(/observación: "([^"]*)"/)[1];
-      const codigo = body.match(/Código: (\w{5})/)[1];
-
-      // Extraer solo el número de teléfono, eliminando el prefijo 'whatsapp:'
+      // Extrae solo el número de teléfono, eliminando el prefijo 'whatsapp:'
       const from = fromWithPrefix.replace('whatsapp:', '');
+
+      // Expresiones regulares para extraer los datos
+      const nombreMatch = body.match(/Hola! ([^,]+),/);
+      const comensalesMatch = body.match(/reserva para (\d+) comensales/);
+      const observacionMatch = body.match(/observación: "([^"]*)"/);
+      const codigoMatch = body.match(/Código: (\w{5})/);
+
+      // Verificar que todos los datos fueron extraídos correctamente
+      if (!nombreMatch || !comensalesMatch || !observacionMatch || !codigoMatch) {
+          console.log("No se pudo extraer el nombre, comensales, observación o código del mensaje.");
+          console.log("Datos extraídos:", {
+              nombre: nombreMatch ? nombreMatch[1] : null,
+              comensales: comensalesMatch ? parseInt(comensalesMatch[1]) : null,
+              observacion: observacionMatch ? observacionMatch[1] : null,
+              codigo: codigoMatch ? codigoMatch[1] : null,
+          });
+          return;
+      }
+
+      // Extraer los datos del mensaje
+      const nombre = nombreMatch[1];
+      const comensales = parseInt(comensalesMatch[1]);
+      const observacion = observacionMatch[1];
+      const codigo = codigoMatch[1];
+
       console.log("Datos extraídos:", { nombre, comensales, observacion, codigo });
 
       // Buscar el admin en la base de datos que tenga una reserva con los criterios
@@ -263,6 +281,7 @@ async function handleReservaMessage(body, fromWithPrefix) {
       console.error("Error al manejar el mensaje de reserva:", error);
   }
 }
+
 
 
 
