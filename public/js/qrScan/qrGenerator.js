@@ -22,7 +22,7 @@ $(document).ready(function() {
     // Generar la URL del QR con el adminId
     // /api/qrScan
     const qrCodeUrl = `https://www.pickuptime.io/api/qrScanUpdate/${adminId}`;
-    // const qrCodeUrl = `http://localhost:3000/api/qrScanUpdate/${adminId}`;
+    // const qrCodeUrl = `http://localhost:3000/api/qrScanUpdate/${adminId}` ;
 
     // Generar el QR con el adminId en la URL
     const qr = new QRious({
