@@ -19,7 +19,8 @@ export const sendWhatsAppMessage = async (to, body) => {
         console.log(`Enviando mensaje a: ${to}`);
         await client.messages.create({
             body,
-            from: 'whatsapp:+18643651639', // Asegúrate de usar el número correcto (sandbox o producción)
+            // from: 'whatsapp:+18643651639', // Asegúrate de usar el número correcto (sandbox o producción)
+            from: 'whatsapp:+14155238886', // Asegúrate de usar el número correcto (sandbox o producción)
             to: `${to}`, 
         });
         console.log(`Mensaje enviado a ${to}`);

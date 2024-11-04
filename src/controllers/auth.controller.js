@@ -187,9 +187,9 @@ async function reciveMessage(req, res) {
     // Verificar si el mensaje contiene la palabra "reserva"
     if (body.toLowerCase().includes('reserva')) {
       // Llama a una función específica para manejar mensajes de "reserva"
-      await handleReservaMessage(body, from, localAdmin);
+      await handleReservaMessage(body, from);
     } else if (body.toLowerCase().includes('número de tag')) {
-      await handleTagMessage(body, from, localAdmin);
+      await handleTagMessage(body, from);
     } else if (body.toLowerCase().includes('ya lo tengo')) {
       await handleConfirmationMessage(from, body);
     } else if (body.toLowerCase().includes('baja')) {
@@ -206,8 +206,6 @@ async function reciveMessage(req, res) {
 
 
 
-// Función para manejar mensajes de "reserva"
-
 async function handleReservaMessage(body, from) {
   try {
     // Expresiones regulares para extraer los datos
@@ -221,6 +219,9 @@ async function handleReservaMessage(body, from) {
     const comensales = comensalesMatch ? parseInt(comensalesMatch[1]) : null;
     const observacion = observacionMatch ? observacionMatch[1] : null;
     const codigo = codigoMatch ? codigoMatch[1] : null;
+
+    // Extraer solo el número de teléfono (sin el prefijo 'whatsapp:')
+    const phoneNumber = from.replace('whatsapp:', '');
 
     // Imprimir los datos extraídos para depuración
     console.log("Datos extraídos:", { nombre, comensales, observacion, codigo });
@@ -245,10 +246,16 @@ async function handleReservaMessage(body, from) {
     );
 
     if (reserva) {
-      // Actualizar el estado de textConfirmation a true
+      // Actualizar el estado de textConfirmation a true y asignar el número de teléfono en el campo `from`
       reserva.textConfirmation = "true";
+      reserva.from = phoneNumber;
       await admin.save();
-      console.log(`Reserva actualizada para ${nombre} con código ${codigo}.`);
+      console.log(`Reserva actualizada para ${nombre} con código ${codigo}. Número asignado: ${phoneNumber}`);
+
+      // Enviar respuesta automática de confirmación al cliente
+      const responseMessage = '🎉 Gracias por confirmar la reserva!\n\nTe avisaremos cuando sea hora de venir, mientras segui disfrutando del complejo 🥂🕺😃.';
+      await sendWhatsAppMessage(`whatsapp:${phoneNumber}`, responseMessage); // Añadir prefijo 'whatsapp:'
+      console.log("Mensaje de confirmación enviado al cliente.");
     } else {
       console.log("No se encontró la reserva específica en el documento del admin.");
     }
@@ -256,6 +263,7 @@ async function handleReservaMessage(body, from) {
     console.error("Error al manejar el mensaje de reserva:", error.message);
   }
 }
+
 
 
 
