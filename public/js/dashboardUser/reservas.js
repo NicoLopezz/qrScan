@@ -39,14 +39,20 @@ async function cargarReservas() {
     }
 }
 
-// Función para agregar una fila en la tabla para cada reserva
 function agregarFilaTabla(reserva) {
     const row = document.createElement('tr');
     row.id = `cliente-row-${reserva._id}`;
+
+    // Verificar si el teléfono está vacío y si el estado de confirmación es true o false
+    const telefono = reserva.telefono || 'Vacío';
+    const confirmo = reserva.textConfirmation ? 'Sí' : 'No';
+
     row.innerHTML = `
         <td>${reserva.nombre}</td>
+        <td>${telefono}</td>
         <td>${reserva.comensales}</td>
         <td>${reserva.observacion}</td>
+        <td>${confirmo}</td>
         <td id="tiempo-cliente-${reserva._id}">5:00</td>
     `;
     
@@ -54,6 +60,7 @@ function agregarFilaTabla(reserva) {
     row.addEventListener('click', () => seleccionarCliente(reserva._id));
     tablaClientes.appendChild(row);
 }
+
 
 // Función para seleccionar un cliente y mostrar sus detalles en la tarjeta sin iniciar automáticamente la cuenta regresiva
 function seleccionarCliente(clienteId) {
@@ -149,12 +156,14 @@ function agregarCliente() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert("Cliente agregado con éxito");
+            showNotification("Cliente agregado con éxito");
+            // alert("Cliente agregado con éxito");
             const nuevoCliente = { _id: data.id, nombre, comensales, observacion };
             reservas.push(nuevoCliente); // Agregar al array de reservas
             agregarFilaTabla(nuevoCliente); // Agregar la fila en la tabla
         } else {
-            alert("Error al agregar cliente");
+            showNotification("Error al agregar cliente.", "error");
+            // alert("Error al agregar cliente");
         }
     })
     .catch(error => console.error("Error:", error));
@@ -163,6 +172,7 @@ function agregarCliente() {
 // Función para generar QR y actualizar la reserva seleccionada
 async function generarQR() {
     if (!clienteSeleccionado) {
+        showNotification("No hay un cliente seleccionado.", "error");
         console.error("No hay un cliente seleccionado.");
         return;
     }
@@ -178,15 +188,56 @@ async function generarQR() {
 
         const data = await response.json();
         if (data.success) {
-            document.getElementById('qrNotification').style.display = 'block';
+            showNotification("QR generado con éxito. Ahora puede escanear el código.", "success");
             console.log("Cliente seleccionado actualizado correctamente.");
         } else {
+            showNotification("Error al actualizar el cliente seleccionado.", "error");
             console.error("Error al actualizar el cliente seleccionado.");
         }
     } catch (error) {
+        showNotification("Ocurrió un error al intentar actualizar el cliente.", "error");
         console.error("Error en la solicitud:", error);
     }
 }
+
+
+
+async function eliminarReserva() {
+    if (!clienteSeleccionado) {
+        showNotification("No hay ningún cliente seleccionado para eliminar.", "error");
+        // alert("No hay ningún cliente seleccionado para eliminar.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/reservas/${clienteSeleccionado}/eliminar`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            showNotification("Reserva eliminada exitosamente.");
+            // alert("Reserva eliminada exitosamente.");
+            // Remover la fila de la tabla y limpiar la tarjeta
+            document.getElementById(`cliente-row-${clienteSeleccionado}`).remove();
+            nombreCliente.textContent = "Detalles";
+            comensales.textContent = "Comensales: --";
+            observacion.textContent = "Observación: --";
+            tiempoRestanteElem.textContent = "5:00";
+            clienteSeleccionado = null;
+        } else {
+            alert("Hubo un problema al eliminar la reserva.");
+        }
+    } catch (error) {
+        console.error("Error al eliminar la reserva:", error);
+        alert("Ocurrió un error al intentar eliminar la reserva.");
+    }
+}
+
+
 
 // Hacer que agregarCliente y generarQR estén disponibles globalmente
 window.agregarCliente = agregarCliente;

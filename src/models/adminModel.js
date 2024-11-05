@@ -54,11 +54,12 @@ const reservaSchema = new mongoose.Schema({
   nombre: { type: String, required: true },         // Nuevo campo
   comensales: { type: Number, required: true },     // Nuevo campo
   observacion: { type: String, required: true },    // Nuevo campo
-  mesaId: { type: Number},          // Nuevo campo
-  selected: { type: Boolean,default: false },         // Nuevo campo
-  textConfirmation: { type: Boolean,default: false }          // Nuevo campo
+  mesaId: { type: Number },          // Nuevo campo
+  selected: { type: Boolean, default: false },         // Nuevo campo
+  textConfirmation: { type: Boolean, default: false },        // Nuevo campo
+  numeroDeFila: { type: Number, default: 0 }          // Nuevo campo
 });
- 
+
 // Esquema para los pagos
 const pagoSchema = new mongoose.Schema({
   fecha: { type: Date, default: null },

@@ -278,3 +278,26 @@ function insertInOrder(container, element, tagNumber) {
     container.appendChild(element);
   }
 }
+
+
+function showNotification(message, type = 'success') {
+  const notificationContainer = document.getElementById('notification-container');
+
+  const notification = document.createElement('div');
+  notification.classList.add('notification');
+  if (type === 'error') {
+      notification.classList.add('error');
+  }
+
+  notification.innerHTML = `
+      <span>${message}</span>
+      <span class="close-btn" onclick="this.parentElement.remove()">✕</span>
+  `;
+
+  notificationContainer.appendChild(notification);
+
+  // Eliminar la notificación automáticamente después de 4 segundos
+  setTimeout(() => {
+      notification.remove();
+  }, 4000);
+}

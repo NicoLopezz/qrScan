@@ -2,7 +2,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'Montserrat', sans-serif;
 }
 
 body {
@@ -15,48 +15,124 @@ body {
 
 .container {
     display: grid;
-    gap: 50px;
-    /* width: 90%; */
-    /* max-width: 1200px; */
-    grid-template-columns: 65% 1fr;
+    gap: 30px;
+    grid-template-columns: 1fr 1fr;
     justify-items: center;
+    max-width: 100%;
 }
 
 .tabla, .tarjeta {
     border: 1px solid #ddd;
-    border-radius: 8px;
+    border-radius: 12px;
     background-color: #ffffff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    height: fit-content;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    width: 100%;
+    max-width: 1500px;
+    height: 445px;
+
 }
 
 .tabla {
     width: 100%;
+    padding: 25px;
+    height: 660px;
 }
 
 .tarjeta {
-    width: 45%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 50%;
+    padding: 25px;
+    width: 30%;
+    height: 530px;
 }
 
 h3 {
     color: #333;
-    font-size: 1.2em;
-    margin-bottom: 16px;
+    font-size: 2.0em;
+    margin-bottom: 20px;
     text-align: center;
+}
+
+input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1em;
+    color: #555;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+input[type="text"]:focus, input[type="number"]:focus {
+    background-color: #fff;
+    box-shadow: 0 0 6px rgba(107, 0, 173, 0.3);
+    outline: none;
+}
+
+button {
+    padding: 12px 25px;
+    margin-top: 15px;
+    font-size: 1.1em;
+    color: #fff;
+    background-color: #6b00ad;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    width: 180px;
+}
+
+#btnIniciar{
+    background-color: #008000;
+}
+
+
+
+button:hover {
+    background-color: #55008a;
+    transform: scale(1.05);
+}
+
+#btnReiniciar {
+    background-color: #ff914d;
+}
+
+#btnReiniciar:hover {
+    background-color: #d97c3a;
+}
+
+.contador {
+    margin-top: 25px;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 6px solid #6b00ad;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5em;
+    color: #333;
+    position: relative;
+    transition: border-color 0.3s ease;
+}
+
+.contador.active {
+    border-color: #ff914d;
+    animation: countdown 300s linear forwards;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
+    margin-top: 20px;
 }
 
 th, td {
-    padding: 12px;
+    padding: 15px;
     text-align: center;
     border-bottom: 1px solid #ddd;
     transition: background-color 0.3s, transform 0.2s;
@@ -85,62 +161,9 @@ tr:hover td {
     transform: scale(1.02);
 }
 
-button {
-    padding: 10px 20px;
-    margin-top: 20px;
-    font-size: 1em;
-    color: #fff;
-    background-color: #6b00ad;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-button:hover {
-    background-color: #55008a;
-}
-
-#btnReiniciar {
-    background-color: #ff914d;
-    margin-left: 10px;
-}
-
-#btnReiniciar:hover {
-    background-color: #d97c3a;
-}
-
-.contador {
-    margin-top: 20px;
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    border: 5px solid #6b00ad;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.5em;
+#tiempoRestante {
+    font-size: 1.3em;
     color: #333;
-    position: relative;
-    transition: border-color 0.3s ease;
-}
-
-.contador.active {
-    border-color: #ff914d;
-    animation: countdown 300s linear forwards;
-}
-
-.content-container{
-    background-color: var(--white-color);
-    padding: 25px;
-    border-radius: 15px;
-    max-width: 80%;
-    margin: 40px auto;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-left: 260px;
-    /* margin-top: 95px; */
-    width: 80%;
-    height: 95%;
 }
 
 @keyframes countdown {
@@ -150,9 +173,4 @@ button:hover {
     to {
         stroke-dasharray: 0;
     }
-}
-
-#tiempoRestante {
-    font-size: 1.2em;
-    color: #333;
 }

@@ -82,6 +82,10 @@ router.post('/enviarMensajeCuentaRegresiva', autenthication.enviarMensajeCuentaR
 
 router.patch('/reservas/:clienteId/updateSelected', autenthication.actualizarSelectedCliente);
 
+// En auth.routes.js o en el archivo de rutas correspondiente
+router.delete('/reservas/:clienteId/eliminar', autenthication.eliminarCliente);
+
+
 
 
 

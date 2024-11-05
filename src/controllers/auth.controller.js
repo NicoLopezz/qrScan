@@ -877,7 +877,6 @@ async function agregarCliente(req, res) {
   }
 }
 
-
 async function actualizarSelectedCliente(req, res) {
   const clienteId = req.params.clienteId;
 
@@ -897,6 +896,29 @@ async function actualizarSelectedCliente(req, res) {
   } catch (error) {
       console.error('Error al actualizar el cliente:', error);
       res.status(500).json({ success: false, message: 'Error al actualizar el cliente' });
+  }
+}
+
+
+async function eliminarCliente(req, res) {
+  const clienteId = req.params.clienteId;
+
+  try {
+      // Encuentra el cliente dentro del array de reservas y lo elimina
+      const admin = await Admin.findOneAndUpdate(
+          { "reservas._id": clienteId }, // Busca dentro del array de reservas
+          { $pull: { reservas: { _id: clienteId } } }, // Elimina la reserva que coincide con el clienteId
+          { new: true }
+      );
+
+      if (!admin) {
+          return res.status(404).json({ success: false, message: 'Cliente no encontrado' });
+      }
+
+      res.json({ success: true, message: 'Cliente eliminado correctamente', admin });
+  } catch (error) {
+      console.error('Error al eliminar el cliente:', error);
+      res.status(500).json({ success: false, message: 'Error al eliminar el cliente' });
   }
 }
 
@@ -986,4 +1008,5 @@ export const methods = {
   agregarCliente,
   actualizarSelectedCliente,
   enviarMensajeCuentaRegresiva,
+  eliminarCliente,
 };

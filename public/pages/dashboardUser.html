@@ -21,6 +21,10 @@
 
 <body>
 
+    <!-- NOTIFICATION -->
+    <div id="notification-container"></div>
+
+
     <!-- Menú lateral -->
     <div id="sidebar" class="sidebar">
         <div class="logo">
@@ -167,14 +171,16 @@
                 <div class="container">
                     <!-- Tabla de Datos -->
                     <div class="tabla">
-                        <h3>Clientes</h3>
+                        <h3>Reservas</h3>
                         <table>
                             <thead>
                                 <tr>
                                     <th>Nombre</th>
+                                    <th>Telefono</th>
                                     <th>Comensales</th>
                                     <th>Observación</th>
-                                    <th>Cuenta Regresiva</th>
+                                    <th>Confirmo?</th>
+                                    <th>Tiempo</th>
                                 </tr>
                             </thead>
                             <tbody id="tablaClientes">
@@ -184,7 +190,7 @@
                     </div>
 
                     <div class="tarjeta">
-                        <h3>Agregar Cliente</h3>
+                        <h3>Nueva Reserva</h3>
                         <input type="text" id="inputNombre" placeholder="Nombre del Cliente" required>
                         <input type="number" id="inputComensales" placeholder="Comensales" required>
                         <input type="text" id="inputObservacion" placeholder="Observación" required>
@@ -193,19 +199,35 @@
 
                     <!-- Tarjeta del Cliente Seleccionado -->
                     <div class="tarjeta">
-                        <h3 id="nombreCliente">Nombre del Cliente</h3>
+                        <h3 id="nombreCliente">Detalles</h3>
                         <p id="comensales">Comensales: --</p>
                         <p id="observacion">Observación: --</p>
-                        <button id="btnGenerarQR" onclick="generarQR()">Generar QR</button>
-                        <div id="qrNotification" style="display: none; color: green; font-weight: bold; margin-top: 10px;">
+                        <!-- Botón Generar QR con ícono de QR -->
+                        <button id="btnGenerarQR" onclick="generarQR()">
+                            <i class="fas fa-qrcode"></i> Generar QR
+                        </button>
+                        <!-- <div id="qrNotification"
+                            style="display: none; color: green; font-weight: bold; margin-top: 10px; text-align: center;">
                             QR generado con éxito. Ahora puede escanear el código.
-                        </div>
-                        <button id="btnIniciar" onclick="iniciarCuentaRegresiva()">Iniciar Cuenta Regresiva</button>
-                        <button id="btnReiniciar" onclick="reiniciarCuentaRegresiva()">Reiniciar</button>
+                        </div> -->
+                        <!-- Botón Enviar Aviso con ícono de WhatsApp -->
+                        <button id="btnIniciar" onclick="iniciarCuentaRegresiva()">
+                            <i class="fab fa-whatsapp"></i> Enviar Aviso
+                        </button>
+                        <!-- Botón Reiniciar con ícono de reinicio -->
+                        <button id="btnReiniciar" onclick="reiniciarCuentaRegresiva()">
+                            <i class="fas fa-sync-alt"></i> Reiniciar
+                        </button>
                         <div class="contador" id="contadorCirculo">
                             <span id="tiempoRestante">5:00</span>
                         </div>
+                        <!-- Botón Eliminar con ícono de eliminación -->
+                        <button id="btnEliminar" onclick="eliminarReserva()">
+                            <i class="fas fa-trash-alt"></i> Eliminar
+                        </button>
+
                     </div>
+
                 </div>
             </div>
 
