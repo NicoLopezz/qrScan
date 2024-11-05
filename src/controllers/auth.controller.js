@@ -285,6 +285,52 @@ async function handleReservaMessage(body, fromWithPrefix) {
 
 
 
+// Función para enviar mensaje de cuenta regresiva
+async function enviarMensajeCuentaRegresiva(req, res) {
+  try {
+      const { clienteId } = req.body;
+
+      if (!clienteId) {
+          console.error("No se recibió clienteId en la solicitud");
+          return res.status(400).json({ success: false, message: "No se recibió clienteId" });
+      }
+
+      // Buscar el admin que tenga una reserva con el ID del cliente proporcionado
+      const admin = await Admin.findOne({ 'reservas._id': clienteId });
+
+      if (admin) {
+          console.log("Admin encontrado:", admin._id);
+
+          // Encontrar la reserva específica dentro de `admin.reservas` con el clienteId
+          const reserva = admin.reservas.find(reserva => reserva._id.toString() === clienteId);
+
+          if (reserva) {
+              // Crear el mensaje con el nombre del cliente
+              const mensaje = `Hola, ${reserva.nombre}, te pedimos que te acerques a tomar la reserva. Recuerda que tienes 5 minutos para efectivizarla. Gracias ☺️`;
+
+              // Enviar el mensaje al número de WhatsApp almacenado en el campo `from`
+              await sendWhatsAppMessage(`whatsapp:${reserva.from}`, mensaje);
+
+              console.log(`Mensaje de cuenta regresiva enviado a ${reserva.from} para el cliente ${reserva.nombre}`);
+              res.json({ success: true, message: "Mensaje enviado con éxito" });
+          } else {
+              console.log("No se encontró la reserva con el ID proporcionado en el documento del admin.");
+              res.status(404).json({ success: false, message: "Reserva no encontrada" });
+          }
+      } else {
+          console.log("No se encontró ningún admin con una reserva coincidente.");
+          res.status(404).json({ success: false, message: "Admin no encontrado" });
+      }
+  } catch (error) {
+      console.error("Error al enviar el mensaje:", error);
+      res.status(500).json({ success: false, message: "Error al enviar el mensaje" });
+  }
+}
+
+
+
+
+
 
 
 
@@ -939,4 +985,5 @@ export const methods = {
   getReservas,
   agregarCliente,
   actualizarSelectedCliente,
+  enviarMensajeCuentaRegresiva,
 };

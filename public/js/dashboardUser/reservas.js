@@ -24,7 +24,7 @@ async function cargarReservas() {
         reservas.forEach(reserva => {
             agregarFilaTabla(reserva);
 
-            // Cargar tiempo restante desde localStorage o asignar 5 minutos por defecto
+            // Cargar tiempo restante desde localStorage
             const tiempoRestante = localStorage.getItem(`cliente-${reserva._id}-tiempoRestante`);
             intervalos[reserva._id] = {
                 tiempoRestante: tiempoRestante ? parseInt(tiempoRestante) : 300, // 5 minutos si no está en localStorage
@@ -53,14 +53,6 @@ function agregarFilaTabla(reserva) {
     // Agregar evento de clic para cargar datos en la tarjeta
     row.addEventListener('click', () => seleccionarCliente(reserva._id));
     tablaClientes.appendChild(row);
-
-    // Inicializar el temporizador en el objeto intervalos si no existe
-    if (!intervalos[reserva._id]) {
-        intervalos[reserva._id] = {
-            tiempoRestante: 300,
-            intervalo: null
-        };
-    }
 }
 
 // Función para seleccionar un cliente y mostrar sus detalles en la tarjeta sin iniciar automáticamente la cuenta regresiva
@@ -86,6 +78,10 @@ function seleccionarCliente(clienteId) {
 function iniciarCuentaRegresiva() {
     const clienteId = clienteSeleccionado;
     if (!clienteId || intervalos[clienteId].intervalo) return; // Solo iniciar si no está ya en ejecución
+
+    intervalos[clienteId].tiempoRestante = 300; // Reiniciar el tiempo a 5 minutos
+    actualizarTiempoVisual(300);
+    actualizarTiempoTabla(clienteId, 300);
 
     // Crear un nuevo intervalo solo para el cliente seleccionado
     intervalos[clienteId].intervalo = setInterval(() => {
@@ -139,6 +135,7 @@ function actualizarTiempoTabla(clienteId, tiempo) {
     tiempoElem.textContent = `${minutos}:${segundos < 10 ? '0' : ''}${segundos}`;
 }
 
+// Función para agregar un nuevo cliente y actualizar la tabla
 function agregarCliente() {
     const nombre = document.getElementById('inputNombre').value;
     const comensales = parseInt(document.getElementById('inputComensales').value);
@@ -153,12 +150,9 @@ function agregarCliente() {
     .then(data => {
         if (data.success) {
             alert("Cliente agregado con éxito");
-
-            // Guardar la sección actual en localStorage antes de recargar
-            localStorage.setItem('currentSection', 'section-mensajes'); // Cambia 'section-mensajes' a la sección deseada
-
-            // Recargar la página
-            location.reload();
+            const nuevoCliente = { _id: data.id, nombre, comensales, observacion };
+            reservas.push(nuevoCliente); // Agregar al array de reservas
+            agregarFilaTabla(nuevoCliente); // Agregar la fila en la tabla
         } else {
             alert("Error al agregar cliente");
         }
@@ -166,57 +160,66 @@ function agregarCliente() {
     .catch(error => console.error("Error:", error));
 }
 
-// Restaurar la sección activa al cargar la página
-document.addEventListener('DOMContentLoaded', () => {
-    const currentSection = localStorage.getItem('currentSection');
-    if (currentSection) {
-        document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
-        document.getElementById(currentSection).classList.add('active');
-        localStorage.removeItem('currentSection'); // Limpiar para futuras cargas
-    }
-});
-
-
-function generarQR() {
+// Función para generar QR y actualizar la reserva seleccionada
+async function generarQR() {
     if (!clienteSeleccionado) {
         console.error("No hay un cliente seleccionado.");
         return;
     }
 
-    fetch(`/api/reservas/${clienteSeleccionado}/updateSelected`, {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ selected: true })
-    })
-    .then(response => response.json())
-    .then(data => {
+    try {
+        const response = await fetch(`/api/reservas/${clienteSeleccionado}/updateSelected`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ selected: true })
+        });
+
+        const data = await response.json();
         if (data.success) {
+            document.getElementById('qrNotification').style.display = 'block';
             console.log("Cliente seleccionado actualizado correctamente.");
-            mostrarNotificacionQR();
         } else {
             console.error("Error al actualizar el cliente seleccionado.");
         }
-    })
-    .catch(error => console.error("Error en la solicitud:", error));
+    } catch (error) {
+        console.error("Error en la solicitud:", error);
+    }
 }
 
-function mostrarNotificacionQR() {
-    const notification = document.getElementById("qrNotification");
-    notification.style.display = "block";
-
-    // Oculta la notificación después de unos segundos
-    setTimeout(() => {
-        notification.style.display = "none";
-    }, 3000); // Ocultar después de 3 segundos
-}
-
-
-
+// Hacer que agregarCliente y generarQR estén disponibles globalmente
+window.agregarCliente = agregarCliente;
+window.generarQR = generarQR;
 
 // Llamar a la función para cargar las reservas al cargar la página
 document.addEventListener('DOMContentLoaded', cargarReservas);
 
-// Hacer que agregarCliente esté disponible globalmente
-window.agregarCliente = agregarCliente;
+// Agregar evento al botón de "Iniciar Cuenta Regresiva"
+document.getElementById('btnIniciar').addEventListener('click', async () => {
+    try {
+        const clienteId = clienteSeleccionado; // Asegura que ya tienes el cliente seleccionado
+
+        // Solicitud al servidor para enviar el mensaje
+        const response = await fetch(`/api/enviarMensajeCuentaRegresiva`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ clienteId })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            alert('Mensaje enviado al cliente. Ahora puedes monitorear la cuenta regresiva.');
+
+            // Inicia la cuenta regresiva solo si el mensaje fue enviado con éxito
+            iniciarCuentaRegresiva();
+        } else {
+            alert('Hubo un problema al enviar el mensaje.');
+        }
+    } catch (error) {
+        console.error('Error al enviar el mensaje:', error);
+        alert('Ocurrió un error al intentar enviar el mensaje.');
+    }
+});
