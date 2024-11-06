@@ -30,7 +30,6 @@ body {
     width: 100%;
     max-width: 1500px;
     height: 445px;
-
 }
 
 .tabla {
@@ -45,7 +44,21 @@ body {
     align-items: center;
     padding: 25px;
     width: 30%;
-    height: 530px;
+    height: fit-content;
+}
+
+.highlight-row {
+    background-color: rgba(255, 255, 0, 0.544); /* Puedes cambiar el color o añadir más estilos */
+    transition: background-color 0.3s ease;
+}
+
+#observacion {
+    text-align: center;
+    font-weight: 300;
+}
+
+#comensales {
+    font-weight: 300;
 }
 
 h3 {
@@ -86,23 +99,83 @@ button {
     width: 180px;
 }
 
-#btnIniciar{
+.red-text {
+    color: red;
+    font-weight: bold;
+}
+
+.disabled-row {
+    font-style: italic;
+    color: #ff6868d9 !important;
+}
+
+.highlight-row {
+    background-color: rgba(255, 255, 0, 0.567);
+    transition: background-color 0.3s ease;
+}
+
+#btnIniciar {
     background-color: #008000;
 }
 
+.btnActions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    gap: 10px;
+}
 
+/* Estilos específicos para cada botón usando IDs */
+#btnReiniciar, #btnEliminar, #btnParar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px !important;
+    height: 50px !important;
+    background-color: #f0f0f0; /* Color de fondo por defecto */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
 
-button:hover {
-    background-color: #55008a;
+/* Estilos de hover específicos */
+#btnReiniciar:hover {
+    background-color: #d97c3a;
     transform: scale(1.05);
 }
 
+#btnEliminar:hover {
+    background-color: #d45a4a;
+    transform: scale(1.05);
+}
+
+#btnParar:hover {
+    background-color: #6848a3;
+    transform: scale(1.05);
+}
+
+/* Colores de fondo específicos para cada botón */
 #btnReiniciar {
+    margin: 0 !important;
     background-color: #ff914d;
 }
 
-#btnReiniciar:hover {
-    background-color: #d97c3a;
+#btnEliminar {
+    margin: 0 !important;
+    background-color: #ef5350;
+}
+
+#btnParar {
+    margin: 0 !important;
+    background-color: #7e57c2;
+}
+
+/* Estilos del icono dentro de los botones */
+#btnReiniciar i, #btnEliminar i, #btnParar i {
+    font-size: 24px; /* Tamaño del icono */
+    color: #fff; /* Color del icono */
 }
 
 .contador {
@@ -144,10 +217,10 @@ th {
     font-weight: bold;
 }
 
-td {
+/* td {
     color: #555;
     cursor: pointer;
-}
+} */
 
 /* Estilo de la fila seleccionada */
 .selected {
@@ -164,6 +237,12 @@ tr:hover td {
 #tiempoRestante {
     font-size: 1.3em;
     color: #333;
+}
+
+/* Contenedor de tabla con scroll */
+.table-container {
+    max-height: 500px; /* Ajusta la altura máxima según sea necesario */
+    overflow-y: auto; /* Habilita el desplazamiento vertical */
 }
 
 @keyframes countdown {

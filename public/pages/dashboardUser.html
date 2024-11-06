@@ -32,9 +32,7 @@
         </div>
         <nav>
             <ul>
-                <li class="menu-item" data-section="dashboard">
-                    <i class="fas fa-home"></i>Dashboard
-                </li>
+                
                 <li class="menu-item" data-section="pedidos">
                     <i class="fas fa-home"></i>Pedidos
                 </li>
@@ -43,12 +41,12 @@
                 </li>
                 <li class="menu-item" data-section="qr">
                     <a href="../qrScan" class="no-decoration">
-                        <i class="fas fa-question-circle"></i> Ver QR
+                        <i class="fas fa-question-circle"></i> Pedidos QR
                     </a>
                 </li>
                 <li class="menu-item" data-section="qr">
                     <a href="../qrScanReservas" class="no-decoration">
-                        <i class="fas fa-question-circle"></i> Ver QR Reservas
+                        <i class="fas fa-question-circle"></i> Reservas Qr
                     </a>
                 </li>
                 <li class="menu-item" data-section="faq">
@@ -172,30 +170,28 @@
                     <!-- Tabla de Datos -->
                     <div class="tabla">
                         <h3>Reservas</h3>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Nombre</th>
-                                    <th>Telefono</th>
-                                    <th>Comensales</th>
-                                    <th>Observación</th>
-                                    <th>Confirmo?</th>
-                                    <th>Tiempo</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tablaClientes">
-                                <!-- Filas de datos se agregarán dinámicamente -->
-                            </tbody>
-                        </table>
+                        <div class="table-container"> <!-- Contenedor para la tabla con scroll -->
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Telefono</th>
+                                        <th>Comensales</th>
+                                        <th>Observación</th>
+                                        <th>Confirmo?</th>
+                                        <th>Tiempo</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaClientes">
+                                    <!-- Filas de datos se agregarán dinámicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+
                     </div>
 
-                    <div class="tarjeta">
-                        <h3>Nueva Reserva</h3>
-                        <input type="text" id="inputNombre" placeholder="Nombre del Cliente" required>
-                        <input type="number" id="inputComensales" placeholder="Comensales" required>
-                        <input type="text" id="inputObservacion" placeholder="Observación" required>
-                        <button id="btnAgregar" onclick="agregarCliente()">Agregar Cliente</button>
-                    </div>
+                    
 
                     <!-- Tarjeta del Cliente Seleccionado -->
                     <div class="tarjeta">
@@ -214,18 +210,37 @@
                         <button id="btnIniciar" onclick="iniciarCuentaRegresiva()">
                             <i class="fab fa-whatsapp"></i> Enviar Aviso
                         </button>
-                        <!-- Botón Reiniciar con ícono de reinicio -->
-                        <button id="btnReiniciar" onclick="reiniciarCuentaRegresiva()">
-                            <i class="fas fa-sync-alt"></i> Reiniciar
-                        </button>
+
                         <div class="contador" id="contadorCirculo">
                             <span id="tiempoRestante">5:00</span>
                         </div>
-                        <!-- Botón Eliminar con ícono de eliminación -->
-                        <button id="btnEliminar" onclick="eliminarReserva()">
-                            <i class="fas fa-trash-alt"></i> Eliminar
-                        </button>
 
+                        <div class="btnActions">
+                            <!-- Botón Reiniciar con ícono de reinicio -->
+                            <button id="btnReiniciar" onclick="reiniciarCuentaRegresiva()">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                            <!-- Botón Eliminar con ícono de eliminación -->
+                            <button id="btnEliminar" onclick="eliminarReserva()">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                            <!-- Botón Parar con ícono de detener -->
+                            <button id="btnParar" onclick="togglePausaReanudar()">
+                                <i class="fas fa-stop"></i>
+                            </button>
+                        </div>
+                        
+
+
+                    </div>
+
+                    <!-- Tarjeta Alta nueva reserva -->
+                    <div class="tarjeta">
+                        <h3>Nueva Reserva</h3>
+                        <input type="text" id="inputNombre" placeholder="Nombre del Cliente" required>
+                        <input type="number" id="inputComensales" placeholder="Comensales" required>
+                        <input type="text" id="inputObservacion" placeholder="Observación" required>
+                        <button id="btnAgregar" onclick="agregarCliente()">Agregar Cliente</button>
                     </div>
 
                 </div>

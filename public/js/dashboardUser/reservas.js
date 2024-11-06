@@ -39,6 +39,25 @@ async function cargarReservas() {
     }
 }
 
+// Función para seleccionar un cliente y mostrar sus detalles en la tarjeta sin iniciar automáticamente la cuenta regresiva
+function seleccionarCliente(clienteId) {
+    clienteSeleccionado = clienteId;
+    const reserva = reservas.find(r => r._id === clienteId); // Encuentra la reserva seleccionada
+
+    if (reserva) {
+        nombreCliente.textContent = reserva.nombre;
+        comensales.textContent = `Comensales: ${reserva.comensales}`;
+        observacion.textContent = `Observación: ${reserva.observacion}`;
+
+        // Mostrar el tiempo actual en la tarjeta sin iniciar el temporizador
+        actualizarTiempoVisual(intervalos[clienteId].tiempoRestante);
+
+        // Marcar la fila seleccionada
+        document.querySelectorAll('.selected').forEach(row => row.classList.remove('selected'));
+        document.getElementById(`cliente-row-${clienteId}`).classList.add('selected');
+    }
+}
+
 function agregarFilaTabla(reserva) {
     const row = document.createElement('tr');
     row.id = `cliente-row-${reserva._id}`;
@@ -61,34 +80,16 @@ function agregarFilaTabla(reserva) {
     tablaClientes.appendChild(row);
 }
 
-
-// Función para seleccionar un cliente y mostrar sus detalles en la tarjeta sin iniciar automáticamente la cuenta regresiva
-function seleccionarCliente(clienteId) {
-    clienteSeleccionado = clienteId;
-    const reserva = reservas.find(r => r._id === clienteId); // Encuentra la reserva seleccionada
-
-    if (reserva) {
-        nombreCliente.textContent = reserva.nombre;
-        comensales.textContent = `Comensales: ${reserva.comensales}`;
-        observacion.textContent = `Observación: ${reserva.observacion}`;
-
-        // Mostrar el tiempo actual en la tarjeta sin iniciar el temporizador
-        actualizarTiempoVisual(intervalos[clienteId].tiempoRestante);
-
-        // Marcar la fila seleccionada
-        document.querySelectorAll('.selected').forEach(row => row.classList.remove('selected'));
-        document.getElementById(`cliente-row-${clienteId}`).classList.add('selected');
-    }
-}
-
 // Función para iniciar la cuenta regresiva del cliente seleccionado
+// Función para iniciar o reanudar la cuenta regresiva del cliente seleccionado
 function iniciarCuentaRegresiva() {
     const clienteId = clienteSeleccionado;
-    if (!clienteId || intervalos[clienteId].intervalo) return; // Solo iniciar si no está ya en ejecución
+    if (!clienteId || intervalos[clienteId].intervalo) return; // Solo iniciar si no está en pausa o ya en ejecución
 
-    intervalos[clienteId].tiempoRestante = 300; // Reiniciar el tiempo a 5 minutos
-    actualizarTiempoVisual(300);
-    actualizarTiempoTabla(clienteId, 300);
+    // Si es una cuenta regresiva nueva (sin tiempo restante guardado), establecemos 5 minutos
+    if (intervalos[clienteId].tiempoRestante === undefined) {
+        intervalos[clienteId].tiempoRestante = 300;
+    }
 
     // Crear un nuevo intervalo solo para el cliente seleccionado
     intervalos[clienteId].intervalo = setInterval(() => {
@@ -126,6 +127,33 @@ function reiniciarCuentaRegresiva() {
     actualizarTiempoVisual(300);
     actualizarTiempoTabla(clienteId, 300);
 }
+
+let cuentaRegresivaEnPausa = false; // Variable para controlar el estado de pausa
+
+// Función para alternar entre pausa y reanudación de la cuenta regresiva
+function togglePausaReanudar() {
+    const clienteId = clienteSeleccionado;
+    if (!clienteId) return; // Salir si no hay cliente seleccionado
+
+    const btnPararPlay = document.getElementById("btnParar");
+    const icono = btnPararPlay.querySelector("i");
+
+    if (cuentaRegresivaEnPausa) {
+        // Si la cuenta regresiva estaba en pausa, reanudar
+        iniciarCuentaRegresiva(); // Llamar a la función que reanuda la cuenta regresiva
+        icono.classList.remove("fa-play");
+        icono.classList.add("fa-stop");
+        cuentaRegresivaEnPausa = false;
+    } else {
+        // Si la cuenta regresiva está en marcha, pausar
+        clearInterval(intervalos[clienteId].intervalo); // Pausar la cuenta regresiva
+        intervalos[clienteId].intervalo = null;
+        icono.classList.remove("fa-stop");
+        icono.classList.add("fa-play");
+        cuentaRegresivaEnPausa = true;
+    }
+}
+
 
 // Función para actualizar el tiempo visual en la tarjeta del cliente
 function actualizarTiempoVisual(tiempo) {
@@ -201,40 +229,59 @@ async function generarQR() {
 }
 
 
+//ELIMINA DE LA BASE DE DATOS....
+// async function eliminarReserva() {
+//     if (!clienteSeleccionado) {
+//         showNotification("No hay ningún cliente seleccionado para eliminar.", "error");
+//         // alert("No hay ningún cliente seleccionado para eliminar.");
+//         return;
+//     }
 
-async function eliminarReserva() {
-    if (!clienteSeleccionado) {
+//     try {
+//         const response = await fetch(`/api/reservas/${clienteSeleccionado}/eliminar`, {
+//             method: 'DELETE',
+//             headers: {
+//                 'Content-Type': 'application/json'
+//             }
+//         });
+
+//         const result = await response.json();
+//         if (result.success) {
+//             showNotification("Reserva eliminada exitosamente.");
+//             // alert("Reserva eliminada exitosamente.");
+//             // Remover la fila de la tabla y limpiar la tarjeta
+//             document.getElementById(`cliente-row-${clienteSeleccionado}`).remove();
+//             nombreCliente.textContent = "Detalles";
+//             comensales.textContent = "Comensales: --";
+//             observacion.textContent = "Observación: --";
+//             tiempoRestanteElem.textContent = "5:00";
+//             clienteSeleccionado = null;
+//         } else {
+//             alert("Hubo un problema al eliminar la reserva.");
+//         }
+//     } catch (error) {
+//         console.error("Error al eliminar la reserva:", error);
+//         alert("Ocurrió un error al intentar eliminar la reserva.");
+//     }
+// }
+
+// Función para marcar el cliente como "eliminado" sin borrarlo de la tabla
+function eliminarReserva() {
+    const clienteId = clienteSeleccionado; // Asegura que tienes el cliente seleccionado
+
+    if (!clienteId) {
         showNotification("No hay ningún cliente seleccionado para eliminar.", "error");
-        // alert("No hay ningún cliente seleccionado para eliminar.");
         return;
     }
 
-    try {
-        const response = await fetch(`/api/reservas/${clienteSeleccionado}/eliminar`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-
-        const result = await response.json();
-        if (result.success) {
-            showNotification("Reserva eliminada exitosamente.");
-            // alert("Reserva eliminada exitosamente.");
-            // Remover la fila de la tabla y limpiar la tarjeta
-            document.getElementById(`cliente-row-${clienteSeleccionado}`).remove();
-            nombreCliente.textContent = "Detalles";
-            comensales.textContent = "Comensales: --";
-            observacion.textContent = "Observación: --";
-            tiempoRestanteElem.textContent = "5:00";
-            clienteSeleccionado = null;
-        } else {
-            alert("Hubo un problema al eliminar la reserva.");
-        }
-    } catch (error) {
-        console.error("Error al eliminar la reserva:", error);
-        alert("Ocurrió un error al intentar eliminar la reserva.");
+    // Aplicar el estilo de "eliminado" al cliente
+    const filaCliente = document.getElementById(`cliente-row-${clienteId}`);
+    if (filaCliente) {
+        filaCliente.classList.remove('highlight-row'); // Remover el fondo amarillo
+        filaCliente.classList.add('disabled-row'); // Aplicar estilo en cursiva y gris
     }
+
+    showNotification("El cliente ha sido marcado como eliminado.");
 }
 
 
@@ -246,7 +293,7 @@ window.generarQR = generarQR;
 // Llamar a la función para cargar las reservas al cargar la página
 document.addEventListener('DOMContentLoaded', cargarReservas);
 
-// Agregar evento al botón de "Iniciar Cuenta Regresiva"
+// Modificar el evento del botón para iniciar la cuenta regresiva y aplicar el estilo
 document.getElementById('btnIniciar').addEventListener('click', async () => {
     try {
         const clienteId = clienteSeleccionado; // Asegura que ya tienes el cliente seleccionado
@@ -262,15 +309,27 @@ document.getElementById('btnIniciar').addEventListener('click', async () => {
 
         const result = await response.json();
         if (result.success) {
-            alert('Mensaje enviado al cliente. Ahora puedes monitorear la cuenta regresiva.');
+            showNotification("Mensaje enviado al cliente. Ahora puedes monitorear la cuenta regresiva.");
 
             // Inicia la cuenta regresiva solo si el mensaje fue enviado con éxito
             iniciarCuentaRegresiva();
+
+            // Aplicar el estilo de resaltado a la fila del cliente
+            const filaCliente = document.getElementById(`cliente-row-${clienteId}`);
+            if (filaCliente) {
+                filaCliente.classList.add('highlight-row');
+            }
+
+            // Cambiar el color de la columna "Tiempo" a rojo
+            const tiempoCelda = document.getElementById(`tiempo-cliente-${clienteId}`);
+            if (tiempoCelda) {
+                tiempoCelda.classList.add('red-text');
+            }
         } else {
-            alert('Hubo un problema al enviar el mensaje.');
+            showNotification("Hubo un problema al enviar el mensaje.", "error");
         }
     } catch (error) {
+        showNotification("Ocurrió un error al intentar enviar el mensaje.", "error");
         console.error('Error al enviar el mensaje:', error);
-        alert('Ocurrió un error al intentar enviar el mensaje.');
     }
 });

@@ -55,10 +55,10 @@
 
 /* Efecto hover */
 .sidebar nav ul li:hover {
-    background-color: #ffffff;
+    /* background-color: #ffffff; */
     color: #6b00ad;
     border-radius: 10px;
-    transform: scale(1.05);
+    transform: scale(1.15);
 }
 
 /* Ocultar el submenú por defecto */
