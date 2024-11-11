@@ -157,36 +157,31 @@ async function getLocalDetails(req, res) {
 
 
 async function reciveMessage(req, res) {
-  // Imprime todo el req.body para verificar su contenido
+  res.status(200).send('<Response></Response>');
+
   console.log("Contenido completo de req.body:", req.body);
 
   const { From: fromWithPrefix, Body: body, To: toWithPrefix } = req.body;
-
-  // Eliminar el prefijo 'whatsapp:' de los números y el '+'
   const from = fromWithPrefix ? fromWithPrefix.replace('whatsapp:', '') : null;
   const to = toWithPrefix ? toWithPrefix.replace('whatsapp:', '').replace('+', '') : null;
 
+  if (!body) {
+    console.error("El contenido del mensaje (Body) está vacío o no se encuentra.");
+    return;
+  }
+
   try {
-    // Responder inmediatamente a Twilio
-    res.status(200).send('<Response></Response>');
-
-    // Verificar si recibimos el contenido del mensaje
-    if (!body) {
-      console.error("El contenido del mensaje (Body) está vacío o no se encuentra.");
-      return;
-    }
-
-    // Buscar el local en función del número de WhatsApp de destino (To)
     const localAdmin = await Admin.findOne({ localNumber: to });
 
     if (!localAdmin) {
       console.log(`No se encontró un local para el número de WhatsApp: ${to}`);
+      // Respuesta para números desconocidos
+      await sendWhatsAppMessage(`whatsapp:${from}`, "Hola, no tenemos tu número registrado en nuestro sistema. Por favor, contacta a soporte.");
       return;
     }
 
-    // Verificar si el mensaje contiene la palabra "reserva"
+    // Procesar el mensaje según el contenido
     if (body.toLowerCase().includes('reserva')) {
-      // Llama a una función específica para manejar mensajes de "reserva"
       await handleReservaMessage(body, from, localAdmin);
     } else if (body.toLowerCase().includes('número de tag')) {
       await handleTagMessage(body, from, localAdmin);
@@ -196,13 +191,14 @@ async function reciveMessage(req, res) {
       await handleBajaRequest(from);
     } else {
       console.log('Mensaje no reconocido:', body);
+      // Respuesta para mensajes no reconocidos
+      await sendWhatsAppMessage(`whatsapp:${from}`, "Lo siento, no pudimos entender tu mensaje. Por favor, usa una palabra clave válida o contacta a soporte.");
     }
-
   } catch (error) {
     console.error('Error al procesar el mensaje:', error.message);
-    res.status(500).send('Error al procesar el mensaje');
   }
 }
+
 
 
 
