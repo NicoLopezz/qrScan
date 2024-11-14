@@ -33,7 +33,7 @@ body {
 }
 
 .tabla {
-    width: 100%;
+    width: 200%;
     padding: 25px;
     height: 660px;
 }
@@ -43,12 +43,11 @@ body {
     flex-direction: column;
     align-items: center;
     padding: 25px;
-    width: 30%;
     height: fit-content;
 }
 
 .highlight-row {
-    background-color: rgba(255, 255, 0, 0.544); /* Puedes cambiar el color o añadir más estilos */
+    background-color: rgba(255, 255, 0, 0.544);
     transition: background-color 0.3s ease;
 }
 
@@ -126,21 +125,19 @@ button {
     gap: 10px;
 }
 
-/* Estilos específicos para cada botón usando IDs */
 #btnReiniciar, #btnEliminar, #btnParar {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 50px !important;
     height: 50px !important;
-    background-color: #f0f0f0; /* Color de fondo por defecto */
+    background-color: #f0f0f0;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-/* Estilos de hover específicos */
 #btnReiniciar:hover {
     background-color: #d97c3a;
     transform: scale(1.05);
@@ -156,7 +153,6 @@ button {
     transform: scale(1.05);
 }
 
-/* Colores de fondo específicos para cada botón */
 #btnReiniciar {
     margin: 0 !important;
     background-color: #ff914d;
@@ -172,10 +168,9 @@ button {
     background-color: #7e57c2;
 }
 
-/* Estilos del icono dentro de los botones */
 #btnReiniciar i, #btnEliminar i, #btnParar i {
-    font-size: 24px; /* Tamaño del icono */
-    color: #fff; /* Color del icono */
+    font-size: 24px;
+    color: #fff;
 }
 
 .contador {
@@ -198,6 +193,35 @@ button {
     animation: countdown 300s linear forwards;
 }
 
+button:hover {
+    background-color: #55008a;
+    transform: scale(1.05);
+}
+
+#btnIniciar:hover {
+    background-color: #006400;
+}
+
+#btnGenerarQR:hover {
+    background-color: #4e00ad;
+}
+
+#btnReiniciar:hover {
+    background-color: #d97c3a;
+    transform: scale(1.05);
+}
+
+#btnEliminar:hover {
+    background-color: #d45a4a;
+    transform: scale(1.05);
+}
+
+#btnParar:hover {
+    background-color: #6848a3;
+    transform: scale(1.05);
+}
+
+/* Estilos para la tabla */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -212,17 +236,15 @@ th, td {
 }
 
 th {
-    background-color: #6b00ad;
+    background-color: #6b00ad; /* Fondo violeta para el encabezado */
     color: #fff;
     font-weight: bold;
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
 
-/* td {
-    color: #555;
-    cursor: pointer;
-} */
-
-/* Estilo de la fila seleccionada */
+/* Fila seleccionada */
 .selected {
     background-color: #f0f0ff;
     transform: scale(1.02);
@@ -241,13 +263,26 @@ tr:hover td {
 
 /* Contenedor de tabla con scroll */
 .table-container {
-    max-height: 500px; /* Ajusta la altura máxima según sea necesario */
-    overflow-y: auto; /* Habilita el desplazamiento vertical */
+    max-height: 500px;
+    overflow-y: auto;
 }
+
+/* Estilos para el encabezado de la tabla */
+table thead th {
+    background-color: #6b00ad !important; /* Fondo violeta */
+    color: #ffffff; /* Texto blanco para contraste */
+    font-weight: bold;
+    padding: 15px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
 
 @keyframes countdown {
     from {
-        stroke-dasharray: 251.2; /* Circunferencia del círculo */
+        stroke-dasharray: 251.2;
     }
     to {
         stroke-dasharray: 0;

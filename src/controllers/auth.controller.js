@@ -877,23 +877,31 @@ async function actualizarSelectedCliente(req, res) {
   const clienteId = req.params.clienteId;
 
   try {
-      // Encuentra el cliente dentro del array de reservas y actualiza el campo 'selected'
-      const admin = await Admin.findOneAndUpdate(
-          { "reservas._id": clienteId }, // Busca dentro del array de reservas
-          { $set: { "reservas.$.selected": true } }, // Actualiza el campo selected a true
-          { new: true }
-      );
+    // Primero, busca el admin que contiene la reserva con el clienteId y establece todas las reservas en false
+    const admin = await Admin.findOneAndUpdate(
+      { "reservas._id": clienteId }, 
+      { $set: { "reservas.$[].selected": false } }, // Establece todas las reservas como false
+      { new: true }
+    );
 
-      if (!admin) {
-          return res.status(404).json({ success: false, message: 'Cliente no encontrado' });
-      }
+    if (!admin) {
+      return res.status(404).json({ success: false, message: 'Cliente no encontrado' });
+    }
 
-      res.json({ success: true, message: 'Cliente actualizado correctamente', admin });
+    // Luego, establece solo la reserva seleccionada en true
+    const updatedAdmin = await Admin.findOneAndUpdate(
+      { "reservas._id": clienteId }, 
+      { $set: { "reservas.$.selected": true } }, // Establece solo la reserva específica en true
+      { new: true }
+    );
+
+    res.json({ success: true, message: 'Cliente actualizado correctamente', admin: updatedAdmin });
   } catch (error) {
-      console.error('Error al actualizar el cliente:', error);
-      res.status(500).json({ success: false, message: 'Error al actualizar el cliente' });
+    console.error('Error al actualizar el cliente:', error);
+    res.status(500).json({ success: false, message: 'Error al actualizar el cliente' });
   }
 }
+
 
 
 async function eliminarCliente(req, res) {

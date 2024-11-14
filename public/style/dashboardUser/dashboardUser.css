@@ -24,6 +24,21 @@ body {
   height: calc(100vh - 10vh); /* La altura se ajusta al viewport restando el padding */
 }
 
+/* Contenedor principal que contiene todo el contenido */
+.content-container {
+  background-color: var(--white-color);
+  padding: 25px;
+  border-radius: 15px;
+  max-width: 1500px;
+  margin: 40px auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-left: 230px;
+  margin-top: 40px;
+  height: 95%;
+  width: 94%;
+}
+
+
 .tags-section {
   flex: 1;
   padding: 20px;

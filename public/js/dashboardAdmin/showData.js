@@ -99,3 +99,71 @@ function getCookie(name) {
     }
 }
 
+// Generar filas de ejemplo en la tabla de Reservas
+document.addEventListener("DOMContentLoaded", () => {
+  const clientTableBodyReservas = document.getElementById('clientTableBodyReservas');
+
+  // Lista de comentarios aleatorios
+  const comments = [
+      "Me gustó pero...",
+      "¡Excelente!",
+      "Hermoso lugar",
+      "La comida picante",
+      "Muy buen servicio",
+      "Habitaciones limpias",
+      "Perfecto para vacaciones",
+      "Ambiente relajante",
+      "El personal muy amable",
+      "Desayuno delicioso",
+      "Camas cómodas",
+      "Buena ubicación",
+      "Mejorable en algunos aspectos",
+      "Experiencia inolvidable",
+      "Volvería sin dudar",
+      "Un poco ruidoso",
+      "Ideal para familia",
+      "Muy recomendable",
+      "Precio justo",
+      "Decoración elegante"
+  ];
+
+  // Datos de ejemplo para 20 clientes
+  const clients = Array.from({ length: 20 }, (_, i) => ({
+      nombre: `Cliente ${i + 1}`,
+      telefono: `+54 9 11 1234 56${String(i).padStart(2, '0')}`,
+      calificacion: generateRandomStars(), // Generar calificación aleatoria en estrellas
+      puntuacion: comments[Math.floor(Math.random() * comments.length)] // Comentario aleatorio
+  }));
+
+  // Crear filas con los datos de cada cliente
+  clients.forEach(client => {
+      const tr = document.createElement('tr');
+
+      const nombreTd = document.createElement('td');
+      nombreTd.textContent = client.nombre;
+
+      // const telefonoTd = document.createElement('td');
+      // telefonoTd.textContent = client.telefono;
+
+      const calificacionTd = document.createElement('td');
+      calificacionTd.innerHTML = `<span class="stars">${client.calificacion}</span>`;
+
+      const puntuacionTd = document.createElement('td');
+      puntuacionTd.textContent = client.puntuacion;
+
+      tr.appendChild(nombreTd);
+      // tr.appendChild(telefonoTd);
+      tr.appendChild(calificacionTd);
+      tr.appendChild(puntuacionTd);
+
+      clientTableBodyReservas.appendChild(tr);
+  });
+});
+
+// Función para generar una calificación aleatoria en estrellas
+function generateRandomStars() {
+  const totalStars = 5;
+  const brightStars = Math.floor(Math.random() * (totalStars + 1)); // Número aleatorio de estrellas brillantes
+  const darkStars = totalStars - brightStars; // Estrellas oscuras para completar 5 estrellas
+  return '⭐'.repeat(brightStars) + '☆'.repeat(darkStars);
+}

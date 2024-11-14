@@ -63,12 +63,13 @@ function agregarFilaTabla(reserva) {
     row.id = `cliente-row-${reserva._id}`;
 
     // Verificar si el teléfono está vacío y si el estado de confirmación es true o false
-    const telefono = reserva.telefono || 'Vacío';
+    const telefono = reserva.from 
+        ? `...${reserva.from.slice(-4)}`  // Mostrar solo los últimos 4 dígitos
+        : 'Vacío';
     const confirmo = reserva.textConfirmation ? 'Sí' : 'No';
 
     row.innerHTML = `
         <td>${reserva.nombre}</td>
-        <td>${telefono}</td>
         <td>${reserva.comensales}</td>
         <td>${reserva.observacion}</td>
         <td>${confirmo}</td>
@@ -185,17 +186,18 @@ function agregarCliente() {
     .then(data => {
         if (data.success) {
             showNotification("Cliente agregado con éxito");
-            // alert("Cliente agregado con éxito");
             const nuevoCliente = { _id: data.id, nombre, comensales, observacion };
-            reservas.push(nuevoCliente); // Agregar al array de reservas
-            agregarFilaTabla(nuevoCliente); // Agregar la fila en la tabla
+            reservas.push(nuevoCliente);
+            agregarFilaTabla(nuevoCliente);
+            // Recargar la página después de agregar el cliente
+            window.location.reload();
         } else {
             showNotification("Error al agregar cliente.", "error");
-            // alert("Error al agregar cliente");
         }
     })
     .catch(error => console.error("Error:", error));
 }
+
 
 // Función para generar QR y actualizar la reserva seleccionada
 async function generarQR() {

@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="/style/dashboardAdmin/profile.css">
     <link rel="stylesheet" href="/style/dashboardUser/reservas.css">
     <link rel="stylesheet" href="/style/dashboardUser/dashboardUser.css">
+    <link rel="stylesheet" href="/style/qrScan/qrScan.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&display=swap" rel="stylesheet">
 </head>
@@ -32,23 +33,24 @@
         </div>
         <nav>
             <ul>
-                
+
                 <li class="menu-item" data-section="pedidos">
-                    <i class="fas fa-home"></i>Pedidos
+                    <i class="fas fa-shopping-cart"></i> Pedidos
+
                 </li>
                 <li class="menu-item mensajes" data-section="mensajes">
-                    <i class="fas fa-table"></i> Reservas
+                    <i class="fas fa-clipboard-check"></i> Reservas
                 </li>
                 <li class="menu-item" data-section="qr">
                     <a href="../qrScan" class="no-decoration">
                         <i class="fas fa-question-circle"></i> Pedidos QR
                     </a>
                 </li>
-                <li class="menu-item" data-section="qr">
+                <!-- <li class="menu-item" data-section="qr">
                     <a href="../qrScanReservas" class="no-decoration">
                         <i class="fas fa-question-circle"></i> Reservas Qr
                     </a>
-                </li>
+                </li> -->
                 <li class="menu-item" data-section="faq">
                     <i class="fas fa-question-circle"></i> FAQ
                 </li>
@@ -76,7 +78,7 @@
         <div class="main-content">
 
             <!-- Sección Dashboard (activa por defecto) -->
-            <div id="section-dashboard" class="section active">
+            <div id="section-dashboard" class="section">
                 <div class="cards">
                     <div class="card">
                         <div class="icon-container">
@@ -165,7 +167,7 @@
             </div>
 
             <!-- Sección Reservas -->
-            <div id="section-mensajes" class="section">
+            <div id="section-mensajes" class="section active">
                 <div class="container">
                     <!-- Tabla de Datos -->
                     <div class="tabla">
@@ -175,7 +177,7 @@
                                 <thead>
                                     <tr>
                                         <th>Nombre</th>
-                                        <th>Telefono</th>
+                                        <!-- <th>Telefono</th> -->
                                         <th>Comensales</th>
                                         <th>Observación</th>
                                         <th>Confirmo?</th>
@@ -187,11 +189,11 @@
                                 </tbody>
                             </table>
                         </div>
-                        
+
 
                     </div>
 
-                    
+
 
                     <!-- Tarjeta del Cliente Seleccionado -->
                     <div class="tarjeta">
@@ -229,19 +231,26 @@
                                 <i class="fas fa-stop"></i>
                             </button>
                         </div>
-                        
+
 
 
                     </div>
-
                     <!-- Tarjeta Alta nueva reserva -->
-                    <div class="tarjeta">
-                        <h3>Nueva Reserva</h3>
-                        <input type="text" id="inputNombre" placeholder="Nombre del Cliente" required>
-                        <input type="number" id="inputComensales" placeholder="Comensales" required>
-                        <input type="text" id="inputObservacion" placeholder="Observación" required>
-                        <button id="btnAgregar" onclick="agregarCliente()">Agregar Cliente</button>
+                    <div class="tarjetaYqr">
+                        <div class="tarjeta">
+                            <h3>Nueva Reserva</h3>
+                            <input type="text" id="inputNombre" placeholder="Nombre del Cliente" required>
+                            <input type="number" id="inputComensales" placeholder="Comensales" required>
+                            <input type="text" id="inputObservacion" placeholder="Observación" required>
+                            <button id="btnAgregar" onclick="agregarCliente()">Agregar Cliente</button>
+                        </div>
+
+                        <div class="qr-container">
+                            <!-- <img src="../img/qrRiu.png" alt=""> -->
+                            <canvas id="qrcode"></canvas>
+                          </div>
                     </div>
+                    
 
                 </div>
             </div>
@@ -353,6 +362,10 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/dashboardUser/dashboardUser.js"></script>
     <script type="module" src="/js/messages/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/qrScan/qrGeneratorReservas.js"></script>
 
 
 
