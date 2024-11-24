@@ -85,7 +85,7 @@ p {
     font-size: 20px;
 }
 
-.tag-line-body{
+.tag-line-body {
     /* background-color: grey; */
 }
 
@@ -114,16 +114,17 @@ p.lead {
     color: #d6619c;
 }
 
-.iconNovedades img{
+.iconNovedades img {
     width: 60px;
 }
 
 .pulse-btn {
-    animation: pulse 2s infinite; /* Efecto de latido */
+    animation: pulse 2s infinite;
+    /* Efecto de latido */
     transition: transform 0.3s, background-color 0.3s;
 }
 
-.section-title small{
+.section-title small {
     font-size: 20px;
 }
 
@@ -148,11 +149,19 @@ p.lead {
 }
 
 
+/* FAQ section */
+
+
+
+
 /* Efecto de latido */
 @keyframes pulse {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: scale(1);
     }
+
     50% {
         transform: scale(1.1);
     }
@@ -160,11 +169,37 @@ p.lead {
 
 /* Efecto al pasar el mouse */
 .pulse-btn:hover {
-    transform: scale(1.15); /* Aumenta el tamaño en el hover */
-    background-color: #ff914d; /* Cambia el color en el hover */
-    color: #ffffff; /* Cambia el color del texto en el hover */
+    transform: scale(1.15);
+    /* Aumenta el tamaño en el hover */
+    background-color: #ff914d;
+    /* Cambia el color en el hover */
+    color: #ffffff;
+    /* Cambia el color del texto en el hover */
 }
 
+.rowPersonal {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+}
+
+#conocenos {
+    scroll-margin-top: 50px;
+    /* Ajusta el valor según lo necesites */
+
+}
+
+#conocenos {
+    padding-top: 120px;
+}
+
+#packs {
+    padding-top: 190px;
+}
+
+.cajaMotivos {
+    max-width: 100%;
+}
 
 .btn-primary {
     border-radius: 3px;
@@ -250,11 +285,14 @@ p.lead {
 .text-wrap:nth-child(3) {
     animation-delay: 4s;
 }
+
 .dynamic-words {
     display: inline-block;
     position: relative;
-    width: 450px; /* Asegúrate de que sea suficientemente ancho */
-    height: 1em; /* Ajusta la altura al tamaño de fuente */
+    width: 450px;
+    /* Asegúrate de que sea suficientemente ancho */
+    height: 1em;
+    /* Ajusta la altura al tamaño de fuente */
     overflow: hidden;
     vertical-align: middle;
 }
@@ -270,9 +308,17 @@ p.lead {
 }
 
 /* Animación de cada palabra con delay para hacer el cambio */
-.text-wrap:nth-child(1) { animation-delay: 0s; }
-.text-wrap:nth-child(2) { animation-delay: 2s; }
-.text-wrap:nth-child(3) { animation-delay: 4s; }
+.text-wrap:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.text-wrap:nth-child(2) {
+    animation-delay: 2s;
+}
+
+.text-wrap:nth-child(3) {
+    animation-delay: 4s;
+}
 
 /* Keyframes para el efecto de desvanecimiento y desplazamiento */
 @keyframes fadeInOut {
@@ -280,14 +326,20 @@ p.lead {
         opacity: 0;
         transform: translateX(-100%);
     }
-    10%, 30% {
+
+    10%,
+    30% {
         opacity: 1;
-        transform: translateX(0); /* Palabra visible en el centro */
+        transform: translateX(0);
+        /* Palabra visible en el centro */
     }
+
     50% {
         opacity: 0;
-        transform: translateX(100%); /* Palabra se desplaza hacia la derecha */
+        transform: translateX(100%);
+        /* Palabra se desplaza hacia la derecha */
     }
+
     100% {
         opacity: 0;
     }
@@ -326,6 +378,7 @@ p.lead {
     align-items: center;
     justify-content: center;
 }
+
 /* 
 .img-fluid2 {
     max-width: 30%;
@@ -334,7 +387,8 @@ p.lead {
 
 /* Archivo CSS personalizado */
 .container {
-    max-width: 1500px; /* Ajusta el valor como necesites */
+    max-width: 1500px;
+    /* Ajusta el valor como necesites */
 }
 
 
@@ -838,7 +892,8 @@ header {
     line-height: 50px;
     margin: 0 0.3rem;
     border-radius: 5px;
-    color: #f4c9e2;
+    color: #c1208f;
+
     transition: all 0.3s ease;
 }
 

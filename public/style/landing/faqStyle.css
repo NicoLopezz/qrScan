@@ -1,0 +1,87 @@
+
+#faq{
+    padding-top: 200px;
+}
+
+.faq-section {
+    background-color: #f9f9f9;
+    padding: 40px 20px;
+    height: 790px;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .faq-title {
+    text-align: center;
+    font-size: 2rem;
+    color: #6b00ad;
+    margin-bottom: 30px;
+  }
+  
+  /* Configuración de la cuadrícula */
+  .faq-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Una sola columna en pantallas pequeñas */
+    gap: 20px;
+    max-height: 650px; /* Limita a tres preguntas visibles */
+    overflow-y: auto; /* Scroll interno */
+    padding-right: 10px;
+  }
+  
+  @media (min-width: 768px) {
+    .faq-grid {
+      grid-template-columns: repeat(3, 1fr); /* Tres columnas en pantallas grandes */
+      max-height: none;
+      overflow: visible;
+    }
+  }
+  
+  /* Estilo del contenedor de preguntas */
+  .faq-item {
+    border-radius: 5px;
+    overflow: hidden;
+    transition: background-color 0.3s ease;
+  }
+  
+  .faq-question {
+    background-color: white;
+    padding: 15px 20px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 0;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  /* Hover solo en la pregunta */
+  .faq-question:hover {
+    background-color: #6b00ad;
+    color: white;
+  }
+  
+  /* Estilo de la respuesta */
+  .faq-answer {
+    background-color: #ffffff; /* Gris claro */
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.6;
+    padding: 0 20px; /* Inicialmente sin espacio */
+    max-height: 0; /* Altura inicial para que no se muestre */
+    opacity: 0; /* Transparencia al principio */
+    overflow: hidden; /* Esconde el contenido que excede la altura */
+    transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+  }
+  
+  /* Muestra la respuesta cuando el contenedor está activo */
+  .faq-item.active .faq-answer {
+    max-height: 200px; /* Ajusta según la cantidad de contenido */
+    padding: 15px 20px; /* Añade espacio al texto */
+    opacity: 1; /* Hace visible el contenido */
+  }
+  

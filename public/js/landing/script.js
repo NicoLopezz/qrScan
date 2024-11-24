@@ -125,7 +125,26 @@ function showImage(imageNumber) {
 }
 
 
-
+// Función para expandir o contraer respuestas
+function toggleFaq(element) {
+    // Si ya está activo, lo desactiva
+    if (element.classList.contains('active')) {
+      element.classList.remove('active');
+    } else {
+      // Desactiva todos los demás
+      document.querySelectorAll('.faq-item').forEach(item => item.classList.remove('active'));
+      // Activa el clic actual
+      element.classList.add('active');
+    }
+  }
+  
+  // Agregar evento click a todos los elementos de pregunta
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.addEventListener('click', function () {
+      toggleFaq(item);
+    });
+  });
+  
 
 
 console.log("Archivo JavaScript cargado correctamente");

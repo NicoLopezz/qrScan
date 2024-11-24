@@ -1,0 +1,132 @@
+/* Contenedor principal de la sección de contacto */
+.contact-container {
+    display: flex;
+    justify-content: space-between; /* Separar los elementos a izquierda y derecha */
+    align-items: flex-start; /* Alinear los elementos al inicio vertical */
+    gap: 30px; /* Espaciado entre formulario e información */
+    background: #ffffff; /* Fondo blanco */
+    border-radius: 10px; /* Bordes redondeados */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Sombra para destacar */
+    padding: 40px; /* Espaciado interno */
+    max-width: 1000px; /* Ancho máximo */
+    margin: 0 auto 50px; /* Centrado horizontal con separación inferior */
+  }
+  
+  /* Título de la sección */
+  #contacto {
+    text-align: center; /* Centrar el texto */
+    padding-top: 180px; /* Espaciado superior */
+    margin-bottom: 30px; /* Espaciado inferior */
+    /* margin-top: 10px; */
+  }
+  
+  /* Contenedor del formulario */
+  .form-container {
+    flex: 1; /* Ocupa la mitad del espacio disponible */
+  }
+  
+  /* Estilo del título del formulario */
+  .form-container h2 {
+    font-size: 36px; /* Tamaño del texto */
+    color: #6b00ad; /* Color morado */
+    margin-bottom: 20px; /* Separación inferior */
+  }
+  
+  /* Campos del formulario */
+  form input,
+  form textarea {
+    width: 100%; /* Ocupa todo el ancho */
+    margin-bottom: 15px; /* Separación entre campos */
+    padding: 12px 15px; /* Espaciado interno */
+    border: 1px solid #ddd; /* Borde gris claro */
+    border-radius: 5px; /* Bordes redondeados */
+    font-size: 18px; /* Tamaño de fuente */
+  }
+  
+  /* Ajuste del textarea */
+  form textarea {
+    resize: none; /* Desactivar el redimensionamiento */
+  }
+  
+  /* Botón del formulario */
+  form button {
+    background-color: #6b00ad; /* Fondo morado */
+    color: #ffffff; /* Texto blanco */
+    border: none; /* Sin borde */
+    padding: 12px 20px; /* Espaciado interno */
+    border-radius: 5px; /* Bordes redondeados */
+    font-size: 16px; /* Tamaño de fuente */
+    font-weight: bold; /* Negrita */
+    cursor: pointer; /* Cursor de mano al pasar */
+    transition: background-color 0.3s ease; /* Animación en hover */
+  }
+  
+  form button:hover {
+    background-color: #4a007d; /* Cambio de color en hover */
+  }
+  
+  /* Contenedor de la información */
+  .info-container {
+    flex: 1; /* Ocupa la mitad del espacio disponible */
+    background: #f9f9fc; /* Fondo gris claro */
+    border-radius: 10px; /* Bordes redondeados */
+    padding: 20px; /* Espaciado interno */
+    text-align: left; /* Texto alineado a la izquierda */
+  }
+  
+  /* Texto de la información */
+  .contact-info p {
+    margin: 10px 0; /* Separación vertical */
+    display: flex; /* Alinear ícono con texto */
+    align-items: center; /* Centrar verticalmente */
+    font-size: 18px; /* Tamaño de fuente */
+    color: #555; /* Color del texto */
+  }
+  
+  /* Íconos de la información */
+  .contact-info i {
+    font-size: 20px; /* Tamaño del ícono */
+    color: #6b00ad; /* Color morado */
+    margin-right: 10px; /* Espaciado derecho */
+  }
+  
+  /* Enlaces en la información */
+  .contact-info a {
+    color: #6b00ad; /* Color morado */
+    text-decoration: none; /* Sin subrayado */
+    transition: color 0.3s ease; /* Animación en hover */
+  }
+  
+  .contact-info a:hover {
+    color: #4a007d; /* Cambio de color en hover */
+  }
+  
+  .social-icons {
+    display: flex;
+    justify-content: center; /* Centrar los iconos */
+    gap: 20px; /* Espaciado entre iconos */
+    margin-top: 20px; /* Separación superior respecto a la información */
+  }
+  
+  .social-icons a {
+    text-decoration: none;
+    font-size: 24px; /* Tamaño de los iconos */
+    color: #6b00ad; /* Color morado */
+    transition: color 0.3s ease, transform 0.3s ease; /* Animaciones */
+  }
+  
+  .social-icons a:hover {
+    color: #4a007d; /* Cambio de color en hover */
+    transform: scale(1.2); /* Ampliar ligeramente en hover */
+  }
+
+  .btn-primary a {
+    text-decoration: none; /* Elimina el subrayado */
+    color: white; /* Asegura que el texto sea blanco */
+  }
+  
+  .btn-primary a:hover {
+    color: #ddd; /* Cambia el color al pasar el cursor */
+  }
+  
+  

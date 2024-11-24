@@ -14,18 +14,35 @@
   <base href="./">
 
   <!-- Font -->
-  <link rel="dns-prefetch" href="//fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500&family=Montserrat:wght@200;400&display=swap" rel="stylesheet">
+
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="style/landing/bootstrap.min.css">
+  
   <!-- Themify Icons -->
   <link rel="stylesheet" href="style/landing/themify-icons.css">
-  <!-- Owl carousel -->
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-pC4yrO6PnWx3tOUJ9fp+rE3f/Q9ZVUKcdYIhNgvpx8u+deKm4gVRntFj7W53Q1ryefzzT2sJgG/5p1SO3BHOzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- Owl Carousel -->
   <link rel="stylesheet" href="style/landing/owl.carousel.min.css">
-  <!-- Main css -->
-  <link href="style/landing/style.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&display=swap" rel="stylesheet">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style/landing/faqStyle.css">
+  <link rel="stylesheet" href="style/landing/contacto.css">
+  <link rel="stylesheet" href="style/landing/whatsapp.css">
+  <link rel="stylesheet" href="style/landing/style.css">
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </head>
+
+
+<a href="https://wa.me/5491234567890?text=Hola%20quiero%20saber%20más%20sobre%20Pick%20Up%20Time" target="_blank" class="whatsapp-float">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" style="width: 32px; height: 32px;">
+</a>
+
 
 <body data-spy="scroll" data-target="#navbar" data-offset="30">
 
@@ -46,10 +63,11 @@
                 <li class="nav-item"> <a class="nav-link active" href="#home">HOME <span
                       class="sr-only">(current)</span></a> </li>
                 <li class="nav-item"> <a class="nav-link" href="#conocenos">CONOCENOS</a> </li>
-                <li class="nav-item"> <a class="nav-link" href="#gallery">QUIERO MI PICK UP TIME</a> </li>
+                <li class="nav-item"> <a class="nav-link" href="#packs">QUIERO MI PICK UP TIME</a> </li>
                 <li class="nav-item"> <a class="nav-link" href="#faq">FAQ</a> </li>
-                <li class="nav-item"> <a class="nav-link" href="#contact">CONTACTO</a> </li>
-                <li class="nav-item"><a href="./api/login" class="btn btn-outline-light my-3 my-sm-0 ml-lg-3">Login</a></li>
+                <li class="nav-item"> <a class="nav-link" href="#contacto">CONTACTO</a> </li>
+                <li class="nav-item"><a href="./api/login" class="btn btn-outline-light my-3 my-sm-0 ml-lg-3">Login</a>
+                </li>
               </ul>
             </div>
           </nav>
@@ -89,10 +107,9 @@
             ¿Queres saber como funciona?
             Mira el siguiente video.
             <br><br>
-            Mira el siguiente video explicativo:
           </p>
           <!-- Video de YouTube incrustado -->
-          <iframe class="video" width="1000" height="515" src="https://www.youtube.com/embed/VIDEO_ID"
+          <iframe class="video" width="1000" height="515" src="https://www.youtube.com/embed/LYBi9LxcHHQ"
             title="YouTube video player" frameborder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen></iframe>
@@ -109,8 +126,8 @@
         <h3>Porque Pick <br> Up Time?</h3>
       </div>
 
-      <div class="row">
-        <div class="col-12 col-lg-4">
+      <div class="rowPersonal">
+        <div class="col-12 col-lg-4 cajaMotivos">
           <div class="card features">
             <div class="card-body">
               <div class="media">
@@ -124,7 +141,7 @@
             </div>
           </div>
         </div>
-        <div class="col-12 col-lg-4">
+        <div class="col-12 col-lg-4 cajaMotivos">
           <div class="card features">
             <div class="card-body">
               <div class="media">
@@ -138,7 +155,7 @@
             </div>
           </div>
         </div>
-        <div class="col-12 col-lg-4">
+        <div class="col-12 col-lg-4 cajaMotivos">
           <div class="card features">
             <div class="card-body">
               <div class="media">
@@ -152,7 +169,7 @@
             </div>
           </div>
         </div>
-        <div class="col-12 col-lg-4">
+        <div class="col-12 col-lg-4 cajaMotivos">
           <div class="card features">
             <div class="card-body">
               <div class="media">
@@ -166,7 +183,7 @@
             </div>
           </div>
         </div>
-        <div class="col-12 col-lg-4">
+        <div class="col-12 col-lg-4 cajaMotivos">
           <div class="card features">
             <div class="card-body">
               <div class="media">
@@ -181,7 +198,7 @@
           </div>
 
         </div>
-        <div class="col-12 col-lg-4">
+        <div class="col-12 col-lg-4 cajaMotivos">
           <div class="card features">
             <div class="card-body">
               <div class="media">
@@ -201,7 +218,7 @@
 
 
   <!-- SECCION DE PACKS -->
-  <div class="section light-bg">
+  <div class="section light-bg" id="packs">
     <div class="container">
       <div class="section-title">
         <small>PACKS DISPONIBLES</small>
@@ -210,157 +227,162 @@
 
       <ul class="nav nav-tabs nav-justified" role="tablist">
         <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#starter">PACK STARTER</a></li>
-        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#platinum">PACK PLATINUM</a></li>
-        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#black">PACK BLACK</a></li>
-    </ul>
-    
+        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#black">PACK PREMIUN</a></li>
+      </ul>
+
       <div class="tab-content">
         <!-- Pack Starter -->
         <div class="tab-pane fade show active" id="starter">
-            <div class="d-flex flex-column flex-lg-row">
-                <div class="d-flex flex-column align-items-center mr-lg-5 mb-5 mb-lg-0">
-                    <img src="img/graphic.png" alt="graphic" class="img-fluid rounded mb-3">
-                    <button class="btn btn-primary pulse-btn mt-3">¡Adquiere tu prueba gratis <br> ahora!</button>
-                </div>
-                <div>
-                    <h2>Negocios pequeños</h2>
-                    <p class="lead">Diseñado para aquellos negocios pequeños que...</p>
-                    <p>Acceso al software:</p>
-                    <ul>
-                        <li>QR personalizado.</li>
-                        <li>Diseño adaptativo a diferentes dispositivos (computadora, tablet, celular).</li>
-                        <li>Capacitación del personal y administradores con videos asincrónicos.</li>
-                        <li>Generación y diseño de PDF personalizado para imprimir el QR.</li>
-                        <li>Mensaje automático de aviso del tiempo transcurrido desde que el pedido está listo.</li>
-                        <li>Sistema de doble confirmación de pedido recibido.</li>
-                        <li>Soporte técnico vía email.</li>
-                    </ul>
-                </div>
+          <div class="d-flex flex-column flex-lg-row">
+            <div class="d-flex flex-column align-items-center mr-lg-5 mb-5 mb-lg-0">
+              <img src="img/graphic.png" alt="graphic" class="img-fluid rounded mb-3">
+              <button class="btn btn-primary pulse-btn mt-3">
+                <a href="https://wa.me/5491153836633?text=Hola%20quiero%20saber%20más%20sobre%20Pick%20Up%20Time" target="_blank" style="text-decoration: none; color: white;">
+                  ¡Adquiere tu prueba gratis ahora!
+                </a>
+              </button>
+              
             </div>
+            <div>
+              <h2>Negocios pequeños</h2>
+              <p class="lead">Diseñado para aquellos negocios pequeños que...</p>
+              <p>Acceso al software:</p>
+              <ul>
+                <li>QR personalizado.</li>
+                <li>Diseño adaptativo a diferentes dispositivos (computadora, tablet, celular).</li>
+                <li>Capacitación del personal y administradores con videos asincrónicos.</li>
+                <li>Generación y diseño de PDF personalizado para imprimir el QR.</li>
+                <li>Mensaje automático de aviso del tiempo transcurrido desde que el pedido está listo.</li>
+                <li>Sistema de doble confirmación de pedido recibido.</li>
+                <li>Soporte técnico vía email.</li>
+              </ul>
+            </div>
+          </div>
         </div>
-    
+
         <!-- Pack Platinum -->
         <div class="tab-pane fade" id="platinum">
-            <div class="d-flex flex-column flex-lg-row">
-                <div class="d-flex flex-column align-items-center mr-lg-5 mb-5 mb-lg-0">
-                    <img src="img/graphic.png" alt="graphic" class="img-fluid rounded mb-3">
-                    <button class="btn btn-primary pulse-btn mt-3">¡Adquiere tu prueba gratis <br> ahora!</button>
-                </div>
-                <div>
-                    <h2>Pack Platinum</h2>
-                    <p>Características:</p>
-                    <ul>
-                        <li>Todo lo incluido en el Pack Starter, más:</li>
-                        <li>Acceso a 2 usuarios (local y administrador) a una sección para la organización personalizada de datos de clientes y estadísticas del local.</li>
-                        <li>Soporte técnico multicanal directo 24x7.</li>
-                        <li>Descuento del 40% en nuevas funcionalidades.</li>
-                    </ul>
-                    <p>Con este pack:</p>
-                    <ul>
-                        <li>Obtendrás herramientas avanzadas para análisis y estrategias de marketing.</li>
-                        <li>Soporte Premium: Atención inmediata y soporte constante, crucial para operaciones continuas.</li>
-                    </ul>
-                </div>
+          <div class="d-flex flex-column flex-lg-row">
+            <div class="d-flex flex-column align-items-center mr-lg-5 mb-5 mb-lg-0">
+              <img src="img/graphic.png" alt="graphic" class="img-fluid rounded mb-3">
+              <button class="btn btn-primary pulse-btn mt-3">
+                <a href="https://wa.me/5491153836633?text=Hola%20quiero%20saber%20más%20sobre%20Pick%20Up%20Time" target="_blank" style="text-decoration: none; color: white;">
+                  ¡Adquiere tu prueba gratis ahora!
+                </a>
+              </button>
             </div>
+            <div>
+              <h2>Pack Platinum</h2>
+              <p>Características:</p>
+              <ul>
+                <li>Todo lo incluido en el Pack Starter, más:</li>
+                <li>Acceso a 2 usuarios (local y administrador) a una sección para la organización personalizada de
+                  datos de clientes y estadísticas del local.</li>
+                <li>Soporte técnico multicanal directo 24x7.</li>
+                <li>Descuento del 40% en nuevas funcionalidades.</li>
+              </ul>
+              <p>Con este pack:</p>
+              <ul>
+                <li>Obtendrás herramientas avanzadas para análisis y estrategias de marketing.</li>
+                <li>Soporte Premium: Atención inmediata y soporte constante, crucial para operaciones continuas.</li>
+              </ul>
+            </div>
+          </div>
         </div>
-    
+
         <!-- Pack Black -->
         <div class="tab-pane fade" id="black">
-            <div class="d-flex flex-column flex-lg-row">
-                <div>
-                    <h2>Pack Black</h2>
-                    <p class="lead">Diseñado para aquellos negocios pequeños que...</p>
-                    <p>Características:</p>
-                    <ul>
-                        <li>Todo lo incluido en el Pack Platinum, más:</li>
-                        <li>Acceso a 2 usuarios (local y administrador) por local, hasta 2 sucursales.</li>
-                        <li>Sistema de mensajería por WhatsApp propio del local integrado al software.</li>
-                        <li>Acceso anticipado y sin costo a las nuevas funcionalidades.</li>
-                        <li>Soporte técnico multicanal directo 24x7.</li>
-                    </ul>
-                    <p>Con este pack:</p>
-                    <ul>
-                        <li>Obtendrás un mayor alcance, ideal para negocios con múltiples sucursales.</li>
-                        <li>Comunicación Directa: La integración de WhatsApp permite una interacción más personalizada con los clientes.</li>
-                        <li>Innovación Constante: Acceso temprano a nuevas herramientas, manteniendo al negocio a la vanguardia.</li>
-                    </ul>
-                </div>
-                <div class="d-flex flex-column align-items-center mr-lg-5 mb-5 mb-lg-0">
-                  <img src="img/graphic.png" alt="graphic" class="img-fluid rounded mb-3">
-                  <button class="btn btn-primary pulse-btn mt-3">¡Adquiere tu prueba gratis <br> ahora!</button>
-              </div>
-            </div>
-        </div>
-    </div>
-    
-      
-
-
-        <div class="tab-pane fade" id="livechat">
           <div class="d-flex flex-column flex-lg-row">
             <div>
-              <h2>Live chat when you needed</h2>
-              <p class="lead">Uniquely underwhelm premium outsourcing with proactive leadership skills.</p>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer rutrum, urna eu pellentesque
-                pretium...</p>
+              <h2>Pack Black</h2>
+              <p class="lead">Diseñado para aquellos negocios pequeños que...</p>
+              <p>Características:</p>
+              <ul>
+                <li>Todo lo incluido en el Pack Platinum, más:</li>
+                <li>Acceso a 2 usuarios (local y administrador) por local, hasta 2 sucursales.</li>
+                <li>Sistema de mensajería por WhatsApp propio del local integrado al software.</li>
+                <li>Acceso anticipado y sin costo a las nuevas funcionalidades.</li>
+                <li>Soporte técnico multicanal directo 24x7.</li>
+              </ul>
+              <p>Con este pack:</p>
+              <ul>
+                <li>Obtendrás un mayor alcance, ideal para negocios con múltiples sucursales.</li>
+                <li>Comunicación Directa: La integración de WhatsApp permite una interacción más personalizada con los
+                  clientes.</li>
+                <li>Innovación Constante: Acceso temprano a nuevas herramientas, manteniendo al negocio a la vanguardia.
+                </li>
+              </ul>
             </div>
-            <img src="img/graphic.png" alt="graphic" class="img-fluid rounded align-self-start mr-lg-5 mb-5 mb-lg-0">
+            <div class="d-flex flex-column align-items-center mr-lg-5 mb-5 mb-lg-0">
+              <img src="img/graphic.png" alt="graphic" class="img-fluid rounded mb-3">
+              <button class="btn btn-primary pulse-btn mt-3">¡Adquiere tu prueba gratis <br> ahora!</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+
+      <!-- <div class="tab-pane fade" id="livechat">
+        <div class="d-flex flex-column flex-lg-row">
+          <div>
+            <h2>Live chat when you needed</h2>
+            <p class="lead">Uniquely underwhelm premium outsourcing with proactive leadership skills.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer rutrum, urna eu pellentesque
+              pretium...</p>
+          </div>
+          <img src="img/graphic.png" alt="graphic" class="img-fluid rounded align-self-start mr-lg-5 mb-5 mb-lg-0">
+        </div>
+      </div> -->
+    </div>
+
+  </div>
+  </div>
+
+<!-- SECCION DE PASOS CON IMAGEN -->
+  <div class="section light-bg">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 d-flex align-items-center">
+          <ul class="list-unstyled ui-steps">
+            <li class="media" onmouseover="showImage(1)">
+              <div class="circle-icon mr-4">1</div>
+              <div class="media-body">
+                <h5>Carga del pedido</h5>
+                <p>Carga el pedido del cliente en la plataforma</p>
+              </div>
+            </li>
+            <li class="media my-4" onmouseover="showImage(2)">
+              <div class="circle-icon mr-4">2</div>
+              <div class="media-body">
+                <h5>Scanea</h5>
+                <p>Te llegara avisos, cuántas personas tenés delante, cuándo debés volver al local o cuando tu pedido
+                  esté listo.</p>
+              </div>
+            </li>
+            <li class="media" onmouseover="showImage(3)">
+              <div class="circle-icon mr-4">3</div>
+              <div class="media-body">
+                <h5>Notificacion</h5>
+                <p>En caso de ser necesario, se incluyen confirmaciones o encuestas de calidad finales.</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="col-md-4">
+          <div class="carousel-images">
+            <img id="image1" src="img/compu1.png" alt="Image 1" class="carousel-image active">
+            <img id="image2" src="img/scan5.png" alt="Image 2" class="carousel-image">
+            <img id="image3" src="img/celuchat.png" alt="Image 3" class="carousel-image">
           </div>
         </div>
       </div>
     </div>
   </div>
 
-
-
-
-
-    <div class="section light-bg">
-      <div class="container">
-          <div class="row">
-              <div class="col-md-8 d-flex align-items-center">
-                  <ul class="list-unstyled ui-steps">
-                      <li class="media" onmouseover="showImage(1)">
-                          <div class="circle-icon mr-4">1</div>
-                          <div class="media-body">
-                              <h5>Pedi y Escanea</h5>
-                              <p>El cliente realiza la reserva y la confirma escaneando el Qr</p>
-                          </div>
-                      </li>
-                      <li class="media my-4" onmouseover="showImage(2)">
-                          <div class="circle-icon mr-4">2</div>
-                          <div class="media-body">
-                              <h5>Envio de informacion</h5>
-                              <p>Te llegara avisos, cuántas personas tenés delante, cuándo debés volver al local o cuando tu pedido esté listo.</p>
-                          </div>
-                      </li>
-                      <li class="media" onmouseover="showImage(3)">
-                          <div class="circle-icon mr-4">3</div>
-                          <div class="media-body">
-                              <h5>Confirmacion</h5>
-                              <p>En caso de ser necesario, se incluyen confirmaciones o encuestas de calidad finales.</p>
-                          </div>
-                      </li>
-                  </ul>
-              </div>
-  
-              <div class="col-md-4">
-                  <div class="carousel-images">
-                      <img id="image1" src="img/celuchat.png" alt="Image 1" class="carousel-image active">
-                      <img id="image2" src="img/iphonex.png" alt="Image 2" class="carousel-image">
-                      <img id="image3" src="img/dualphone.png" alt="Image 3" class="carousel-image">
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
-  
-
-
-
-
-
-  <div class="section">
+  <!-- <div class="section">
     <div class="container">
       <div class="section-title">
         <small>TESTIMONIALS</small>
@@ -391,8 +413,8 @@
         </div>
       </div>
     </div>
-  </div>
-
+  </div> -->
+<!-- 
   <div class="section light-bg" id="gallery">
     <div class="container">
       <div class="section-title">
@@ -407,9 +429,9 @@
         <img src="img/screen1.jpg" alt="image">
       </div>
     </div>
-  </div>
+  </div> -->
 
-  <div class="section" id="pricing">
+  <!-- <div class="section" id="pricing">
     <div class="container">
       <div class="section-title">
         <small>PRICING</small>
@@ -467,88 +489,152 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 
-  <div class="section" id="faq">
-    <div class="container">
-      <div class="section-title">
-        <small>FAQ</small>
-        <h3>Frequently Asked Questions</h3>
+<!-- SECCION DE PASOS CON FAQS -->
+<div class="faq-section" id="faq"  >
+  <div class="container">
+    <div class="section-title" >
+      <small>FAQ</small>
+      <h3>Preguntas Frecuentes</h3>
+    </div>
+    <div class="faq-grid">
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          ¿Qué métodos de pago aceptan?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          Aceptamos pesos argentinos, dólares, débito automático, PayPal, MercadoPago y billeteras virtuales.
+        </div>
       </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          ¿Necesito dispositivos extras para Pick Up Time?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          No, solo necesitas un dispositivo con acceso a internet como una computadora, tablet o celular.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          ¿El aviso al cliente tiene límite de distancia?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          No, el cliente puede moverse libremente o volver a su casa mientras espera el aviso.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          ¿Cómo funciona el sistema de notificación por WhatsApp?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          El cliente escanea un QR y, cuando el pedido está listo, recibe el aviso automáticamente.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          ¿Cuánto tiempo tarda en enviar la notificación?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          El mensaje se envía de forma instantánea cuando el administrador marca el pedido como listo.
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          ¿El sistema está disponible en diferentes idiomas?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          Si porque se personaliza según el país de origen de la empresa que contrata el servicio. 
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          ¿Puedo personalizar los mensajes de notificación?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          Sí, puedes personalizar tanto los mensajes como la apariencia del QR.
+        </div>
 
-      <div class="row pt-4">
-        <div class="col-md-6">
-          <h4 class="mb-3">Can I try before I buy?</h4>
-          <p class="light-font mb-5">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer rutrum, urna eu
-            pellentesque pretium...</p>
-          <h4 class="mb-3">What payment methods do you accept?</h4>
-          <p class="light-font mb-5">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer rutrum, urna eu
-            pellentesque pretium...</p>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          ¿Puedo ver estadísticas o informes sobre el uso del sistema?
+          <span class="faq-icon">+</span>
         </div>
-        <div class="col-md-6">
-          <h4 class="mb-3">Can I change my plan later?</h4>
-          <p class="light-font mb-5">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer rutrum, urna eu
-            pellentesque pretium...</p>
-          <h4 class="mb-3">Do you have a contract?</h4>
-          <p class="light-font mb-5">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer rutrum, urna eu
-            pellentesque pretium...</p>
+        <div class="faq-answer">
+          Si con el pack premiun vas a poder ver estadísticas y los datos de los clientes para poder potenciar tu negocio. 
         </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+  <!-- SECCION DE PASOS CON CONTACTO -->
+  <div class="section-title" id="contacto" >
+    <small>CONTACTO</small>
+    <h3>Formulario y medios de contacto</h3>
+  </div>
+  <div class="contact-container">
+    <div class="form-container">
+      <h2>Empeza ahora!</h2>
+      <form id="contact-form">
+        <input type="text" name="name" placeholder="Name" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="text" name="subject" placeholder="Subject">
+        <textarea name="message" placeholder="Message" rows="5"></textarea>
+        <button type="submit">Send Message</button>
+      </form>
+    </div>
+    <div class="info-container">
+      <!-- <h2>Contact us</h2> -->
+      <div class="contact-info">
+        <p class="mb-2"> <span class="ti-location-pin mr-2"></span> Buenos Aires, Argentina, Capital Federal ARG</p>
+        <p class="mb-2">
+          <span class="ti-email mr-2"></span> <a class="mr-4"
+            href="mailto:support@mobileapp.com">contacto@pickuptime.io</a>
+        </p>
+        <div class="d-block d-sm-inline-block">
+          <p class="mb-0">
+            <span class="ti-headphone-alt mr-2"></span> <a href="tel:51836362800">518-3636-2800</a>
+          </p>
+        </div>
+            <!-- Redes sociales -->
+    <div class="social-icons">
+      <a href="#"><span class="ti-facebook"></span></a>
+      <a href="#"><span class="ti-twitter-alt"></span></a>
+      <a href="#"><span class="ti-instagram"></span></a>
+    </div>
+        
       </div>
     </div>
   </div>
 
-  <div class="section bg-gradient">
-    <div class="container">
-      <div class="call-to-action">
-        <div class="box-icon"><span class="ti-mobile gradient-fill ti-3x"></span></div>
-        <h2>Download Anywhere</h2>
-        <p class="tagline">Available for all major mobile and desktop platforms.</p>
-        <div class="my-4">
-          <a href="#" class="btn btn-light"><img src="img/appleicon.png" alt="icon"> App Store</a>
-          <a href="#" class="btn btn-light"><img src="img/playicon.png" alt="icon"> Google play</a>
-        </div>
-        <p class="text-primary"><small><i>*Works on iOS 10.0.5+, Android Kitkat and above.</i></small></p>
-      </div>
-    </div>
-  </div>
 
-  <div class="light-bg py-5" id="contact">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-6 text-center text-lg-left">
-          <p class="mb-2"> <span class="ti-location-pin mr-2"></span> 1485 Pacific St, Brooklyn, NY 11216 USA</p>
-          <div class="d-block d-sm-inline-block">
-            <p class="mb-2">
-              <span class="ti-email mr-2"></span> <a class="mr-4"
-                href="mailto:support@mobileapp.com">contacto@pickuptime.io</a>
-            </p>
-          </div>
-          <div class="d-block d-sm-inline-block">
-            <p class="mb-0">
-              <span class="ti-headphone-alt mr-2"></span> <a href="tel:51836362800">518-3636-2800</a>
-            </p>
-          </div>
-        </div>
-        <div class="col-lg-6">
-          <div class="social-icons">
-            <a href="#"><span class="ti-facebook"></span></a>
-            <a href="#"><span class="ti-twitter-alt"></span></a>
-            <a href="#"><span class="ti-instagram"></span></a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
+<!-- SECCION DE PASOS CON FOOTER2 -->
   <footer class="my-5 text-center">
     <p class="mb-2"><small>COPYRIGHT © 2017. ALL RIGHTS RESERVED. MOBAPP TEMPLATE BY <a
-          href="https://colorlib.com">COLORLIB</a></small></p>
+          href="https://desyngBytes.com">Desing Bytes</a></small></p>
     <small>
       <a href="#" class="m-2">PRESS</a>
       <a href="#" class="m-2">TERMS</a>
       <a href="#" class="m-2">PRIVACY</a>
     </small>
   </footer>
+
+
+
+
 
   <!-- jQuery and Bootstrap -->
   <script src="js/landing/jquery-3.2.1.min.js"></script>
