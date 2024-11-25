@@ -130,3 +130,27 @@
   }
   
   
+
+  @media (max-width: 768px) {
+    .contact-container {
+      flex-direction: column; /* Cambia a columna */
+      padding: 20px;
+    }
+  
+    .form-container,
+    .info-container {
+      width: 100%; /* Ocupan todo el ancho */
+      margin-bottom: 20px;
+    }
+  
+    .form-container h2 {
+      font-size: 24px; /* Reduce el tamaño del título */
+    }
+  
+    form input,
+    form textarea {
+      font-size: 16px; /* Ajusta el tamaño del texto */
+      padding: 10px;
+    }
+  }
+  

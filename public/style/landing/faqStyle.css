@@ -80,7 +80,7 @@
   
   /* Muestra la respuesta cuando el contenedor está activo */
   .faq-item.active .faq-answer {
-    max-height: 200px; /* Ajusta según la cantidad de contenido */
+    max-height: 450px; /* Ajusta según la cantidad de contenido */
     padding: 15px 20px; /* Añade espacio al texto */
     opacity: 1; /* Hace visible el contenido */
   }
