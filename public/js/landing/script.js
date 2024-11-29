@@ -146,6 +146,46 @@ function toggleFaq(element) {
   });
   
 
+  document.addEventListener('DOMContentLoaded', function () {
+    const body = document.body;
+  
+    function adjustOffset() {
+      if (window.innerWidth <= 768) {
+        body.setAttribute('data-offset', '120'); // Altura del menú en móvil
+      } else {
+        body.setAttribute('data-offset', '0'); // Sin offset en pantallas grandes
+      }
+    }
+  
+    // Ejecutar en carga inicial
+    adjustOffset();
+  
+    // Escuchar cambios en el tamaño de la ventana
+    window.addEventListener('resize', adjustOffset);
+  });
+
+function showContent(number) {
+  // Oculta todos los bloques de contenido
+  const blocks = document.querySelectorAll('.content-block');
+  blocks.forEach(block => block.classList.remove('active'));
+
+  // Oculta todas las imágenes
+  const images = document.querySelectorAll('.carousel-image');
+  images.forEach(image => image.classList.remove('active'));
+
+  // Muestra el bloque de contenido seleccionado
+  const selectedBlock = document.getElementById(`content${number}`);
+  selectedBlock.classList.add('active');
+
+  // Muestra la imagen correspondiente
+  const selectedImage = selectedBlock.querySelector('.carousel-image');
+  if (selectedImage) {
+    selectedImage.classList.add('active');
+  }
+}
+
+  
+
 
 console.log("Archivo JavaScript cargado correctamente");
 

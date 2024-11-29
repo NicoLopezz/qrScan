@@ -151,7 +151,7 @@ p.lead {
     opacity: 1;
 }
 
-.media{
+.media {
     gap: 20px;
     align-items: center;
     justify-items: center;
@@ -159,13 +159,14 @@ p.lead {
 }
 
 
-.img-fluid3{
+.img-fluid3 {
     width: 75% !important;
 }
 
-.box1{
+.box1 {
     width: 50% !important;
 }
+
 /* FAQ section */
 
 
@@ -425,9 +426,6 @@ p.lead {
     margin-bottom: 200px;
 }
 
-.img-holder {
-    /* text-align: right; */
-}
 
 .img-fluid2 {
     max-width: 100%;
@@ -438,6 +436,9 @@ p.lead {
 
 
 @media (max-width:767px) {
+
+    /*  */
+    
     h1 {
         font-size: 40px;
     }
@@ -446,113 +447,154 @@ p.lead {
         font-size: 30px;
     }
 
+    .text-content h1 {
+        font-size: 28px;
+        /* Reduce el título */
+        line-height: 1.2;
+    }
 
-  .text-content h1 {
-    font-size: 28px; /* Reduce el título */
-    line-height: 1.2;
-  }
+    .text-content p {
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
 
-  .text-content p {
-    font-size: 14px;
-    margin-bottom: 20px;
-  }
-
-  .img-holder img {
-    width: 100%; /* Imagen responsiva */
-    height: auto;
-  }
-
-  /* Ajusta las tarjetas de "Novedades" */
-  .rowPersonal {
-    display: flex;
-    flex-wrap: wrap;
-  }
-
-  .cajaMotivos {
-    width: 100%; /* Cada tarjeta ocupa todo el ancho */
-    margin-bottom: 20px;
-  }
-
-  .navbar {
-    width: 400px;
-    max-width: 100%;
-    height: 100px;
-  }
-
-  /* Asegurar que el menú hamburguesa esté por encima de todo */
-.nav-menu {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 9999; /* Garantiza que esté al frente */
-  }
-  
-  /* Fondo oscuro para el menú desplegado */
-  .navbar-collapse {
-    background-color: #6b00ad; /* Cambia el color según tu diseño */
-    position: absolute;
-    top: 100%; /* Aparece justo debajo del navbar */
-    left: 0;
-    width: 100%; /* Toma todo el ancho */
-    z-index: 9998;
-    padding: 10px;
-    border-radius: 0 0 10px 10px; /* Bordes suaves abajo */
-  }
-  
-  /* Estilo de los enlaces dentro del menú */
-  .navbar-nav .nav-link {
-    color: white !important; /* Asegura contraste en el fondo */
-    text-align: center; /* Centra el texto */
-    padding: 10px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Divisiones suaves */
-    transition: background-color 0.3s ease;
-  }
-  
-  .navbar-nav .nav-link:hover {
-    background-color: rgba(255, 255, 255, 0.1); /* Hover con fondo suave */
-    border-radius: 5px;
-  }
-  
-  /* Ocultar bordes sobrantes del colapso */
-  .navbar-toggler {
-    border: none; /* Sin borde en el botón */
-  }
-  
-  /* Icono hamburguesa */
-  .navbar-toggler-icon {
-    background-image: url('data:image/svg+xml;charset=utf8,%3Csvg xmlns="http://www.w3.org/2000/svg" fill="%23fff" viewBox="0 0 30 30"%3E%3Cpath stroke="rgba%28255, 255, 255, 1%29" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"/%3E%3C/svg%3E');
-  }
-  
-  /* Ajuste general del menú en pantallas pequeñas */
-  @media (max-width: 768px) {
-    .navbar-collapse {
-        position: fixed;
-        top: 140px;
-        right: 0;
-        left: 0;
-        z-index: 9999;
+    .img-holder img {
+        width: 100%;
+        /* Imagen responsiva */
         height: auto;
-        overflow-y: auto;
-    }
-  
-    .nav-item {
-      margin: 10px 0; /* Separación entre opciones */
-    }
-  
-    .navbar-nav {
-      display: flex;
-      flex-direction: column; /* Elementos en columna */
-      align-items: center; /* Centra los elementos */
     }
 
-    .dynamic-words {
-        background-color: red;
+    /* Ajusta las tarjetas de "Novedades" */
+    .rowPersonal {
+        display: flex;
+        flex-wrap: wrap;
     }
 
+    .cajaMotivos {
+        width: 100%;
+        /* Cada tarjeta ocupa todo el ancho */
+        margin-bottom: 20px;
+    }
 
-  }
-  
+    .navbar {
+        width: 400px;
+        max-width: 100%;
+        height: 100px;
+    }
+
+    #custom-nav {
+        padding: 10px 0;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        z-index: 9999 !important;
+        /* background-color: red !important; */
+        height: 120px;
+    }
+
+    .nav-menu {
+        padding: 1rem 0;
+        transition: all 0.3s ease;
+    }
+
+    /* Fondo oscuro para el menú desplegado */
+    .navbar-collapse {
+        background-image: linear-gradient(135deg, rgba(60, 8, 118, 1) 0%, rgba(250, 0, 118, 1) 100%);
+        /* Cambia el color según tu diseño */
+        position: absolute;
+        top: 100%;
+        /* Aparece justo debajo del navbar */
+        left: 0;
+        width: 100%;
+        /* Toma todo el ancho */
+        z-index: 9998;
+        padding: 10px;
+        border-radius: 0 0 10px 10px;
+        /* Bordes suaves abajo */
+    }
+
+    /* Estilo de los enlaces dentro del menú */
+    .navbar-nav .nav-link {
+        color: white !important;
+        /* Asegura contraste en el fondo */
+        text-align: center;
+        /* Centra el texto */
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        /* Divisiones suaves */
+        transition: background-color 0.3s ease;
+    }
+
+    .navbar-nav .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        /* Hover con fondo suave */
+        border-radius: 5px;
+    }
+
+    /* Ocultar bordes sobrantes del colapso */
+    .navbar-toggler {
+        border: none;
+        /* Sin borde en el botón */
+    }
+
+    /* Icono hamburguesa */
+    .navbar-toggler-icon {
+        background-image: url('data:image/svg+xml;charset=utf8,%3Csvg xmlns="http://www.w3.org/2000/svg" fill="%23fff" viewBox="0 0 30 30"%3E%3Cpath stroke="rgba%28255, 255, 255, 1%29" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"/%3E%3C/svg%3E');
+    }
+
+    /* Ajuste general del menú en pantallas pequeñas */
+    @media (max-width: 768px) {
+        .navbar-collapse {
+            position: fixed;
+            top: 120px;
+            right: 0;
+            left: 0;
+            z-index: 9999;
+            height: auto;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            margin: 10px 0;
+            /* Separación entre opciones */
+        }
+
+        .navbar-nav {
+            display: flex;
+            flex-direction: column;
+            /* Elementos en columna */
+            align-items: center;
+            /* Centra los elementos */
+        }
+
+        .dynamic-words {
+            width: 70%;
+            margin-left: -10px;
+        }
+
+        .container.grid-layout {
+            display: grid;
+            grid-template-columns: 45% 55%;
+            gap: 0px;
+            align-items: center;
+            height: max-he;
+            margin-bottom: 180px;
+            max-height: 400px;
+            height: 300px;
+        }
+
+        .nav-menu.is-scrolling {
+            /* background-color: red !important; */
+            padding: 0;
+        }
+        
+        
+
+
+
+    }
+
 }
 
 
@@ -566,13 +608,15 @@ p.lead {
 
 .nav-menu.is-scrolling,
 .nav-menu.menu-is-open {
-    background-color: rgb(74, 13, 143);
+    /* background-color: rgb(74, 13, 143);
     background: -moz-linear-gradient(135deg, rgb(74, 13, 143) 0%, rgb(250, 42, 143) 100%);
     background: -webkit-linear-gradient(135deg, rgb(74, 13, 143) 0%, rgb(250, 42, 143) 100%);
     background: linear-gradient(135deg, rgb(74, 13, 143) 0%, rgb(250, 42, 143) 100%);
     -webkit-box-shadow: 0px 5px 23px 0px rgba(0, 0, 0, 0.1);
     -moz-box-shadow: 0px 5px 23px 0px rgba(0, 0, 0, 0.1);
-    box-shadow: 0px 5px 23px 0px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 5px 23px 0px rgba(0, 0, 0, 0.1); */
+    /* background-color: red; */
+    height: 120px !important;
 }
 
 .nav-menu.is-scrolling {
@@ -781,6 +825,11 @@ header {
         margin-top: -150px;
     }
 }
+
+.sectionMovil{
+    display: none;
+}
+
 
 
 /*  TABS

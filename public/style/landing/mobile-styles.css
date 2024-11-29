@@ -1,11 +1,12 @@
-
 /* General Mobile Styles */
 @media (max-width: 768px) {
+
   /* Header Adjustments */
   header .text-content h1 {
     font-size: 24px;
     text-align: center;
   }
+
   .img-holder img {
     width: 100%;
     height: auto;
@@ -48,13 +49,19 @@
     height: auto;
   }
 
-  /* Navigation Menu */
+
+  /* NAV MENU */
+
   .nav-menu {
-    padding: 10px 0;
+    background-image: linear-gradient(135deg, rgba(60, 8, 118, 0.8) 0%, rgba(250, 0, 118, 0.8) 100%);
+  }
+
+  .nav-menu.is-scrolling {
+      background-image: linear-gradient(135deg, rgba(60, 8, 118, 1) 0%, rgba(250, 0, 118, 1) 100%);}
   }
 
   .nav-menu .navbar-brand img {
-    width: 120px;
+    width: 70px;
     height: auto;
   }
 
@@ -66,4 +73,224 @@
     text-align: center;
     margin-bottom: 10px;
   }
+
+
+@media (max-width: 768px) {
+  .rowPersonal {
+    display: grid;
+    /* Usa flexbox para un carrusel horizontal */
+    overflow-x: auto;
+    /* Scroll horizontal */
+    padding: 20px;
+    scroll-snap-type: x mandatory;
+    /* Desplazamiento suave */
+    border-radius: 20px;
+  }
+
+  .cajaMotivos {
+    flex: 0 0 auto;
+    /* Cada tarjeta tiene un ancho fijo y no se estira */
+    width: 300px;
+    /* Ancho fijo de cada tarjeta */
+    padding: 20px;
+    scroll-snap-align: center;
+    /* Centra la tarjeta al detenerse */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .card.features {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    border-radius: 0px 30px 30px 0px;
+    box-shadow: 12px 20px 20px 0px rgba(0, 0, 0, 0.1);
+  }
+
+  .iconNovedades img {
+    max-width: 80px;
+    height: auto;
+  }
+
+  .card-title {
+    font-size: 1.5rem;
+    margin: 10px 0;
+    line-height: 1.2;
+    color: #6b00ad;
+    /* Color del título */
+  }
+
+  .card-text {
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #555;
+  }
+
+  /* Estiliza el scroll horizontal */
+  .rowPersonal::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .rowPersonal::-webkit-scrollbar-thumb {
+    background: #6b00ad;
+    border-radius: 10px;
+  }
+
+  .rowPersonal::-webkit-scrollbar-track {
+    background: #d9d6f6;
+    border-radius: 10px;
+  }
+
+  .media {
+    display: grid;
+  }
+
+
+
+  /* SECTION PACKS */
+
+  .box1 {
+    width: 100% !important;
+  }
+
+  .pulse-btn {
+    display: flex;
+    /* Flexbox para centrar contenido */
+    justify-content: center;
+    /* Centra horizontalmente */
+    align-items: center;
+    /* Centra verticalmente */
+    padding: 10px 20px;
+    /* Espaciado interno */
+    border-radius: 5px;
+    /* Bordes redondeados */
+    font-size: 14px;
+    /* Tamaño de fuente */
+    background-color: #ff4081;
+    /* Color de fondo */
+    color: white;
+    /* Color del texto */
+    text-transform: uppercase;
+    /* Texto en mayúsculas */
+    cursor: pointer;
+    /* Cambia el cursor al pasar */
+    transition: all 0.3s ease;
+    /* Suaviza interacción */
+    text-align: center;
+    /* Asegura el centrado del texto */
+    max-width: 100%;
+    /* Evita que el botón sea más ancho que su contenedor */
+    overflow: hidden;
+    /* Evita desbordamiento interno */
+    white-space: nowrap;
+    /* Impide saltos de línea */
+  }
+
+  .pulse-btn a {
+    text-decoration: none;
+    /* Sin subrayado */
+    color: white;
+    /* Color del texto */
+    display: inline-block;
+    /* Ocupa espacio del botón */
+    max-width: 100%;
+    /* Respeta los límites del botón */
+    overflow: hidden;
+    /* Evita que el texto se salga */
+    white-space: nowrap;
+    /* Asegura que no haya salto de línea */
+    text-align: center;
+    /* Centra el texto */
+  }
+
+
+  /* section de PASOS CON IMAGEN */
+
+  .pasosDesktop {
+    display: none;
+  }
+
+  .sectionMovil {
+    display: block;
+  }
+
+  /* Estilo para los botones de números */
+  .numbers {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    gap: 10px;
+  }
+
+  .number-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #6b00ad;
+    color: white;
+    font-size: 1.2rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .number-btn:hover {
+    background-color: #ff914d;
+  }
+
+  /* Ocultar los bloques por defecto */
+  .content-block {
+    display: none;
+  }
+
+  .content-block.active {
+    display: block;
+  }
+
+  .carousel-image {
+    position: relative;
+    /* Cambia de absolute a relative para mantener el flujo normal */
+    top: auto;
+    /* Restablece la posición vertical */
+    left: auto;
+    /* Restablece la posición horizontal */
+    width: 100%;
+    /* Ajusta el tamaño al contenedor */
+    max-width: 300px;
+    /* Tamaño máximo de las imágenes */
+    height: auto;
+    /* Mantiene la proporción */
+    opacity: 0;
+    /* Oculta las imágenes por defecto */
+    transition: opacity 0.5s ease;
+    /* Suaviza la aparición */
+    margin-top: 20px;
+    /* Agrega espacio superior */
+    border-radius: 10px;
+    /* Bordes redondeados */
+    box-shadow: 0 6px 20px 6px rgba(0, 0, 0, 0.25),
+      0 6px 6px rgba(0, 0, 0, 0.22);
+    /* Sombra */
+  }
+
+  .carousel-image.active {
+    opacity: 1;
+    /* Muestra solo la imagen activa */
+  }
+
+
+  #faq{
+    margin-top: -120px;
+    margin-bottom: 100px;
+  }
+
+
+  /* FOOTER */
+.social-icons{
+  justify-content: center;
+}
+
 }

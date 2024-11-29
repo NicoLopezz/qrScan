@@ -10,38 +10,55 @@
   <meta name="keywords" content="HTML5, bootstrap, mobile, app, landing, ios, android, responsive">
   <meta name="facebook-domain-verification" content="9tbzfz2pxmcffm8pyobvys4in43gwd" />
 
+  <script>
+    // Variable global para manejar la versión
+    const VERSION = "1.0.0"; // Cambia esta versión para forzar la recarga
+  </script>
+  
+  <!-- jQuery and Bootstrap -->
+  <script src="js/landing/jquery-3.2.1.min.js?v=" + VERSION></script>
+  <script src="js/landing/bootstrap.bundle.min.js?v=" + VERSION></script>
+  
+  <!-- Plugins JS -->
+  <script src="js/landing/owl.carousel.min.js?v=" + VERSION></script>
+  
+  <!-- Custom JS -->
+  <script src="js/landing/script.js?v=" + VERSION></script>
+  
   <!-- Base href para rutas relativas -->
   <base href="./">
-
+  
   <!-- Font -->
   <link
     href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500&family=Montserrat:wght@200;400&display=swap"
     rel="stylesheet">
-
+  
   <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="style/landing/bootstrap.min.css">
-
+  <link rel="stylesheet" href="style/landing/bootstrap.min.css?v=" + VERSION>
+  
   <!-- Themify Icons -->
-  <link rel="stylesheet" href="style/landing/themify-icons.css">
-
+  <link rel="stylesheet" href="style/landing/themify-icons.css?v=" + VERSION>
+  
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     integrity="sha512-pC4yrO6PnWx3tOUJ9fp+rE3f/Q9ZVUKcdYIhNgvpx8u+deKm4gVRntFj7W53Q1ryefzzT2sJgG/5p1SO3BHOzQ=="
-    crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+    crossorigin="anonymous" referrerpolicy="no-referrer">
+  
   <!-- Owl Carousel -->
-  <link rel="stylesheet" href="style/landing/owl.carousel.min.css">
-
+  <link rel="stylesheet" href="style/landing/owl.carousel.min.css?v=" + VERSION>
+  
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="style/landing/faqStyle.css">
-  <link rel="stylesheet" href="style/landing/contacto.css">
-  <link rel="stylesheet" href="style/landing/whatsapp.css">
-  <link rel="stylesheet" href="style/landing/style.css">
-  <link rel="stylesheet" href="style/landing/mobile-styles.css">
-
-
+  <link rel="stylesheet" href="style/landing/faqStyle.css?v=" + VERSION>
+  <link rel="stylesheet" href="style/landing/contacto.css?v=" + VERSION>
+  <link rel="stylesheet" href="style/landing/whatsapp.css?v=" + VERSION>
+  <link rel="stylesheet" href="style/landing/style.css?v=" + VERSION>
+  <link rel="stylesheet" href="style/landing/mobile-styles.css?v=" + VERSION>
+  
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+
 </head>
 
 
@@ -126,96 +143,53 @@
     </div>
   </div>
 
-  <!-- section NOVEDADES -->
-  <div class="section light-bg" id="features">
-    <div class="container">
-      <div class="section-title">
-        <!-- <small>NOVEDADES</small> -->
-        <h3>¿Porque Pick Up Time?</h3>
+
+<!-- Section NOVEDADES -->
+<div class="section light-bg" id="features">
+  <div class="container">
+    <div class="section-title">
+      <h3>¿Por qué Pick Up Time?</h3>
+    </div>
+
+    <!-- Contenedor del carrusel -->
+    <div class="rowPersonal">
+      <!-- Tarjeta 1 -->
+      <div class="cajaMotivos">
+        <div class="card features">
+          <div class="card-body">
+            <div class="media">
+              <a class="iconNovedades" href="#"><img src="./img/icono1HD.png" alt="icon"></a>
+              <div class="media-body">
+                <h4 class="card-title">Simple</h4>
+                <p class="card-text">Son solo 3 simples pasos, pedís, escaneas y retirás. Sin instalaciones ni formularios.</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-
-      <div class="rowPersonal">
-        <div class="col-12 col-lg-4 cajaMotivos">
-          <div class="card features">
-            <div class="card-body">
-              <div class="media">
-                <a class="iconNovedades" href="#"><img src="./img/icono1HD.png" alt="icon"></a>
-                <div class="media-body">
-                  <h4 class="card-title">Simple</h4>
-                  <p class="card-text">Son solo 3 simples pasos, pedís, escaneas y retirás. Sin instalaciones ni
-                    formularios.</p>
-                </div>
+      <!-- Tarjeta 2 -->
+      <div class="cajaMotivos">
+        <div class="card features">
+          <div class="card-body">
+            <div class="media">
+              <a class="iconNovedades" href="#"><img src="./img/icono2HD.png" alt="icon"></a>
+              <div class="media-body">
+                <h4 class="card-title">Seguro</h4>
+                <p class="card-text">Sin preocuparte por descargar apps de terceros, con nosotros tus datos siempre estarán seguros con procesos de encriptación complejos con IA.</p>
               </div>
             </div>
           </div>
         </div>
-        <div class="col-12 col-lg-4 cajaMotivos">
-          <div class="card features">
-            <div class="card-body">
-              <div class="media">
-                <a class="iconNovedades" href="#"><img src="./img/icono2HD.png" alt="icon"></a>
-                <div class="media-body">
-                  <h4 class="card-title">Seguro</h4>
-                  <p class="card-text">Sin preocuparte por descargar apps de terceros, con nosotros tus datos siempre
-                    estarán seguros con procesos de encriptación complejos con IA.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-12 col-lg-4 cajaMotivos">
-          <div class="card features">
-            <div class="card-body">
-              <div class="media">
-                <a class="iconNovedades" href="#"><img src="./img/icono3HD.png" alt="icon"></a>
-                <div class="media-body">
-                  <h4 class="card-title">Customizable</h4>
-                  <p class="card-text">Vas a poder editar los mensajes, personalizar el QR, programar mensajes, armar
-                    afiliados ¡y más!</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-12 col-lg-4 cajaMotivos">
-          <div class="card features">
-            <div class="card-body">
-              <div class="media">
-                <a class="iconNovedades" href="#"><img src="./img/icono4HD.png" alt="icon"></a>
-                <div class="media-body">
-                  <h4 class="card-title">Customizable</h4>
-                  <p class="card-text">Vas a poder editar los mensajes, personalizar el QR, programar mensajes, armar
-                    afiliados ¡y más!</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-12 col-lg-4 cajaMotivos">
-          <div class="card features">
-            <div class="card-body">
-              <div class="media">
-                <a class="iconNovedades" href="#"><img src="./img/icono5HD.png" alt="icon"></a>
-                <div class="media-body">
-                  <h4 class="card-title">Customizable</h4>
-                  <p class="card-text">Vas a poder editar los mensajes, personalizar el QR, programar mensajes, armar
-                    afiliados ¡y más!</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-        <div class="col-12 col-lg-4 cajaMotivos">
-          <div class="card features">
-            <div class="card-body">
-              <div class="media">
-                <a class="iconNovedades" href="#"><img src="./img/icono6HD.png" alt="icon"></a>
-                <div class="media-body">
-                  <h4 class="card-title">Customizable</h4>
-                  <p class="card-text">Vas a poder editar los mensajes, personalizar el QR, programar mensajes, armar
-                    afiliados ¡y más!</p>
-                </div>
+      </div>
+      <!-- Tarjeta 3 -->
+      <div class="cajaMotivos">
+        <div class="card features">
+          <div class="card-body">
+            <div class="media">
+              <a class="iconNovedades" href="#"><img src="./img/icono3HD.png" alt="icon"></a>
+              <div class="media-body">
+                <h4 class="card-title">Customizable</h4>
+                <p class="card-text">Vas a poder editar los mensajes, personalizar el QR, programar mensajes, armar afiliados ¡y más!</p>
               </div>
             </div>
           </div>
@@ -223,6 +197,9 @@
       </div>
     </div>
   </div>
+</div>
+
+
 
 
   <!-- SECCION DE PACKS -->
@@ -302,45 +279,82 @@
   </div>
 
   <!-- SECCION DE PASOS CON IMAGEN -->
-  <div class="section light-bg">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-8 d-flex align-items-center">
-          <ul class="list-unstyled ui-steps">
-            <li class="media" onmouseover="showImage(1)">
-              <div class="circle-icon mr-4">1</div>
-              <div class="media-body">
-                <h5>Carga de reserva/pedidos</h5>
-                <p>El encargado genera la reserva/pedido.</p>
-              </div>
-            </li>
-            <li class="media my-4" onmouseover="showImage(2)">
-              <div class="circle-icon mr-4">2</div>
-              <div class="media-body">
-                <h5>Confirmación</h5>
-                <p>El cliente escanea el Qr y la confirma a través de WhatsApp.</p>
-              </div>
-            </li>
-            <li class="media" onmouseover="showImage(3)">
-              <div class="circle-icon mr-4">3</div>
-              <div class="media-body">
-                <h5>Notificacion</h5>
-                <p>Pick Up Time le envía un mensaje al cliente avisándole que es su turno y el tiempo que tiene para efectivizar su reserva/retirar su pedido.</p>
-              </div>
-            </li>
-          </ul>
-        </div>
-
-        <div class="col-md-4">
-          <div class="carousel-images">
-            <img id="image1" src="img/notificacion1.jpg" alt="Image 1" class="carousel-image active">
-            <img id="image2" src="img/scan1.jpg" alt="Image 2" class="carousel-image">
-            <img id="image3" src="img/pedido1.jpg" alt="Image 3" class="carousel-image">
+  <div class="pasosDesktop">
+    <div class="section light-bg">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-8 d-flex align-items-center">
+            <ul class="list-unstyled ui-steps">
+              <li class="media" onmouseover="showImage(1)">
+                <div class="circle-icon mr-4">1</div>
+                <div class="media-body">
+                  <h5>Carga de reserva/pedidos</h5>
+                  <p>El encargado genera la reserva/pedido.</p>
+                </div>
+              </li>
+              <li class="media my-4" onmouseover="showImage(2)">
+                <div class="circle-icon mr-4">2</div>
+                <div class="media-body">
+                  <h5>Confirmación</h5>
+                  <p>El cliente escanea el Qr y la confirma a través de WhatsApp.</p>
+                </div>
+              </li>
+              <li class="media" onmouseover="showImage(3)">
+                <div class="circle-icon mr-4">3</div>
+                <div class="media-body">
+                  <h5>Notificacion</h5>
+                  <p>Pick Up Time le envía un mensaje al cliente avisándole que es su turno y el tiempo que tiene para
+                    efectivizar su reserva/retirar su pedido.</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+  
+          <div class="col-md-4">
+            <div class="carousel-images">
+              <img id="image1" src="img/notificacion1.jpg" alt="Image 1" class="carousel-image active">
+              <img id="image2" src="img/scan1.jpg" alt="Image 2" class="carousel-image">
+              <img id="image3" src="img/pedido1.jpg" alt="Image 3" class="carousel-image">
+            </div>
           </div>
         </div>
       </div>
     </div>
+
   </div>
+  
+
+<!-- SECCION DE PASOS CON IMAGEN movil-->
+<div class="sectionMovil light-bg text-center">
+  <div class="container">
+    <div class="numbers">
+      <button class="number-btn" onclick="showContent(1)">1</button>
+      <button class="number-btn" onclick="showContent(2)">2</button>
+      <button class="number-btn" onclick="showContent(3)">3</button>
+    </div>
+    <div class="content">
+      <div id="content1" class="content-block active">
+        <h5>Carga de reserva/pedidos Celu</h5>
+        <p>El encargado genera la reserva/pedido.</p>
+        <img id="image1" src="img/notificacion1.jpg" alt="Carga de reserva" class="carousel-image active">
+      </div>
+      <div id="content2" class="content-block">
+        <h5>Confirmación</h5>
+        <p>El cliente escanea el Qr y la confirma a través de WhatsApp.</p>
+        <img id="image2" src="img/scan1.jpg" alt="Confirmación" class="carousel-image">
+      </div>
+      <div id="content3" class="content-block">
+        <h5>Notificación</h5>
+        <p>Pick Up Time le envía un mensaje al cliente avisándole que es su turno y el tiempo que tiene para
+          efectivizar su reserva/retirar su pedido.</p>
+        <img id="image3" src="img/pedido1.jpg" alt="Notificación" class="carousel-image">
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+
 
   <!-- <div class="section">
     <div class="container">
@@ -471,11 +485,11 @@
         </div>
         <div class="faq-item">
           <div class="faq-question" onclick="toggleFaq(this)">
-            ¿Necesito dispositivos extras para Pick Up Time? 
+            ¿Necesito dispositivos extras para Pick Up Time?
             <span class="faq-icon">+</span>
           </div>
           <div class="faq-answer">
-            No, solo debes contar con algún dispositivo como una computadora, Tablet o celular con acceso a internet. 
+            No, solo debes contar con algún dispositivo como una computadora, Tablet o celular con acceso a internet.
           </div>
         </div>
         <div class="faq-item">
@@ -484,16 +498,17 @@
             <span class="faq-icon">+</span>
           </div>
           <div class="faq-answer">
-            No, el cliente puede moverse libremente o volver a su casa mientras espera que le llegue el mensaje de aviso que su pedido o servicio está listo.
+            No, el cliente puede moverse libremente o volver a su casa mientras espera que le llegue el mensaje de aviso
+            que su pedido o servicio está listo.
           </div>
         </div>
         <div class="faq-item">
           <div class="faq-question" onclick="toggleFaq(this)">
-            ¿Puedo personalizar los mensajes de notificación? 
+            ¿Puedo personalizar los mensajes de notificación?
             <span class="faq-icon">+</span>
           </div>
           <div class="faq-answer">
-            Si se puede personalizar los mensajes de notificación y la apariencia del Qr. 
+            Si se puede personalizar los mensajes de notificación y la apariencia del Qr.
           </div>
         </div>
         <div class="faq-item">
@@ -513,11 +528,12 @@
           <div class="faq-answer">
             <ul>
               <li>Diferenciación y ventaja competitiva mediante métricas y datos.</li>
-              <li>Aumento de beneficios para el cliente y el negocio con disminución de costos y mantenimiento de dispositivos.</li>
+              <li>Aumento de beneficios para el cliente y el negocio con disminución de costos y mantenimiento de
+                dispositivos.</li>
               <li>Mejora de la imagen corporativa por innovación, sofisticación y confort del cliente.</li>
               <li>Mayor difusión de tus redes sociales y feedback de los clientes (Google, Tripadvisor).</li>
-          </ul>
-          
+            </ul>
+
           </div>
         </div>
 
@@ -584,13 +600,15 @@
 
 
 
-  <!-- jQuery and Bootstrap -->
-  <script src="js/landing/jquery-3.2.1.min.js"></script>
-  <script src="js/landing/bootstrap.bundle.min.js"></script>
-  <!-- Plugins JS -->
-  <script src="js/landing/owl.carousel.min.js"></script>
-  <!-- Custom JS -->
-  <script src="js/landing/script.js"></script>
+<!-- jQuery and Bootstrap -->
+<script src="js/landing/jquery-3.2.1.min.js?v=" + VERSION></script>
+<script src="js/landing/bootstrap.bundle.min.js?v=" + VERSION></script>
+
+<!-- Plugins JS -->
+<script src="js/landing/owl.carousel.min.js?v=" + VERSION></script>
+
+<!-- Custom JS -->
+<script src="js/landing/script.js?v=" + VERSION></script>
 
 </body>
 
