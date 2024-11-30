@@ -12,7 +12,7 @@
 
   <script>
     // Variable global para manejar la versión
-    const VERSION = "1.0.0"; // Cambia esta versión para forzar la recarga
+    const VERSION = "1.0.1"; // Cambia esta versión para forzar la recarga
   </script>
   
   <!-- jQuery and Bootstrap -->
@@ -79,10 +79,11 @@
           <nav class="navbar navbar-dark navbar-expand-lg">
             <a class="navbar-brand" href="index.html"><img src="img/logoConLetras.png" class="img-fluid1"
                 alt="logo"></a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar"
-              aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"
+                aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
             </button>
+            
             <div class="collapse navbar-collapse" id="navbar">
               <ul class="navbar-nav ml-auto">
                 <li class="nav-item"> <a class="nav-link active" href="#home">HOME <span
@@ -100,6 +101,9 @@
       </div>
     </div>
   </div>
+
+
+  <!-- HOME TITULO CENTRAL-->
 
   <header class="bg-gradient" id="home">
     <div class="container mt-5 grid-layout">
@@ -157,7 +161,7 @@
       <div class="cajaMotivos">
         <div class="card features">
           <div class="card-body">
-            <div class="media">
+            <div class="media" id="mediaNovedades">
               <a class="iconNovedades" href="#"><img src="./img/icono1HD.png" alt="icon"></a>
               <div class="media-body">
                 <h4 class="card-title">Simple</h4>
@@ -171,7 +175,7 @@
       <div class="cajaMotivos">
         <div class="card features">
           <div class="card-body">
-            <div class="media">
+            <div class="media" id="mediaNovedades">
               <a class="iconNovedades" href="#"><img src="./img/icono2HD.png" alt="icon"></a>
               <div class="media-body">
                 <h4 class="card-title">Seguro</h4>
@@ -185,7 +189,7 @@
       <div class="cajaMotivos">
         <div class="card features">
           <div class="card-body">
-            <div class="media">
+            <div class="media" id="mediaNovedades">
               <a class="iconNovedades" href="#"><img src="./img/icono3HD.png" alt="icon"></a>
               <div class="media-body">
                 <h4 class="card-title">Customizable</h4>
@@ -328,7 +332,7 @@
 <div class="sectionMovil light-bg text-center">
   <div class="container">
     <div class="numbers">
-      <button class="number-btn" onclick="showContent(1)">1</button>
+      <button class="number-btn active" onclick="showContent(1)">1</button>
       <button class="number-btn" onclick="showContent(2)">2</button>
       <button class="number-btn" onclick="showContent(3)">3</button>
     </div>
@@ -569,15 +573,14 @@
         </p>
         <div class="d-block d-sm-inline-block">
           <p class="mb-0">
-            <span class="ti-headphone-alt mr-2"></span> <a href="tel:51836362800">518-3636-2800</a>
+            <span class="ti-headphone-alt mr-2"></span> <a href="tel:51836362800">11-5383-6633</a>
           </p>
         </div>
         <!-- Redes sociales -->
         <div class="social-icons">
-          <a href="#"><span class="ti-facebook"></span></a>
-          <a href="#"><span class="ti-youtube"></span> <!-- Clase corregida -->
+          <a href="https://www.youtube.com/embed/LYBi9LxcHHQ"><span class="ti-youtube"></span> <!-- Clase corregida -->
           </a>
-          <a href="#"><span class="ti-instagram"></span></a>
+          <a href="https://www.instagram.com/pickup.time/"><span class="ti-instagram"></span></a>
         </div>
 
       </div>

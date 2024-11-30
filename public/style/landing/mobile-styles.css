@@ -12,6 +12,15 @@
     height: auto;
   }
 
+  .collapse {
+    transition: height 0.3s ease-out; /* Transición suave para colapsar */
+  }
+  
+  .collapse.show {
+    transition: height 0.3s ease-in; /* Transición suave para expandirse */
+  }
+  
+
   /* Contact Section */
   .contact-container {
     flex-direction: column;
@@ -49,15 +58,13 @@
     height: auto;
   }
 
-
   /* NAV MENU */
-
   .nav-menu {
     background-image: linear-gradient(135deg, rgba(60, 8, 118, 0.8) 0%, rgba(250, 0, 118, 0.8) 100%);
   }
 
   .nav-menu.is-scrolling {
-      background-image: linear-gradient(135deg, rgba(60, 8, 118, 1) 0%, rgba(250, 0, 118, 1) 100%);}
+    background-image: linear-gradient(135deg, rgba(60, 8, 118, 1) 0%, rgba(250, 0, 118, 1) 100%);
   }
 
   .nav-menu .navbar-brand img {
@@ -74,27 +81,20 @@
     margin-bottom: 10px;
   }
 
-
-@media (max-width: 768px) {
+  /* Row Personal - Carrusel */
   .rowPersonal {
     display: grid;
-    /* Usa flexbox para un carrusel horizontal */
-    overflow-x: auto;
-    /* Scroll horizontal */
+    overflow-x: auto; /* Scroll horizontal */
     padding: 20px;
     scroll-snap-type: x mandatory;
-    /* Desplazamiento suave */
     border-radius: 20px;
   }
 
   .cajaMotivos {
     flex: 0 0 auto;
-    /* Cada tarjeta tiene un ancho fijo y no se estira */
-    width: 300px;
-    /* Ancho fijo de cada tarjeta */
+    width: 300px; /* Ancho fijo de cada tarjeta */
     padding: 20px;
-    scroll-snap-align: center;
-    /* Centra la tarjeta al detenerse */
+    scroll-snap-align: center; /* Centra la tarjeta al detenerse */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -111,16 +111,15 @@
   }
 
   .iconNovedades img {
-    max-width: 80px;
+    max-width: 180px;
     height: auto;
   }
 
   .card-title {
-    font-size: 1.5rem;
+    font-size: 1.9rem;
     margin: 10px 0;
     line-height: 1.2;
     color: #6b00ad;
-    /* Color del título */
   }
 
   .card-text {
@@ -129,7 +128,11 @@
     color: #555;
   }
 
-  /* Estiliza el scroll horizontal */
+  #mediaNovedades{
+    display: grid;
+  }
+
+  /* Scroll Estilizado */
   .rowPersonal::-webkit-scrollbar {
     height: 8px;
   }
@@ -144,71 +147,41 @@
     border-radius: 10px;
   }
 
-  .media {
-    display: grid;
-  }
-
-
-
   /* SECTION PACKS */
-
   .box1 {
     width: 100% !important;
   }
 
+  /* Pulse Button */
   .pulse-btn {
     display: flex;
-    /* Flexbox para centrar contenido */
     justify-content: center;
-    /* Centra horizontalmente */
     align-items: center;
-    /* Centra verticalmente */
     padding: 10px 20px;
-    /* Espaciado interno */
     border-radius: 5px;
-    /* Bordes redondeados */
     font-size: 14px;
-    /* Tamaño de fuente */
     background-color: #ff4081;
-    /* Color de fondo */
     color: white;
-    /* Color del texto */
     text-transform: uppercase;
-    /* Texto en mayúsculas */
     cursor: pointer;
-    /* Cambia el cursor al pasar */
     transition: all 0.3s ease;
-    /* Suaviza interacción */
     text-align: center;
-    /* Asegura el centrado del texto */
     max-width: 100%;
-    /* Evita que el botón sea más ancho que su contenedor */
     overflow: hidden;
-    /* Evita desbordamiento interno */
     white-space: nowrap;
-    /* Impide saltos de línea */
   }
 
   .pulse-btn a {
     text-decoration: none;
-    /* Sin subrayado */
     color: white;
-    /* Color del texto */
     display: inline-block;
-    /* Ocupa espacio del botón */
     max-width: 100%;
-    /* Respeta los límites del botón */
     overflow: hidden;
-    /* Evita que el texto se salga */
     white-space: nowrap;
-    /* Asegura que no haya salto de línea */
     text-align: center;
-    /* Centra el texto */
   }
 
-
-  /* section de PASOS CON IMAGEN */
-
+  /* SECTION PASOS CON IMAGEN */
   .pasosDesktop {
     display: none;
   }
@@ -234,63 +207,63 @@
     font-size: 1.2rem;
     border: none;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.3s ease;
   }
 
+  /* Botón Activo */
+  .number-btn.active {
+    background-color: #ff914d;
+    transform: scale(1.1);
+    transition: background-color 0.5s ease, transform 0.5s ease;
+  }
+
+  /* Botón Hover */
   .number-btn:hover {
     background-color: #ff914d;
   }
 
-  /* Ocultar los bloques por defecto */
+  /* Bloques de contenido */
   .content-block {
     display: none;
+    opacity: 0; /* Oculto inicialmente */
+    transform: translateX(-20px); /* Aparece desde la izquierda */
+    transition: opacity 0.5s ease, transform 0.5s ease; /* Suaviza el movimiento y la opacidad */
   }
 
   .content-block.active {
     display: block;
+    opacity: 1; /* Totalmente visible */
+    transform: translateX(0); /* Regresa a su posición original */
   }
 
+  /* Imágenes */
   .carousel-image {
-    position: relative;
-    /* Cambia de absolute a relative para mantener el flujo normal */
-    top: auto;
-    /* Restablece la posición vertical */
-    left: auto;
-    /* Restablece la posición horizontal */
+    position: static;
     width: 100%;
-    /* Ajusta el tamaño al contenedor */
     max-width: 300px;
-    /* Tamaño máximo de las imágenes */
     height: auto;
-    /* Mantiene la proporción */
     opacity: 0;
-    /* Oculta las imágenes por defecto */
-    transition: opacity 0.5s ease;
-    /* Suaviza la aparición */
+    transform: scale(0.9);
+    transition: opacity 0.5s ease, transform 0.5s ease;
     margin-top: 20px;
-    /* Agrega espacio superior */
     border-radius: 10px;
-    /* Bordes redondeados */
-    box-shadow: 0 6px 20px 6px rgba(0, 0, 0, 0.25),
-      0 6px 6px rgba(0, 0, 0, 0.22);
-    /* Sombra */
+    box-shadow: 0 6px 20px 6px rgba(0, 0, 0, 0.25), 0 6px 6px rgba(0, 0, 0, 0.22);
   }
 
   .carousel-image.active {
     opacity: 1;
-    /* Muestra solo la imagen activa */
+    transform: scale(1);
   }
 
-
-  #faq{
+  /* FAQ Section */
+  #faq {
     margin-top: -120px;
     margin-bottom: 100px;
   }
 
-
-  /* FOOTER */
-.social-icons{
-  justify-content: center;
-}
+  /* Footer */
+  .social-icons {
+    justify-content: center;
+  }
 
 }

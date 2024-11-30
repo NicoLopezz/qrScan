@@ -1,15 +1,5 @@
-/*
 
-Style   : MobApp Script JS
-Version : 1.0
-Author  : Surjith S M
-URI     : https://surjithctly.in/
-
-Copyright © All rights Reserved 
-
-*/
-
-$(function() {
+$(function () {
     "use strict";
 
     /*-----------------------------------
@@ -24,24 +14,24 @@ $(function() {
         }
     }
     menuscroll();
-    $(window).on('scroll', function() {
+    $(window).on('scroll', function () {
         menuscroll();
     });
     /*-----------------------------------
      * NAVBAR CLOSE ON CLICK
      *-----------------------------------*/
 
-    $('.navbar-nav > li:not(.dropdown) > a').on('click', function() {
+    $('.navbar-nav > li:not(.dropdown) > a').on('click', function () {
         $('.navbar-collapse').collapse('hide');
     });
     /* 
      * NAVBAR TOGGLE BG
      *-----------------*/
     var siteNav = $('#navbar');
-    siteNav.on('show.bs.collapse', function(e) {
+    siteNav.on('show.bs.collapse', function (e) {
         $(this).parents('.nav-menu').addClass('menu-is-open');
     })
-    siteNav.on('hide.bs.collapse', function(e) {
+    siteNav.on('hide.bs.collapse', function (e) {
         $(this).parents('.nav-menu').removeClass('menu-is-open');
     })
 
@@ -49,7 +39,7 @@ $(function() {
      * ONE PAGE SCROLLING
      *-----------------------------------*/
     // Select all links with hashes
-    $('a[href*="#"]').not('[href="#"]').not('[href="#0"]').not('[data-toggle="tab"]').on('click', function(event) {
+    $('a[href*="#"]').not('[href="#"]').not('[href="#0"]').not('[data-toggle="tab"]').on('click', function (event) {
         // On-page links
         if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
             // Figure out element to scroll to
@@ -61,7 +51,7 @@ $(function() {
                 event.preventDefault();
                 $('html, body').animate({
                     scrollTop: target.offset().top
-                }, 1000, function() {
+                }, 1000, function () {
                     // Callback after animation
                     // Must change focus!
                     var $target = $(target);
@@ -108,11 +98,18 @@ $(function() {
             }
         });
     }
-
-
-    
-
 }); /* End Fn */
+
+
+
+
+
+
+$(document).on('click', '.navbar-nav > li:not(.dropdown) > a', function () {
+    $('.navbar-collapse').collapse('hide'); // Cierra el menú
+});
+
+
 
 function showImage(imageNumber) {
     // Oculta todas las imágenes
@@ -129,62 +126,72 @@ function showImage(imageNumber) {
 function toggleFaq(element) {
     // Si ya está activo, lo desactiva
     if (element.classList.contains('active')) {
-      element.classList.remove('active');
+        element.classList.remove('active');
     } else {
-      // Desactiva todos los demás
-      document.querySelectorAll('.faq-item').forEach(item => item.classList.remove('active'));
-      // Activa el clic actual
-      element.classList.add('active');
+        // Desactiva todos los demás
+        document.querySelectorAll('.faq-item').forEach(item => item.classList.remove('active'));
+        // Activa el clic actual
+        element.classList.add('active');
     }
-  }
-  
-  // Agregar evento click a todos los elementos de pregunta
-  document.querySelectorAll('.faq-item').forEach(item => {
+}
+// Agregar evento click a todos los elementos de pregunta
+document.querySelectorAll('.faq-item').forEach(item => {
     item.addEventListener('click', function () {
-      toggleFaq(item);
+        toggleFaq(item);
     });
-  });
-  
+});
 
-  document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function () {
     const body = document.body;
-  
+
     function adjustOffset() {
-      if (window.innerWidth <= 768) {
-        body.setAttribute('data-offset', '120'); // Altura del menú en móvil
-      } else {
-        body.setAttribute('data-offset', '0'); // Sin offset en pantallas grandes
-      }
+        if (window.innerWidth <= 768) {
+            body.setAttribute('data-offset', '120'); // Altura del menú en móvil
+        } else {
+            body.setAttribute('data-offset', '0'); // Sin offset en pantallas grandes
+        }
     }
-  
+
     // Ejecutar en carga inicial
     adjustOffset();
-  
+
     // Escuchar cambios en el tamaño de la ventana
     window.addEventListener('resize', adjustOffset);
-  });
+});
 
+//ASI FUNCIONAAAAAA!
 function showContent(number) {
-  // Oculta todos los bloques de contenido
-  const blocks = document.querySelectorAll('.content-block');
-  blocks.forEach(block => block.classList.remove('active'));
+    // Remover la clase 'active' de todos los botones
+    const buttons = document.querySelectorAll('.number-btn');
+    buttons.forEach(button => button.classList.remove('active'));
 
-  // Oculta todas las imágenes
-  const images = document.querySelectorAll('.carousel-image');
-  images.forEach(image => image.classList.remove('active'));
+    // Agregar la clase 'active' al botón seleccionado
+    const selectedButton = buttons[number - 1]; // Ajusta índice (1 -> índice 0)
+    selectedButton.classList.add('active');
 
-  // Muestra el bloque de contenido seleccionado
-  const selectedBlock = document.getElementById(`content${number}`);
-  selectedBlock.classList.add('active');
+    // Ocultar todos los bloques de contenido
+    const blocks = document.querySelectorAll('.content-block');
+    blocks.forEach(block => block.classList.remove('active'));
 
-  // Muestra la imagen correspondiente
-  const selectedImage = selectedBlock.querySelector('.carousel-image');
-  if (selectedImage) {
-    selectedImage.classList.add('active');
-  }
+    // Ocultar todas las imágenes
+    const images = document.querySelectorAll('.carousel-image');
+    images.forEach(image => image.classList.remove('active'));
+
+    // Mostrar el bloque de contenido seleccionado
+    const selectedBlock = document.getElementById(`content${number}`);
+    selectedBlock.classList.add('active');
+
+    // Mostrar la imagen correspondiente
+    const selectedImage = selectedBlock.querySelector('.carousel-image');
+    if (selectedImage) {
+        selectedImage.classList.add('active');
+    }
 }
 
-  
+
+
+
+
 
 
 console.log("Archivo JavaScript cargado correctamente");
