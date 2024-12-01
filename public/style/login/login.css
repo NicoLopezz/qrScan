@@ -5,13 +5,21 @@
     box-sizing: border-box;
 }
 
+
+
+img {
+    vertical-align: middle;
+    border-style: none;
+    width: 100%;
+}
+
 body {
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-image: url('/img/fondoLogin.jpg');
-    background-size: cover;
+    height: 100vh !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    background-image: url('/img/fondoLogin.jpg') !important;
+    background-size: cover !important;
 }
 
 .login-container {
