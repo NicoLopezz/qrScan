@@ -1,5 +1,12 @@
 @media (max-width: 768px) {
 
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+    }
+
     /* Estilos adicionales para la disposición de columnas */
     .container.grid-layout {
         display: grid;
