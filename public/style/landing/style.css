@@ -423,7 +423,6 @@ p.lead {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    margin-bottom: 200px;
 }
 
 
@@ -448,7 +447,7 @@ p.lead {
     }
 
     .text-content h1 {
-        font-size: 28px;
+        font-size: 50px;
         /* Reduce el título */
         line-height: 1.2;
     }
@@ -575,10 +574,10 @@ p.lead {
 
         .container.grid-layout {
             display: grid;
-            grid-template-columns: 45% 55%;
+            grid-template-columns: 95%;
             gap: 0px;
             align-items: center;
-            height: max-he;
+            height: AUTO;
             margin-bottom: 180px;
             max-height: 400px;
             height: 300px;

@@ -1,3 +1,133 @@
 @media (max-width: 768px) {
-    
+
+    /* Estilos adicionales para la disposición de columnas */
+    .container.grid-layout {
+        display: grid;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: -10rem;
+    }
+
+    .text-content,
+    .img-holder,
+    .login-container {
+        flex: 1;
+        padding: 20px;
+    }
+
+    .login-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .login-box {
+        width: 100%;
+        max-width: 300px;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Ajuste de imagen para mantener proporciones */
+    .img-holder img {
+        height: auto;
+    }
+
+    .img-holder {
+        max-width: 100%;
+        margin-bottom: 25%;
+        display: none;
+    }
+
+    .container {
+        max-width: 2500px;
+    }
+
+    .img-fluid2 {
+        max-width: 100%;
+        height: auto;
+        width: 110%;
+    }
+
+    .text-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-bottom: 0px;
+    }
+
+
+
+    .img-holder img {
+        width: 50% !important;
+        height: auto;
+    }
+
+    #home {
+        height: 100vh;
+        /* Ocupa el 100% del alto de la pantalla */
+        display: flex;
+        /* Para centrar contenido, si es necesario */
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        /* Evita que se muestren barras de scroll */
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        /* Evita el desplazamiento horizontal */
+        box-sizing: border-box;
+        /* Incluye padding y border en el tamaño total de los elementos */
+
+
+    }
+
+
+
+    /* HEADER */
+
+    .img-fluid1 {
+        width: 100px;
+    }
+
+    /*WHATSAPP BTN  */
+    .whatsapp-float {
+        bottom: 55px !important;
+        right: 40px !important;
+        width: 50px !important;
+        height: 50px !important;
+    }
+
+    /* Botones sociales: Estilo base */
+    .social-btn {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: transparent;
+        /* O puedes agregar un color si lo deseas */
+        cursor: pointer;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    /* Estilo para las imágenes dentro de los botones */
+    .social-btn img {
+        width: 45px;
+        /* Tamaño del ícono */
+        height: 45px;
+    }
+
+    /* Hover para los botones */
+    .social-btn:hover {
+        transform: scale(1.1);
+    }
+
+
+
 }
