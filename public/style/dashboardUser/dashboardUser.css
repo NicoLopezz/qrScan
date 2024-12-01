@@ -15,6 +15,10 @@ body {
   overflow: hidden; /* Evita el desbordamiento de la pantalla */
 }
 
+.nav-menu{
+  display: none;
+}
+
 
 .container {
   display: flex;
