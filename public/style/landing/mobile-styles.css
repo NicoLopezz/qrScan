@@ -3,12 +3,12 @@
 
   /* Header Adjustments */
   header .text-content h1 {
-    font-size: 24px;
+    font-size: 30px;
     text-align: center;
   }
 
   .img-holder img {
-    width: 100%;
+    width: 70%;
     height: auto;
   }
 
