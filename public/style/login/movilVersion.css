@@ -1,3 +1,4 @@
+/* Pantallas menores o iguales a 768px */
 @media (max-width: 768px) {
 
     html, body {
@@ -7,19 +8,18 @@
         overflow: hidden;
     }
 
-    /* Estilos adicionales para la disposición de columnas */
     .container.grid-layout {
         display: grid;
-        justify-content: space-between;
+        justify-content: center;
         align-items: center;
-        margin-top: -10rem;
+        margin-top: 5rem; /* Ajustado para evitar mucho desplazamiento negativo */
     }
 
     .text-content,
     .img-holder,
     .login-container {
         flex: 1;
-        padding: 20px;
+        padding: 15px; /* Espaciado más pequeño para móviles */
     }
 
     .login-container {
@@ -29,7 +29,7 @@
     }
 
     .login-box {
-        width: 100%;
+        width: 90%; /* Ocupa casi todo el ancho disponible */
         max-width: 300px;
         padding: 20px;
         background-color: #fff;
@@ -37,115 +37,100 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
 
-    /* Ajuste de imagen para mantener proporciones */
-    .img-holder img {
-        height: auto;
-    }
-
     .img-holder {
-        max-width: 100%;
-        margin-bottom: 25%;
-        display: none;
-    }
-
-    .container {
-        max-width: 2500px;
-    }
-
-    .img-fluid2 {
-        max-width: 100%;
-        height: auto;
-        width: 110%;
+        display: none; /* Oculta las imágenes en pantallas pequeñas */
     }
 
     .text-content {
         display: flex;
         flex-direction: column;
         justify-content: center;
-        margin-bottom: 0px;
-    }
-
-
-
-    .img-holder img {
-        width: 50% !important;
-        height: auto;
-    }
-
-    #home {
-        height: 100vh;
-        /* Ocupa el 100% del alto de la pantalla */
-        display: flex;
-        /* Para centrar contenido, si es necesario */
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        overflow: hidden;
-        /* Evita que se muestren barras de scroll */
-        margin: 0;
-        padding: 0;
-        overflow-x: hidden;
-        /* Evita el desplazamiento horizontal */
-        box-sizing: border-box;
-        /* Incluye padding y border en el tamaño total de los elementos */
-
-
-    }
-
-
-
-    /* HEADER */
-
-    .img-fluid1 {
-        width: 100px;
-    }
-
-    /*WHATSAPP BTN  */
-    .whatsapp-float {
-        bottom: 55px !important;
-        right: 40px !important;
-        width: 50px !important;
-        height: 50px !important;
-    }
-
-    /* Botones sociales: Estilo base */
-    .social-btn {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        border: none;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: transparent;
-        /* O puedes agregar un color si lo deseas */
-        cursor: pointer;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    /* Estilo para las imágenes dentro de los botones */
-    .social-btn img {
-        width: 45px;
-        /* Tamaño del ícono */
-        height: 45px;
-    }
-
-    /* Hover para los botones */
-    .social-btn:hover {
-        transform: scale(1.1);
-    }
-
-
-    .text-content p {
-        font-size: 18px !important;
-        margin-bottom: 20px !important;
+        text-align: center; /* Alineación para texto en pantallas pequeñas */
     }
 
     header .text-content h1 {
-        font-size: 40px !important;
-        text-align: center !important;
+        font-size: 32px; /* Tamaño de fuente reducido */
     }
 
+    .text-content p {
+        font-size: 16px; /* Reducido para móviles */
+        margin-bottom: 15px;
+    }
 
+    .whatsapp-float {
+        bottom: 30px !important;
+        right: 20px !important;
+        width: 40px !important;
+        height: 40px !important;
+    }
+
+}
+
+/* Pantallas menores o iguales a 480px (dispositivos muy pequeños como iPhone SE) */
+@media (max-width: 480px) {
+
+    .login-box {
+        width: 95%;
+        padding: 15px;
+    }
+
+    .social-btn img {
+        width: 35px; /* Iconos más pequeños */
+        height: 35px;
+    }
+
+    header .text-content h1 {
+        font-size: 28px; /* Fuente más pequeña */
+    }
+
+    .text-content p {
+        font-size: 14px;
+    }
+
+    .whatsapp-float {
+        bottom: 20px !important;
+        right: 15px !important;
+        width: 35px !important;
+        height: 35px !important;
+    }
+}
+
+/* Pantallas entre 768px y 1024px (tablets o iPads en orientación vertical) */
+@media (min-width: 769px) and (max-width: 1024px) {
+
+    .container.grid-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* Dos columnas para aprovechar más espacio */
+        justify-content: space-between;
+        align-items: start;
+        margin-top: 0;
+    }
+
+    .img-holder {
+        display: block; /* Reaparece en tablets */
+        max-width: 60%;
+        margin: auto;
+    }
+
+    .text-content {
+        margin-bottom: 0;
+        text-align: left; /* Texto alineado a la izquierda en tablets */
+    }
+
+    header .text-content h1 {
+        font-size: 36px;
+    }
+
+    .login-box {
+        max-width: 400px;
+        padding: 25px;
+    }
+
+    .whatsapp-float {
+        bottom: 50px !important;
+        right: 30px !important;
+        width: 50px !important;
+        height: 50px !important;
+    }
 
 }
