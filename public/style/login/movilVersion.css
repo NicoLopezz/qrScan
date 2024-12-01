@@ -73,6 +73,7 @@
     .login-box {
         width: 95%;
         padding: 15px;
+        margin-bottom: 1rem;
     }
 
     .social-btn img {
