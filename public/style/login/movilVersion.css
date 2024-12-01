@@ -50,7 +50,8 @@
     }
 
     header .text-content h1 {
-        font-size: 32px; /* Tamaño de fuente reducido */
+        font-size: 32px !important; /* Tamaño de fuente reducido */
+        margin-top: 50px !important;
     }
 
     .text-content p {
