@@ -5,7 +5,7 @@
         margin: 0;
         padding: 0;
         height: 100%;
-        overflow: hidden;
+        /* overflow: hidden; */
     }
 
     #sidebar{
@@ -26,7 +26,7 @@
     }
 
 
-    
+
 
     .content-container {
         background-color: #afafaf;
@@ -74,10 +74,100 @@
 
 
 .section.active {
+    display: block;
+}
+
+/* CONTAINER TABLA Y DATOS */
+
+
+
+.tabla{
+    width: 120% !important;
     display: none;
 }
 
+.table-container {
+    max-height: 500px;
+    overflow-y: auto;
+    display: none;
 }
+
+.tarjeta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 25px;
+    height: fit-content;
+    /* display: none; */
+}
+
+.qr-container {
+    text-align: center;
+    display: none;
+}
+
+/* #tarjetaReserva{
+    display: none;
+} */
+
+#tarjetaCliente{
+    display: none;
+}
+
+.tarjetaYqr {
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    margin-top: 10% !important;
+    width: 120%;
+}
+
+
+.menu-container {
+    display: flex;
+    justify-content: space-evenly; /* Distribución uniforme entre elementos */
+    align-items: center; /* Alineación vertical */
+    padding: 10px 0; /* Espaciado vertical */
+    color: #ffffff; /* Color del texto */
+    font-family: 'Arial', sans-serif; /* Fuente */
+    font-size: 20px; /* Tamaño del texto */
+    text-transform: uppercase; /* Texto en mayúsculas */
+    margin-bottom: 40%; /* Margen inferior */
+    width: 100%; /* Ocupa el ancho completo */
+  }
+  
+  .menu-option {
+    background: none; /* Sin fondo para botones */
+    border: none; /* Sin bordes */
+    color: inherit; /* Hereda el color del contenedor */
+    text-align: center; /* Centrado del texto */
+    font-size: inherit; /* Tamaño de texto igual al contenedor */
+    cursor: pointer; /* Indicador de interactividad */
+    flex: 1; /* Cada opción ocupa el mismo espacio */
+  }
+  
+  .menu-option:hover {
+    color: #f5a623; /* Cambia el color al pasar el cursor */
+    font-weight: bold; /* Resalta el texto */
+  }
+  
+  .menu-option:focus {
+    outline: none; /* Elimina el borde por defecto */
+  }
+  
+
+
+
+
+ 
+
+
+
+
+
+}
+
+
 
 
 
