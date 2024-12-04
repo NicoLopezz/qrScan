@@ -155,7 +155,6 @@ function togglePausaReanudar() {
     }
 }
 
-
 // Función para actualizar el tiempo visual en la tarjeta del cliente
 function actualizarTiempoVisual(tiempo) {
     const minutos = Math.floor(tiempo / 60);
@@ -230,43 +229,6 @@ async function generarQR() {
     }
 }
 
-
-//ELIMINA DE LA BASE DE DATOS....
-// async function eliminarReserva() {
-//     if (!clienteSeleccionado) {
-//         showNotification("No hay ningún cliente seleccionado para eliminar.", "error");
-//         // alert("No hay ningún cliente seleccionado para eliminar.");
-//         return;
-//     }
-
-//     try {
-//         const response = await fetch(`/api/reservas/${clienteSeleccionado}/eliminar`, {
-//             method: 'DELETE',
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             }
-//         });
-
-//         const result = await response.json();
-//         if (result.success) {
-//             showNotification("Reserva eliminada exitosamente.");
-//             // alert("Reserva eliminada exitosamente.");
-//             // Remover la fila de la tabla y limpiar la tarjeta
-//             document.getElementById(`cliente-row-${clienteSeleccionado}`).remove();
-//             nombreCliente.textContent = "Detalles";
-//             comensales.textContent = "Comensales: --";
-//             observacion.textContent = "Observación: --";
-//             tiempoRestanteElem.textContent = "5:00";
-//             clienteSeleccionado = null;
-//         } else {
-//             alert("Hubo un problema al eliminar la reserva.");
-//         }
-//     } catch (error) {
-//         console.error("Error al eliminar la reserva:", error);
-//         alert("Ocurrió un error al intentar eliminar la reserva.");
-//     }
-// }
-
 // Función para marcar el cliente como "eliminado" sin borrarlo de la tabla
 function eliminarReserva() {
     const clienteId = clienteSeleccionado; // Asegura que tienes el cliente seleccionado
@@ -285,8 +247,6 @@ function eliminarReserva() {
 
     showNotification("El cliente ha sido marcado como eliminado.");
 }
-
-
 
 // Hacer que agregarCliente y generarQR estén disponibles globalmente
 window.agregarCliente = agregarCliente;
