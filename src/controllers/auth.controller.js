@@ -303,7 +303,7 @@ async function handleLavadoMessage(body, fromWithPrefix) {
 
     // Buscar el admin que tiene un lavado con el código y que esté seleccionado
     const admin = await Admin.findOne({
-      'lavados._id': { $regex: codigo + '$' }, // Buscar que termine con el código
+      'lavados._id': { $regex: codigo + '$' }, // Buscar  que termine con el código
       'lavados.selected': true // Filtrar lavados seleccionados
     });
 
