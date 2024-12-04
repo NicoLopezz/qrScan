@@ -233,7 +233,7 @@
             </div>
 
             <!-- Sección Reservas -->
-            <div id="section-mensajes" class="section">
+            <div id="section-mensajes" class="section active">
                 <div class="container" id="containerUser">
                     <!-- Tabla de Datos -->
                     <div class="tabla">
@@ -244,10 +244,10 @@
                                     <tr>
                                         <th>Nombre</th>
                                         <!-- <th>Telefono</th> -->
-                                        <th>Modelo</th>
-                                        <th>Patente</th>
-                                        <th>Lavado</th>
-                                        <th>Observacion</th>
+                                        <th>Comensales</th>
+                                        <th>Observación</th>
+                                        <th>Confirmo?</th>
+                                        <th>Tiempo</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tablaClientes">
@@ -302,29 +302,18 @@
 
                     </div>
                     <!-- Tarjeta Alta nueva reserva -->
-                    <div class="tarjetaYqr visible" id="tarjetaYqr">
+                    <div class="tarjetaYqr">
                         <div class="tarjeta" id="tarjetaReserva">
-                          <h3>Nuevo Cliente</h3>
-                          <input type="text" id="inputNombre" placeholder="Nombre" required>
-                          <input type="text" id="inputComensales" placeholder="Modelo" required>
-                          <input type="text" id="inputObservation" placeholder="Patente" required>
-                      
-                          <!-- Menú desplegable para tipos de lavado -->
-                          <select id="selectServicio" required>
-                            <option value="" disabled selected>Seleccione el tipo de lavado</option>
-                            <option value="lavado-basico">Lavado Básico</option>
-                            <option value="lavado-completo">Lavado Completo</option>
-                            <option value="lavado-en-profundidad">Lavado en Profundidad</option>
-                            <option value="lavado-con-encerado">Lavado con Encerado</option>
-                          </select>
-                      
-                          <input type="text" id="inputObservation" placeholder="Observacion">
-                          <button id="btnAgregar" onclick="agregarCliente()">Agregar Cliente</button>
+                            <h3>Nueva Reserva</h3>
+                            <input type="text" id="inputNombre" placeholder="Nombre del Cliente" required>
+                            <input type="number" id="inputComensales" placeholder="Comensales" required>
+                            <input type="text" id="inputObservacion" placeholder="Observación" required>
+                            <button id="btnAgregar" onclick="agregarCliente()">Agregar Cliente</button>
                         </div>
 
                         <div class="qr-container">
                             <!-- <img src="../img/qrRiu.png" alt=""> -->
-                            <canvas id="qrcode" height="200" width="200"></canvas>
+                            <canvas id="qrcode"></canvas>
                         </div>
                     </div>
 
