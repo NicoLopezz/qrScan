@@ -288,7 +288,7 @@ async function handleLavadoMessage(body, fromWithPrefix) {
     const from = fromWithPrefix.replace('whatsapp:', '');
 
     // Extraer solo el código del mensaje
-    const codigoMatch = body.match(/Código:\s(.+)/);
+    const codigoMatch = body.match(/Código:\s([a-zA-Z0-9]+)/);
     const codigo = codigoMatch ? codigoMatch[1].trim() : null;
 
     if (!codigo) {
@@ -325,12 +325,7 @@ async function handleLavadoMessage(body, fromWithPrefix) {
       await admin.save();
 
       // Enviar un mensaje de confirmación al cliente
-      const responseMessage = `Hola! ${lavado.nombre}, aquí está el detalle de tu servicio de lavado:
-Vehículo: ${lavado.modelo}
-Tipo de lavado: ${lavado.tipoDeLavado}
-Patente: ${lavado.patente}
-Observación: ${lavado.observacion || 'Sin observaciones'}.
-Gracias por confirmar. Te avisaremos cuando esté listo para retirarlo.`;
+      const responseMessage = `Hola! ${lavado.nombre}, tu lavado ha sido confirmado. Gracias por utilizar nuestro servicio.`;
       await sendWhatsAppMessage(`whatsapp:${from}`, responseMessage);
       console.log("Lavado confirmado y mensaje de confirmación enviado al cliente.");
     } else {
@@ -340,6 +335,7 @@ Gracias por confirmar. Te avisaremos cuando esté listo para retirarlo.`;
     console.error("Error al manejar el mensaje de lavado:", error);
   }
 }
+
 
 
 
