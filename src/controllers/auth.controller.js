@@ -290,59 +290,60 @@ async function handleLavadoMessage(body, fromWithPrefix) {
     // Extrae solo el número de teléfono, eliminando el prefijo 'whatsapp:'
     const from = fromWithPrefix.replace('whatsapp:', '');
 
-    // Imprimir el mensaje recibido para verificar su formato
     console.log("Mensaje recibido en Body:", body);
 
-    // Expresión regular para extraer el código
-    const codigoMatch = body.match(/Código:\s*(\w{5})/); // Acepta espacios opcionales
+    // Extraer el código del mensaje
+    const codigoMatch = body.match(/Código: (\w{5})/);
     const codigo = codigoMatch ? codigoMatch[1] : null;
 
     if (!codigo) {
-      console.error("No se pudo extraer el código del mensaje.");
+      console.log("No se pudo extraer el código del mensaje.");
       return;
     }
 
     console.log("Código extraído:", codigo);
 
-    // Buscar el admin que tiene un lavado con el código y que esté seleccionado
+    // Buscar el admin en la base de datos que tenga un lavado con los criterios
     const admin = await Admin.findOne({
-      'lavados._id': { $regex: codigo + '$' }, // Buscar que termine con el código
-      'lavados.selected': true, // Filtrar lavados seleccionados
+      'lavados.selected': true
     });
 
-    if (!admin) {
-      console.log("No se encontró ningún admin con un lavado coincidente.");
-      return;
-    }
+    if (admin) {
+      console.log("Admin encontrado:", admin._id);
 
-    console.log("Admin encontrado:", admin.localName);
+      // Filtrar el lavado específico dentro de `admin.lavados`
+      const lavado = admin.lavados.find(lavado =>
+        lavado.selected === true &&
+        lavado._id.toString().endsWith(codigo) // Comparación con los últimos 5 caracteres del ID
+      );
 
-    // Buscar el lavado específico dentro de `admin.lavados`
-    const lavado = admin.lavados.find(
-      (l) => l._id.toString().endsWith(codigo) && l.selected === true
-    );
+      // Validar si se encontró el lavado
+      if (!lavado) {
+        console.log("No se encontró el lavado específico en el documento del admin.");
+        return;
+      }
 
-    if (lavado) {
-      // Actualizar los campos del lavado
-      lavado.selected = false;
-      lavado.from = from; // Asociar el número del cliente
+      // Actualizar los campos del lavado encontrado
+      lavado.from = from; // Guardar el número del cliente
+      lavado.selected = false; // Desmarcar el lavado como seleccionado
 
       // Guardar los cambios en la base de datos
       await admin.save();
 
-      // Construir el mensaje de confirmación
-      const responseMessage = `Hola! ${lavado.nombre}, tu servicio de lavado con el tipo "${lavado.tipoDeLavado}" y la patente "${lavado.patente}" ha sido confirmado. Gracias por elegirnos.`;
+      // Crear el mensaje personalizado para confirmación
+      const responseMessage = `Hola! ${lavado.nombre}, tu servicio de lavado ha sido confirmado. Gracias por tu paciencia.`;
 
-      // Enviar el mensaje de confirmación al cliente
+      // Enviar un mensaje de confirmación al cliente
       await sendWhatsAppMessage(`whatsapp:${from}`, responseMessage);
       console.log("Lavado confirmado y mensaje de confirmación enviado al cliente.");
     } else {
-      console.log("No se encontró el lavado específico en el documento del admin.");
+      console.log("No se encontró ningún admin con un lavado coincidente.");
     }
   } catch (error) {
     console.error("Error al manejar el mensaje de lavado:", error);
   }
 }
+
 
 
 
