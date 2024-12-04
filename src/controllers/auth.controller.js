@@ -933,7 +933,10 @@ async function qrScanUpdateLavados(req, res) {
     const code = _id.toString().slice(-5);
 
     // Construir el mensaje personalizado
-    const message = `Hola, quiero confirmar el lavado`;
+    const message = `Hola! ${nombre}, aquí está el detalle de tu servicio de lavado:
+Vehículo: ${modelo}, Tipo de lavado: ${tipoDeLavado} ,Patente: ${patente},Observación: ${observacion || 'Sin observaciones'}.
+Código: ${code}`;
+
 
 
     // Construir la URL de WhatsApp con el mensaje detallado
