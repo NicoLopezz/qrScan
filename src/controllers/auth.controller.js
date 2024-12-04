@@ -853,29 +853,78 @@ async function getReservas(req, res) {
   }
 }
 
-//AGREGAR CLIENTE PARA RESERVA
+// AGREGAR CLIENTE O LAVADO
 async function agregarCliente(req, res) {
-  const { nombre, comensales, observacion } = req.body;
+  const { type, ...data } = req.body; // Extraemos el tipo y los datos restantes
 
   try {
-      // Lógica para agregar el cliente
-      const adminId = req.cookies.adminId; // Obtener el ID del admin desde la cookie, si aplica
-      const admin = await Admin.findById(adminId);
+    // Obtener el ID del admin desde la cookie
+    const adminId = req.cookies.adminId;
+    const admin = await Admin.findById(adminId);
 
-      if (!admin) {
-          return res.status(404).json({ error: 'Admin no encontrado' });
+    if (!admin) {
+      return res.status(404).json({ error: 'Admin no encontrado' });
+    }
+
+    switch (type) {
+      case 'reserva': {
+        // Validación para reservas
+        const { nombre, comensales, observacion, mesaId } = data;
+        if (!nombre || !comensales) {
+          return res.status(400).json({ error: 'Faltan campos obligatorios para la reserva' });
+        }
+
+        // Agregar reserva al admin
+        admin.reservas.push({
+          nombre,
+          comensales,
+          observacion,
+          mesaId,
+          selected: false, // Campo por defecto
+          textConfirmation: false,
+          numeroDeFila: admin.reservas.length + 1, // Ejemplo de numeración dinámica
+        });
+        break;
       }
 
-      // Agregar el cliente a la lista de reservas o clientes
-      admin.reservas.push({ nombre, comensales, observacion });
-      await admin.save();
+      case 'lavado': {
+        // Validación para lavados
+        const { nombre, patente, tipoDeLavado, observacion } = data;
+        if (!nombre || !patente || !tipoDeLavado) {
+          return res.status(400).json({ error: 'Faltan campos obligatorios para el lavado' });
+        }
 
-      res.status(201).json({ success: true, message: 'Cliente agregado con éxito' });
+        // Agregar lavado al admin
+        admin.lavados.push({
+          nombre,
+          patente,
+          tipoDeLavado,
+          observacion,
+          estado: 'Pendiente', // Campo por defecto
+        });
+        break;
+      }
+
+      default:
+        return res.status(400).json({ error: 'Tipo de operación no reconocido' });
+    }
+
+    // Guardar los cambios en la base de datos
+    await admin.save();
+
+    res.status(201).json({
+      success: true,
+      message: `Operación '${type}' completada con éxito`,
+    });
   } catch (error) {
-      console.error('Error al agregar cliente:', error);
-      res.status(500).json({ success: false, error: 'Error al agregar cliente' });
+    console.error('Error al procesar la operación:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Error al procesar la operación',
+    });
   }
 }
+
 
 
 
