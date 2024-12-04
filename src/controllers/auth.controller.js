@@ -288,11 +288,11 @@ async function handleLavadoMessage(body, fromWithPrefix) {
     const from = fromWithPrefix.replace('whatsapp:', '');
 
     // Expresiones regulares para extraer los datos del mensaje
-    const nombreMatch = body.match(/Hola! ([^,]+),/);
-    const modeloMatch = body.match(/Vehículo: ([^\n]+)/);
-    const tipoDeLavadoMatch = body.match(/Tipo de lavado: ([^\n]+)/);
-    const patenteMatch = body.match(/Patente: ([^\n]+)/);
-    const observacionMatch = body.match(/Observación: ([^\n]*)/);
+    const nombreMatch = body.match(/Hola!\s([^\n,]+),/);
+    const modeloMatch = body.match(/Vehículo:\s([^\n]+)/);
+    const tipoDeLavadoMatch = body.match(/Tipo de lavado:\s([^\n]+)/);
+    const patenteMatch = body.match(/Patente:\s([^\n]+)/);
+    const observacionMatch = body.match(/Observación:\s([^\n.]+)/);
 
     // Verificar que todos los datos fueron extraídos correctamente
     if (!nombreMatch || !modeloMatch || !tipoDeLavadoMatch || !patenteMatch) {
@@ -346,8 +346,8 @@ async function handleLavadoMessage(body, fromWithPrefix) {
         await admin.save();
 
         // Enviar un mensaje de confirmación al cliente
-        const responseMessage = `**${admin.localName}**: 
-Hola! ${nombre}, Aquí está el detalle de tu servicio:
+        const responseMessage = `🎉 Gracias por confirmar el servicio de lavado!
+        
 🚙 Vehículo: ${modelo}
 🧽 Tipo de lavado: ${tipoDeLavado}
 🔖 Patente: ${patente}
