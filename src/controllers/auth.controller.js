@@ -284,14 +284,17 @@ async function handleReservaMessage(body, fromWithPrefix) {
 // Función para manejar mensajes de "reserva"
 async function handleLavadoMessage(body, fromWithPrefix) {
   try {
-    // Validar y extraer solo el número de teléfono del prefijo 'whatsapp:'
-    const from = fromWithPrefix.replace('whatsapp:', '').trim();
+    // Extraer el número de teléfono desde el campo correcto
+    const from = fromWithPrefix.trim(); // Este debe ser `From` del req.body
 
-    // Validar que el número sea válido (número internacional con prefijo)
-    if (!/^\d+$/.test(from)) {
+    // Validar que el número de teléfono sea válido
+    if (!from.startsWith('whatsapp:') || !/^\d+$/.test(from.replace('whatsapp:', ''))) {
       console.error(`Número de teléfono inválido: ${from}`);
       return;
     }
+
+    // Eliminar el prefijo 'whatsapp:' para trabajar solo con el número
+    const phoneNumber = from.replace('whatsapp:', '').trim();
 
     // Busca el admin que tenga un lavado con selected: true
     const admin = await Admin.findOne({ 'lavados.selected': true });
@@ -311,7 +314,7 @@ async function handleLavadoMessage(body, fromWithPrefix) {
 
       // Actualizar el lavado
       lavado.selected = false;
-      lavado.from = from;
+      lavado.from = phoneNumber;
 
       // Guardar los cambios en la base de datos
       await admin.save();
@@ -327,7 +330,7 @@ Hola! ${nombre}, Aquí está el detalle de tu servicio:
 📢 Te avisaremos cuando esté listo para retirarlo.`;
 
       // Enviar mensaje al cliente
-      await sendWhatsAppMessage(`whatsapp:${from}`, responseMessage);
+      await sendWhatsAppMessage(`whatsapp:${phoneNumber}`, responseMessage);
       console.log("Lavado actualizado y mensaje de confirmación enviado al cliente.");
     } else {
       console.log("No se encontró ningún lavado seleccionado en el documento del admin.");
