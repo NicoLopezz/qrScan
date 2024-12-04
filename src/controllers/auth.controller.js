@@ -187,6 +187,8 @@ async function reciveMessage(req, res) {
       await handleTagMessage(body, from, localAdmin);
     } else if (body.toLowerCase().includes('ya lo tengo')) {
       await handleConfirmationMessage(from, body);
+    } else if (body.toLowerCase().includes('lavado')) {
+      await handleLavadoMessage(from, body);
     } else if (body.toLowerCase().includes('baja')) {
       await handleBajaRequest(from);
     } else {
@@ -277,6 +279,53 @@ async function handleReservaMessage(body, fromWithPrefix) {
     console.error("Error al manejar el mensaje de reserva:", error);
   }
 }
+
+
+// Función para manejar mensajes de "reserva"
+async function handleLavadoMessage(body, fromWithPrefix) {
+  try {
+    // Extrae solo el número de teléfono, eliminando el prefijo 'whatsapp:'
+    const from = fromWithPrefix.replace('whatsapp:', '');
+
+    // Busca el admin que tenga un lavado con selected: true
+    const admin = await Admin.findOne({ 'lavados.selected': true });
+    if (!admin) {
+      console.log("No se encontró ningún admin con un lavado seleccionado.");
+      return;
+    }
+
+    // Encuentra el lavado seleccionado
+    const lavadoSeleccionado = admin.lavados.find(lavado => lavado.selected === true);
+
+    if (!lavadoSeleccionado) {
+      console.log("No se encontró ningún lavado seleccionado en este admin.");
+      return;
+    }
+
+    // Extraer datos del lavado
+    const { nombre, modelo, patente, tipoDeLavado, observacion } = lavadoSeleccionado;
+
+    // Crear el mensaje personalizado
+    const message = `**${localName}**: 
+    Hola! ${nombre}, Aquí está el detalle de tu servicio:
+    🚙 Vehículo: ${modelo}
+    🧽 Tipo de lavado: ${tipoDeLavado}
+    🔖 Patente: ${patente}
+    📝 Observación: ${observacion || 'Sin observaciones'}
+    
+     Te avisaremos cuando esté listo para retirarlo.`;
+    
+
+    // Enviar el mensaje de confirmación por WhatsApp
+    await sendWhatsAppMessage(`whatsapp:${from}`, message);
+    console.log("Mensaje enviado al cliente:", from);
+  } catch (error) {
+    console.error("Error al manejar el mensaje de lavado:", error);
+  }
+}
+
+
+
 
 
 
@@ -866,11 +915,7 @@ async function qrScanUpdateLavados(req, res) {
     const code = _id.toString().slice(-5);
 
     // Construir el mensaje personalizado
-    const message = `✨ Aquí está el detalle de tu servicio:
-🚙 Vehículo: ${nombre}
-🧽 Tipo de lavado: ${tipoDeLavado}
-🔖 Patente: ${patente}
-📝 Observación: ${observacion || 'Sin observaciones'}`;
+    const message = `Hola, quiero confirmar el lavado`;
 
 
     // Construir la URL de WhatsApp con el mensaje detallado
