@@ -284,61 +284,89 @@ async function handleReservaMessage(body, fromWithPrefix) {
 // Función para manejar mensajes de "reserva"
 async function handleLavadoMessage(body, fromWithPrefix) {
   try {
-    // Extraer el número de teléfono desde el campo correcto
-    const from = fromWithPrefix.trim(); // Este debe ser `From` del req.body
+    // Extraer el número de teléfono, eliminando el prefijo 'whatsapp:'
+    const from = fromWithPrefix.replace('whatsapp:', '');
 
-    // Validar que el número de teléfono sea válido
-    if (!from.startsWith('whatsapp:') || !/^\d+$/.test(from.replace('whatsapp:', ''))) {
-      console.error(`Número de teléfono inválido: ${from}`);
+    // Expresiones regulares para extraer los datos del mensaje
+    const nombreMatch = body.match(/Hola! ([^,]+),/);
+    const modeloMatch = body.match(/Vehículo: ([^\n]+)/);
+    const tipoDeLavadoMatch = body.match(/Tipo de lavado: ([^\n]+)/);
+    const patenteMatch = body.match(/Patente: ([^\n]+)/);
+    const observacionMatch = body.match(/Observación: ([^\n]*)/);
+
+    // Verificar que todos los datos fueron extraídos correctamente
+    if (!nombreMatch || !modeloMatch || !tipoDeLavadoMatch || !patenteMatch) {
+      console.log("No se pudo extraer uno o más datos del mensaje.");
+      console.log("Datos extraídos:", {
+        nombre: nombreMatch ? nombreMatch[1] : null,
+        modelo: modeloMatch ? modeloMatch[1] : null,
+        tipoDeLavado: tipoDeLavadoMatch ? tipoDeLavadoMatch[1] : null,
+        patente: patenteMatch ? patenteMatch[1] : null,
+        observacion: observacionMatch ? observacionMatch[1] : null,
+      });
       return;
     }
 
-    // Eliminar el prefijo 'whatsapp:' para trabajar solo con el número
-    const phoneNumber = from.replace('whatsapp:', '').trim();
+    // Extraer los datos del mensaje
+    const nombre = nombreMatch[1];
+    const modelo = modeloMatch[1];
+    const tipoDeLavado = tipoDeLavadoMatch[1];
+    const patente = patenteMatch[1];
+    const observacion = observacionMatch ? observacionMatch[1] : 'Sin observaciones';
 
-    // Busca el admin que tenga un lavado con selected: true
-    const admin = await Admin.findOne({ 'lavados.selected': true });
-    if (!admin) {
-      console.log("No se encontró ningún admin con un lavado seleccionado.");
-      return;
-    }
+    console.log("Datos extraídos:", { nombre, modelo, tipoDeLavado, patente, observacion });
 
-    const localName = admin.localName;
+    // Buscar el admin en la base de datos que tenga un lavado con los criterios
+    const admin = await Admin.findOne({
+      'lavados.nombre': nombre,
+      'lavados.modelo': modelo,
+      'lavados.tipoDeLavado': tipoDeLavado,
+      'lavados.patente': patente,
+      'lavados.selected': true,
+    });
 
-    // Encuentra el lavado específico
-    const lavado = admin.lavados.find(lavado => lavado.selected === true);
+    if (admin) {
+      console.log("Admin encontrado:", admin._id);
 
-    if (lavado) {
-      // Extraer datos del lavado
-      const { nombre, modelo, patente, tipoDeLavado, observacion } = lavado;
+      // Filtrar el lavado específico dentro de `admin.lavados`
+      const lavado = admin.lavados.find(lavado =>
+        lavado.nombre === nombre &&
+        lavado.modelo === modelo &&
+        lavado.tipoDeLavado === tipoDeLavado &&
+        lavado.patente === patente &&
+        lavado.selected === true
+      );
 
-      // Actualizar el lavado
-      lavado.selected = false;
-      lavado.from = phoneNumber;
+      if (lavado) {
+        // Actualizar los campos solicitados
+        lavado.selected = false;
+        lavado.from = from; // Cargar el número de teléfono sin el prefijo
 
-      // Guardar los cambios en la base de datos
-      await admin.save();
+        // Guardar los cambios en la base de datos
+        await admin.save();
 
-      // Crear el mensaje de respuesta
-      const responseMessage = `**${localName}**: 
+        // Enviar un mensaje de confirmación al cliente
+        const responseMessage = `**${admin.localName}**: 
 Hola! ${nombre}, Aquí está el detalle de tu servicio:
 🚙 Vehículo: ${modelo}
 🧽 Tipo de lavado: ${tipoDeLavado}
 🔖 Patente: ${patente}
-📝 Observación: ${observacion || 'Sin observaciones'}
+📝 Observación: ${observacion}
 
 📢 Te avisaremos cuando esté listo para retirarlo.`;
-
-      // Enviar mensaje al cliente
-      await sendWhatsAppMessage(`whatsapp:${phoneNumber}`, responseMessage);
-      console.log("Lavado actualizado y mensaje de confirmación enviado al cliente.");
+        await sendWhatsAppMessage(`whatsapp:${from}`, responseMessage);
+        console.log("Lavado confirmado y mensaje de confirmación enviado al cliente.");
+      } else {
+        console.log("No se encontró el lavado específico en el documento del admin.");
+      }
     } else {
-      console.log("No se encontró ningún lavado seleccionado en el documento del admin.");
+      console.log("No se encontró ningún admin con un lavado coincidente.");
     }
   } catch (error) {
     console.error("Error al manejar el mensaje de lavado:", error);
   }
 }
+
 
 
 
