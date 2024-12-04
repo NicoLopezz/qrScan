@@ -287,47 +287,51 @@ async function handleLavadoMessage(body, fromWithPrefix) {
     // Extraer el número de teléfono, eliminando el prefijo 'whatsapp:'
     const from = fromWithPrefix.replace('whatsapp:', '');
 
-    // Agregar un log para verificar el formato del mensaje
-    console.log("Formato del mensaje recibido:", body);
+    // Log para depurar el formato del mensaje recibido
+    console.log("Formato del mensaje recibido en Body:", body);
 
-    // Expresiones regulares para extraer los datos del mensaje
-    const nombreMatch = body.match(/Hola!\s([^,]+),/); // Extrae el nombre después de "Hola!"
-    const modeloMatch = body.match(/Vehículo:\s([^\n]+)/); // Extrae el modelo del vehículo
-    const tipoDeLavadoMatch = body.match(/Tipo de lavado:\s([^\n]+)/); // Extrae el tipo de lavado
-    const patenteMatch = body.match(/Patente:\s([^\n]+)/); // Extrae la patente
-    const observacionMatch = body.match(/Observación:\s([^\n.]+)/); // Extrae la observación antes del punto final
+    // Expresiones regulares ajustadas para capturar los datos correctamente
+    const nombreMatch = body.match(/Hola!\s(.+?),/); // Captura el nombre después de "Hola!"
+    const modeloMatch = body.match(/Vehículo:\s(.+?)\n/); // Captura el modelo del vehículo
+    const tipoDeLavadoMatch = body.match(/Tipo de lavado:\s(.+?)\n/); // Captura el tipo de lavado
+    const patenteMatch = body.match(/Patente:\s(.+?)\n/); // Captura la patente del vehículo
+    const observacionMatch = body.match(/Observación:\s(.+?)\./); // Captura la observación antes del punto final
+    const codigoMatch = body.match(/Código:\s(.+)/); // Captura el código único al final
 
-    // Agregar logs para cada expresión regular
+    // Logs para verificar los resultados de cada expresión
     console.log("Resultados de las expresiones regulares:");
     console.log("Nombre:", nombreMatch ? nombreMatch[1] : null);
     console.log("Modelo:", modeloMatch ? modeloMatch[1] : null);
     console.log("Tipo de lavado:", tipoDeLavadoMatch ? tipoDeLavadoMatch[1] : null);
     console.log("Patente:", patenteMatch ? patenteMatch[1] : null);
     console.log("Observación:", observacionMatch ? observacionMatch[1] : null);
+    console.log("Código:", codigoMatch ? codigoMatch[1] : null);
 
     // Verificar que todos los datos fueron extraídos correctamente
-    if (!nombreMatch || !modeloMatch || !tipoDeLavadoMatch || !patenteMatch) {
-      console.log("No se pudo extraer uno o más datos del mensaje.");
-      console.log("Datos extraídos:", {
+    if (!nombreMatch || !modeloMatch || !tipoDeLavadoMatch || !patenteMatch || !codigoMatch) {
+      console.error("No se pudo extraer uno o más datos del mensaje.");
+      console.error("Datos extraídos:", {
         nombre: nombreMatch ? nombreMatch[1] : null,
         modelo: modeloMatch ? modeloMatch[1] : null,
         tipoDeLavado: tipoDeLavadoMatch ? tipoDeLavadoMatch[1] : null,
         patente: patenteMatch ? patenteMatch[1] : null,
-        observacion: observacionMatch ? observacionMatch[1] : null,
+        observacion: observacionMatch ? observacionMatch[1] : 'Sin observaciones',
+        codigo: codigoMatch ? codigoMatch[1] : null,
       });
       return;
     }
 
     // Extraer los datos del mensaje
-    const nombre = nombreMatch[1];
-    const modelo = modeloMatch[1];
-    const tipoDeLavado = tipoDeLavadoMatch[1];
-    const patente = patenteMatch[1];
-    const observacion = observacionMatch ? observacionMatch[1] : 'Sin observaciones';
+    const nombre = nombreMatch[1].trim();
+    const modelo = modeloMatch[1].trim();
+    const tipoDeLavado = tipoDeLavadoMatch[1].trim();
+    const patente = patenteMatch[1].trim();
+    const observacion = observacionMatch ? observacionMatch[1].trim() : 'Sin observaciones';
+    const codigo = codigoMatch[1].trim();
 
-    console.log("Datos extraídos:", { nombre, modelo, tipoDeLavado, patente, observacion });
+    console.log("Datos extraídos exitosamente:", { nombre, modelo, tipoDeLavado, patente, observacion, codigo });
 
-    // Buscar el admin en la base de datos que tenga un lavado con los criterios
+    // Buscar el admin en la base de datos que tenga un lavado coincidente
     const admin = await Admin.findOne({
       'lavados.nombre': nombre,
       'lavados.modelo': modelo,
@@ -345,26 +349,20 @@ async function handleLavadoMessage(body, fromWithPrefix) {
         lavado.modelo === modelo &&
         lavado.tipoDeLavado === tipoDeLavado &&
         lavado.patente === patente &&
-        lavado.selected === true
+        lavado.selected === true &&
+        lavado._id.toString().endsWith(codigo)
       );
 
       if (lavado) {
-        // Actualizar los campos solicitados
+        // Actualizar los campos del lavado seleccionado
         lavado.selected = false;
-        lavado.from = from; // Cargar el número de teléfono sin el prefijo
+        lavado.from = from; // Asociar el número de teléfono al lavado
 
         // Guardar los cambios en la base de datos
         await admin.save();
 
         // Enviar un mensaje de confirmación al cliente
-        const responseMessage = `🎉 Gracias por confirmar el servicio de lavado!
-        
-🚙 Vehículo: ${modelo}
-🧽 Tipo de lavado: ${tipoDeLavado}
-🔖 Patente: ${patente}
-📝 Observación: ${observacion}
-
-📢 Te avisaremos cuando esté listo para retirarlo.`;
+        const responseMessage = `🎉 Gracias por confirmar el servicio de lavado! 📢 Te avisaremos cuando esté listo para retirarlo.`;
         await sendWhatsAppMessage(`whatsapp:${from}`, responseMessage);
         console.log("Lavado confirmado y mensaje de confirmación enviado al cliente.");
       } else {
