@@ -615,15 +615,6 @@ p.lead {
 
 .nav-menu.is-scrolling,
 .nav-menu.menu-is-open {
-    /* background-color: rgb(74, 13, 143);
-    background: -moz-linear-gradient(135deg, rgb(74, 13, 143) 0%, rgb(250, 42, 143) 100%);
-    background: -webkit-linear-gradient(135deg, rgb(74, 13, 143) 0%, rgb(250, 42, 143) 100%);
-    background: linear-gradient(135deg, rgb(74, 13, 143) 0%, rgb(250, 42, 143) 100%);
-    -webkit-box-shadow: 0px 5px 23px 0px rgba(0, 0, 0, 0.1);
-    -moz-box-shadow: 0px 5px 23px 0px rgba(0, 0, 0, 0.1);
-    box-shadow: 0px 5px 23px 0px rgba(0, 0, 0, 0.1); */
-    /* background-color: red; */
-    /* height: 120px !important; */
     opacity: 0;
 }
 
@@ -670,8 +661,7 @@ p.lead {
     width: 120px;
 }
 
-/* HERO
-----------------------*/
+/* HERO----------------------*/
 
 header {
     padding: 100px 0 0;

@@ -852,6 +852,8 @@ async function getReservas(req, res) {
     res.status(500).json({ error: 'Error al obtener las reservas' });
   }
 }
+
+//AGREGAR CLIENTE PARA RESERVA
 async function agregarCliente(req, res) {
   const { nombre, comensales, observacion } = req.body;
 
@@ -874,6 +876,8 @@ async function agregarCliente(req, res) {
       res.status(500).json({ success: false, error: 'Error al agregar cliente' });
   }
 }
+
+
 
 async function actualizarSelectedCliente(req, res) {
   const clienteId = req.params.clienteId;
