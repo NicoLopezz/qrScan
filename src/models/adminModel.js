@@ -51,13 +51,23 @@ const reservaSchema = new mongoose.Schema({
     fecha: { type: String, required: true },
     body: { type: String, required: true }
   }],
-  nombre: { type: String, required: true },         // Nuevo campo
-  comensales: { type: Number, required: true },     // Nuevo campo
-  observacion: { type: String, required: true },    // Nuevo campo
-  mesaId: { type: Number },          // Nuevo campo
-  selected: { type: Boolean, default: false },         // Nuevo campo
-  textConfirmation: { type: Boolean, default: false },        // Nuevo campo
-  numeroDeFila: { type: Number, default: 0 }          // Nuevo campo
+  nombre: { type: String, required: true },
+  comensales: { type: Number, required: true },
+  observacion: { type: String, required: true },
+  mesaId: { type: Number },
+  selected: { type: Boolean, default: false },
+  textConfirmation: { type: Boolean, default: false },
+  numeroDeFila: { type: Number, default: 0 }
+});
+
+// Esquema para los lavados
+const lavadoSchema = new mongoose.Schema({
+  nombre: { type: String, required: true },         // Nombre del cliente
+  patente: { type: String, required: true },        // Patente del vehículo
+  tipoDeLavado: { type: String, required: true },   // Tipo de lavado (Básico, Completo, etc.)
+  observacion: { type: String, default: '' },       // Observaciones adicionales
+  fechaRegistro: { type: Date, default: Date.now }, // Fecha del registro del lavado
+  estado: { type: String, default: 'Pendiente' }    // Estado del lavado (Pendiente, Completado, etc.)
 });
 
 // Esquema para los pagos
@@ -92,7 +102,8 @@ const adminSchema = new mongoose.Schema({
   passwordActual: { type: String, default: '' },
   tagSelected: { type: Number, default: 0 },
   clientes: { type: [clienteSchema], default: [] },
-  reservas: { type: [reservaSchema], default: [] } // Modificación: esquema de reservas actualizado
+  reservas: { type: [reservaSchema], default: [] }, // Lista de reservas
+  lavados: { type: [lavadoSchema], default: [] }   // Lista de lavados
 });
 
 export default mongoose.model('Admin', adminSchema);
