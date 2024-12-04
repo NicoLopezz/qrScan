@@ -284,13 +284,14 @@ async function handleReservaMessage(body, fromWithPrefix) {
 // Función para manejar mensajes de "reserva"
 async function handleLavadoMessage(body, fromWithPrefix) {
   try {
-    // Extraer el número de teléfono del cliente
+    // Extraer solo el número de teléfono del cliente, eliminando el prefijo 'whatsapp:'
     const from = fromWithPrefix.replace('whatsapp:', '');
 
-    // Extraer solo el código del mensaje
-    const codigoMatch = body.match(/Código:\s([a-zA-Z0-9]+)/);
-    const codigo = codigoMatch ? codigoMatch[1].trim() : null;
+    // Expresión regular para extraer el código
+    const codigoMatch = body.match(/Código: (\w{5})/);
+    const codigo = codigoMatch ? codigoMatch[1] : null;
 
+    // Validar si el código fue extraído
     if (!codigo) {
       console.error("No se pudo extraer el código del mensaje.");
       return;
@@ -300,8 +301,8 @@ async function handleLavadoMessage(body, fromWithPrefix) {
 
     // Buscar el admin que tiene un lavado con el código y que esté seleccionado
     const admin = await Admin.findOne({
-      'lavados._id': { $regex: codigo + '$' },
-      'lavados.selected': true
+      'lavados._id': { $regex: codigo + '$' }, // Buscar que termine con el código
+      'lavados.selected': true // Filtrar lavados seleccionados
     });
 
     if (!admin) {
@@ -324,8 +325,10 @@ async function handleLavadoMessage(body, fromWithPrefix) {
       // Guardar los cambios en la base de datos
       await admin.save();
 
+      // Construir el mensaje de confirmación
+      const responseMessage = `Hola! ${lavado.nombre}, tu servicio de lavado con el tipo "${lavado.tipoDeLavado}" y la patente "${lavado.patente}" ha sido confirmado. Gracias por elegirnos.`;
+
       // Enviar un mensaje de confirmación al cliente
-      const responseMessage = `Hola! ${lavado.nombre}, tu lavado ha sido confirmado. Gracias por utilizar nuestro servicio.`;
       await sendWhatsAppMessage(`whatsapp:${from}`, responseMessage);
       console.log("Lavado confirmado y mensaje de confirmación enviado al cliente.");
     } else {
@@ -335,6 +338,7 @@ async function handleLavadoMessage(body, fromWithPrefix) {
     console.error("Error al manejar el mensaje de lavado:", error);
   }
 }
+
 
 
 
