@@ -73,7 +73,7 @@ router.get('/qrScanUpdate/:localId', autenthication.qrScanUpdate, (req, res) => 
 
 //RUTA PARA OBTENER LA INFO DE LA RESERVA A GESTIONAR.
 router.get('/qrScanUpdateReservas/:localId', autenthication.qrScanUpdateReservas);
-router.get('/qrScanUpdateLavados/:lavadoId', autenthication.qrScanUpdateLavados);
+router.get('/qrScanUpdateLavados/:localId', autenthication.qrScanUpdateLavados);
 router.post('/enviarMensajeCuentaRegresiva', autenthication.enviarMensajeCuentaRegresiva);
 router.patch('/reservas/:clienteId/updateSelected', autenthication.actualizarSelectedCliente);
 router.patch('/lavados/:lavadoId/actualizarSelectedLavado', autenthication.actualizarSelectedLavado);
