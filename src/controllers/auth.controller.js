@@ -284,8 +284,14 @@ async function handleReservaMessage(body, fromWithPrefix) {
 // Función para manejar mensajes de "reserva"
 async function handleLavadoMessage(body, fromWithPrefix) {
   try {
-    // Extrae solo el número de teléfono, eliminando el prefijo 'whatsapp:'
-    const from = fromWithPrefix.replace('whatsapp:', '');
+    // Validar y extraer solo el número de teléfono del prefijo 'whatsapp:'
+    const from = fromWithPrefix.replace('whatsapp:', '').trim();
+
+    // Validar que el número sea válido (número internacional con prefijo)
+    if (!/^\d+$/.test(from)) {
+      console.error(`Número de teléfono inválido: ${from}`);
+      return;
+    }
 
     // Busca el admin que tenga un lavado con selected: true
     const admin = await Admin.findOne({ 'lavados.selected': true });
@@ -294,22 +300,24 @@ async function handleLavadoMessage(body, fromWithPrefix) {
       return;
     }
 
-    // Extrae el nombre del local
     const localName = admin.localName;
 
-    // Encuentra el lavado seleccionado
-    const lavadoSeleccionado = admin.lavados.find(lavado => lavado.selected === true);
+    // Encuentra el lavado específico
+    const lavado = admin.lavados.find(lavado => lavado.selected === true);
 
-    if (!lavadoSeleccionado) {
-      console.log("No se encontró ningún lavado seleccionado en este admin.");
-      return;
-    }
+    if (lavado) {
+      // Extraer datos del lavado
+      const { nombre, modelo, patente, tipoDeLavado, observacion } = lavado;
 
-    // Extraer datos del lavado
-    const { nombre, modelo, patente, tipoDeLavado, observacion } = lavadoSeleccionado;
+      // Actualizar el lavado
+      lavado.selected = false;
+      lavado.from = from;
 
-    // Crear el mensaje personalizado
-    const message = `**${localName}**: 
+      // Guardar los cambios en la base de datos
+      await admin.save();
+
+      // Crear el mensaje de respuesta
+      const responseMessage = `**${localName}**: 
 Hola! ${nombre}, Aquí está el detalle de tu servicio:
 🚙 Vehículo: ${modelo}
 🧽 Tipo de lavado: ${tipoDeLavado}
@@ -318,13 +326,17 @@ Hola! ${nombre}, Aquí está el detalle de tu servicio:
 
 📢 Te avisaremos cuando esté listo para retirarlo.`;
 
-    // Enviar el mensaje de confirmación por WhatsApp
-    await sendWhatsAppMessage(`whatsapp:${from}`, message);
-    console.log("Mensaje enviado al cliente:", from);
+      // Enviar mensaje al cliente
+      await sendWhatsAppMessage(`whatsapp:${from}`, responseMessage);
+      console.log("Lavado actualizado y mensaje de confirmación enviado al cliente.");
+    } else {
+      console.log("No se encontró ningún lavado seleccionado en el documento del admin.");
+    }
   } catch (error) {
     console.error("Error al manejar el mensaje de lavado:", error);
   }
 }
+
 
 
 
