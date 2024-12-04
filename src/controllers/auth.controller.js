@@ -955,17 +955,18 @@ async function qrScanUpdateLavados(req, res) {
     }
 
     // Obtener los datos del lavado seleccionado
-    const { nombre, patente, tipoDeLavado, observacion, _id } = lavadoSeleccionado;
+    const { nombre, modelo, patente, tipoDeLavado, observacion, _id } = lavadoSeleccionado;
 
     // Extraer los últimos 5 caracteres del ObjectId
     const code = _id.toString().slice(-5);
 
     // Construir el mensaje personalizado
     const message = `Hola! ${nombre}, aquí está el detalle de tu servicio de lavado:
-Vehículo: ${modelo}, Tipo de lavado: ${tipoDeLavado} ,Patente: ${patente},Observación: ${observacion || 'Sin observaciones'}.
+🚙 Vehículo: ${modelo}
+🧽 Tipo de lavado: ${tipoDeLavado}
+🔖 Patente: ${patente}
+📝 Observación: ${observacion || 'Sin observaciones'}.
 Código: ${code}`;
-
-
 
     // Construir la URL de WhatsApp con el mensaje detallado
     const whatsappNumber = 5491135254661; // Número de WhatsApp (puedes reemplazarlo según corresponda)
@@ -975,10 +976,11 @@ Código: ${code}`;
     res.redirect(whatsappUrl);
 
   } catch (error) {
-    console.error('Error al obtener el admin:', error);
+    console.error('Error al procesar el QR:', error);
     res.status(500).send('Error al procesar el QR');
   }
 }
+
 
 
 
