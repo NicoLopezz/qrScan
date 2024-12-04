@@ -6,7 +6,9 @@ const tiempoRestanteElem = document.getElementById('tiempoRestante');
 
 let intervalos = {};
 let clienteSeleccionado = null;
+let lavadoSeleccionado = null;
 let reservas = []; // Almacena las reservas desde la base de datos
+let lavados = [];
 
 // Función para cargar reservas desde la base de datos
 async function cargarReservas() {
@@ -39,6 +41,41 @@ async function cargarReservas() {
     }
 }
 
+// Función para cargar lavados desde la base de datos
+async function cargarLavados() {
+    const adminId = getCookie('adminId'); // Obtén el adminId de la cookie
+
+    try {
+        const response = await fetch(`/api/admins/${adminId}/lavados`);
+        if (!response.ok) throw new Error('No se pudo cargar los lavaderos');
+        
+        const data = await response.json();
+        console.log('Respuesta del servidor:', data); // Verifica los datos recibidos
+        lavados = data;
+
+        if (!lavados.length) {
+            console.warn('No se encontraron lavaderos asociados al administrador.');
+        }
+
+        // Limpiar la tabla antes de agregar las filas
+        const tablaLavados = document.getElementById('tablaLavados');
+        if (!tablaLavados) {
+            console.error('La tabla de lavados no existe en el DOM.');
+            return;
+        }
+        tablaLavados.innerHTML = '';
+
+        // Iterar sobre los lavados y agregarlos a la tabla
+        lavados.forEach(lavado => {
+            agregarFilaTablaLavados(lavado);
+        });
+    } catch (error) {
+        console.error('Error al cargar lavaderos:', error);
+    }
+}
+
+
+
 // Función para seleccionar un cliente y mostrar sus detalles en la tarjeta sin iniciar automáticamente la cuenta regresiva
 function seleccionarCliente(clienteId) {
     clienteSeleccionado = clienteId;
@@ -57,6 +94,36 @@ function seleccionarCliente(clienteId) {
         document.getElementById(`cliente-row-${clienteId}`).classList.add('selected');
     }
 }
+
+
+// Función para seleccionar un lavado y mostrar sus detalles en la tarjeta sin iniciar automáticamente la cuenta regresiva
+function seleccionarLavado(lavadoId) {
+    lavadoSeleccionado = lavadoId;
+    const lavado = lavados.find(l => l._id === lavadoId); // Encuentra el lavado seleccionado
+    console.log(lavadoSeleccionado)
+
+    if (lavado) {
+        // Actualizar detalles en la tarjeta
+        document.getElementById('nombreCliente').textContent = `Nombre: ${lavado.nombre}`;
+        document.getElementById('patenteCliente').textContent = `Patente: ${lavado.patente}`;
+        document.getElementById('modeloCliente').textContent = `Patente: ${lavado.modelo}`;
+        document.getElementById('lavadoCliente').textContent = `Tipo de Lavado: ${lavado.tipoDeLavado}`;
+        document.getElementById('observacionCliente').textContent = `Observación: ${lavado.observacion || 'Sin observaciones'}`;
+
+        // Marcar la fila seleccionada
+        document.querySelectorAll('.selected').forEach(row => row.classList.remove('selected'));
+        const filaSeleccionada = document.getElementById(`lavado-row-${lavadoId}`);
+        if (filaSeleccionada) {
+            filaSeleccionada.classList.add('selected');
+        }
+    } else {
+        console.error('Lavado no encontrado:', lavadoId);
+    }
+}
+
+
+
+
 
 function agregarFilaTabla(reserva) {
     const row = document.createElement('tr');
@@ -155,6 +222,7 @@ function togglePausaReanudar() {
     }
 }
 
+
 // Función para actualizar el tiempo visual en la tarjeta del cliente
 function actualizarTiempoVisual(tiempo) {
     const minutos = Math.floor(tiempo / 60);
@@ -198,6 +266,7 @@ function agregarCliente() {
 }
 
 
+
 // Función para generar QR y actualizar la reserva seleccionada
 async function generarQR() {
     if (!clienteSeleccionado) {
@@ -229,6 +298,40 @@ async function generarQR() {
     }
 }
 
+async function generarQRlavado() {
+    if (!lavadoSeleccionado) {
+        showNotification("No hay un cliente seleccionado.", "error");
+        console.error("No hay un cliente seleccionado.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/lavados/${lavadoSeleccionado}/actualizarSelectedLavado`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ selected: true })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            showNotification("QR generado con éxito. Ahora puede escanear el código.", "success");
+            console.log("Cliente seleccionado actualizado correctamente.");
+        } else {
+            showNotification("Error al actualizar el cliente seleccionado.", "error");
+            console.error("Error al actualizar el cliente seleccionado.");
+        }
+    } catch (error) {
+        showNotification("Ocurrió un error al intentar actualizar el cliente.", "error");
+        console.error("Error en la solicitud:", error);
+    }
+}
+
+
+
+
+
 // Función para marcar el cliente como "eliminado" sin borrarlo de la tabla
 function eliminarReserva() {
     const clienteId = clienteSeleccionado; // Asegura que tienes el cliente seleccionado
@@ -248,12 +351,102 @@ function eliminarReserva() {
     showNotification("El cliente ha sido marcado como eliminado.");
 }
 
+
+
+
+function agregarLavado() {
+    // Obtener valores del formulario
+    const nombre = document.getElementById('inputNombre2').value.trim();
+    const modelo = document.getElementById('inputModelo').value.trim();
+    const patente = document.getElementById('inputPatente').value.trim();
+    const tipoDeLavado = document.getElementById('selectServicio').value;
+    const observacion = document.getElementById('inputObservation').value.trim();
+
+    // Verificar si los valores están llegando correctamente
+    console.log("Nombre:", nombre);
+    console.log("Modelo:", modelo);
+    console.log("Patente:", patente);
+    console.log("Tipo de Lavado:", tipoDeLavado);
+    console.log("Observación:", observacion);
+
+    // Validar los campos del formulario
+    if (!nombre || !modelo || !patente || !tipoDeLavado) {
+        showNotification("Por favor, completa todos los campos obligatorios para el lavado.", "error");
+        return;
+    }
+
+    // Enviar solicitud al servidor
+    fetch('/api/admins/agregarLavado', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            type: 'lavado',
+            nombre,
+            modelo,
+            patente,
+            tipoDeLavado,
+            observacion
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("No se pudo completar la operación.");
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            showNotification("Lavado agregado con éxito");
+            const nuevoLavado = { _id: data.id, nombre, modelo, patente, tipoDeLavado, observacion };
+            agregarFilaTablaLavados(nuevoLavado);
+            window.location.reload();ß
+            limpiarFormularioLavado();
+        } else {
+            showNotification(data.error || "Error al agregar el lavado.", "error");
+        }
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        // showNotification("Error de red o servidor. Intenta nuevamente.", "error");
+    });
+}
+
+// Función para agregar una fila a la tabla de lavados
+function agregarFilaTablaLavados(lavado) {
+    const row = document.createElement('tr');
+    row.id = `lavado-row-${lavado._id}`;
+
+    // Verificar datos opcionales o vacíos
+    const estado = lavado.estado ? lavado.estado : 'Pendiente'; // Estado predeterminado
+    const observacion = lavado.observacion ? lavado.observacion : 'Sin observaciones';
+
+    row.innerHTML = `
+        <td>${lavado.nombre}</td>
+        <td>${lavado.patente}</td>
+        <td>${lavado.tipoDeLavado}</td>
+        <td>${observacion}</td>
+        <td>${estado}</td>
+    `;
+
+    // Agregar evento de clic para cargar datos en la tarjeta de lavado
+    row.addEventListener('click', () => seleccionarLavado(lavado._id));
+    const tablaLavados = document.getElementById('tablaLavados');
+    if (tablaLavados) {
+        tablaLavados.appendChild(row);
+    } else {
+        console.error('La tabla de lavados no existe en el DOM.');
+    }
+}
+
+
+
 // Hacer que agregarCliente y generarQR estén disponibles globalmente
 window.agregarCliente = agregarCliente;
 window.generarQR = generarQR;
 
 // Llamar a la función para cargar las reservas al cargar la página
 document.addEventListener('DOMContentLoaded', cargarReservas);
+document.addEventListener('DOMContentLoaded', cargarLavados);
 
 // Modificar el evento del botón para iniciar la cuenta regresiva y aplicar el estilo
 document.getElementById('btnIniciar').addEventListener('click', async () => {

@@ -312,8 +312,6 @@
                         </div>
 
                         <div class="qr-container">
-                            <!-- <img src="../img/qrRiu.png" alt=""> -->
-                            <h1>HOLA2!</h1>
                             <canvas id="qrcode"></canvas>
                         </div>
                     </div>
@@ -321,113 +319,88 @@
                     <div class="menu-container">
                         <button class="menu-option" onclick="handleOption('reservas')">Reservas</button>
                         <button class="menu-option" onclick="handleOption('tabla')">Tabla</button>
-                      </div>
-                      
+                    </div>
+
                 </div>
             </div>
 
             <!-- Sección Lavaderos -->
             <div id="section-lavaderos" class="section active">
                 <div class="container" id="containerUser">
+
                     <!-- Tabla de Datos -->
                     <div class="tabla">
                         <h3>Lavaderos</h3>
-                        <div class="table-container"> <!-- Contenedor para la tabla con scroll -->
+                        <div class="table-container">
+                            <!-- Contenedor para la tabla con scroll -->
                             <table>
                                 <thead>
                                     <tr>
                                         <th>Nombre</th>
-                                        <!-- <th>Telefono</th> -->
                                         <th>Modelo</th>
                                         <th>Patente</th>
                                         <th>Lavado</th>
-                                        <th>Observacion</th>
+                                        <th>Observación</th>
                                     </tr>
                                 </thead>
-                                <tbody id="tablaClientes">
+                                <tbody id="tablaLavados">
                                     <!-- Filas de datos se agregarán dinámicamente -->
                                 </tbody>
                             </table>
                         </div>
                     </div>
 
-
-
                     <!-- Tarjeta del Cliente Seleccionado -->
                     <div class="tarjeta" id="tarjetaCliente">
                         <h3 id="nombreCliente">Detalles</h3>
-                        <p id="comensales">Comensales: --</p>
-                        <p id="observacion">Observación: --</p>
-                        <!-- Botón Generar QR con ícono de QR -->
-                        <button id="btnGenerarQR" onclick="generarQR()">
+                        <p id="modeloCliente">Modelo: --</p>
+                        <p id="patenteCliente">Patente: --</p>
+                        <p id="lavadoCliente">Lavado: --</p>
+                        <p id="observacionCliente">Observación: --</p>
+
+                        <!-- Botón Generar QR -->
+                        <button id="btnGenerarQRlavado" onclick="generarQRlavado()">
                             <i class="fas fa-qrcode"></i> Generar QR
                         </button>
-                        <!-- <div id="qrNotification"
-                            style="display: none; color: green; font-weight: bold; margin-top: 10px; text-align: center;">
-                            QR generado con éxito. Ahora puede escanear el código.
-                        </div> -->
-                        <!-- Botón Enviar Aviso con ícono de WhatsApp -->
+
+                        <!-- Botón Enviar Aviso -->
                         <button id="btnIniciar" onclick="iniciarCuentaRegresiva()">
                             <i class="fab fa-whatsapp"></i> Enviar Aviso
                         </button>
-
-                        <div class="contador" id="contadorCirculo">
-                            <span id="tiempoRestante">5:00</span>
-                        </div>
-
-                        <div class="btnActions">
-                            <!-- Botón Reiniciar con ícono de reinicio -->
-                            <button id="btnReiniciar" onclick="reiniciarCuentaRegresiva()">
-                                <i class="fas fa-sync-alt"></i>
-                            </button>
-                            <!-- Botón Eliminar con ícono de eliminación -->
-                            <button id="btnEliminar" onclick="eliminarReserva()">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                            <!-- Botón Parar con ícono de detener -->
-                            <button id="btnParar" onclick="togglePausaReanudar()">
-                                <i class="fas fa-stop"></i>
-                            </button>
-                        </div>
-
-
-
                     </div>
-                    <!-- Tarjeta Alta nueva reserva -->
+
+                    <!-- Tarjeta Alta Nuevo Lavado -->
                     <div class="tarjetaYqr visible" id="tarjetaYqr">
                         <div class="tarjeta" id="tarjetaReserva">
-                          <h3>Nuevo Cliente</h3>
-                          <input type="text" id="inputNombre" placeholder="Nombre" required>
-                          <input type="text" id="inputComensales" placeholder="Modelo" required>
-                          <input type="text" id="inputObservation" placeholder="Patente" required>
-                      
-                          <!-- Menú desplegable para tipos de lavado -->
-                          <select id="selectServicio" required>
-                            <option value="" disabled selected>Seleccione el tipo de lavado</option>
-                            <option value="lavado-basico">Lavado Básico</option>
-                            <option value="lavado-completo">Lavado Completo</option>
-                            <option value="lavado-en-profundidad">Lavado en Profundidad</option>
-                            <option value="lavado-con-encerado">Lavado con Encerado</option>
-                          </select>
-                      
-                          <input type="text" id="inputObservation" placeholder="Observacion">
-                          <button id="btnAgregar" onclick="agregarCliente()">Agregar Cliente</button>
+                            <h3>Nuevo Cliente</h3>
+                            <input type="text" id="inputNombre2" placeholder="Nombre" required />
+                            <input type="text" id="inputModelo" placeholder="Modelo" required />
+                            <input type="text" id="inputPatente" placeholder="Patente" required />
+                            <select id="selectServicio" required>
+                                <option value="" disabled selected>Seleccione el tipo de lavado</option>
+                                <option value="lavado-basico">Lavado Básico</option>
+                                <option value="lavado-completo">Lavado Completo</option>
+                                <option value="lavado-en-profundidad">Lavado en Profundidad</option>
+                                <option value="lavado-con-encerado">Lavado con Encerado</option>
+                            </select>
+                            <input type="text" id="inputObservation" placeholder="Observaciones" />
+                            <button id="btnAgregar" onclick="agregarLavado()">Agregar Lavado</button>
                         </div>
 
+                        <!-- Contenedor QR -->
                         <div class="qr-container">
-                            <h1>HOLA!</h1>
-                            <!-- <img src="../img/qrRiu.png" alt=""> -->
-                            <canvas id="qrcode"></canvas>
+                            <canvas id="qrcode2"></canvas>
                         </div>
                     </div>
 
+                    <!-- Menú de Navegación -->
                     <div class="menu-container">
                         <button class="menu-option" onclick="handleOption('reservas')">Reservas</button>
                         <button class="menu-option" onclick="handleOption('tabla')">Tabla</button>
-                      </div>
-                      
+                    </div>
                 </div>
             </div>
+
 
             <!-- Sección FAQ -->
             <div id="section-faq" class="section">
@@ -540,6 +513,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/qrScan/qrGeneratorReservas.js"></script>
+    <script src="/js/qrScan/qrGeneratorLavados.js"></script>
 
     <!-- jQuery and Bootstrap -->
 

@@ -22,12 +22,12 @@ $(document).ready(function () {
     //QR PARA LOS
     // Generar la URL del QR con el adminId
     // /api/qrScan
-    const qrCodeUrl = `https://www.pickuptime.io/api/qrScanUpdateReservas/${adminId}`;
+    const qrCodeUrl = `https://www.pickuptime.io/api/qrScanUpdateLavados/${adminId}`;
     // const qrCodeUrl = `http://localhost:3000/api/qrScanUpdateReservas/${adminId}`;
 
     // Generar el QR con el adminId en la URL
     const qr = new QRious({
-        element: document.getElementById('qrcode'),
+        element: document.getElementById('qrcode2'),
         value: qrCodeUrl,  // Usar la URL con el adminId
         size: 200
     });

@@ -30,6 +30,13 @@ $(document).ready(function() {
         value: qrCodeUrl,  // Usar la URL con el adminId
         size: 200
     });
+
+    // Generar el QR con el adminId en la URL
+    const qr2 = new QRious({
+        element: document.getElementById('qrcode2'),
+        value: qrCodeUrl,  // Usar la URL con el adminId
+        size: 200
+    });
 });
 
 

@@ -73,14 +73,10 @@ router.get('/qrScanUpdate/:localId', autenthication.qrScanUpdate, (req, res) => 
 
 //RUTA PARA OBTENER LA INFO DE LA RESERVA A GESTIONAR.
 router.get('/qrScanUpdateReservas/:localId', autenthication.qrScanUpdateReservas);
-
-
+router.get('/qrScanUpdateLavados/:lavadoId', autenthication.qrScanUpdateLavados);
 router.post('/enviarMensajeCuentaRegresiva', autenthication.enviarMensajeCuentaRegresiva);
-
-
-
-
 router.patch('/reservas/:clienteId/updateSelected', autenthication.actualizarSelectedCliente);
+router.patch('/lavados/:lavadoId/actualizarSelectedLavado', autenthication.actualizarSelectedLavado);
 
 // En auth.routes.js o en el archivo de rutas correspondiente
 router.delete('/reservas/:clienteId/eliminar', autenthication.eliminarCliente);
@@ -92,7 +88,9 @@ router.delete('/reservas/:clienteId/eliminar', autenthication.eliminarCliente);
 
 // Endpoint para obtener reservas de un administrador
 router.get('/admins/:adminId/reservas', autenthication.getReservas);
+router.get('/admins/:adminId/lavados', autenthication.getLavados);
 router.post('/admins/agregarCliente', autenthication.agregarCliente);
+router.post('/admins/agregarLavado', autenthication.agregarLavado);
 
 
 

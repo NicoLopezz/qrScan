@@ -205,76 +205,76 @@ async function reciveMessage(req, res) {
 // Función para manejar mensajes de "reserva"
 async function handleReservaMessage(body, fromWithPrefix) {
   try {
-      // Extrae solo el número de teléfono, eliminando el prefijo 'whatsapp:'
-      const from = fromWithPrefix.replace('whatsapp:', '');
+    // Extrae solo el número de teléfono, eliminando el prefijo 'whatsapp:'
+    const from = fromWithPrefix.replace('whatsapp:', '');
 
-      // Expresiones regulares para extraer los datos
-      const nombreMatch = body.match(/Hola! ([^,]+),/);
-      const comensalesMatch = body.match(/reserva para (\d+) comensales/);
-      const observacionMatch = body.match(/observación: "([^"]*)"/);
-      const codigoMatch = body.match(/Código: (\w{5})/);
+    // Expresiones regulares para extraer los datos
+    const nombreMatch = body.match(/Hola! ([^,]+),/);
+    const comensalesMatch = body.match(/reserva para (\d+) comensales/);
+    const observacionMatch = body.match(/observación: "([^"]*)"/);
+    const codigoMatch = body.match(/Código: (\w{5})/);
 
-      // Verificar que todos los datos fueron extraídos correctamente
-      if (!nombreMatch || !comensalesMatch || !observacionMatch || !codigoMatch) {
-          console.log("No se pudo extraer el nombre, comensales, observación o código del mensaje.");
-          console.log("Datos extraídos:", {
-              nombre: nombreMatch ? nombreMatch[1] : null,
-              comensales: comensalesMatch ? parseInt(comensalesMatch[1]) : null,
-              observacion: observacionMatch ? observacionMatch[1] : null,
-              codigo: codigoMatch ? codigoMatch[1] : null,
-          });
-          return;
-      }
-
-      // Extraer los datos del mensaje
-      const nombre = nombreMatch[1];
-      const comensales = parseInt(comensalesMatch[1]);
-      const observacion = observacionMatch[1];
-      const codigo = codigoMatch[1];
-
-      console.log("Datos extraídos:", { nombre, comensales, observacion, codigo });
-
-      // Buscar el admin en la base de datos que tenga una reserva con los criterios
-      const admin = await Admin.findOne({
-          'reservas.nombre': nombre,
-          'reservas.comensales': comensales,
-          'reservas.observacion': observacion,
-          'reservas.selected': true
+    // Verificar que todos los datos fueron extraídos correctamente
+    if (!nombreMatch || !comensalesMatch || !observacionMatch || !codigoMatch) {
+      console.log("No se pudo extraer el nombre, comensales, observación o código del mensaje.");
+      console.log("Datos extraídos:", {
+        nombre: nombreMatch ? nombreMatch[1] : null,
+        comensales: comensalesMatch ? parseInt(comensalesMatch[1]) : null,
+        observacion: observacionMatch ? observacionMatch[1] : null,
+        codigo: codigoMatch ? codigoMatch[1] : null,
       });
+      return;
+    }
 
-      if (admin) {
-          console.log("Admin encontrado:", admin._id);
+    // Extraer los datos del mensaje
+    const nombre = nombreMatch[1];
+    const comensales = parseInt(comensalesMatch[1]);
+    const observacion = observacionMatch[1];
+    const codigo = codigoMatch[1];
 
-          // Filtrar la reserva específica dentro de `admin.reservas`
-          const reserva = admin.reservas.find(reserva =>
-              reserva.nombre === nombre &&
-              reserva.comensales === comensales &&
-              reserva.observacion === observacion &&
-              reserva.selected === true &&
-              reserva._id.toString().endsWith(codigo)
-          );
+    console.log("Datos extraídos:", { nombre, comensales, observacion, codigo });
 
-          if (reserva) {
-              // Actualizar los campos solicitados
-              reserva.textConfirmation = true;
-              reserva.selected = false; // Cambiar `selected` a false
-              reserva.from = from; // Cargar el número de teléfono sin el prefijo
-              
-              // Guardar los cambios en la base de datos
-              await admin.save();
+    // Buscar el admin en la base de datos que tenga una reserva con los criterios
+    const admin = await Admin.findOne({
+      'reservas.nombre': nombre,
+      'reservas.comensales': comensales,
+      'reservas.observacion': observacion,
+      'reservas.selected': true
+    });
 
-              // Enviar un mensaje de confirmación al cliente
-              const responseMessage = "🎉 Gracias por confirmar la reserva!\n\nTe avisaremos cuando sea hora de venir, mientras sigue disfrutando del complejo 🥂🕺😃.";
-              await sendWhatsAppMessage(`whatsapp:${from}`, responseMessage);
-              console.log("Reserva confirmada y mensaje de confirmación enviado al cliente.");
-          } else {
-              console.log("No se encontró la reserva específica en el documento del admin.");
-          }
+    if (admin) {
+      console.log("Admin encontrado:", admin._id);
+
+      // Filtrar la reserva específica dentro de `admin.reservas`
+      const reserva = admin.reservas.find(reserva =>
+        reserva.nombre === nombre &&
+        reserva.comensales === comensales &&
+        reserva.observacion === observacion &&
+        reserva.selected === true &&
+        reserva._id.toString().endsWith(codigo)
+      );
+
+      if (reserva) {
+        // Actualizar los campos solicitados
+        reserva.textConfirmation = true;
+        reserva.selected = false; // Cambiar `selected` a false
+        reserva.from = from; // Cargar el número de teléfono sin el prefijo
+
+        // Guardar los cambios en la base de datos
+        await admin.save();
+
+        // Enviar un mensaje de confirmación al cliente
+        const responseMessage = "🎉 Gracias por confirmar la reserva!\n\nTe avisaremos cuando sea hora de venir, mientras sigue disfrutando del complejo 🥂🕺😃.";
+        await sendWhatsAppMessage(`whatsapp:${from}`, responseMessage);
+        console.log("Reserva confirmada y mensaje de confirmación enviado al cliente.");
       } else {
-          console.log("No se encontró ningún admin con una reserva coincidente.");
+        console.log("No se encontró la reserva específica en el documento del admin.");
       }
+    } else {
+      console.log("No se encontró ningún admin con una reserva coincidente.");
+    }
   } catch (error) {
-      console.error("Error al manejar el mensaje de reserva:", error);
+    console.error("Error al manejar el mensaje de reserva:", error);
   }
 }
 
@@ -284,42 +284,42 @@ async function handleReservaMessage(body, fromWithPrefix) {
 // Función para enviar mensaje de cuenta regresiva
 async function enviarMensajeCuentaRegresiva(req, res) {
   try {
-      const { clienteId } = req.body;
+    const { clienteId } = req.body;
 
-      if (!clienteId) {
-          console.error("No se recibió clienteId en la solicitud");
-          return res.status(400).json({ success: false, message: "No se recibió clienteId" });
-      }
+    if (!clienteId) {
+      console.error("No se recibió clienteId en la solicitud");
+      return res.status(400).json({ success: false, message: "No se recibió clienteId" });
+    }
 
-      // Buscar el admin que tenga una reserva con el ID del cliente proporcionado
-      const admin = await Admin.findOne({ 'reservas._id': clienteId });
+    // Buscar el admin que tenga una reserva con el ID del cliente proporcionado
+    const admin = await Admin.findOne({ 'reservas._id': clienteId });
 
-      if (admin) {
-          console.log("Admin encontrado:", admin._id);
+    if (admin) {
+      console.log("Admin encontrado:", admin._id);
 
-          // Encontrar la reserva específica dentro de `admin.reservas` con el clienteId
-          const reserva = admin.reservas.find(reserva => reserva._id.toString() === clienteId);
+      // Encontrar la reserva específica dentro de `admin.reservas` con el clienteId
+      const reserva = admin.reservas.find(reserva => reserva._id.toString() === clienteId);
 
-          if (reserva) {
-              // Crear el mensaje con el nombre del cliente
-              const mensaje = `Hola, ${reserva.nombre}, te pedimos que te acerques a tomar la reserva. Recuerda que tienes 5 minutos para efectivizarla. Gracias ☺️`;
+      if (reserva) {
+        // Crear el mensaje con el nombre del cliente
+        const mensaje = `Hola, ${reserva.nombre}, te pedimos que te acerques a tomar la reserva. Recuerda que tienes 5 minutos para efectivizarla. Gracias ☺️`;
 
-              // Enviar el mensaje al número de WhatsApp almacenado en el campo `from`
-              await sendWhatsAppMessage(`whatsapp:${reserva.from}`, mensaje);
+        // Enviar el mensaje al número de WhatsApp almacenado en el campo `from`
+        await sendWhatsAppMessage(`whatsapp:${reserva.from}`, mensaje);
 
-              console.log(`Mensaje de cuenta regresiva enviado a ${reserva.from} para el cliente ${reserva.nombre}`);
-              res.json({ success: true, message: "Mensaje enviado con éxito" });
-          } else {
-              console.log("No se encontró la reserva con el ID proporcionado en el documento del admin.");
-              res.status(404).json({ success: false, message: "Reserva no encontrada" });
-          }
+        console.log(`Mensaje de cuenta regresiva enviado a ${reserva.from} para el cliente ${reserva.nombre}`);
+        res.json({ success: true, message: "Mensaje enviado con éxito" });
       } else {
-          console.log("No se encontró ningún admin con una reserva coincidente.");
-          res.status(404).json({ success: false, message: "Admin no encontrado" });
+        console.log("No se encontró la reserva con el ID proporcionado en el documento del admin.");
+        res.status(404).json({ success: false, message: "Reserva no encontrada" });
       }
+    } else {
+      console.log("No se encontró ningún admin con una reserva coincidente.");
+      res.status(404).json({ success: false, message: "Admin no encontrado" });
+    }
   } catch (error) {
-      console.error("Error al enviar el mensaje:", error);
-      res.status(500).json({ success: false, message: "Error al enviar el mensaje" });
+    console.error("Error al enviar el mensaje:", error);
+    res.status(500).json({ success: false, message: "Error al enviar el mensaje" });
   }
 }
 
@@ -576,7 +576,7 @@ async function notifyUserPickedUp(req, res) {
 // Función para actualizar el tag seleccionado
 async function updateTagSelected(req, res) {
   console.log("ENTRE DENTRO DE UPDATE!!");
-  
+
   const idLocal = req.params.idLocal; // ID del local
   const { tagSelected } = req.body; // Nuevo valor del tag
 
@@ -838,6 +838,56 @@ async function qrScanUpdateReservas(req, res) {
 }
 
 
+// Función para validar el QR y redirigir a WhatsApp para lavados
+async function qrScanUpdateLavados(req, res) {
+  const adminId = req.params.localId;
+  console.log("EL ADMIN QUE SE ESTA BUSCANDO CON EL QR ES: " + adminId);
+
+  try {
+    // Buscar el admin en la base de datos
+    const admin = await Admin.findById(adminId);
+    if (!admin) {
+      console.error("Admin/local no encontrado con el ID:", adminId);
+      return res.status(404).send('Admin no encontrado');
+    }
+
+    // Buscar el lavado donde selected sea true
+    const lavadoSeleccionado = admin.lavados.find(lavado => lavado.selected === true);
+
+    if (!lavadoSeleccionado) {
+      console.error("No se encontró ningún lavado seleccionado.");
+      return res.status(404).send('No se encontró ningún lavado seleccionado');
+    }
+
+    // Obtener los datos del lavado seleccionado
+    const { nombre, patente, tipoDeLavado, observacion, _id } = lavadoSeleccionado;
+
+    // Extraer los últimos 5 caracteres del ObjectId
+    const code = _id.toString().slice(-5);
+
+    // Construir el mensaje personalizado
+    const message = `✨ Aquí está el detalle de tu servicio:
+🚙 Vehículo: ${nombre}
+🧽 Tipo de lavado: ${tipoDeLavado}
+🔖 Patente: ${patente}
+📝 Observación: ${observacion || 'Sin observaciones'}`;
+
+
+    // Construir la URL de WhatsApp con el mensaje detallado
+    const whatsappNumber = 5491135254661; // Número de WhatsApp (puedes reemplazarlo según corresponda)
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+
+    // Redirigir instantáneamente al cliente a la URL de WhatsApp
+    res.redirect(whatsappUrl);
+
+  } catch (error) {
+    console.error('Error al obtener el admin:', error);
+    res.status(500).send('Error al procesar el QR');
+  }
+}
+
+
+
 async function getReservas(req, res) {
   const { adminId } = req.params;
 
@@ -853,75 +903,79 @@ async function getReservas(req, res) {
   }
 }
 
-// AGREGAR CLIENTE O LAVADO
-async function agregarCliente(req, res) {
-  const { type, ...data } = req.body; // Extraemos el tipo y los datos restantes
+// Obtener lavaderos de un administrador específico
+async function getLavados(req, res) {
+  const { adminId } = req.params;
 
   try {
-    // Obtener el ID del admin desde la cookie
-    const adminId = req.cookies.adminId;
+    // Buscar al administrador por su ID y seleccionar solo los lavaderos
+    const admin = await Admin.findById(adminId).select('lavados');
+    if (!admin) {
+      return res.status(404).json({ error: 'Admin no encontrado' });
+    }
+
+    // Responder con los lavaderos del administrador
+    res.json(admin.lavados);
+  } catch (error) {
+    console.error('Error al obtener los lavaderos:', error);
+    res.status(500).json({ error: 'Error al obtener los lavaderos' });
+  }
+}
+
+
+
+//AGREGAR CLIENTE
+async function agregarCliente(req, res) {
+  const { nombre, comensales, observacion } = req.body;
+
+  try {
+    // Lógica para agregar el cliente
+    const adminId = req.cookies.adminId; // Obtener el ID del admin desde la cookie, si aplica
     const admin = await Admin.findById(adminId);
 
     if (!admin) {
       return res.status(404).json({ error: 'Admin no encontrado' });
     }
 
-    switch (type) {
-      case 'reserva': {
-        // Validación para reservas
-        const { nombre, comensales, observacion, mesaId } = data;
-        if (!nombre || !comensales) {
-          return res.status(400).json({ error: 'Faltan campos obligatorios para la reserva' });
-        }
-
-        // Agregar reserva al admin
-        admin.reservas.push({
-          nombre,
-          comensales,
-          observacion,
-          mesaId,
-          selected: false, // Campo por defecto
-          textConfirmation: false,
-          numeroDeFila: admin.reservas.length + 1, // Ejemplo de numeración dinámica
-        });
-        break;
-      }
-
-      case 'lavado': {
-        // Validación para lavados
-        const { nombre, patente, tipoDeLavado, observacion } = data;
-        if (!nombre || !patente || !tipoDeLavado) {
-          return res.status(400).json({ error: 'Faltan campos obligatorios para el lavado' });
-        }
-
-        // Agregar lavado al admin
-        admin.lavados.push({
-          nombre,
-          patente,
-          tipoDeLavado,
-          observacion,
-          estado: 'Pendiente', // Campo por defecto
-        });
-        break;
-      }
-
-      default:
-        return res.status(400).json({ error: 'Tipo de operación no reconocido' });
-    }
-
-    // Guardar los cambios en la base de datos
+    // Agregar el cliente a la lista de reservas o clientes
+    admin.reservas.push({ nombre, comensales, observacion });
     await admin.save();
 
-    res.status(201).json({
-      success: true,
-      message: `Operación '${type}' completada con éxito`,
-    });
+    res.status(201).json({ success: true, message: 'Cliente agregado con éxito' });
   } catch (error) {
-    console.error('Error al procesar la operación:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Error al procesar la operación',
+    console.error('Error al agregar cliente:', error);
+    res.status(500).json({ success: false, error: 'Error al agregar cliente' });
+  }
+}
+
+// AGREGAR LAVADO
+async function agregarLavado(req, res) {
+  const { nombre, modelo, patente, tipoDeLavado, observacion } = req.body;
+
+  try {
+    // Lógica para agregar el lavado
+    const adminId = req.cookies.adminId; // Obtener el ID del admin desde la cookie
+    const admin = await Admin.findById(adminId);
+
+    if (!admin) {
+      return res.status(404).json({ error: 'Admin no encontrado' });
+    }
+
+    // Agregar el lavado a la lista de lavados
+    admin.lavados.push({
+      nombre,
+      modelo,
+      patente,
+      tipoDeLavado,
+      observacion,
+      estado: 'Pendiente' // Estado inicial por defecto
     });
+    await admin.save();
+
+    res.status(201).json({ success: true, message: 'Lavado agregado con éxito' });
+  } catch (error) {
+    console.error('Error al agregar lavado:', error);
+    res.status(500).json({ success: false, error: 'Error al agregar lavado' });
   }
 }
 
@@ -934,7 +988,7 @@ async function actualizarSelectedCliente(req, res) {
   try {
     // Primero, busca el admin que contiene la reserva con el clienteId y establece todas las reservas en false
     const admin = await Admin.findOneAndUpdate(
-      { "reservas._id": clienteId }, 
+      { "reservas._id": clienteId },
       { $set: { "reservas.$[].selected": false } }, // Establece todas las reservas como false
       { new: true }
     );
@@ -945,7 +999,7 @@ async function actualizarSelectedCliente(req, res) {
 
     // Luego, establece solo la reserva seleccionada en true
     const updatedAdmin = await Admin.findOneAndUpdate(
-      { "reservas._id": clienteId }, 
+      { "reservas._id": clienteId },
       { $set: { "reservas.$.selected": true } }, // Establece solo la reserva específica en true
       { new: true }
     );
@@ -959,25 +1013,64 @@ async function actualizarSelectedCliente(req, res) {
 
 
 
+
+async function actualizarSelectedLavado(req, res) {
+  const lavadoId = req.params.lavadoId;
+
+  try {
+    // Encuentra el admin que contiene el lavado seleccionado
+    const admin = await Admin.findOne({ "lavados._id": lavadoId });
+
+    if (!admin) {
+      return res.status(404).json({ success: false, message: 'Lavado no encontrado' });
+    }
+
+    // Establece todos los lavados en `selected: false`
+    admin.lavados.forEach(lavado => {
+      lavado.selected = false;
+    });
+
+    // Luego, establece el lavado seleccionado en `true`
+    const lavadoSeleccionado = admin.lavados.find(lavado => lavado._id.toString() === lavadoId);
+    if (lavadoSeleccionado) {
+      lavadoSeleccionado.selected = true;
+    } else {
+      return res.status(404).json({ success: false, message: 'Lavado no encontrado en el administrador' });
+    }
+
+    // Guarda los cambios
+    await admin.save();
+
+    res.json({ success: true, message: 'Lavado actualizado correctamente', admin });
+  } catch (error) {
+    console.error('Error al actualizar el lavado:', error);
+    res.status(500).json({ success: false, message: 'Error al actualizar el lavado' });
+  }
+}
+
+
+
+
+
 async function eliminarCliente(req, res) {
   const clienteId = req.params.clienteId;
 
   try {
-      // Encuentra el cliente dentro del array de reservas y lo elimina
-      const admin = await Admin.findOneAndUpdate(
-          { "reservas._id": clienteId }, // Busca dentro del array de reservas
-          { $pull: { reservas: { _id: clienteId } } }, // Elimina la reserva que coincide con el clienteId
-          { new: true }
-      );
+    // Encuentra el cliente dentro del array de reservas y lo elimina
+    const admin = await Admin.findOneAndUpdate(
+      { "reservas._id": clienteId }, // Busca dentro del array de reservas
+      { $pull: { reservas: { _id: clienteId } } }, // Elimina la reserva que coincide con el clienteId
+      { new: true }
+    );
 
-      if (!admin) {
-          return res.status(404).json({ success: false, message: 'Cliente no encontrado' });
-      }
+    if (!admin) {
+      return res.status(404).json({ success: false, message: 'Cliente no encontrado' });
+    }
 
-      res.json({ success: true, message: 'Cliente eliminado correctamente', admin });
+    res.json({ success: true, message: 'Cliente eliminado correctamente', admin });
   } catch (error) {
-      console.error('Error al eliminar el cliente:', error);
-      res.status(500).json({ success: false, message: 'Error al eliminar el cliente' });
+    console.error('Error al eliminar el cliente:', error);
+    res.status(500).json({ success: false, message: 'Error al eliminar el cliente' });
   }
 }
 
@@ -1068,4 +1161,8 @@ export const methods = {
   actualizarSelectedCliente,
   enviarMensajeCuentaRegresiva,
   eliminarCliente,
+  agregarLavado,
+  getLavados,
+  actualizarSelectedLavado,
+  qrScanUpdateLavados
 };

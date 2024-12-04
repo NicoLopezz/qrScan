@@ -62,12 +62,35 @@ const reservaSchema = new mongoose.Schema({
 
 // Esquema para los lavados
 const lavadoSchema = new mongoose.Schema({
+  solicitudBaja: { type: Boolean, default: false },
+  from: { type: String, default: '' },
+  historialPedidos: [{
+    tagNumber: { type: Number, default: null },
+    fechaPedido: { type: Date, default: null },
+    fechaRetiro: { type: Date, default: null },
+    tiempoEspera: { type: Number, default: 0 },
+    estadoPorBarra: { type: String, default: '' },
+    confirmacionPorCliente: { type: Boolean, default: false },
+    mensajes: [{
+      body: { type: String, default: '' },
+      fecha: { type: String, default: '' }
+    }]
+  }],
+  promedioTiempo: { type: Number, default: 0 },
+  mensajesEnviados: [{
+    fecha: { type: String, required: true },
+    body: { type: String, required: true }
+  }],
   nombre: { type: String, required: true },         // Nombre del cliente
   patente: { type: String, required: true },        // Patente del vehículo
   tipoDeLavado: { type: String, required: true },   // Tipo de lavado (Básico, Completo, etc.)
   observacion: { type: String, default: '' },       // Observaciones adicionales
   fechaRegistro: { type: Date, default: Date.now }, // Fecha del registro del lavado
-  estado: { type: String, default: 'Pendiente' }    // Estado del lavado (Pendiente, Completado, etc.)
+  estado: { type: String, default: 'Pendiente' },    // Estado del lavado (Pendiente, Completado, etc.)
+  modelo: { type: String, required: true },         // modelo de vehiculo
+  selected: { type: Boolean, default: false },
+  textConfirmation: { type: Boolean, default: false },
+  numeroDeFila: { type: Number, default: 0 }
 });
 
 // Esquema para los pagos
