@@ -287,12 +287,23 @@ async function handleLavadoMessage(body, fromWithPrefix) {
     // Extraer el número de teléfono, eliminando el prefijo 'whatsapp:'
     const from = fromWithPrefix.replace('whatsapp:', '');
 
+    // Agregar un log para verificar el formato del mensaje
+    console.log("Formato del mensaje recibido:", body);
+
     // Expresiones regulares para extraer los datos del mensaje
-    const nombreMatch = body.match(/Hola!\s([^\n,]+),/);
-    const modeloMatch = body.match(/Vehículo:\s([^\n]+)/);
-    const tipoDeLavadoMatch = body.match(/Tipo de lavado:\s([^\n]+)/);
-    const patenteMatch = body.match(/Patente:\s([^\n]+)/);
-    const observacionMatch = body.match(/Observación:\s([^\n.]+)/);
+    const nombreMatch = body.match(/Hola!\s([^,]+),/); // Extrae el nombre después de "Hola!"
+    const modeloMatch = body.match(/Vehículo:\s([^\n]+)/); // Extrae el modelo del vehículo
+    const tipoDeLavadoMatch = body.match(/Tipo de lavado:\s([^\n]+)/); // Extrae el tipo de lavado
+    const patenteMatch = body.match(/Patente:\s([^\n]+)/); // Extrae la patente
+    const observacionMatch = body.match(/Observación:\s([^\n.]+)/); // Extrae la observación antes del punto final
+
+    // Agregar logs para cada expresión regular
+    console.log("Resultados de las expresiones regulares:");
+    console.log("Nombre:", nombreMatch ? nombreMatch[1] : null);
+    console.log("Modelo:", modeloMatch ? modeloMatch[1] : null);
+    console.log("Tipo de lavado:", tipoDeLavadoMatch ? tipoDeLavadoMatch[1] : null);
+    console.log("Patente:", patenteMatch ? patenteMatch[1] : null);
+    console.log("Observación:", observacionMatch ? observacionMatch[1] : null);
 
     // Verificar que todos los datos fueron extraídos correctamente
     if (!nombreMatch || !modeloMatch || !tipoDeLavadoMatch || !patenteMatch) {
