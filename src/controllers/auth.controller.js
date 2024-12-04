@@ -294,6 +294,9 @@ async function handleLavadoMessage(body, fromWithPrefix) {
       return;
     }
 
+    // Extrae el nombre del local
+    const localName = admin.localName;
+
     // Encuentra el lavado seleccionado
     const lavadoSeleccionado = admin.lavados.find(lavado => lavado.selected === true);
 
@@ -307,14 +310,13 @@ async function handleLavadoMessage(body, fromWithPrefix) {
 
     // Crear el mensaje personalizado
     const message = `**${localName}**: 
-    Hola! ${nombre}, Aquí está el detalle de tu servicio:
-    🚙 Vehículo: ${modelo}
-    🧽 Tipo de lavado: ${tipoDeLavado}
-    🔖 Patente: ${patente}
-    📝 Observación: ${observacion || 'Sin observaciones'}
-    
-     Te avisaremos cuando esté listo para retirarlo.`;
-    
+Hola! ${nombre}, Aquí está el detalle de tu servicio:
+🚙 Vehículo: ${modelo}
+🧽 Tipo de lavado: ${tipoDeLavado}
+🔖 Patente: ${patente}
+📝 Observación: ${observacion || 'Sin observaciones'}
+
+📢 Te avisaremos cuando esté listo para retirarlo.`;
 
     // Enviar el mensaje de confirmación por WhatsApp
     await sendWhatsAppMessage(`whatsapp:${from}`, message);
@@ -323,6 +325,7 @@ async function handleLavadoMessage(body, fromWithPrefix) {
     console.error("Error al manejar el mensaje de lavado:", error);
   }
 }
+
 
 
 
