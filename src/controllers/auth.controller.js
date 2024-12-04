@@ -290,11 +290,11 @@ async function handleLavadoMessage(body, fromWithPrefix) {
     // Log para depurar el formato del mensaje recibido
     console.log("Formato del mensaje recibido en Body:", body);
 
-    // Expresiones regulares ajustadas para capturar los datos correctamente
+    // Expresiones regulares ajustadas para el nuevo formato del mensaje
     const nombreMatch = body.match(/Hola!\s(.+?),/); // Captura el nombre después de "Hola!"
-    const modeloMatch = body.match(/Vehículo:\s(.+?)\n/); // Captura el modelo del vehículo
-    const tipoDeLavadoMatch = body.match(/Tipo de lavado:\s(.+?)\n/); // Captura el tipo de lavado
-    const patenteMatch = body.match(/Patente:\s(.+?)\n/); // Captura la patente del vehículo
+    const modeloMatch = body.match(/Vehículo:\s(.+)/); // Captura el modelo del vehículo
+    const tipoDeLavadoMatch = body.match(/Tipo de lavado:\s(.+)/); // Captura el tipo de lavado
+    const patenteMatch = body.match(/Patente:\s(.+)/); // Captura la patente
     const observacionMatch = body.match(/Observación:\s(.+?)\./); // Captura la observación antes del punto final
     const codigoMatch = body.match(/Código:\s(.+)/); // Captura el código único al final
 
@@ -315,7 +315,7 @@ async function handleLavadoMessage(body, fromWithPrefix) {
         modelo: modeloMatch ? modeloMatch[1] : null,
         tipoDeLavado: tipoDeLavadoMatch ? tipoDeLavadoMatch[1] : null,
         patente: patenteMatch ? patenteMatch[1] : null,
-        observacion: observacionMatch ? observacionMatch[1] : 'Sin observaciones',
+        observacion: observacionMatch ? observacionMatch[1] : null,
         codigo: codigoMatch ? codigoMatch[1] : null,
       });
       return;
@@ -362,7 +362,7 @@ async function handleLavadoMessage(body, fromWithPrefix) {
         await admin.save();
 
         // Enviar un mensaje de confirmación al cliente
-        const responseMessage = `🎉 Gracias por confirmar el servicio de lavado! 📢 Te avisaremos cuando esté listo para retirarlo.`;
+        const responseMessage = `Hola! ${nombre}, vamos a validar el servicio de lavado para el vehículo ${modelo} (${patente}). Observación: "${observacion}". Código: ${codigo}.`;
         await sendWhatsAppMessage(`whatsapp:${from}`, responseMessage);
         console.log("Lavado confirmado y mensaje de confirmación enviado al cliente.");
       } else {
@@ -971,11 +971,12 @@ async function qrScanUpdateLavados(req, res) {
 
     // Construir el mensaje personalizado
     const message = `Hola! ${nombre}, aquí está el detalle de tu servicio de lavado:
-🚙 Vehículo: ${modelo}
-🧽 Tipo de lavado: ${tipoDeLavado}
-🔖 Patente: ${patente}
-📝 Observación: ${observacion || 'Sin observaciones'}.
-Código: ${code}`;
+    Vehículo: ${modelo}
+    Tipo de lavado: ${tipoDeLavado}
+    Patente: ${patente}
+    Observación: ${observacion || 'Sin observaciones'}.
+    Código: ${code}`;
+    
 
     // Construir la URL de WhatsApp con el mensaje detallado
     const whatsappNumber = 5491135254661; // Número de WhatsApp (puedes reemplazarlo según corresponda)
