@@ -189,7 +189,7 @@ async function reciveMessage(req, res) {
       await handleConfirmationMessage(from, body);
     } else if (body.toLowerCase().includes('lavado')) {
       console.log("DETECTE LA PALABRA LAVADO!")
-      await handleLavadoMessage(from, body, localAdmin);
+      await handleLavadoMessage(body, from, localAdmin);
     } else if (body.toLowerCase().includes('baja')) {
       await handleBajaRequest(from);
     } else {
