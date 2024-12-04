@@ -217,6 +217,8 @@ async function handleReservaMessage(body, fromWithPrefix) {
     const observacionMatch = body.match(/observación: "([^"]*)"/);
     const codigoMatch = body.match(/Código: (\w{5})/);
 
+    console.log("EL CODIGO DEL MENSAJE ES en reservas: " +codigoMatch)
+
     // Verificar que todos los datos fueron extraídos correctamente
     if (!nombreMatch || !comensalesMatch || !observacionMatch || !codigoMatch) {
       console.log("No se pudo extraer el nombre, comensales, observación o código del mensaje.");
@@ -291,6 +293,7 @@ async function handleLavadoMessage(body, fromWithPrefix) {
     // Expresión regular para extraer el código
     const codigoMatch = body.match(/Código: (\w{5})/);
     // const codigo = codigoMatch ? codigoMatch[1] : null;
+    console.log("EL CODIGO DEL MENSAJE ES en lavados: " +codigoMatch)
 
     // Validar si el código fue extraído
     if (!codigoMatch) {
