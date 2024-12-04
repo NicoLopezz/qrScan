@@ -287,27 +287,27 @@ async function handleReservaMessage(body, fromWithPrefix) {
 // Función para manejar mensajes de "reserva"
 async function handleLavadoMessage(body, fromWithPrefix) {
   try {
-    // Extraer solo el número de teléfono del cliente, eliminando el prefijo 'whatsapp:'
+    // Extrae solo el número de teléfono, eliminando el prefijo 'whatsapp:'
     const from = fromWithPrefix.replace('whatsapp:', '');
 
-    // Expresión regular para extraer el código
-    const codigoMatch = body.match(/Código: (\w{5})/);
-    // const codigo = codigoMatch ? codigoMatch[1] : null;
-    console.log("EL CODIGO DEL MENSAJE ES en lavados: " +codigoMatch)
+    // Imprimir el mensaje recibido para verificar su formato
+    console.log("Mensaje recibido en Body:", body);
 
-    // Validar si el código fue extraído
-    if (!codigoMatch) {
+    // Expresión regular para extraer el código
+    const codigoMatch = body.match(/Código:\s*(\w{5})/); // Acepta espacios opcionales
+    const codigo = codigoMatch ? codigoMatch[1] : null;
+
+    if (!codigo) {
       console.error("No se pudo extraer el código del mensaje.");
       return;
     }
 
-    const codigo = codigoMatch ? codigoMatch[1] : null;
     console.log("Código extraído:", codigo);
 
     // Buscar el admin que tiene un lavado con el código y que esté seleccionado
     const admin = await Admin.findOne({
-      'lavados._id': { $regex: codigo + '$' }, // Buscar  que termine con el código
-      'lavados.selected': true // Filtrar lavados seleccionados
+      'lavados._id': { $regex: codigo + '$' }, // Buscar que termine con el código
+      'lavados.selected': true, // Filtrar lavados seleccionados
     });
 
     if (!admin) {
@@ -318,14 +318,14 @@ async function handleLavadoMessage(body, fromWithPrefix) {
     console.log("Admin encontrado:", admin.localName);
 
     // Buscar el lavado específico dentro de `admin.lavados`
-    const lavado = admin.lavados.find(l =>
-      l._id.toString().endsWith(codigo) && l.selected === true
+    const lavado = admin.lavados.find(
+      (l) => l._id.toString().endsWith(codigo) && l.selected === true
     );
 
     if (lavado) {
       // Actualizar los campos del lavado
       lavado.selected = false;
-      lavado.from = from; // Asociar el número de teléfono del cliente
+      lavado.from = from; // Asociar el número del cliente
 
       // Guardar los cambios en la base de datos
       await admin.save();
@@ -333,7 +333,7 @@ async function handleLavadoMessage(body, fromWithPrefix) {
       // Construir el mensaje de confirmación
       const responseMessage = `Hola! ${lavado.nombre}, tu servicio de lavado con el tipo "${lavado.tipoDeLavado}" y la patente "${lavado.patente}" ha sido confirmado. Gracias por elegirnos.`;
 
-      // Enviar un mensaje de confirmación al cliente
+      // Enviar el mensaje de confirmación al cliente
       await sendWhatsAppMessage(`whatsapp:${from}`, responseMessage);
       console.log("Lavado confirmado y mensaje de confirmación enviado al cliente.");
     } else {
@@ -343,6 +343,7 @@ async function handleLavadoMessage(body, fromWithPrefix) {
     console.error("Error al manejar el mensaje de lavado:", error);
   }
 }
+
 
 
 
