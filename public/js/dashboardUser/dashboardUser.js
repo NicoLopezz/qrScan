@@ -302,23 +302,32 @@ function showNotification(message, type = 'success') {
   }, 4000);
 }
 
+
+// MANEJO DE BTN VERSIÓN DE MÓVIL
+
 // MANEJO DE BTN VERSIÓN DE MÓVIL
 function handleOption(option) {
+  const tarjetaYqr = document.querySelector("#tarjetaYqr");
+  const tabla = document.querySelector(".tabla");
+
   if (option === 'reservas') {
-    // Lógica para "Reservas"
-    alert('Mostrando Reservas');
-    const tarjeta = document.querySelector(".tarjeta");
-    if (tarjeta) {
-      tarjeta.style.display = "flex"; // Asegura que la tarjeta sea visible
+    // Muestra tarjetaYqr y oculta tabla
+    if (tarjetaYqr) {
+      tarjetaYqr.style.display = "grid"; // Hace visible tarjetaYqr
+    }
+    if (tabla) {
+      tabla.style.display = "none"; // Oculta tabla
     }
   } else if (option === 'tabla') {
-    // Lógica para "Tabla"
-    alert('Mostrando Tabla');
-    const tarjeta = document.querySelector(".tarjeta");
-    if (tarjeta) {
-      tarjeta.style.display = "none"; // Oculta la tarjeta
+    // Muestra tabla y oculta tarjetaYqr
+    if (tabla) {
+      tabla.style.display = "grid"; // Hace visible tabla
+    }
+    if (tarjetaYqr) {
+      tarjetaYqr.style.display = "none"; // Oculta tarjetaYqr
     }
   }
 }
+
 
 

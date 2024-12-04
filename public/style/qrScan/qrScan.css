@@ -23,4 +23,5 @@ img{
     align-items: center;
     justify-items: center;
     margin-top: -85px;
+    z-index: 100000;
 }

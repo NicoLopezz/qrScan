@@ -782,7 +782,7 @@ async function qrScanUpdate(req, res) {
 
     // Construir la URL de WhatsApp con el mensaje detallado
     // const whatsappNumber = 15717770517;  // Número de WhatsApp (puedes reemplazarlo según corresponda)
-    const whatsappNumber = 541135254661;  // Número de WhatsApp (puedes reemplazarlo según corresponda)
+    const whatsappNumber = 5491135254661;  // Número de WhatsApp (puedes reemplazarlo según corresponda)
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 
     // Redirigir instantáneamente al cliente a la URL de WhatsApp
@@ -825,7 +825,7 @@ async function qrScanUpdateReservas(req, res) {
 
     // Construir la URL de WhatsApp con el mensaje detallado
     // const whatsappNumber = 15717770517;  // Número de WhatsApp (puedes reemplazarlo según corresponda)
-    const whatsappNumber = 541135254661;  // Número de WhatsApp (puedes reemplazarlo según corresponda)
+    const whatsappNumber = 5491135254661;  // Número de WhatsApp (puedes reemplazarlo según corresponda)
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 
     // Redirigir instantáneamente al cliente a la URL de WhatsApp

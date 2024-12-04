@@ -414,6 +414,7 @@ p.lead {
     display: flex;
     gap: 0px;
     align-items: center;
+    gap: 90px;
 }
 
 .text-content {
