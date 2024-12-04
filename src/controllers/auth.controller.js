@@ -188,6 +188,7 @@ async function reciveMessage(req, res) {
     } else if (body.toLowerCase().includes('ya lo tengo')) {
       await handleConfirmationMessage(from, body);
     } else if (body.toLowerCase().includes('lavado')) {
+      console.log("DETECTE LA PALABRA LAVADO!")
       await handleLavadoMessage(from, body);
     } else if (body.toLowerCase().includes('baja')) {
       await handleBajaRequest(from);
@@ -289,14 +290,15 @@ async function handleLavadoMessage(body, fromWithPrefix) {
 
     // Expresión regular para extraer el código
     const codigoMatch = body.match(/Código: (\w{5})/);
-    const codigo = codigoMatch ? codigoMatch[1] : null;
+    // const codigo = codigoMatch ? codigoMatch[1] : null;
 
     // Validar si el código fue extraído
-    if (!codigo) {
+    if (!codigoMatch) {
       console.error("No se pudo extraer el código del mensaje.");
       return;
     }
 
+    const codigo = codigoMatch ? codigoMatch[1] : null;
     console.log("Código extraído:", codigo);
 
     // Buscar el admin que tiene un lavado con el código y que esté seleccionado
