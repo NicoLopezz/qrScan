@@ -75,6 +75,7 @@ router.get('/qrScanUpdate/:localId', autenthication.qrScanUpdate, (req, res) => 
 router.get('/qrScanUpdateReservas/:localId', autenthication.qrScanUpdateReservas);
 router.get('/qrScanUpdateLavados/:localId', autenthication.qrScanUpdateLavados);
 router.post('/enviarMensajeCuentaRegresiva', autenthication.enviarMensajeCuentaRegresiva);
+router.post('/enviarAvisoRetiroLavado', autenthication.enviarAvisoRetiroLavado);
 router.patch('/reservas/:clienteId/updateSelected', autenthication.actualizarSelectedCliente);
 router.patch('/lavados/:lavadoId/actualizarSelectedLavado', autenthication.actualizarSelectedLavado);
 

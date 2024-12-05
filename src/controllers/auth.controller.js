@@ -335,14 +335,14 @@ async function handleLavadoMessage(body, fromWithPrefix) {
       // const responseMessage = `Hola! ${lavado.nombre}, tu servicio de lavado ha sido confirmado. 
 
       const responseMessage =
-      `Aquí está el detalle de tu servicio ${lavado.nombre}:
+      `**Aquí está el detalle de tu servicio ${lavado.nombre}**:
 
       🚙 Vehículo: ${lavado.modelo}
       🧽 Tipo de lavado: ${lavado.tipoDeLavado}
       🔖 Patente: ${lavado.patente}
       📝 Observación: ${lavado.observacion || 'Sin observaciones'}
       
-      Te avisaremos cuando este listo para ser retirado.`;
+    Te avisaremos cuando este listo para ser retirado. `;
       
       
       
@@ -414,6 +414,47 @@ async function enviarMensajeCuentaRegresiva(req, res) {
   }
 }
 
+// Función para enviar mensaje de cuenta regresiva
+async function enviarAvisoRetiroLavado(req, res) {
+  try {
+    const { clienteId } = req.body;
+
+    if (!clienteId) {
+      console.error("No se recibió clienteId en la solicitud");
+      return res.status(400).json({ success: false, message: "No se recibió clienteId" });
+    }
+
+    // Buscar el admin que tenga un lavado con el ID del cliente proporcionado
+    const admin = await Admin.findOne({ 'lavados._id': clienteId });
+
+    if (admin) {
+      console.log("Admin encontrado:", admin._id);
+
+      // Encontrar el lavado específico dentro de `admin.lavados` con el clienteId
+      const lavado = admin.lavados.find(lavado => lavado._id.toString() === clienteId);
+
+      if (lavado) {
+        // Crear el mensaje con los datos del cliente y del lavado
+        const mensaje = `Hola, ${lavado.nombre}, tu vehículo (${lavado.patente}) está listo para ser retirado. . ¡Gracias por elegirnos! y te esperamos 🚗`;
+
+        // Enviar el mensaje al número de WhatsApp almacenado en el campo `from`
+        await sendWhatsAppMessage(`whatsapp:${lavado.from}`, mensaje);
+
+        console.log(`Aviso de retiro de lavado enviado a ${lavado.from} para el cliente ${lavado.nombre}`);
+        res.json({ success: true, message: "Mensaje enviado con éxito" });
+      } else {
+        console.log("No se encontró el lavado con el ID proporcionado en el documento del admin.");
+        res.status(404).json({ success: false, message: "Lavado no encontrado" });
+      }
+    } else {
+      console.log("No se encontró ningún admin con un lavado coincidente.");
+      res.status(404).json({ success: false, message: "Admin no encontrado" });
+    }
+  } catch (error) {
+    console.error("Error al enviar el mensaje:", error);
+    res.status(500).json({ success: false, message: "Error al enviar el mensaje" });
+  }
+}
 
 
 
@@ -1253,5 +1294,6 @@ export const methods = {
   agregarLavado,
   getLavados,
   actualizarSelectedLavado,
-  qrScanUpdateLavados
+  qrScanUpdateLavados,
+  enviarAvisoRetiroLavado
 };

@@ -9,6 +9,7 @@ let clienteSeleccionado = null;
 let lavadoSeleccionado = null;
 let reservas = []; // Almacena las reservas desde la base de datos
 let lavados = [];
+let cuentaRegresivaEnPausa = false; // Variable para controlar el estado de pausa
 
 // Función para cargar reservas desde la base de datos
 async function cargarReservas() {
@@ -75,7 +76,6 @@ async function cargarLavados() {
 }
 
 
-
 // Función para seleccionar un cliente y mostrar sus detalles en la tarjeta sin iniciar automáticamente la cuenta regresiva
 function seleccionarCliente(clienteId) {
     clienteSeleccionado = clienteId;
@@ -122,9 +122,6 @@ function seleccionarLavado(lavadoId) {
 }
 
 
-
-
-
 function agregarFilaTabla(reserva) {
     const row = document.createElement('tr');
     row.id = `cliente-row-${reserva._id}`;
@@ -148,95 +145,34 @@ function agregarFilaTabla(reserva) {
     tablaClientes.appendChild(row);
 }
 
-// Función para iniciar la cuenta regresiva del cliente seleccionado
-// Función para iniciar o reanudar la cuenta regresiva del cliente seleccionado
-function iniciarCuentaRegresiva() {
-    const clienteId = clienteSeleccionado;
-    if (!clienteId || intervalos[clienteId].intervalo) return; // Solo iniciar si no está en pausa o ya en ejecución
 
-    // Si es una cuenta regresiva nueva (sin tiempo restante guardado), establecemos 5 minutos
-    if (intervalos[clienteId].tiempoRestante === undefined) {
-        intervalos[clienteId].tiempoRestante = 300;
-    }
+// Función para agregar una fila a la tabla de lavados
+function agregarFilaTablaLavados(lavado) {
+    const row = document.createElement('tr');
+    row.id = `lavado-row-${lavado._id}`;
 
-    // Crear un nuevo intervalo solo para el cliente seleccionado
-    intervalos[clienteId].intervalo = setInterval(() => {
-        if (intervalos[clienteId].tiempoRestante > 0) {
-            intervalos[clienteId].tiempoRestante--;
-            localStorage.setItem(`cliente-${clienteId}-tiempoRestante`, intervalos[clienteId].tiempoRestante);
-            actualizarTiempoTabla(clienteId, intervalos[clienteId].tiempoRestante);
+    // Verificar datos opcionales o vacíos
+    const estado = lavado.estado ? lavado.estado : 'Pendiente'; // Estado predeterminado
+    const observacion = lavado.observacion ? lavado.observacion : 'Sin observaciones';
 
-            // Actualizar visualización en la tarjeta solo si es el cliente seleccionado
-            if (clienteSeleccionado === clienteId) {
-                actualizarTiempoVisual(intervalos[clienteId].tiempoRestante);
-            }
-        } else {
-            clearInterval(intervalos[clienteId].intervalo);
-            intervalos[clienteId].intervalo = null;
-            localStorage.removeItem(`cliente-${clienteId}-tiempoRestante`);
-        }
-    }, 1000);
-}
+    row.innerHTML = `
+        <td>${lavado.nombre}</td>
+        <td>${lavado.patente}</td>
+        <td>${lavado.tipoDeLavado}</td>
+        <td>${observacion}</td>
+        <td>${estado}</td>
+    `;
 
-// Función para reiniciar la cuenta regresiva del cliente seleccionado
-function reiniciarCuentaRegresiva() {
-    const clienteId = clienteSeleccionado;
-    if (!clienteId) return;
-
-    // Detener el temporizador actual si existe
-    if (intervalos[clienteId].intervalo) {
-        clearInterval(intervalos[clienteId].intervalo);
-        intervalos[clienteId].intervalo = null;
-    }
-
-    // Reiniciar el tiempo restante y guardarlo en localStorage
-    intervalos[clienteId].tiempoRestante = 300;
-    localStorage.setItem(`cliente-${clienteId}-tiempoRestante`, 300);
-    actualizarTiempoVisual(300);
-    actualizarTiempoTabla(clienteId, 300);
-}
-
-let cuentaRegresivaEnPausa = false; // Variable para controlar el estado de pausa
-
-// Función para alternar entre pausa y reanudación de la cuenta regresiva
-function togglePausaReanudar() {
-    const clienteId = clienteSeleccionado;
-    if (!clienteId) return; // Salir si no hay cliente seleccionado
-
-    const btnPararPlay = document.getElementById("btnParar");
-    const icono = btnPararPlay.querySelector("i");
-
-    if (cuentaRegresivaEnPausa) {
-        // Si la cuenta regresiva estaba en pausa, reanudar
-        iniciarCuentaRegresiva(); // Llamar a la función que reanuda la cuenta regresiva
-        icono.classList.remove("fa-play");
-        icono.classList.add("fa-stop");
-        cuentaRegresivaEnPausa = false;
+    // Agregar evento de clic para cargar datos en la tarjeta de lavado
+    row.addEventListener('click', () => seleccionarLavado(lavado._id));
+    const tablaLavados = document.getElementById('tablaLavados');
+    if (tablaLavados) {
+        tablaLavados.appendChild(row);
     } else {
-        // Si la cuenta regresiva está en marcha, pausar
-        clearInterval(intervalos[clienteId].intervalo); // Pausar la cuenta regresiva
-        intervalos[clienteId].intervalo = null;
-        icono.classList.remove("fa-stop");
-        icono.classList.add("fa-play");
-        cuentaRegresivaEnPausa = true;
+        console.error('La tabla de lavados no existe en el DOM.');
     }
 }
 
-
-// Función para actualizar el tiempo visual en la tarjeta del cliente
-function actualizarTiempoVisual(tiempo) {
-    const minutos = Math.floor(tiempo / 60);
-    const segundos = tiempo % 60;
-    tiempoRestanteElem.textContent = `${minutos}:${segundos < 10 ? '0' : ''}${segundos}`;
-}
-
-// Función para actualizar el tiempo visual en la tabla
-function actualizarTiempoTabla(clienteId, tiempo) {
-    const minutos = Math.floor(tiempo / 60);
-    const segundos = tiempo % 60;
-    const tiempoElem = document.getElementById(`tiempo-cliente-${clienteId}`);
-    tiempoElem.textContent = `${minutos}:${segundos < 10 ? '0' : ''}${segundos}`;
-}
 
 // Función para agregar un nuevo cliente y actualizar la tabla
 function agregarCliente() {
@@ -265,6 +201,63 @@ function agregarCliente() {
     .catch(error => console.error("Error:", error));
 }
 
+
+function agregarLavado() {
+    // Obtener valores del formulario
+    const nombre = document.getElementById('inputNombre2').value.trim();
+    const modelo = document.getElementById('inputModelo').value.trim();
+    const patente = document.getElementById('inputPatente').value.trim();
+    const tipoDeLavado = document.getElementById('selectServicio').value;
+    const observacion = document.getElementById('inputObservation').value.trim();
+
+    // Verificar si los valores están llegando correctamente
+    console.log("Nombre:", nombre);
+    console.log("Modelo:", modelo);
+    console.log("Patente:", patente);
+    console.log("Tipo de Lavado:", tipoDeLavado);
+    console.log("Observación:", observacion);
+
+    // Validar los campos del formulario
+    if (!nombre || !modelo || !patente || !tipoDeLavado) {
+        showNotification("Por favor, completa todos los campos obligatorios para el lavado.", "error");
+        return;
+    }
+
+    // Enviar solicitud al servidor
+    fetch('/api/admins/agregarLavado', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            type: 'lavado',
+            nombre,
+            modelo,
+            patente,
+            tipoDeLavado,
+            observacion
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("No se pudo completar la operación.");
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            showNotification("Lavado agregado con éxito");
+            const nuevoLavado = { _id: data.id, nombre, modelo, patente, tipoDeLavado, observacion };
+            agregarFilaTablaLavados(nuevoLavado);
+            window.location.reload();ß
+            limpiarFormularioLavado();
+        } else {
+            showNotification(data.error || "Error al agregar el lavado.", "error");
+        }
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        // showNotification("Error de red o servidor. Intenta nuevamente.", "error");
+    });
+}
 
 
 // Función para generar QR y actualizar la reserva seleccionada
@@ -330,6 +323,95 @@ async function generarQRlavado() {
 
 
 
+// Función para iniciar la cuenta regresiva del cliente seleccionado
+// Función para iniciar o reanudar la cuenta regresiva del cliente seleccionado
+function iniciarCuentaRegresiva() {
+    const clienteId = clienteSeleccionado;
+    if (!clienteId || intervalos[clienteId].intervalo) return; // Solo iniciar si no está en pausa o ya en ejecución
+
+    // Si es una cuenta regresiva nueva (sin tiempo restante guardado), establecemos 5 minutos
+    if (intervalos[clienteId].tiempoRestante === undefined) {
+        intervalos[clienteId].tiempoRestante = 300;
+    }
+
+    // Crear un nuevo intervalo solo para el cliente seleccionado
+    intervalos[clienteId].intervalo = setInterval(() => {
+        if (intervalos[clienteId].tiempoRestante > 0) {
+            intervalos[clienteId].tiempoRestante--;
+            localStorage.setItem(`cliente-${clienteId}-tiempoRestante`, intervalos[clienteId].tiempoRestante);
+            actualizarTiempoTabla(clienteId, intervalos[clienteId].tiempoRestante);
+
+            // Actualizar visualización en la tarjeta solo si es el cliente seleccionado
+            if (clienteSeleccionado === clienteId) {
+                actualizarTiempoVisual(intervalos[clienteId].tiempoRestante);
+            }
+        } else {
+            clearInterval(intervalos[clienteId].intervalo);
+            intervalos[clienteId].intervalo = null;
+            localStorage.removeItem(`cliente-${clienteId}-tiempoRestante`);
+        }
+    }, 1000);
+}
+
+
+// Función para reiniciar la cuenta regresiva del cliente seleccionado
+function reiniciarCuentaRegresiva() {
+    const clienteId = clienteSeleccionado;
+    if (!clienteId) return;
+
+    // Detener el temporizador actual si existe
+    if (intervalos[clienteId].intervalo) {
+        clearInterval(intervalos[clienteId].intervalo);
+        intervalos[clienteId].intervalo = null;
+    }
+
+    // Reiniciar el tiempo restante y guardarlo en localStorage
+    intervalos[clienteId].tiempoRestante = 300;
+    localStorage.setItem(`cliente-${clienteId}-tiempoRestante`, 300);
+    actualizarTiempoVisual(300);
+    actualizarTiempoTabla(clienteId, 300);
+}
+
+// Función para alternar entre pausa y reanudación de la cuenta regresiva
+function togglePausaReanudar() {
+    const clienteId = clienteSeleccionado;
+    if (!clienteId) return; // Salir si no hay cliente seleccionado
+
+    const btnPararPlay = document.getElementById("btnParar");
+    const icono = btnPararPlay.querySelector("i");
+
+    if (cuentaRegresivaEnPausa) {
+        // Si la cuenta regresiva estaba en pausa, reanudar
+        iniciarCuentaRegresiva(); // Llamar a la función que reanuda la cuenta regresiva
+        icono.classList.remove("fa-play");
+        icono.classList.add("fa-stop");
+        cuentaRegresivaEnPausa = false;
+    } else {
+        // Si la cuenta regresiva está en marcha, pausar
+        clearInterval(intervalos[clienteId].intervalo); // Pausar la cuenta regresiva
+        intervalos[clienteId].intervalo = null;
+        icono.classList.remove("fa-stop");
+        icono.classList.add("fa-play");
+        cuentaRegresivaEnPausa = true;
+    }
+}
+
+
+// Función para actualizar el tiempo visual en la tarjeta del cliente
+function actualizarTiempoVisual(tiempo) {
+    const minutos = Math.floor(tiempo / 60);
+    const segundos = tiempo % 60;
+    tiempoRestanteElem.textContent = `${minutos}:${segundos < 10 ? '0' : ''}${segundos}`;
+}
+
+// Función para actualizar el tiempo visual en la tabla
+function actualizarTiempoTabla(clienteId, tiempo) {
+    const minutos = Math.floor(tiempo / 60);
+    const segundos = tiempo % 60;
+    const tiempoElem = document.getElementById(`tiempo-cliente-${clienteId}`);
+    tiempoElem.textContent = `${minutos}:${segundos < 10 ? '0' : ''}${segundos}`;
+}
+
 
 
 // Función para marcar el cliente como "eliminado" sin borrarlo de la tabla
@@ -354,91 +436,6 @@ function eliminarReserva() {
 
 
 
-function agregarLavado() {
-    // Obtener valores del formulario
-    const nombre = document.getElementById('inputNombre2').value.trim();
-    const modelo = document.getElementById('inputModelo').value.trim();
-    const patente = document.getElementById('inputPatente').value.trim();
-    const tipoDeLavado = document.getElementById('selectServicio').value;
-    const observacion = document.getElementById('inputObservation').value.trim();
-
-    // Verificar si los valores están llegando correctamente
-    console.log("Nombre:", nombre);
-    console.log("Modelo:", modelo);
-    console.log("Patente:", patente);
-    console.log("Tipo de Lavado:", tipoDeLavado);
-    console.log("Observación:", observacion);
-
-    // Validar los campos del formulario
-    if (!nombre || !modelo || !patente || !tipoDeLavado) {
-        showNotification("Por favor, completa todos los campos obligatorios para el lavado.", "error");
-        return;
-    }
-
-    // Enviar solicitud al servidor
-    fetch('/api/admins/agregarLavado', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            type: 'lavado',
-            nombre,
-            modelo,
-            patente,
-            tipoDeLavado,
-            observacion
-        })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("No se pudo completar la operación.");
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            showNotification("Lavado agregado con éxito");
-            const nuevoLavado = { _id: data.id, nombre, modelo, patente, tipoDeLavado, observacion };
-            agregarFilaTablaLavados(nuevoLavado);
-            window.location.reload();ß
-            limpiarFormularioLavado();
-        } else {
-            showNotification(data.error || "Error al agregar el lavado.", "error");
-        }
-    })
-    .catch(error => {
-        console.error("Error:", error);
-        // showNotification("Error de red o servidor. Intenta nuevamente.", "error");
-    });
-}
-
-// Función para agregar una fila a la tabla de lavados
-function agregarFilaTablaLavados(lavado) {
-    const row = document.createElement('tr');
-    row.id = `lavado-row-${lavado._id}`;
-
-    // Verificar datos opcionales o vacíos
-    const estado = lavado.estado ? lavado.estado : 'Pendiente'; // Estado predeterminado
-    const observacion = lavado.observacion ? lavado.observacion : 'Sin observaciones';
-
-    row.innerHTML = `
-        <td>${lavado.nombre}</td>
-        <td>${lavado.patente}</td>
-        <td>${lavado.tipoDeLavado}</td>
-        <td>${observacion}</td>
-        <td>${estado}</td>
-    `;
-
-    // Agregar evento de clic para cargar datos en la tarjeta de lavado
-    row.addEventListener('click', () => seleccionarLavado(lavado._id));
-    const tablaLavados = document.getElementById('tablaLavados');
-    if (tablaLavados) {
-        tablaLavados.appendChild(row);
-    } else {
-        console.error('La tabla de lavados no existe en el DOM.');
-    }
-}
-
-
 
 // Hacer que agregarCliente y generarQR estén disponibles globalmente
 window.agregarCliente = agregarCliente;
@@ -455,6 +452,46 @@ document.getElementById('btnIniciar').addEventListener('click', async () => {
 
         // Solicitud al servidor para enviar el mensaje
         const response = await fetch(`/api/enviarMensajeCuentaRegresiva`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ clienteId })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            showNotification("Mensaje enviado al cliente. Ahora puedes monitorear la cuenta regresiva.");
+
+            // Inicia la cuenta regresiva solo si el mensaje fue enviado con éxito
+            iniciarCuentaRegresiva();
+
+            // Aplicar el estilo de resaltado a la fila del cliente
+            const filaCliente = document.getElementById(`cliente-row-${clienteId}`);
+            if (filaCliente) {
+                filaCliente.classList.add('highlight-row');
+            }
+
+            // Cambiar el color de la columna "Tiempo" a rojo
+            const tiempoCelda = document.getElementById(`tiempo-cliente-${clienteId}`);
+            if (tiempoCelda) {
+                tiempoCelda.classList.add('red-text');
+            }
+        } else {
+            showNotification("Hubo un problema al enviar el mensaje.", "error");
+        }
+    } catch (error) {
+        showNotification("Ocurrió un error al intentar enviar el mensaje.", "error");
+        console.error('Error al enviar el mensaje:', error);
+    }
+});
+
+document.getElementById('btnAvisoLavado').addEventListener('click', async () => {
+    try {
+        const clienteId = lavadoSeleccionado; // Asegura que ya tienes el cliente seleccionado
+
+        // Solicitud al servidor para enviar el mensaje
+        const response = await fetch(`/api/enviarAvisoRetiroLavado`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
