@@ -217,7 +217,7 @@ async function handleReservaMessage(body, fromWithPrefix) {
     const observacionMatch = body.match(/observación: "([^"]*)"/);
     const codigoMatch = body.match(/Código: (\w{5})/);
 
-    console.log("EL CODIGO DEL MENSAJE ES en reservas: " +codigoMatch)
+    console.log("EL CODIGO DEL MENSAJE ES en reservas: " + codigoMatch)
 
     // Verificar que todos los datos fueron extraídos correctamente
     if (!nombreMatch || !comensalesMatch || !observacionMatch || !codigoMatch) {
@@ -335,7 +335,7 @@ async function handleLavadoMessage(body, fromWithPrefix) {
       // const responseMessage = `Hola! ${lavado.nombre}, tu servicio de lavado ha sido confirmado. 
 
       const responseMessage =
-      `**Aquí está el detalle de tu servicio ${lavado.nombre}**:
+        `**Aquí está el detalle de tu servicio ${lavado.nombre}**:
 
       🚙 Vehículo: ${lavado.modelo}
       🧽 Tipo de lavado: ${lavado.tipoDeLavado}
@@ -343,9 +343,9 @@ async function handleLavadoMessage(body, fromWithPrefix) {
       📝 Observación: ${lavado.observacion || 'Sin observaciones'}
       
     Te avisaremos cuando este listo para ser retirado. `;
-      
-      
-      
+
+
+
 
       // Enviar un mensaje de confirmación al cliente
       await sendWhatsAppMessage(`whatsapp:${from}`, responseMessage);
@@ -435,7 +435,18 @@ async function enviarAvisoRetiroLavado(req, res) {
 
       if (lavado) {
         // Crear el mensaje con los datos del cliente y del lavado
-        const mensaje = `Hola, ${lavado.nombre}, tu vehículo (${lavado.patente}) está listo para ser retirado. . ¡Gracias por elegirnos! y te esperamos 🚗`;
+        const mensaje = `Hola, ${lavado.nombre} 👋, 
+        Tu vehículo con patente **${lavado.patente}** está listo para ser retirado. 🧼🚗✨  
+
+        Gracias por confiar en nosotros y por elegir nuestro servicio. 
+        ¡Te esperamos la próxima vez con gusto! 😊  
+
+        🌟 **Promoción especial:**  
+        ¡Acumula 3 servicios de lavado y el próximo será gratis! 🎁  
+        Con este lavado, ya tienes **1 de 3 estrellas** ⭐.  
+
+        ¡Gracias por tu preferencia y esperamos verte pronto!`;
+
 
         // Enviar el mensaje al número de WhatsApp almacenado en el campo `from`
         await sendWhatsAppMessage(`whatsapp:${lavado.from}`, mensaje);
@@ -1000,7 +1011,7 @@ async function qrScanUpdateLavados(req, res) {
     // Construir el mensaje personalizado
     const message = `${nombre}, confirmo servicio de lavado. Código: ${code}`;
 
-    
+
 
     // Construir la URL de WhatsApp con el mensaje detallado
     const whatsappNumber = 5491135254661; // Número de WhatsApp (puedes reemplazarlo según corresponda)

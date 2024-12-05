@@ -210,6 +210,10 @@ button {
     background-color: #008000;
 }
 
+#btnAvisoLavado {
+    background-color: #008000;
+}
+
 .btnActions {
     display: flex;
     align-items: center;
