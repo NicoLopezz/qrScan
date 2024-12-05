@@ -435,17 +435,18 @@ async function enviarAvisoRetiroLavado(req, res) {
 
       if (lavado) {
         // Crear el mensaje con los datos del cliente y del lavado
-        const mensaje = `Hola, ${lavado.nombre} 👋, 
-        Tu vehículo con patente **${lavado.patente}** está listo para ser retirado. 🧼🚗✨  
+// Crear el mensaje con los datos del cliente y del lavado
+const mensaje = `Hola, ${lavado.nombre} 👋, ¡tenemos buenas noticias! 🎉  
+Tu vehículo con patente **${lavado.patente}** está listo para ser retirado. 🧼🚗  
 
-        Gracias por confiar en nosotros y por elegir nuestro servicio. 
-        ¡Te esperamos la próxima vez con gusto! 😊  
+Gracias por confiar en nosotros y por elegir nuestro servicio.
 
-        🌟 **Promoción especial:**  
-        ¡Acumula 3 servicios de lavado y el próximo será gratis! 🎁  
-        Con este lavado, ya tienes **1 de 3 estrellas** ⭐.  
+🌟 **Promoción especial:**  
+¡Acumula 3 servicios de lavado y el próximo será gratis! 🎁  
+Con este lavado, ya tienes **1 de 3 estrellas** ⭐.  
 
-        ¡Gracias por tu preferencia y esperamos verte pronto!`;
+¡Gracias por tu preferencia y esperamos verte pronto! 🌟`;
+
 
 
         // Enviar el mensaje al número de WhatsApp almacenado en el campo `from`
