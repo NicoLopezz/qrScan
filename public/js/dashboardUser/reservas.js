@@ -106,7 +106,7 @@ function seleccionarLavado(lavadoId) {
         // Actualizar detalles en la tarjeta
         document.getElementById('nombreCliente').textContent = `Nombre: ${lavado.nombre}`;
         document.getElementById('patenteCliente').textContent = `Patente: ${lavado.patente}`;
-        document.getElementById('modeloCliente').textContent = `Patente: ${lavado.modelo}`;
+        document.getElementById('modeloCliente').textContent = `Modelo: ${lavado.modelo}`;
         document.getElementById('lavadoCliente').textContent = `Tipo de Lavado: ${lavado.tipoDeLavado}`;
         document.getElementById('observacionCliente').textContent = `Observación: ${lavado.observacion || 'Sin observaciones'}`;
 
@@ -156,12 +156,13 @@ function agregarFilaTablaLavados(lavado) {
     const observacion = lavado.observacion ? lavado.observacion : 'Sin observaciones';
 
     row.innerHTML = `
-        <td>${lavado.nombre}</td>
-        <td>${lavado.patente}</td>
-        <td>${lavado.tipoDeLavado}</td>
-        <td>${observacion}</td>
-        <td>${estado}</td>
-    `;
+    <td data-modelo="${lavado.modelo}" data-lavado="${lavado.tipoDeLavado}">${lavado.nombre}</td>
+    <td>${lavado.modelo}</td>
+    <td>${lavado.patente}</td>
+    <td>${lavado.tipoDeLavado}</td>
+    <td>${observacion}</td>
+`;
+
 
     // Agregar evento de clic para cargar datos en la tarjeta de lavado
     row.addEventListener('click', () => seleccionarLavado(lavado._id));
@@ -525,3 +526,50 @@ document.getElementById('btnAvisoLavado').addEventListener('click', async () => 
         console.error('Error al enviar el mensaje:', error);
     }
 });
+
+
+// document.querySelectorAll("#tablaLavados2 tbody tr").forEach((row, index) => {
+//     console.log(`Procesando fila ${index + 1}...`);
+    
+//     // Captura el contenido de las columnas "Modelo" y "Lavado"
+//     const modeloCell = row.querySelector("td:nth-child(2)");
+//     const lavadoCell = row.querySelector("td:nth-child(4)");
+
+//     // Logs para confirmar si se capturaron las celdas
+//     console.log(`Fila ${index + 1} - modeloCell:`, modeloCell ? modeloCell.textContent.trim() : 'No encontrado');
+//     console.log(`Fila ${index + 1} - lavadoCell:`, lavadoCell ? lavadoCell.textContent.trim() : 'No encontrado');
+
+//     // Si las celdas no existen, salta esta fila
+//     if (!modeloCell || !lavadoCell) {
+//         console.warn(`Fila ${index + 1} no tiene las celdas "Modelo" o "Lavado".`);
+//         return;
+//     }
+
+//     // Extraer contenido y verificar si están vacíos
+//     const modelo = modeloCell.textContent.trim() || "Sin modelo";
+//     const lavado = lavadoCell.textContent.trim() || "Sin lavado";
+
+//     // Log para confirmar los valores extraídos
+//     console.log(`Fila ${index + 1} - Modelo extraído: ${modelo}`);
+//     console.log(`Fila ${index + 1} - Lavado extraído: ${lavado}`);
+
+//     // Asigna los valores a la primera columna (Nombre)
+//     const nombreCell = row.querySelector("td:nth-child(1)");
+//     if (nombreCell) {
+//         nombreCell.setAttribute("data-modelo", modelo);
+//         nombreCell.setAttribute("data-lavado", lavado);
+
+//         // Log para confirmar los atributos asignados
+//         console.log(`Fila ${index + 1} - Atributos asignados:`, {
+//             "data-modelo": nombreCell.getAttribute("data-modelo"),
+//             "data-lavado": nombreCell.getAttribute("data-lavado"),
+//         });
+//     } else {
+//         console.warn(`Fila ${index + 1} no tiene la celda "Nombre".`);
+//     }
+// });
+
+
+
+
+

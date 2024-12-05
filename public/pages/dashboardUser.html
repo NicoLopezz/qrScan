@@ -132,7 +132,7 @@
 
     <!-- Barra superior -->
     <div class="topBar">
-        <h1>Empresa: <span id="localName"></span></h1>
+        <h1><span id="localName"></span></h1>
         <div class="date-time-container">
             <p id="time"></p>
             <p id="date"></p>
@@ -329,12 +329,12 @@
                 <div class="container" id="containerUser">
 
                     <!-- Tabla de Datos -->
-                    <div class="tabla">
-                        <h3>Lavaderos</h3>
+                    <div class="tabla" id="tablaLavados2">
+                        <h3>Clientes</h3>
                         <div class="table-container">
                             <!-- Contenedor para la tabla con scroll -->
                             <table>
-                                <thead>
+                                <thead class="cabeceraTabla">
                                     <tr>
                                         <th>Nombre</th>
                                         <th>Modelo</th>
@@ -355,8 +355,9 @@
                         <h3 id="nombreCliente">Detalles</h3>
                         <p id="modeloCliente">Modelo: --</p>
                         <p id="patenteCliente">Patente: --</p>
-                        <p id="lavadoCliente">Lavado: --</p>
                         <p id="observacionCliente">Observación: --</p>
+                        <p id="lavadoCliente">Lavado: --</p>
+                        
 
                         <!-- Botón Generar QR -->
                         <button id="btnGenerarQRlavado" onclick="generarQRlavado()">

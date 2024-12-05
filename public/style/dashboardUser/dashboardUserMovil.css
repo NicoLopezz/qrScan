@@ -1,18 +1,18 @@
-
 @media (max-width: 768px) {
 
-    html, body {
+    html,
+    body {
         margin: 0;
         padding: 0;
         height: 100%;
         /* overflow: hidden; */
     }
 
-    #sidebar{
+    #sidebar {
         display: none;
     }
 
-    .nav-menu{
+    .nav-menu {
         display: block;
     }
 
@@ -45,13 +45,13 @@
 
 
 
-    .topBar{
+    .topBar {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 10px 20px;
-        background-color: var(--white-color);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #ededed;
+        box-shadow: 0 4px 8px #9e3993;
         border-radius: 10px;
         position: fixed;
         top: 0;
@@ -68,103 +68,213 @@
         display: none !important;
     }
 
-    .nav-menu{
+    .nav-menu {
         height: 120px !important;
 
     }
 
 
-.section.active {
-    display: block;
-}
+    .section.active {
+        display: block;
+    }
 
-/* CONTAINER TABLA Y DATOS */
+    /* CONTAINER TABLA Y DATOS */
 
 
 
-.tabla{
-    display: grid;
-    width: 120% !important;
-    display: none;
-}
+    .tabla {
+        display: grid;
+        width: 125% !important;
+        display: none;
+        overflow-y: auto; /* Habilita el desplazamiento vertical */
+        overflow-x: hidden; /* Evita el desplazamiento horizontal */
+    }
 
-.table-container {
-    max-height: 500px;
-    overflow-y: auto;
-}
+    .table-container {
+        max-height: 500px;
+        overflow-y: auto;
+        margin-bottom: 35%;
+        margin-top: -20px;
+    }
 
-.tarjeta {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 25px;
-    height: fit-content;
-    /* display: none; */
-}
+    table thead th {
+        position: sticky !important;
+        text-align: left;
 
-.qr-container {
-    text-align: center;
-    display: none;
-}
 
-/* #tarjetaReserva{
+    }
+
+    th {
+        display: table-cell !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+
+    #tablaLavados2 thead {
+        position: sticky;
+        top: 0;
+        /* Mantiene la cabecera en la parte superior */
+        z-index: 10;
+        /* Asegura que quede por encima del resto */
+        background-color: red;
+        /* Color de la cabecera */
+        overflow-y: auto; /* Habilita el desplazamiento vertical */
+        overflow-x: hidden; /* Evita el desplazamiento horizontal */
+    }
+
+    /* Ocultar las columnas "Modelo", "Lavado" y "Observación" */
+    #tablaLavados2 thead th:nth-child(2),
+    /* Encabezado "Modelo" */
+    #tablaLavados2 thead th:nth-child(4),
+    /* Encabezado "Lavado" */
+    #tablaLavados2 thead th:nth-child(5),
+    /* Encabezado "Observación" */
+    #tablaLavados2 tbody td:nth-child(2),
+    /* Celdas "Modelo" */
+    #tablaLavados2 tbody td:nth-child(4),
+    /* Celdas "Lavado" */
+    #tablaLavados2 tbody td:nth-child(5)
+
+    /* Celdas "Observación" */
+        {
+        display: none !important;
+        /* Oculta las columnas */
+    }
+
+    /* Mostrar "Modelo" y "Lavado" debajo del Nombre */
+    #tablaLavados2 tbody tr td:nth-child(1)::after {
+        content: attr(data-modelo) " - " attr(data-lavado);
+        display: block;
+        font-size: 14px;
+        font-weight: normal;
+        color: #555;
+        margin-top: -2px;
+        font-style: italic;
+    }
+
+    /* Modificar el estilo del contenido del primer <td> (Nombre) */
+    #tablaLavados2 tbody tr td:first-child {
+        font-weight: bold;
+        /* Poner el texto en negrita */
+        font-size: 16px;
+        /* Aumentar el tamaño de la fuente */
+        color: #000000;
+        /* Cambiar el color del texto */
+        text-transform: capitalize;
+        /* Capitalizar la primera letra */
+        padding: 5px;
+        /* Ajustar el espacio */
+    }
+
+    /* Ajuste para las columnas visibles */
+    #tablaLavados2 tbody tr td {
+        padding: 10px;
+        text-align: left;
+    }
+
+    /* Centrar la patente */
+    #tablaLavados2 tbody tr td:nth-child(3) {
+        text-align: center;
+        /* Centra la patente */
+        font-weight: bold;
+    }
+
+    /* Alinear la observación */
+    #tablaLavados2 tbody tr td:nth-child(5) {
+        text-align: right;
+        /* Alinea las observaciones a la derecha */
+        font-weight: bold;
+    }
+
+
+    .tarjeta {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 25px;
+        height: fit-content;
+        /* display: none; */
+    }
+
+    .qr-container {
+        text-align: center;
+        display: none;
+    }
+
+    /* #tarjetaReserva{
     display: none;
 } */
 
-#tarjetaCliente{
-    display: none;
-}
-
-.tarjetaYqr {
-    display: grid;
-    align-items: center;
-    justify-items: center;
-    margin-top: 10% !important;
-    width: 120%;
-}
-
-
-
-
-
-.menu-container {
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    /* padding: 10px 0; */
-    color: #ffffff;
-    /* font-family: 'Arial', sans-serif; */
-    font-size: 20px;
-    text-transform: uppercase;
-    margin-bottom: 35%;
-    width: 100%;
-    
-    border-radius: 10px;
-    background-image: linear-gradient(135deg, rgba(60, 8, 118, 1) 0%, rgba(250, 0, 118, 1) 100%);
+    #tarjetaCliente {
+        display: none;
     }
-  }
-  
-  .menu-option {
-    background: none; /* Sin fondo para botones */
-    border: none; /* Sin bordes */
+
+    .tarjetaYqr {
+        display: grid;
+        align-items: center;
+        justify-items: center;
+        margin-top: 10% !important;
+        width: 120%;
+    }
+
+
+    .menu-container {
+        position: fixed;
+        /* Hace que el elemento esté fijo en la pantalla */
+        bottom: 0;
+        /* Fija el elemento al borde inferior */
+        left: 0;
+        /* Alinea el elemento al borde izquierdo */
+        width: 100%;
+        /* Asegura que ocupe todo el ancho */
+        z-index: 10;
+        /* Asegura que esté por encima de otros elementos */
+        display: flex;
+        /* Mantiene los elementos alineados */
+        justify-content: space-evenly;
+        /* Espacia los elementos uniformemente */
+        align-items: center;
+        /* Centra los elementos verticalmente */
+        color: #ffffff;
+        font-size: 20px;
+        text-transform: uppercase;
+        background-image: linear-gradient(135deg, rgba(60, 8, 118, 1) 0%, rgba(250, 0, 118, 1) 100%);
+        border-radius: 10px 10px 0 0;
+        /* Bordes redondeados solo en la parte superior */
+        padding: 10px 0;
+        /* Añade algo de espacio interno */
+        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .menu-option {
+        background: none;
+        /* Sin fondo para botones */
+        border: none;
+        /* Sin bordes *
     color: inherit; /* Hereda el color del contenedor */
-    text-align: center; /* Centrado del texto */
-    font-size: inherit; /* Tamaño de texto igual al contenedor */
-    cursor: pointer; /* Indicador de interactividad */
-    flex: 1; /* Cada opción ocupa el mismo espacio */
-  }
-  
-  .menu-option:hover {
-    color: #f5a623; /* Cambia el color al pasar el cursor */
-    font-weight: bold; /* Resalta el texto */
-  }
-  
-  .menu-option:focus {
-    outline: none; /* Elimina el borde por defecto */
-  }
-  
+        text-align: center;
+        /* Centrado del texto */
+        font-size: inherit;
+        /* Tamaño de texto igual al contenedor */
+        cursor: pointer;
+        /* Indicador de interactividad */
+        flex: 1;
+        /* Cada opción ocupa el mismo espacio */
+    }
+
+    .menu-option:hover {
+        color: #f5a623;
+        /* Cambia el color al pasar el cursor */
+        font-weight: bold;
+        /* Resalta el texto */
+    }
+
+    .menu-option:focus {
+        outline: none;
+        /* Elimina el borde por defecto */
+    }
 
 
-
-
-
+    
+}

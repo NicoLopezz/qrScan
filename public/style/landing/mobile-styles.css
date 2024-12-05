@@ -7,19 +7,31 @@
     text-align: center;
   }
 
+  .topBar h1 {
+    font-size: 1rem;
+    /* Opcional: ajustar el tamaño */
+  }
+
+  .topBar h1::before {
+    content: "" !important;
+    /* Oculta el texto "Empresa:" */
+  }
+
   .img-holder img {
     width: 70%;
     height: auto;
   }
 
   .collapse {
-    transition: height 0.3s ease-out; /* Transición suave para colapsar */
+    transition: height 0.3s ease-out;
+    /* Transición suave para colapsar */
   }
-  
+
   .collapse.show {
-    transition: height 0.3s ease-in; /* Transición suave para expandirse */
+    transition: height 0.3s ease-in;
+    /* Transición suave para expandirse */
   }
-  
+
 
   /* Contact Section */
   .contact-container {
@@ -86,7 +98,8 @@
   /* Row Personal - Carrusel */
   .rowPersonal {
     display: grid;
-    overflow-x: auto; /* Scroll horizontal */
+    overflow-x: auto;
+    /* Scroll horizontal */
     padding: 20px;
     scroll-snap-type: x mandatory;
     border-radius: 20px;
@@ -94,9 +107,11 @@
 
   .cajaMotivos {
     flex: 0 0 auto;
-    width: 300px; /* Ancho fijo de cada tarjeta */
+    width: 300px;
+    /* Ancho fijo de cada tarjeta */
     padding: 20px;
-    scroll-snap-align: center; /* Centra la tarjeta al detenerse */
+    scroll-snap-align: center;
+    /* Centra la tarjeta al detenerse */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -130,7 +145,7 @@
     color: #555;
   }
 
-  #mediaNovedades{
+  #mediaNovedades {
     display: grid;
   }
 
@@ -227,15 +242,20 @@
   /* Bloques de contenido */
   .content-block {
     display: none;
-    opacity: 0; /* Oculto inicialmente */
-    transform: translateX(-20px); /* Aparece desde la izquierda */
-    transition: opacity 0.5s ease, transform 0.5s ease; /* Suaviza el movimiento y la opacidad */
+    opacity: 0;
+    /* Oculto inicialmente */
+    transform: translateX(-20px);
+    /* Aparece desde la izquierda */
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    /* Suaviza el movimiento y la opacidad */
   }
 
   .content-block.active {
     display: block;
-    opacity: 1; /* Totalmente visible */
-    transform: translateX(0); /* Regresa a su posición original */
+    opacity: 1;
+    /* Totalmente visible */
+    transform: translateX(0);
+    /* Regresa a su posición original */
   }
 
   /* Imágenes */
