@@ -326,12 +326,26 @@ async function handleLavadoMessage(body, fromWithPrefix) {
       // Actualizar los campos del lavado encontrado
       lavado.from = from; // Guardar el número del cliente
       lavado.selected = false; // Desmarcar el lavado como seleccionado
+      lavado.textConfirmation = true;
 
       // Guardar los cambios en la base de datos
       await admin.save();
 
       // Crear el mensaje personalizado para confirmación
-      const responseMessage = `Hola! ${lavado.nombre}, tu servicio de lavado ha sido confirmado. Gracias por tu paciencia.`;
+      // const responseMessage = `Hola! ${lavado.nombre}, tu servicio de lavado ha sido confirmado. 
+
+      const responseMessage =
+      `Aquí está el detalle de tu servicio ${nombre}:
+
+      🚙 Vehículo: ${modelo}
+      🧽 Tipo de lavado: ${tipoDeLavado}
+      🔖 Patente: ${patente}
+      📝 Observación: ${observacion || 'Sin observaciones'}
+      
+      Te avisaremos cuando este listo para ser retirado.`;
+      
+      
+      
 
       // Enviar un mensaje de confirmación al cliente
       await sendWhatsAppMessage(`whatsapp:${from}`, responseMessage);
@@ -943,7 +957,7 @@ async function qrScanUpdateLavados(req, res) {
     const code = _id.toString().slice(-5);
 
     // Construir el mensaje personalizado
-    const message = `Hola! ${nombre}, tu servicio de lavado está en proceso. Código: ${code}`;
+    const message = `${nombre}, confirmo servicio de lavado. Código: ${code}`;
 
     
 
