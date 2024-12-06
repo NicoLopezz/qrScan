@@ -39,7 +39,7 @@ function showConfirmation(element, action) {
     document.removeEventListener('click', handleClickOutside); // Eliminamos el listener global
   };
 
-  
+
 
   // Añadir los botones al cuadro de confirmación
   confirmationBox.appendChild(yesButton);
@@ -137,14 +137,14 @@ function moveToOrder(element) {
 function moveToPending(element) {
   showConfirmation(element, () => {
     const pendingContainer = document.getElementById('pending-tags');
-    
+
     // Eliminar cualquier cuadro de confirmación activo
     removeAllConfirmationBoxes();
-    
+
     // Clonar el elemento y añadir la clase de animación pop-in
     const clonedElement = element.cloneNode(true);
     clonedElement.classList.add('pop-in');
-    
+
     // Agregar un evento para devolverlo a "Tags libres"
     clonedElement.onclick = function () {
       moveToFree(clonedElement);
@@ -160,13 +160,13 @@ function moveToPending(element) {
     const tagNumber = parseInt(clonedElement.getAttribute('data-number'));
 
 
-        // Recuperar el adminId de la cookie
-        const adminId = getCookie('adminId');
-        if (!adminId) {
-          console.error("No se encontró el adminId en la cookie");
-          return;
-        }
-        console.log("Admin ID desde la cookie:", adminId);
+    // Recuperar el adminId de la cookie
+    const adminId = getCookie('adminId');
+    if (!adminId) {
+      console.error("No se encontró el adminId en la cookie");
+      return;
+    }
+    console.log("Admin ID desde la cookie:", adminId);
 
     fetch(`/api/readyPickUp/${adminId}`, {
       method: 'POST',
@@ -175,16 +175,16 @@ function moveToPending(element) {
       },
       body: JSON.stringify({ tagNumber })
     })
-    .then(response => response.json())
-    .then(data => {
-      if (data.error) {
-        console.log("MENSAJE ANTES DEL ERROR:" + tagNumber)
-        console.error('Error al notificar al usuario:', data.error);
-      } else {
-        console.log('Notificación enviada:', data.message);
-      }
-    })
-    .catch(error => console.error('Error en la solicitud:', error));
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          console.log("MENSAJE ANTES DEL ERROR:" + tagNumber)
+          console.error('Error al notificar al usuario:', data.error);
+        } else {
+          console.log('Notificación enviada:', data.message);
+        }
+      })
+      .catch(error => console.error('Error en la solicitud:', error));
 
     // Eliminar la clase de animación después de que termine
     setTimeout(() => {
@@ -200,10 +200,10 @@ function moveToPending(element) {
 function moveToFree(element) {
   showConfirmation(element, () => {
     const freeContainer = document.getElementById('free-tags');
-    
+
     // Eliminar cualquier cuadro de confirmación activo
     removeAllConfirmationBoxes();
-    
+
     // Clonar el elemento y añadir la clase de animación pop-in
     const clonedElement = element.cloneNode(true);
     clonedElement.classList.add('pop-in');
@@ -234,15 +234,15 @@ function moveToFree(element) {
       },
       body: JSON.stringify({ tagNumber })
     })
-    .then(response => response.json())
-    .then(data => {
-      if (data.error) {
-        console.error('Error al confirmar la recogida del pedido:', data.error);
-      } else {
-        console.log('Confirmación de recogida enviada:', data.message);
-      }
-    })
-    .catch(error => console.error('Error en la solicitud:', error));
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          console.error('Error al confirmar la recogida del pedido:', data.error);
+        } else {
+          console.log('Confirmación de recogida enviada:', data.message);
+        }
+      })
+      .catch(error => console.error('Error en la solicitud:', error));
 
     // Eliminar la clase de animación después de que termine
     setTimeout(() => {
@@ -286,7 +286,7 @@ function showNotification(message, type = 'success') {
   const notification = document.createElement('div');
   notification.classList.add('notification');
   if (type === 'error') {
-      notification.classList.add('error');
+    notification.classList.add('error');
   }
 
   notification.innerHTML = `
@@ -298,7 +298,7 @@ function showNotification(message, type = 'success') {
 
   // Eliminar la notificación automáticamente después de 4 segundos
   setTimeout(() => {
-      notification.remove();
+    notification.remove();
   }, 4000);
 }
 
@@ -315,31 +315,72 @@ function handleOption(option) {
 
   // Lógica para mostrar/ocultar elementos
   if (option === 'reservas') {
-      if (tarjetaYqr) {
-          tarjetaYqr.style.display = "grid"; // Hace visible tarjetaYqr
-      }
-      if (tabla) {
-          tabla.style.display = "none"; // Oculta tabla
-      }
+    if (tarjetaYqr) {
+      tarjetaYqr.style.display = "grid"; // Hace visible tarjetaYqr
+    }
+    if (tabla) {
+      tabla.style.display = "none"; // Oculta tabla
+    }
 
-      // Mover el highlight
-      if (highlight) {
-          highlight.style.transform = 'translateX(0)';
-      }
+    // Mover el highlight
+    if (highlight) {
+      highlight.style.transform = 'translateX(0)';
+    }
   } else if (option === 'tabla') {
-      if (tabla) {
-          tabla.style.display = "grid"; // Hace visible tabla
-      }
-      if (tarjetaYqr) {
-          tarjetaYqr.style.display = "none"; // Oculta tarjetaYqr
-      }
+    if (tabla) {
+      tabla.style.display = "grid"; // Hace visible tabla
+    }
+    if (tarjetaYqr) {
+      tarjetaYqr.style.display = "none"; // Oculta tarjetaYqr
+    }
 
-      // Mover el highlight
-      if (highlight) {
-          highlight.style.transform = 'translateX(100%)';
-      }
+    // Mover el highlight
+    if (highlight) {
+      highlight.style.transform = 'translateX(100%)';
+    }
   }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  const mainContent = document.querySelector('.content-container');
+  const sectionDashboard = document.getElementById('section-dashboard');
+
+  // Función para actualizar el overflow
+  function updateOverflow() {
+    if (sectionDashboard.classList.contains('section') && sectionDashboard.classList.contains('active')) {
+      mainContent.style.overflow = 'visible';
+      mainContent.style.overflowY = 'auto';
+    } else {
+      mainContent.style.overflow = '';
+      mainContent.style.overflowY = '';
+    }
+  }
+
+  // Verificar cambios de clase dinámicamente
+  const observer = new MutationObserver(updateOverflow);
+
+  observer.observe(sectionDashboard, {
+    attributes: true, // Observa cambios en los atributos
+    attributeFilter: ['class'] // Específicamente cambios en la clase
+  });
+
+  // Ejecuta al cargar por primera vez
+  updateOverflow();
+});
+
+
+document.querySelectorAll('.nav-link[data-bs-toggle="collapse"]').forEach(link => {
+  link.addEventListener('click', () => {
+    const navbar = document.querySelector('.navbar-collapse');
+    const collapse = new bootstrap.Collapse(navbar, {
+      toggle: false, // Asegura que no se despliegue accidentalmente
+    });
+    collapse.hide(); // Cierra el menú suavemente
+  });
+});
+
+
+
 
 
 

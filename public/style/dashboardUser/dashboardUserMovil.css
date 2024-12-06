@@ -16,6 +16,14 @@
         display: block;
     }
 
+    ul li {
+
+        font-size: 18px;
+        color: white;
+
+        padding: 25px;
+    }
+
     .nav-menu {
         height: 100px !important;
     }
@@ -28,19 +36,19 @@
 
 
 
+
+
     .content-container {
-        padding: 25px;
+        padding: 10px;
         border-radius: 15px;
-        /* max-width: 1500px; */
         margin: 40px auto;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0);
         height: 85%;
-        width: 95%;
+        width: 100%;
         margin-left: 0;
         margin-right: 0;
         margin-bottom: 5%;
         z-index: 100;
-        position: fixed !important;
     }
 
 
@@ -85,15 +93,13 @@
 
     .tabla {
         display: grid;
-        width: 120% !important;
+        width: 110% !important;
         display: none;
-        overflow-y: hidden;
-        /* Habilita el desplazamiento vertical */
-        overflow-x: hidden;
-        /* Evita el desplazamiento horizontal */
+        overflow: unset !important;
         height: 32rem;
-        margin-top: 0%;
+        margin-top: 12%;
         z-index: 2;
+
     }
 
     .table-container {
@@ -232,30 +238,32 @@
         justify-content: center;
         align-items: center;
         z-index: 1000;
-    
+
         /* Estado inicial (oculto) */
         visibility: hidden;
         opacity: 0;
         transition: opacity 0.3s ease, visibility 0.3s ease;
     }
-    
+
     .qr-overlay.visible {
-        visibility: visible !important; /* Mostrar */
-        opacity: 1 !important; /* Totalmente visible */
+        visibility: visible !important;
+        /* Mostrar */
+        opacity: 1 !important;
+        /* Totalmente visible */
         z-index: 1000000 !important;
     }
-    
+
     .qr-container {
         position: relative;
         padding: 4rem;
     }
-    
+
     .qr-container canvas {
         width: 200px;
         height: 200px;
         margin-top: 3rem;
     }
-    
+
     .close-btn {
         background: transparent;
         border: none;
@@ -263,7 +271,7 @@
         color: #fff7f785;
         cursor: pointer;
     }
-    
+
 
 
 
@@ -277,8 +285,8 @@
         display: grid;
         align-items: center;
         justify-items: center;
-        margin-top: 10% !important;
-        width: 120% !important;
+        margin-top: 20% !important;
+        width: 100% !important;
     }
 
 
@@ -393,6 +401,123 @@
         font-size: 2rem;
         /* Cambia el tamaño según necesites */
         color: #9135a2;
+    }
+
+    #section-lavaderos {
+        overflow-y: unset;
+    }
+
+
+    /* SECTION DASHBOARD */
+
+    /* Estilo para las tarjetas en una columna */
+    .cards {
+        flex-direction: column;
+        gap: 1rem;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 27px;
+        margin-bottom: 5rem;
+        width: 100%;
+        justify-items: center;
+        margin-top: 10rem;
+        align-items: center;
+
+    }
+
+    .card {
+        flex: 1 1 100%;
+        /* Cada tarjeta ocupa todo el ancho */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: #f5f5f5;
+        padding: 1rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .icon-container {
+        font-size: 2rem;
+        color: #6b00ad;
+    }
+
+    .card-content h3 {
+        margin: 0.5rem 0;
+        font-size: 1.2rem;
+        color: #333;
+    }
+
+    .card-content p {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #555;
+    }
+
+    /* Gráficos uno debajo del otro */
+    .charts {
+        flex-direction: column;
+        /* Gráficos apilados verticalmente */
+        gap: 10rem;
+        /* Espaciado entre gráficos */
+    }
+
+    .charts-and-counter {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        margin-top: 10rem;
+        margin-bottom: 3rem;
+        /* margin-bottom: -100px; */
+    }
+
+    .charts canvas {
+        width: 100%;
+        /* Ocupan todo el ancho disponible */
+        max-width: 100%;
+        height: auto;
+        aspect-ratio: 1.6;
+        /* Proporción estándar */
+        border: 1px solid #ddd;
+        /* Opcional: borde para visualizar mejor */
+    }
+
+    /* Tabla fluida */
+    .table-section {
+        overflow-x: auto;
+        /* Permite desplazarse horizontalmente si es necesario */
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    table th,
+    table td {
+        padding: 0.75rem;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    table th {
+        background-color: #f0f0f0;
+        font-weight: bold;
+    }
+
+    table tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    /* Ajustes generales para la sección */
+    #section-dashboard {
+        flex-direction: column;
+        gap: 1rem;
+        /* Espaciado ent100re las secciones */
+        padding: 1rem;
     }
 
 
