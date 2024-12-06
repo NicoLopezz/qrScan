@@ -76,6 +76,7 @@
     opacity: 1 !important;
     z-index: 100000;
     height: 10% !important;
+    position: fixed !important;
   }
 
   .nav-menu.is-scrolling {

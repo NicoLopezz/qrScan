@@ -139,6 +139,14 @@
         </div>
     </div>
 
+    <!-- Contenedor QR flotante -->
+    <div id="qrOverlay" class="qr-overlay">
+        <div class="qr-container">
+            <canvas id="qrcode2"></canvas> <!-- Aquí está el QR ya generado -->
+            <button id="closeQR" class="close-btn">✖</button>
+        </div>
+    </div>
+
     <!-- Contenedor principal del contenido -->
     <div class="content-container">
         <div class="main-content">
@@ -348,7 +356,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        
+
 
                     </div>
 
@@ -371,7 +379,6 @@
                             <i class="fab fa-whatsapp"></i> Enviar Aviso
                         </button>
                     </div>
-
                     <!-- Tarjeta Alta Nuevo Lavado -->
                     <div class="tarjetaYqr visible" id="tarjetaYqr">
                         <div class="tarjeta" id="tarjetaReserva">
@@ -389,11 +396,6 @@
                             <input type="text" id="inputObservation" placeholder="Observaciones" />
                             <button id="btnAgregar" onclick="agregarLavado()">Agregar Lavado</button>
                         </div>
-
-                        <!-- Contenedor QR -->
-                        <div class="qr-container">
-                            <canvas id="qrcode2"></canvas>
-                        </div>
                     </div>
 
 
@@ -406,7 +408,7 @@
                         <div class="btnsMovil">
                             <!-- Botón Generar QR -->
                             <button class="btnAction" id="btnGenesrarQRlavado" onclick="generarQRlavado()">
-                                <i class="fas fa-qrcode" ></i>
+                                <i class="fas fa-qrcode"></i>
                             </button>
                             <!-- Botón Enviar Aviso -->
                             <button class="btnAction" id="btnAvisoLavado">

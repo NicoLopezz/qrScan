@@ -176,12 +176,12 @@ h2 {
   border-radius: 5px;
   padding: 15px 20px;
   min-width: 250px;
-  max-width: 400px;
+  max-width: 600px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  animation: fadeIn 0.4s ease, fadeOut 0.4s ease 2.5s forwards;
+  /* animation: fadeIn 0.4s ease, fadeOut 0.4s ease 2.5s forwards; */
   font-family: Arial, sans-serif;
 }
 
@@ -243,4 +243,48 @@ h2 {
   .grid-item {
     height: 60px;
   }
+
+
+
+  #notification-container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .notification {
+    background-color: #e0f8e9;
+    color: #2d6a4f;
+    border: 1px solid #95d5b2;
+    border-radius: 5px;
+    padding: 15px 20px;
+    min-width: 250px;
+    max-width: 700px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.4s ease, fadeOut 0.4s ease 2.5s forwards;
+    font-family: Arial, sans-serif;
+    width: 125%;
+    gap: 20px;
+  }
+  
+  .notification.error {
+    background-color: #fde2e2;
+    color: #d9534f;
+    border-color: #f5c6cb;
+  }
+
+  
+
+
+
+
 }

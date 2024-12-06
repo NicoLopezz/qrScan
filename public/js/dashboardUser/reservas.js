@@ -280,7 +280,7 @@ async function generarQR() {
 
         const data = await response.json();
         if (data.success) {
-            showNotification("QR generado con éxito. Ahora puede escanear el código.", "success");
+            showNotification("Por favor, escanear el qr.", "success");
             console.log("Cliente seleccionado actualizado correctamente.");
         } else {
             showNotification("Error al actualizar el cliente seleccionado.", "error");
@@ -292,10 +292,10 @@ async function generarQR() {
     }
 }
 
+
 async function generarQRlavado() {
     if (!lavadoSeleccionado) {
         showNotification("No hay un cliente seleccionado.", "error");
-        console.error("No hay un cliente seleccionado.");
         return;
     }
 
@@ -310,17 +310,25 @@ async function generarQRlavado() {
 
         const data = await response.json();
         if (data.success) {
-            showNotification("QR generado con éxito. Ahora puede escanear el código.", "success");
-            console.log("Cliente seleccionado actualizado correctamente.");
+            showNotification("Por favor escanee el QR", "success");
+
+            // Agrega la clase visible
+            const qrOverlay = document.getElementById("qrOverlay");
+            qrOverlay.classList.add("visible");
         } else {
             showNotification("Error al actualizar el cliente seleccionado.", "error");
-            console.error("Error al actualizar el cliente seleccionado.");
         }
     } catch (error) {
         showNotification("Ocurrió un error al intentar actualizar el cliente.", "error");
-        console.error("Error en la solicitud:", error);
     }
 }
+
+// Cerrar el QR al hacer clic en el botón "X"
+document.getElementById("closeQR").addEventListener("click", () => {
+    const qrOverlay = document.getElementById("qrOverlay");
+    qrOverlay.classList.remove("visible");
+});
+
 
 
 
@@ -462,7 +470,7 @@ document.getElementById('btnIniciar').addEventListener('click', async () => {
 
         const result = await response.json();
         if (result.success) {
-            showNotification("Mensaje enviado al cliente. Ahora puedes monitorear la cuenta regresiva.");
+            showNotification("Mensaje enviado al cliente exitosamente.");
 
             // Inicia la cuenta regresiva solo si el mensaje fue enviado con éxito
             iniciarCuentaRegresiva();
@@ -502,7 +510,7 @@ document.getElementById('btnAvisoLavado').addEventListener('click', async () => 
 
         const result = await response.json();
         if (result.success) {
-            showNotification("Mensaje enviado al cliente. Ahora puedes monitorear la cuenta regresiva.");
+            showNotification("Mensaje enviado al cliente exitosamente.");
 
             // Inicia la cuenta regresiva solo si el mensaje fue enviado con éxito
             iniciarCuentaRegresiva();

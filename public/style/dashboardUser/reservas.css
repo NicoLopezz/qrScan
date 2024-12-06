@@ -110,9 +110,9 @@ form {
     padding: 10px 20px;
     font-size: 16px;
     border: none;
-    border-radius: 5px;
+    border-radius: 10px;
     cursor: pointer;
-    width: 100%; /* Ajuste al tamaño del formulario */
+    width: 45%;
   }
   
   button#btnAgregar:hover {
@@ -123,8 +123,9 @@ form {
   @media (max-width: 768px) {
     #selectServicio {
       font-size: 14px; /* Tamaño de texto más pequeño */
-      width: 90%; /* Asegura que no ocupe más espacio */
+      width: 65%; /* Asegura que no ocupe más espacio */
       margin: 0 auto; /* Centra el select */
+      text-align: center;
     }
   
     .tarjeta {
