@@ -348,6 +348,8 @@
                                 </tbody>
                             </table>
                         </div>
+                        
+
                     </div>
 
                     <!-- Tarjeta del Cliente Seleccionado -->
@@ -357,7 +359,7 @@
                         <p id="patenteCliente">Patente: --</p>
                         <p id="observacionCliente">Observación: --</p>
                         <p id="lavadoCliente">Lavado: --</p>
-                        
+
 
                         <!-- Botón Generar QR -->
                         <button id="btnGenerarQRlavado" onclick="generarQRlavado()">
@@ -365,7 +367,7 @@
                         </button>
 
                         <!-- Botón Enviar Aviso -->
-                        <button id="btnAvisoLavado">
+                        <button id="btnAvisoLavado2">
                             <i class="fab fa-whatsapp"></i> Enviar Aviso
                         </button>
                     </div>
@@ -373,7 +375,7 @@
                     <!-- Tarjeta Alta Nuevo Lavado -->
                     <div class="tarjetaYqr visible" id="tarjetaYqr">
                         <div class="tarjeta" id="tarjetaReserva">
-                            <h3>Nuevo Cliente</h3>
+                            <h3>Agregar Cliente</h3>
                             <input type="text" id="inputNombre2" placeholder="Nombre" required />
                             <input type="text" id="inputModelo" placeholder="Modelo" required />
                             <input type="text" id="inputPatente" placeholder="Patente" required />
@@ -394,13 +396,26 @@
                         </div>
                     </div>
 
+
+
+
                     <!-- Menú de Navegación -->
                     <div class="menu-container">
                         <div class="background-highlight"></div>
-                        <button class="menu-option" onclick="handleOption('reservas')">Reservas</button>
+                        <button class="menu-option" onclick="handleOption('reservas')">Nuevo</button>
+                        <div class="btnsMovil">
+                            <!-- Botón Generar QR -->
+                            <button class="btnAction" id="btnGenesrarQRlavado" onclick="generarQRlavado()">
+                                <i class="fas fa-qrcode" ></i>
+                            </button>
+                            <!-- Botón Enviar Aviso -->
+                            <button class="btnAction" id="btnAvisoLavado">
+                                <i class="fab fa-whatsapp"></i>
+                            </button>
+                        </div>
                         <button class="menu-option" onclick="handleOption('tabla')">Tabla</button>
                     </div>
-                    
+
                 </div>
             </div>
 

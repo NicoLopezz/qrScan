@@ -527,47 +527,46 @@ document.getElementById('btnAvisoLavado').addEventListener('click', async () => 
     }
 });
 
+document.getElementById('btnAvisoLavado2').addEventListener('click', async () => {
+    try {
+        const clienteId = lavadoSeleccionado; // Asegura que ya tienes el cliente seleccionado
 
-// document.querySelectorAll("#tablaLavados2 tbody tr").forEach((row, index) => {
-//     console.log(`Procesando fila ${index + 1}...`);
-    
-//     // Captura el contenido de las columnas "Modelo" y "Lavado"
-//     const modeloCell = row.querySelector("td:nth-child(2)");
-//     const lavadoCell = row.querySelector("td:nth-child(4)");
+        // Solicitud al servidor para enviar el mensaje
+        const response = await fetch(`/api/enviarAvisoRetiroLavado`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ clienteId })
+        });
 
-//     // Logs para confirmar si se capturaron las celdas
-//     console.log(`Fila ${index + 1} - modeloCell:`, modeloCell ? modeloCell.textContent.trim() : 'No encontrado');
-//     console.log(`Fila ${index + 1} - lavadoCell:`, lavadoCell ? lavadoCell.textContent.trim() : 'No encontrado');
+        const result = await response.json();
+        if (result.success) {
+            showNotification("Mensaje enviado al cliente. Ahora puedes monitorear la cuenta regresiva.");
 
-//     // Si las celdas no existen, salta esta fila
-//     if (!modeloCell || !lavadoCell) {
-//         console.warn(`Fila ${index + 1} no tiene las celdas "Modelo" o "Lavado".`);
-//         return;
-//     }
+            // Inicia la cuenta regresiva solo si el mensaje fue enviado con éxito
+            iniciarCuentaRegresiva();
 
-//     // Extraer contenido y verificar si están vacíos
-//     const modelo = modeloCell.textContent.trim() || "Sin modelo";
-//     const lavado = lavadoCell.textContent.trim() || "Sin lavado";
+            // Aplicar el estilo de resaltado a la fila del cliente
+            const filaCliente = document.getElementById(`cliente-row-${clienteId}`);
+            if (filaCliente) {
+                filaCliente.classList.add('highlight-row');
+            }
 
-//     // Log para confirmar los valores extraídos
-//     console.log(`Fila ${index + 1} - Modelo extraído: ${modelo}`);
-//     console.log(`Fila ${index + 1} - Lavado extraído: ${lavado}`);
+            // Cambiar el color de la columna "Tiempo" a rojo
+            const tiempoCelda = document.getElementById(`tiempo-cliente-${clienteId}`);
+            if (tiempoCelda) {
+                tiempoCelda.classList.add('red-text');
+            }
+        } else {
+            showNotification("Hubo un problema al enviar el mensaje.", "error");
+        }
+    } catch (error) {
+        showNotification("Ocurrió un error al intentar enviar el mensaje.", "error");
+        console.error('Error al enviar el mensaje:', error);
+    }
+});
 
-//     // Asigna los valores a la primera columna (Nombre)
-//     const nombreCell = row.querySelector("td:nth-child(1)");
-//     if (nombreCell) {
-//         nombreCell.setAttribute("data-modelo", modelo);
-//         nombreCell.setAttribute("data-lavado", lavado);
-
-//         // Log para confirmar los atributos asignados
-//         console.log(`Fila ${index + 1} - Atributos asignados:`, {
-//             "data-modelo": nombreCell.getAttribute("data-modelo"),
-//             "data-lavado": nombreCell.getAttribute("data-lavado"),
-//         });
-//     } else {
-//         console.warn(`Fila ${index + 1} no tiene la celda "Nombre".`);
-//     }
-// });
 
 
 
