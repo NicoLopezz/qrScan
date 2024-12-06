@@ -12,7 +12,7 @@
         display: grid;
         justify-content: center;
         align-items: center;
-        margin-top: 5rem; /* Ajustado para evitar mucho desplazamiento negativo */
+        margin-top: -3rem; /* Ajustado para evitar mucho desplazamiento negativo */
     }
 
     .text-content,
@@ -87,7 +87,7 @@
     }
 
     .text-content p {
-        font-size: 14px;
+        font-size: 20px;
     }
 
     .whatsapp-float {

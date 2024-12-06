@@ -307,29 +307,41 @@ function showNotification(message, type = 'success') {
 
 
 
-// MANEJO DE BTN VERSIÓN DE MÓVIL
 function handleOption(option) {
+  // Seleccionamos los elementos necesarios
   const tarjetaYqr = document.querySelector("#tarjetaYqr");
   const tabla = document.querySelector("#tablaLavados2");
+  const highlight = document.querySelector('.background-highlight');
 
+  // Lógica para mostrar/ocultar elementos
   if (option === 'reservas') {
-      // Muestra tarjetaYqr y oculta tabla
       if (tarjetaYqr) {
           tarjetaYqr.style.display = "grid"; // Hace visible tarjetaYqr
       }
       if (tabla) {
           tabla.style.display = "none"; // Oculta tabla
       }
+
+      // Mover el highlight
+      if (highlight) {
+          highlight.style.transform = 'translateX(0)';
+      }
   } else if (option === 'tabla') {
-      // Muestra tabla y oculta tarjetaYqr
       if (tabla) {
           tabla.style.display = "grid"; // Hace visible tabla
       }
       if (tarjetaYqr) {
           tarjetaYqr.style.display = "none"; // Oculta tarjetaYqr
       }
+
+      // Mover el highlight
+      if (highlight) {
+          highlight.style.transform = 'translateX(100%)';
+      }
   }
 }
+
+
 
 
 

@@ -75,14 +75,37 @@
     background-image: linear-gradient(135deg, rgba(60, 8, 118, 0.8) 0%, rgba(250, 0, 118, 0.8) 100%);
     opacity: 1 !important;
     z-index: 100000;
+    height: 10% !important;
   }
 
   .nav-menu.is-scrolling {
     background-image: linear-gradient(135deg, rgba(60, 8, 118, 1) 0%, rgba(250, 0, 118, 1) 100%);
   }
 
+
+  .navbar {
+    position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem 1rem;
+        flex-wrap: nowrap;
+        width: auto;
+        margin-top: -5%;
+  }
+
+  .navbar-brand {
+    margin-right: auto;
+    /* Alinea el logo a la izquierda */
+  }
+
+  .navbar-toggler {
+    margin-left: auto;
+    /* Alinea el menú hamburguesa a la derecha */
+  }
+
   .nav-menu .navbar-brand img {
-    width: 70px;
+    width: 12%;
     height: auto;
   }
 
@@ -287,5 +310,8 @@
   .social-icons {
     justify-content: center;
   }
+
+
+
 
 }

@@ -29,7 +29,6 @@
 
 
     .content-container {
-        background-color: #afafaf;
         padding: 25px;
         border-radius: 15px;
         /* max-width: 1500px; */
@@ -39,7 +38,7 @@
         width: 95%;
         margin-left: 0;
         margin-right: 0;
-        margin-bottom: -25%;
+        margin-bottom: -5%;
         z-index: 100;
     }
 
@@ -50,8 +49,8 @@
         justify-content: space-between;
         align-items: center;
         padding: 10px 20px;
-        background-color: #ededed;
-        box-shadow: 0 4px 8px #9e3993;
+        background-color: #ffffff;
+        box-shadow: 0 4px 8px #c4c4c4;
         border-radius: 10px;
         position: fixed;
         top: 0;
@@ -59,7 +58,7 @@
         width: 80%;
         z-index: 1000;
         transition: opacity 0.2s ease;
-        margin-top: 30%;
+        margin-top: 20%;
         margin-left: 0px;
         width: 80%;
     }
@@ -84,17 +83,22 @@
 
     .tabla {
         display: grid;
-        width: 125% !important;
+        width: 120% !important;
         display: none;
         overflow-y: auto; /* Habilita el desplazamiento vertical */
         overflow-x: hidden; /* Evita el desplazamiento horizontal */
+        height: 30rem;
+        margin-top: 0%;
     }
 
     .table-container {
         max-height: 500px;
         overflow-y: auto;
         margin-bottom: 35%;
-        margin-top: -20px;
+        /* margin-top: -20px; */
+        /* overflow-y: hidden; */
+        /* overflow-x: hidden; */
+        
     }
 
     table thead th {
@@ -194,7 +198,16 @@
         align-items: center;
         padding: 25px;
         height: fit-content;
+        width: 100%;
+        margin-top: -10%;
         /* display: none; */
+    }
+
+    .tarjeta h3 {
+        font-size: 33px;
+        color: #6b00ad;
+        margin-bottom: 20px;
+        text-align: center;
     }
 
     .qr-container {
@@ -215,66 +228,66 @@
         align-items: center;
         justify-items: center;
         margin-top: 10% !important;
-        width: 120%;
+        width: 120% !important;
     }
 
 
     .menu-container {
         position: fixed;
-        /* Hace que el elemento esté fijo en la pantalla */
-        bottom: 0;
-        /* Fija el elemento al borde inferior */
-        left: 0;
-        /* Alinea el elemento al borde izquierdo */
-        width: 100%;
-        /* Asegura que ocupe todo el ancho */
+        bottom: 20px;
+        width: 80%;
         z-index: 10;
-        /* Asegura que esté por encima de otros elementos */
         display: flex;
-        /* Mantiene los elementos alineados */
         justify-content: space-evenly;
-        /* Espacia los elementos uniformemente */
         align-items: center;
-        /* Centra los elementos verticalmente */
-        color: #ffffff;
+        color: #954493;
         font-size: 20px;
         text-transform: uppercase;
-        background-image: linear-gradient(135deg, rgba(60, 8, 118, 1) 0%, rgba(250, 0, 118, 1) 100%);
-        border-radius: 10px 10px 0 0;
-        /* Bordes redondeados solo en la parte superior */
-        padding: 10px 0;
-        /* Añade algo de espacio interno */
-        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+        background-image: linear-gradient(118deg, rgb(255 255 255) 0%, rgb(255 255 255) 100%);
+        border-radius: 15px;
+        padding: 0px 30px;
+        box-shadow: -16px 2px 20px 0px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        margin-bottom: 0%;
     }
-
+    
     .menu-option {
         background: none;
-        /* Sin fondo para botones */
         border: none;
-        /* Sin bordes *
-    color: inherit; /* Hereda el color del contenedor */
+        color: #f5a623;
         text-align: center;
-        /* Centrado del texto */
-        font-size: inherit;
-        /* Tamaño de texto igual al contenedor */
-        cursor: pointer;
-        /* Indicador de interactividad */
+        font-size: 16px;
+        /* cursor: pointer; */
         flex: 1;
-        /* Cada opción ocupa el mismo espacio */
+        position: relative;
+        z-index: 1;
+        transition: color 0.3s ease;
+        font-weight: bold;
     }
-
+    }
+    
     .menu-option:hover {
         color: #f5a623;
-        /* Cambia el color al pasar el cursor */
         font-weight: bold;
-        /* Resalta el texto */
     }
+    
+    .background-highlight {
+        position: absolute;
+        bottom: 5px;
+        left: 0;
+        width: 48%;
+        height: calc(100% - 10px);
+        background-image: linear-gradient(135deg, rgb(120 39 172) 0%, rgb(178 71 147) 100%);
+        border-radius: 10px;
+        transform: translateX(0);
+        transition: transform 0.4s ease, background 0.3s ease;
+        z-index: 0;
+        margin-left: 2%;
+    }
+    
+    
 
     .menu-option:focus {
         outline: none;
         /* Elimina el borde por defecto */
     }
-
-
-    
-}
