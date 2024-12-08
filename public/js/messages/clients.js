@@ -26,12 +26,12 @@ export function displayClientList(clientes, handleClientClick) {
         // Nombre del cliente
         const clientName = document.createElement("span");
         clientName.classList.add("client-name");
-        clientName.textContent = cliente.name || "No Disponible";
+        clientName.textContent = cliente.nombre || "No Disponible";
 
         // Número de cliente
         const clientNumber = document.createElement("span");
         clientNumber.classList.add("client-number");
-        clientNumber.textContent = cliente.from || "Número no disponible";
+        clientNumber.textContent = cliente.from || "No disponible";
 
         // Agregar el nombre y número a la información del cliente
         clientInfo.appendChild(clientName);
@@ -107,3 +107,5 @@ export function updateSelectedCount() {
         sendButton.style.backgroundColor = "#25D366";
     }
 }
+
+

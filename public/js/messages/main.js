@@ -4,6 +4,9 @@ import { updateSelectedCount } from './utils.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
     // Obtener el ID del admin desde las cookies
+
+    cargarLavadosEnTabla();
+
     const adminId = getCookie('adminId');
     if (!adminId) {
         console.error('No se encontró el adminId en las cookies. El usuario debe iniciar sesión.');
@@ -57,6 +60,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Deseleccionar todos los clientes al hacer clic en el botón
     const deselectAllButton = document.getElementById('deselectAllButton');
     deselectAllButton.addEventListener('click', deselectAllClients);
+
+
+
 });
 
 // Función para obtener la cookie del adminId
@@ -104,4 +110,33 @@ function loadClientData(client) {
 function generateStars(visits) {
     let stars = '⭐'.repeat(visits) + '☆'.repeat(5 - visits);
     return `<span class="stars">${stars}</span>`;
+}
+
+
+async function cargarLavadosEnTabla() {
+    const adminId = getCookie('adminId'); // Obtén el adminId de la cookie
+
+    try {
+        // Hacer la solicitud para obtener los lavados
+        const response = await fetch(`/api/admins/${adminId}/lavados`);
+        if (!response.ok) throw new Error('No se pudo cargar los lavados');
+        
+        const lavados = await response.json();
+
+        // Verifica si hay lavados
+        if (!lavados.length) {
+            console.warn('No se encontraron lavados asociados al administrador.');
+            return;
+        }
+
+        // Renderizar los lavados utilizando `displayClientList`
+        displayClientList(lavados, lavadoSeleccionado => {
+            // Aquí defines qué sucede al hacer clic en un lavado
+            console.log('Lavado seleccionado:', lavadoSeleccionado);
+        });
+
+        console.log('Lavados cargados exitosamente en la tabla.');
+    } catch (error) {
+        console.error('Error al cargar los lavados:', error);
+    }
 }

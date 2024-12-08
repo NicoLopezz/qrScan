@@ -172,7 +172,7 @@
         <div class="main-content">
 
             <!-- Sección Dashboard -->
-            <div id="section-dashboard" class="section active">
+            <div id="section-dashboard" class="section">
                 <div class="cards">
                     <div class="card">
                         <div class="icon-container">
@@ -531,8 +531,8 @@
             </div>
 
             <!-- Sección Mensajes -->
-            <div id="section-mensajes" class="section">
-                <div class="section-mensajes">
+            <div id="section-mensajes" class="section-active">
+                <div class="section-mensajes" id="section-mensajesMovil">
                     <div class="whatsapp-simulator-box">
                         <!-- Barra lateral izquierda -->
                         <div class="whatsapp-sidebar">
@@ -541,20 +541,22 @@
                                 <input type="text" id="searchInput" placeholder="Buscar..." class="whatsapp-search-bar">
                                 <span id="clearSearch" class="clear-search">&times;</span>
                                 <!-- Cruz para limpiar búsqueda -->
-                            </div>
-                            <!-- Botones de selección -->
-                            <div class="select-buttons">
-                                <button id="selectAllButton" class="select-button">Seleccionar todos</button>
-                                <button id="deselectAllButton" class="select-button">Deseleccionar todos</button>
+                                <!-- Botones de selección -->
+                                <div class="select-buttons">
+                                    <select id="filterSelect" class="filter-select">
+                                        <option value="" disabled selected>Filtros...</option>
+                                        <option value="low-comments">Comentarios bajos</option>
+                                        <option value="no-service-15">+15 días sin servicio</option>
+                                        <option value="frequent">Frecuentes</option>
+                                    </select>
+                                    
+                                    <button id="selectAllButton" class="select-button">Todos</button>
+                                    <button id="deselectAllButton" class="select-button">Ninguno</button>
+                                </div>
+
                             </div>
                             <ul id="clientList">
                                 <!-- Se llenará dinámicamente con clientes -->
-                                <li>
-                                    <div class="client-info">
-                                        <span class="client-name">Cliente 1</span>
-                                        <span class="client-number">+1 (555) 123-4567</span>
-                                    </div>
-                                </li>
                                 <!-- Puedes agregar más clientes si lo deseas -->
                             </ul>
                         </div>
@@ -574,7 +576,7 @@
                             <div class="whatsapp-chat-footer">
                                 <input type="text" id="messageInput" placeholder="Escribe un mensaje..."
                                     class="whatsapp-message-input">
-                                <button id="sendButton" class="whatsapp-send-button">
+                                <button id="sendButton2" class="whatsapp-send-button">
                                     Enviar (<span id="selectedCount">0</span>)
                                 </button>
                             </div>
@@ -620,91 +622,114 @@
                             </table>
                         </div>
 
-                        <div class="cardM">
-                            <div class="icon-container">
-                                <i class="fas fa-box"></i>
+                        <!-- Panel principal (Área de chat) -->
+                        <div class="whatsapp-chat-panel2">
+                            <div class="whatsapp-chat-header">
+                                <img src="/img/userIcon.png" alt="Foto de perfil" id="profilePic">
+                                <div class="whatsapp-header-info">
+                                    <span id="phoneNumber">Selecciona un cliente</span>
+                                    <span class="whatsapp-status">En línea</span>
+                                </div>
                             </div>
-                            <div class="card-content">
-                                <h3 class="titleCard">Mensajes</h3>
-                                <p class="card-number">256/500</p>
+                            <div id="chatHistory" class="whatsapp-chat-history">
+                                <!-- Mensajes se llenarán dinámicamente -->
                             </div>
+                            <div class="whatsapp-chat-footer">
+                                <input type="text" id="messageInput" placeholder="Escribe un mensaje..."
+                                    class="whatsapp-message-input">
+                                <button id="sendButton" class="whatsapp-send-button">
+                                    Enviar (<span id="selectedCount">0</span>)
+                                </button>
+                            </div>
+
                         </div>
-
                     </div>
 
+                    <div class="cardM">
+                        <div class="icon-container">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 class="titleCard">Mensajes</h3>
+                            <p class="card-number">256/500</p>
+                        </div>
+                    </div>
 
                 </div>
 
-            </div>
 
-            <!-- Sección para crear un usuario -->
-            <div id="section-users" class="section">
-                <div class="sectionForm">
-                    <div class="formCreateUser">
-                        <h2>Crear Usuario</h2>
-                        <form class="form-create-user">
-                            <label for="email">Email:</label>
-                            <input type="email" id="email" name="email" required>
-
-                            <label for="password">Contraseña:</label>
-                            <input type="password" id="password" name="password" required>
-
-                            <label for="role">Rol:</label>
-                            <select id="role" name="role" required>
-                                <option value="admin">Admin</option>
-                                <option value="editor">Editor</option>
-                                <option value="viewer">Viewer</option>
-                            </select>
-
-                            <button type="submit">Crear Usuario</button>
-                        </form>
-                    </div>
-
-                    <div class="activeUsers">
-                        <h2>Usuarios Activos</h3>
-                            <div class="table-section">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Email</th>
-                                            <th>Rol</th>
-                                            <th>Estado</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>juan.perez@example.com</td>
-                                            <td>Admin</td>
-                                            <td>Activo</td>
-                                        </tr>
-                                        <tr>
-                                            <td>maria.garcia@example.com</td>
-                                            <td>Editor</td>
-                                            <td>Activo</td>
-                                        </tr>
-                                        <tr>
-                                            <td>luis.mendez@example.com</td>
-                                            <td>Viewer</td>
-                                            <td>Activo</td>
-                                        </tr>
-                                        <tr>
-                                            <td>sofia.lopez@example.com</td>
-                                            <td>Admin</td>
-                                            <td>Activo</td>
-                                        </tr>
-                                        <tr>
-                                            <td>pedro.fernandez@example.com</td>
-                                            <td>Viewer</td>
-                                            <td>Activo</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                    </div>
-                </div>
             </div>
 
         </div>
+
+        <!-- Sección para crear un usuario -->
+        <div id="section-users" class="section">
+            <div class="sectionForm">
+                <div class="formCreateUser">
+                    <h2>Crear Usuario</h2>
+                    <form class="form-create-user">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required>
+
+                        <label for="password">Contraseña:</label>
+                        <input type="password" id="password" name="password" required>
+
+                        <label for="role">Rol:</label>
+                        <select id="role" name="role" required>
+                            <option value="admin">Admin</option>
+                            <option value="editor">Editor</option>
+                            <option value="viewer">Viewer</option>
+                        </select>
+
+                        <button type="submit">Crear Usuario</button>
+                    </form>
+                </div>
+
+                <div class="activeUsers">
+                    <h2>Usuarios Activos</h3>
+                        <div class="table-section">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Email</th>
+                                        <th>Rol</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>juan.perez@example.com</td>
+                                        <td>Admin</td>
+                                        <td>Activo</td>
+                                    </tr>
+                                    <tr>
+                                        <td>maria.garcia@example.com</td>
+                                        <td>Editor</td>
+                                        <td>Activo</td>
+                                    </tr>
+                                    <tr>
+                                        <td>luis.mendez@example.com</td>
+                                        <td>Viewer</td>
+                                        <td>Activo</td>
+                                    </tr>
+                                    <tr>
+                                        <td>sofia.lopez@example.com</td>
+                                        <td>Admin</td>
+                                        <td>Activo</td>
+                                    </tr>
+                                    <tr>
+                                        <td>pedro.fernandez@example.com</td>
+                                        <td>Viewer</td>
+                                        <td>Activo</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
     </div>
 
 
@@ -716,17 +741,18 @@
     <script src="/js/dashboardAdmin/faq.js"></script>
     <script src="/js/dashboardAdmin/sidebar.js"></script>
     <script src="/js/dashboardAdmin/dateTime.js"></script>
-    <script src="/js/dashboardAdmin/showData.js"></script>
+    <!-- <script src="/js/dashboardAdmin/showData.js"></script> -->
     <script src="/js/dashboardUser/reservas.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrious/dist/qrious.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/dashboardUser/dashboardUser.js"></script>
-    <script type="module" src="/js/messages/main.js"></script>
+    <script type="module" src="/js/messages/mainUser.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/qrScan/qrGeneratorReservas.js"></script>
     <script src="/js/qrScan/qrGeneratorLavados.js"></script>
+    <script src="/js/dashboardAdmin/topBar.js"></script>
 
     <!-- jQuery and Bootstrap -->
 
