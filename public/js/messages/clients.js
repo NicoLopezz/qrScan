@@ -55,12 +55,97 @@ export function displayClientList(clientes, handleClientClick) {
         li.addEventListener('click', (event) => {
             if (event.target !== checkbox) {
                 handleClientClick(cliente); // Cargar el chat y la información del cliente
+                mostrarDatosCliente(cliente); // Mostrar los datos del cliente en el HTML
             }
         });
 
         clientList.appendChild(li); // Agregar cada cliente a la lista en el DOM
     });
 }
+
+// Función para mostrar los datos del cliente en el HTML
+// Función para mostrar los datos del cliente en el HTML
+// Función para mostrar los datos del cliente en el HTML
+function mostrarDatosCliente(cliente) {
+    // Seleccionar los elementos HTML
+    const clientNameElem = document.getElementById('client-name');
+    const clientPhoneElem = document.getElementById('client-phone');
+    const clientScoreElem = document.getElementById('client-score');
+    const clientLoyaltyElem = document.getElementById('client-loyalty');
+    const clientLastWashElem = document.getElementById('client-resent'); // Último lavado
+    const clientLastMessageElem = document.getElementById('client-resent-mensaje'); // Último mensaje (reutilizado)
+
+    // Función para formatear una fecha al formato deseado
+    function formatFecha(fecha) {
+        if (!fecha) return 'No disponible';
+
+        const date = new Date(fecha);
+        if (isNaN(date)) return 'No disponible';
+
+        const dia = String(date.getDate()).padStart(2, '0');
+        const mes = String(date.getMonth() + 1).padStart(2, '0'); // Mes empieza en 0
+        const anio = date.getFullYear();
+        const hora = String(date.getHours()).padStart(2, '0');
+        const minutos = String(date.getMinutes()).padStart(2, '0');
+        const segundos = String(date.getSeconds()).padStart(2, '0');
+
+        return `${dia}/${mes}/${anio} ${hora}:${minutos}:${segundos}`;
+    }
+
+    // Asignar valores al HTML
+    clientNameElem.textContent = cliente.nombre || 'Sin nombre';
+    clientPhoneElem.textContent = cliente.from || 'Sin teléfono';
+    clientScoreElem.textContent = cliente.puntuacionPromedio 
+        ? `${cliente.puntuacionPromedio}/5` 
+        : 'Sin calificación';
+
+    // Generar estrellas de fidelidad
+    const fidelidad = cliente.lavadosAcumulados || 0;
+    clientLoyaltyElem.innerHTML = `<span class="stars">${'⭐'.repeat(fidelidad)}${'☆'.repeat(5 - fidelidad)}</span>`;
+
+    // Último lavado (fecha más reciente en historialLavados)
+    let ultimoLavado = null;
+    if (cliente.historialLavados && cliente.historialLavados.length > 0) {
+        // Obtener el lavado con la fecha de egreso más reciente
+        ultimoLavado = cliente.historialLavados.reduce((prev, current) => 
+            new Date(prev.fechaEgreso) > new Date(current.fechaEgreso) ? prev : current
+        );
+
+        // Formatear y mostrar la fecha del último lavado
+        clientLastWashElem.textContent = formatFecha(ultimoLavado.fechaEgreso);
+
+        // Log de validación por cliente
+        console.log(`Último lavado registrado (${cliente.nombre}):`, ultimoLavado.fechaEgreso);
+    } else {
+        clientLastWashElem.textContent = 'Sin registros';
+        console.log(`No hay lavados registrados para ${cliente.nombre || 'Cliente desconocido'}.`);
+    }
+
+    // Último mensaje (fecha más reciente en mensajesEnviados)
+    let ultimoMensaje = null;
+    if (cliente.mensajesEnviados && cliente.mensajesEnviados.length > 0) {
+        ultimoMensaje = cliente.mensajesEnviados.reduce((prev, current) => 
+            new Date(prev.fecha) > new Date(current.fecha) ? prev : current
+        );
+        clientLastMessageElem.textContent = formatFecha(ultimoMensaje.fecha);
+    } else {
+        clientLastMessageElem.textContent = 'Sin mensajes';
+    }
+
+    console.log('Datos del cliente mostrados en el HTML:', cliente);
+}
+
+
+
+// Función para formatear fechas en formato dd/mm/yyyy
+function formatFecha(fecha) {
+    const date = new Date(fecha);
+    const dia = String(date.getDate()).padStart(2, '0');
+    const mes = String(date.getMonth() + 1).padStart(2, '0');
+    const anio = date.getFullYear();
+    return `${dia}/${mes}/${anio}`;
+}
+
 
 // Función para filtrar los clientes en base a la búsqueda
 export function filterClients(query, handleClientClick) {
@@ -107,5 +192,7 @@ export function updateSelectedCount() {
         sendButton.style.backgroundColor = "#25D366";
     }
 }
+
+
 
 

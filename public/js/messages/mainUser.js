@@ -3,6 +3,9 @@ import { loadChat, sendMessage, setCurrentClient } from './chat.js';
 import { updateSelectedCount } from './utils.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
+    // Variable global para almacenar los lavados cargados
+    let lavadosCargados = [];
+
     // Obtener el ID del admin desde las cookies
     const adminId = getCookie('adminId');
     if (!adminId) {
@@ -11,13 +14,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Cargar lavados en la tabla
-    cargarLavadosEnTabla();
+    await cargarLavadosEnTabla();
 
     // Obtener información del usuario desde la base de datos
     const userInfo = await fetchUserInfo(adminId);
     if (userInfo) {
         displayUserInfo(userInfo); // Mostrar el nombre del local
-        
     } else {
         console.error("No se pudo obtener la información del usuario.");
     }
@@ -34,7 +36,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     clearSearch.addEventListener('click', () => {
         searchInput.value = '';
         clearSearch.style.display = 'none';
-        displayClientList(userInfo.clientes, handleClientClick); // Volver a renderizar la lista completa
+        displayClientList(lavadosCargados, handleClientClick); // Volver a renderizar la lista completa
     });
 
     // Mostrar u ocultar la cruz de limpiar búsqueda
@@ -44,7 +46,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Enviar mensaje al hacer clic en el botón
     const sendButton = document.getElementById('sendButton');
-    console.log("btn de enviar presionado!");
     sendButton.addEventListener('click', sendMessage);
 
     // Enviar mensaje al presionar Enter
@@ -66,7 +67,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Función para mostrar el nombre del local en el elemento correspondiente
     function displayUserInfo(userInfo) {
         const localNameElement = document.getElementById("localName");
-        console.log("nombre del local en este caso es: " + localNameElement)
         if (localNameElement && userInfo.localName) {
             localNameElement.textContent = userInfo.localName;
         }
@@ -75,19 +75,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Función para manejar el clic en un cliente, cargar chat e información del cliente
     function handleClientClick(client) {
         setCurrentClient(client); // Establecer el cliente actual
-        loadChat(client); // Cargar el historial de chat del cliente
+        // loadChat(client); // Cargar el historial de chat del cliente
         loadClientData(client); // Cargar la información del cliente en la caja de datos
     }
 
     // Función para cargar la información del cliente en la caja de datos
     function loadClientData(client) {
-        document.getElementById('client-name').textContent = "No Disponible"; // Nombre fijo por ahora
+        document.getElementById('client-name').textContent = client.nombre || "No Disponible"; // Nombre fijo por ahora
         document.getElementById('client-phone').textContent = client.from || "Número no disponible";
         document.getElementById('client-score').textContent = client.promedioTiempo || 'N/A';
         document.getElementById('client-loyalty').innerHTML = generateStars(client.visits || 3);
-        document.getElementById('client-address').textContent = client.address || '123 Calle Falsa';
-        document.getElementById('client-local').textContent = client.local || 'Bar de Juan';
-        document.getElementById('client-resent').textContent = client.resent || '25/11/2024';
+        document.getElementById('client-address').textContent = client.address || 'A determinar';
+        document.getElementById('client-local').textContent = client.local || 'A determinar';
+        document.getElementById('client-resent').textContent = client.resent || 'A determinar';
     }
 
     // Función para generar estrellas de fidelidad
@@ -96,6 +96,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         return `<span class="stars">${stars}</span>`;
     }
 
+    // Función para cargar lavados en la tabla
     async function cargarLavadosEnTabla() {
         const adminId = getCookie('adminId'); // Obtén el adminId de la cookie
 
@@ -103,26 +104,173 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Hacer la solicitud para obtener los lavados
             const response = await fetch(`/api/admins/${adminId}/lavados`);
             if (!response.ok) throw new Error('No se pudo cargar los lavados');
-            
-            const lavados = await response.json();
+
+            lavadosCargados = await response.json();
 
             // Verifica si hay lavados
-            if (!lavados.length) {
+            if (!lavadosCargados.length) {
                 console.warn('No se encontraron lavados asociados al administrador.');
                 return;
             }
 
             // Renderizar los lavados utilizando `displayClientList`
-            displayClientList(lavados, lavadoSeleccionado => {
-                // Aquí defines qué sucede al hacer clic en un lavado
-                console.log('Lavado seleccionado:', lavadoSeleccionado);
-            });
+            displayClientList(lavadosCargados, handleClientClick);
 
-            console.log('Lavados cargados exitosamente en la tabla.');
+            console.log('Lavados cargados exitosamente en la tabla.', lavadosCargados);
         } catch (error) {
             console.error('Error al cargar los lavados:', error);
         }
     }
+
+
+    // Función para manejar filtros de lavados y visibilidad de mensajes
+    function aplicarFiltro(selectedValue) {
+        // Siempre partimos de los datos originales
+        let lavadosFiltrados = [...lavadosCargados];
+
+        // Ocultar todos los mensajes antes de aplicar el filtro
+        activarMensaje(null);
+
+        // Aplicar el filtro correspondiente
+        switch (selectedValue) {
+            case 'low-comments':
+                // Filtrar lavados con puntuación promedio baja
+                lavadosFiltrados = lavadosCargados.filter(lavado => lavado.puntuacionPromedio <= 3);
+                activarMensaje(2);
+                break;
+
+                case 'no-service-15':
+                    // Filtrar lavados con más de 15 días desde el último servicio
+                    lavadosFiltrados = lavadosCargados.filter(lavado => {
+                        const hoy = new Date();
+                
+                        // Validar que 'historialLavados' existe y es un array con elementos
+                        if (!lavado.historialLavados || !Array.isArray(lavado.historialLavados) || lavado.historialLavados.length === 0) {
+                            console.warn('Lavado sin historial de lavados o vacío:', lavado);
+                            return false; // Excluir si no hay historial
+                        }
+                
+                        // Obtener el último lavado (fechaEgreso más reciente)
+                        const ultimoHistorial = lavado.historialLavados.reduce((ultimo, actual) => {
+                            const fechaEgresoUltimo = new Date(ultimo.fechaEgreso);
+                            const fechaEgresoActual = new Date(actual.fechaEgreso);
+                            return fechaEgresoActual > fechaEgresoUltimo ? actual : ultimo;
+                        });
+                
+                        const fechaUltimoLavado = new Date(ultimoHistorial.fechaEgreso);
+                        if (isNaN(fechaUltimoLavado)) {
+                            console.warn('Fecha de egreso inválida:', ultimoHistorial.fechaEgreso);
+                            return false; // Excluir si la fecha es inválida
+                        }
+                
+                        // Calcular la diferencia en días
+                        const diferenciaDias = (hoy - fechaUltimoLavado) / (1000 * 60 * 60 * 24);
+                        return diferenciaDias > 15;
+                    });
+                
+                    activarMensaje(1); // Activar mensaje tipo 1
+                    break;
+                
+
+            case 'frequent':
+                // Filtrar lavados de clientes frecuentes
+                lavadosFiltrados = lavadosCargados.filter(lavado => lavado.lavadosAcumulados >= 3);
+                activarMensaje(3);
+                break;
+
+            case 'promo-1':
+                // Mostrar todos los datos
+                lavadosFiltrados = [...lavadosCargados]; // Copia completa de los datos originales
+                activarMensaje(4);
+                break;
+
+            case 'ninguno': // Opción para restablecer todo
+                // Mostrar todos los datos
+                lavadosFiltrados = [...lavadosCargados]; // Copia completa de los datos originales
+                activarMensaje(null); // No activa ningún mensaje
+                break;
+
+            default:
+                break;
+        }
+
+        // Renderizar la tabla con los lavados filtrados
+        displayClientList(lavadosFiltrados, handleClientClick);
+    }
+
+
+
+    // Manejar el cambio en el filtro
+    filterSelect.addEventListener('change', () => {
+        const selectedValue = filterSelect.value;
+        aplicarFiltro(selectedValue);
+    });
+
+    // Función para activar un mensaje específico y desactivar los demás
+    function activarMensaje(selectedType) {
+        // Obtener todos los mensajes
+        const messages = document.querySelectorAll('.message-bubble');
+
+        // Desactivar todos los mensajes (quitar clase 'active')
+        messages.forEach(message => message.classList.remove('active'));
+
+        // Activar el mensaje seleccionado si existe
+        const mensajeSeleccionado = document.querySelector(`.message-type-${selectedType}`);
+        if (mensajeSeleccionado) {
+            mensajeSeleccionado.classList.add('active');
+        } else {
+            messages.forEach(message => message.classList.remove('active'));
+        }
+    }
+
+
+
+    // LOGICA PARA ENVIAR LAS TEMPLATES DESDE MENSJAES.
+    document.getElementById('sendButtoon').addEventListener('click', async () => {
+        try {
+            const clienteId = lavadoSeleccionado; // Asegura que ya tienes el cliente seleccionado
+    
+            // Solicitud al servidor para enviar el mensaje
+            const response = await fetch(`/api/enviarAvisoRetiroLavado`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ clienteId })
+            });
+    
+            const result = await response.json();
+            if (result.success) {
+                showNotification("Mensaje enviado al cliente exitosamente.");
+    
+                // Inicia la cuenta regresiva solo si el mensaje fue enviado con éxito
+                iniciarCuentaRegresiva();
+    
+                // Aplicar el estilo de resaltado a la fila del cliente
+                const filaCliente = document.getElementById(`cliente-row-${clienteId}`);
+                if (filaCliente) {
+                    filaCliente.classList.add('highlight-row');
+                }
+    
+                // Cambiar el color de la columna "Tiempo" a rojo
+                const tiempoCelda = document.getElementById(`tiempo-cliente-${clienteId}`);
+                if (tiempoCelda) {
+                    tiempoCelda.classList.add('red-text');
+                }
+            } else {
+                showNotification("Hubo un problema al enviar el mensaje.", "error");
+            }
+        } catch (error) {
+            showNotification("Ocurrió un error al intentar enviar el mensaje.", "error");
+            console.error('Error al enviar el mensaje:', error);
+        }
+    });
+
+
+
+
+
+
 
     // Función para obtener la cookie del adminId
     function getCookie(name) {
@@ -132,6 +280,3 @@ document.addEventListener("DOMContentLoaded", async () => {
         return null;
     }
 });
-
-
-

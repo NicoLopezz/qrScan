@@ -107,7 +107,6 @@ async function getLocales(req, res) {
   try {
     const locales = await Admin.find();
     res.status(200).json(locales);
-    
   } catch (error) {
     console.error('Error al obtener locales:', error.message);
     res.status(500).json({ error: 'Error al obtener locales' });
@@ -141,8 +140,6 @@ async function cargarLocales() {
 
 //FUNCION PARA TRAER INFO DE UN LOCAL---->
 async function getLocalDetails(req, res) {
-
-  
   const { id } = req.params;
 
   try {
@@ -150,6 +147,7 @@ async function getLocalDetails(req, res) {
     if (!local) {
       return res.status(404).json({ error: 'Local no encontrado' });
     }
+
     res.status(200).json(local);  // Devolver los detalles completos del local
   } catch (error) {
     console.error('Error al obtener los detalles del local:', error);
@@ -361,95 +359,6 @@ async function handleLavadoMessage(body, fromWithPrefix) {
 }
 
 
-async function actualizarLavadosConHistorial() {
-  try {
-    // Obtener todos los administradores
-    const admins = await Admin.find();
-
-    for (const admin of admins) {
-      let lavadosActualizados = false;
-
-      for (const lavado of admin.lavados) {
-        // Verifica si el historial ya tiene entradas
-        if (!lavado.historialLavados || lavado.historialLavados.length === 0) {
-          // Crear el primer registro basado en el lavado actual
-          const primerLavado = {
-            confirmacionPorCliente: lavado.textConfirmation || false,
-            tipoDeLavado: lavado.tipoDeLavado,
-            fechaIngreso: lavado.fechaDeAlta || faker.date.past(),
-            fechaEgreso: faker.date.recent(),
-            tiempoEspera: faker.random.number({ min: 30, max: 120 }),
-            observacion: lavado.observacion || "Sin observaciones adicionales",
-            mensajes: lavado.mensajesEnviados.map(mensaje => ({
-              body: mensaje.body,
-              fecha: mensaje.fecha
-            }))
-          };
-
-          // Generar entre 1 y 3 lavados adicionales aleatorios
-          const numeroLavadosExtras = faker.random.number({ min: 1, max: 3 });
-          const lavadosExtras = [];
-
-          for (let i = 0; i < numeroLavadosExtras; i++) {
-            const nuevoLavado = {
-              confirmacionPorCliente: faker.random.boolean(),
-              tipoDeLavado: faker.random.arrayElement(['Básico', 'Completo', 'Premium']),
-              fechaIngreso: faker.date.past(),
-              fechaEgreso: faker.date.recent(),
-              tiempoEspera: faker.random.number({ min: 30, max: 120 }),
-              observacion: faker.lorem.sentence(),
-              mensajes: [
-                {
-                  body: faker.lorem.sentence(),
-                  fecha: faker.date.recent().toISOString(),
-                },
-              ],
-            };
-            lavadosExtras.push(nuevoLavado);
-          }
-
-          // Actualizar el historialLavados del lavado actual
-          lavado.historialLavados = [primerLavado, ...lavadosExtras];
-
-          // Actualizar campos adicionales si es necesario
-          lavado.lavadosAcumulados = lavado.historialLavados.length;
-          lavado.promedioTiempo =
-            lavado.historialLavados.reduce((sum, lav) => sum + lav.tiempoEspera, 0) /
-            lavado.historialLavados.length;
-
-          lavadosActualizados = true;
-        }
-      }
-
-      // Guardar los cambios en el administrador si se actualizó algún lavado
-      if (lavadosActualizados) {
-        await admin.save();
-        console.log(`Historial de lavados actualizado para el admin con email: ${admin.email}`);
-      }
-    }
-
-    console.log('Actualización completada.');
-  } catch (error) {
-    console.error('Error al actualizar lavados:', error);
-  } finally {
-    // Cerrar la conexión a la base de datos
-    await mongoose.connection.close();
-    console.log('Conexión a la base de datos cerrada.');
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 // Función para enviar mensaje de cuenta regresiva
@@ -547,7 +456,6 @@ Con este lavado, ya tienes **1 de 3 estrellas** ⭐.
     res.status(500).json({ success: false, message: "Error al enviar el mensaje" });
   }
 }
-
 
 
 
@@ -1107,9 +1015,6 @@ async function qrScanUpdateLavados(req, res) {
   }
 }
 
-
-
-
 async function getReservas(req, res) {
   const { adminId } = req.params;
 
@@ -1125,24 +1030,133 @@ async function getReservas(req, res) {
   }
 }
 
+
+
 // Obtener lavaderos de un administrador específico
 async function getLavados(req, res) {
   const { adminId } = req.params;
 
   try {
-    // Buscar al administrador por su ID y seleccionar solo los lavaderos
-    const admin = await Admin.findById(adminId).select('lavados');
+    // Buscar al administrador por su ID
+    const admin = await Admin.findById(adminId);
     if (!admin) {
       return res.status(404).json({ error: 'Admin no encontrado' });
     }
 
-    // Responder con los lavaderos del administrador
+    // Iterar sobre los lavados y generar datos faltantes
+    admin.lavados.forEach(lavado => {
+      // Generar historialLavados si no existe o está vacío
+      if (!lavado.historialLavados || lavado.historialLavados.length === 0) {
+        lavado.historialLavados = [
+          {
+            confirmacionPorCliente: Math.random() < 0.5,
+            tipoDeLavado: ["lavado-básico", "lavado-premium", "lavado-en-profundidad"][
+              Math.floor(Math.random() * 3)
+            ],
+            fechaIngreso: generarFechaAleatoria(),
+            fechaEgreso: generarFechaAleatoria(),
+            tiempoEspera: 0, // Se calculará después
+            observacion: ["Cliente satisfecho", "Cliente en espera", "Sin comentarios"][
+              Math.floor(Math.random() * 3)
+            ],
+            mensajes: [
+              {
+                body: "Gracias por elegirnos",
+                fecha: new Date().toISOString()
+              }
+            ],
+            puntuacion: Math.floor(Math.random() * 5) + 1
+          }
+        ];
+
+        // Calcular tiempo de espera
+        const historial = lavado.historialLavados[0];
+        historial.tiempoEspera = Math.floor(
+          (new Date(historial.fechaEgreso) - new Date(historial.fechaIngreso)) / 60000
+        );
+      }
+
+      // Completar otros campos faltantes
+      lavado.lavadosAcumulados = lavado.lavadosAcumulados || Math.floor(Math.random() * 15) + 1;
+      lavado.promedioTiempo = lavado.promedioTiempo || Math.floor(Math.random() * 100);
+    });
+
+    // Guardar los cambios si hubo modificaciones
+    await admin.save();
+
+    // Enviar respuesta
     res.json(admin.lavados);
   } catch (error) {
     console.error('Error al obtener los lavaderos:', error);
     res.status(500).json({ error: 'Error al obtener los lavaderos' });
   }
 }
+
+// Función para generar fechas aleatorias
+function generarFechaAleatoria() {
+  const fechaBase = new Date();
+  const randomDiasAtras = Math.floor(Math.random() * 90); // Hasta 90 días atrás
+  const randomHoras = Math.floor(Math.random() * 24); // Hasta 24 horas
+  const randomMinutos = Math.floor(Math.random() * 60); // Hasta 60 minutos
+
+  const fecha = new Date(fechaBase);
+  fecha.setDate(fechaBase.getDate() - randomDiasAtras);
+  fecha.setHours(randomHoras);
+  fecha.setMinutes(randomMinutos);
+
+  return fecha.toISOString();
+}
+
+
+
+// // Obtener e imprimir el historial de lavados para un administrador específico
+// async function imprimirHistorialLavados(adminId) {
+//   try {
+//     // Buscar al administrador por su ID y seleccionar el campo lavados
+//     const admin = await Admin.findById(adminId).select('lavados');
+//     if (!admin) {
+//       console.log('Admin no encontrado');
+//       return;
+//     }
+
+//     // Validar que haya lavados
+//     if (!admin.lavados || admin.lavados.length === 0) {
+//       console.log('No se encontraron lavados para este admin.');
+//       return;
+//     }
+
+//     // Recorrer los lavados
+//     admin.lavados.forEach((lavado, indexLavado) => {
+//       console.log(`Lavado ${indexLavado + 1}:`);
+//       console.log(`  - Nombre: ${lavado.nombre}`);
+//       console.log(`  - Patente: ${lavado.patente}`);
+//       console.log(`  - Tipo de lavado: ${lavado.tipoDeLavado}`);
+//       console.log(`  - Modelo: ${lavado.modelo}`);
+
+//       // Validar que tenga historial de lavados
+//       if (!lavado.historialLavados || lavado.historialLavados.length === 0) {
+//         console.log('  - Sin historial de lavados.');
+//       } else {
+//         // Recorrer el historial de lavados
+//         lavado.historialLavados.forEach((historial, indexHistorial) => {
+//           console.log(`  Historial ${indexHistorial + 1}:`);
+//           console.log(`    - Fecha de ingreso: ${historial.fechaIngreso || 'No registrada'}`);
+//           console.log(`    - Fecha de egreso: ${historial.fechaEgreso || 'No registrada'}`);
+//           console.log(`    - Tiempo de espera: ${historial.tiempoEspera || 'No registrado'} minutos`);
+//           console.log(`    - Observación: ${historial.observacion || 'Sin observaciones'}`);
+//           console.log(`    - Puntuación: ${historial.puntuacion || 'No registrada'}`);
+//         });
+//       }
+//     });
+//   } catch (error) {
+//     console.error('Error al obtener e imprimir el historial de lavados:', error);
+//   }
+// }
+
+
+
+
+
 
 
 
@@ -1203,9 +1217,6 @@ async function agregarLavado(req, res) {
   }
 }
 
-
-
-
 async function actualizarSelectedCliente(req, res) {
   const clienteId = req.params.clienteId;
 
@@ -1234,8 +1245,6 @@ async function actualizarSelectedCliente(req, res) {
     res.status(500).json({ success: false, message: 'Error al actualizar el cliente' });
   }
 }
-
-
 
 
 async function actualizarSelectedLavado(req, res) {
@@ -1297,12 +1306,6 @@ async function eliminarCliente(req, res) {
     res.status(500).json({ success: false, message: 'Error al eliminar el cliente' });
   }
 }
-
-
-
-
-
-
 
 
 
@@ -1389,6 +1392,5 @@ export const methods = {
   getLavados,
   actualizarSelectedLavado,
   qrScanUpdateLavados,
-  enviarAvisoRetiroLavado,
-  actualizarLavadosConHistorial
+  enviarAvisoRetiroLavado
 };

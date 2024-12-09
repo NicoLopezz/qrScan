@@ -545,9 +545,11 @@
                                 <div class="select-buttons">
                                     <select id="filterSelect" class="filter-select">
                                         <option value="" disabled selected>Filtros...</option>
-                                        <option value="low-comments">Comentarios bajos</option>
+                                        <option value="low-comments">Puntuacion baja</option>
                                         <option value="no-service-15">+15 días sin servicio</option>
                                         <option value="frequent">Frecuentes</option>
+                                        <option value="promo-1">Promo #1</option>
+                                        <option value="ninguno">Ninguno</option>
                                     </select>
                                     
                                     <button id="selectAllButton" class="select-button">Todos</button>
@@ -574,7 +576,7 @@
                                 <!-- Mensajes se llenarán dinámicamente -->
                             </div>
                             <div class="whatsapp-chat-footer">
-                                <input type="text" id="messageInput" placeholder="Escribe un mensaje..."
+                                <input type="text" id="messageInput2" placeholder="Escribe un mensaje..."
                                     class="whatsapp-message-input">
                                 <button id="sendButton2" class="whatsapp-send-button">
                                     Enviar (<span id="selectedCount">0</span>)
@@ -591,33 +593,37 @@
                             <table class="client-details">
                                 <tr>
                                     <th>Nombre</th>
-                                    <td id="client-name">Cliente 1</td>
+                                    <td id="client-name"></td>
                                 </tr>
                                 <tr>
                                     <th>Teléfono</th>
-                                    <td id="client-phone">+1 (555) 123-4567</td>
+                                    <td id="client-phone"></td>
                                 </tr>
                                 <tr>
-                                    <th>Puntuación</th>
-                                    <td id="client-score">8.5/10</td>
+                                    <th>Evaluacion Prom.</th>
+                                    <td id="client-score"></td>
                                 </tr>
                                 <tr>
                                     <th>Fidelidad</th>
                                     <td id="client-loyalty">
-                                        <span class="stars">⭐⭐⭐☆☆</span> <!-- Ejemplo de 3 de 5 estrellas -->
+                                        <span class="stars"></span> <!-- Ejemplo de 3 de 5 estrellas -->
                                     </td>
                                 </tr>
                                 <tr>
                                     <th>Dirección</th>
-                                    <td id="client-address">123 Calle Falsa</td>
+                                    <td id="client-address"></td>
                                 </tr>
                                 <tr>
                                     <th>Local</th>
-                                    <td id="client-local">Lavadero Entre Rios</td>
+                                    <td id="client-local"></td>
                                 </tr>
                                 <tr>
-                                    <th>Ultimo Lavado</th>
-                                    <td id="client-resent">25/11/2024</td>
+                                    <th>Ultimo <br> Lavado</th>
+                                    <td id="client-resent"></td>
+                                </tr>
+                                <tr>
+                                    <th>Ultimo <br> Mensaje</th>
+                                    <td id="client-resent-mensaje"></td>
                                 </tr>
                             </table>
                         </div>
@@ -632,6 +638,59 @@
                                 </div>
                             </div>
                             <div id="chatHistory" class="whatsapp-chat-history">
+                                
+                                <div class="whatsapp-container">
+                                    <!-- Mensaje para cliente que no ha venido hace tiempo -->
+                                    <div class="message-bubble message-type-1">
+                                      <p>🚗✨ ¡Hola, hace tiempo que no vemos tu auto brillar como se merece en <strong>CARWASH PREMIUM</strong> 🧽.</p>
+                                      <p>¡Te extrañamos! Por eso queremos darte un <strong>10% de descuento</strong> en tu próximo lavado 🤑 para que tu auto vuelva a lucir impecable.</p>
+                                      <p>📅 Ven cuando quieras, estaremos encantados de ayudarte a dejar tu coche como nuevo.</p>
+                                      <p>¡Te esperamos!</p>
+                                      <p>Saludos,</p>
+                                      <p><strong>El equipo de CARWASH PREMIUM</strong></p>
+                                      <div class="message-timestamp">07/12/2024, 17:09</div>
+                                    </div>
+                                  
+                                    <!-- Mensaje para cliente con calificación baja -->
+                                    <div class="message-bubble message-type-2">
+                                      <p>👋 ¡Hola,!</p>
+                                      <p>En <strong>CARWASH PREMIUM</strong> 🧽 nos importa mucho tu experiencia, y hemos notado que tu última calificación fue algo baja.</p>
+                                      <p>y queremos saber más para mejorar nuestro servicio. ¿Nos cuentas qué pasó? 💬</p>
+                                      <p>👉 Puedes enviarnos tus comentarios de forma rápida aquí: <a href="https://www.google.com/forms" target="_blank">Google Form</a></p>
+                                      <p>O mándanos un mensaje directo en Instagram: <a href="https://www.instagram.com/carwashpremium" target="_blank">@carwashpremium</a> 📲</p>
+                                      <p>Valoramos tu opinión nos ayuda a crecer y asegurarnos de que en tu próxima visita todo sea perfecto. ¡Gracias por ayudarnos a ser mejores!</p>
+                                      <p>Saludos,</p>
+                                      <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
+                                      <div class="message-timestamp">07/12/2024, 17:15</div>
+                                    </div>
+                                  
+                                    <!-- Mensaje para cliente frecuente -->
+                                    <div class="message-bubble message-type-3">
+                                      <p>🎉 ¡Hola!</p>
+                                      <p>En <strong>CARWASH PREMIUM</strong> 🧽 queremos agradecerte por ser uno de nuestros clientes más frecuentes. ¡Eres parte de nuestra familia! 💚</p>
+                                      <p>🚗 Como muestra de nuestro agradecimiento, te regalamos un <strong>lavado premium gratis</strong> en tu próxima visita. ¡Porque tu auto merece lo mejor! ✨</p>
+                                      <p>📅 Pásate por el local cuando quieras y menciona este mensaje para canjear tu recompensa.</p>
+                                      <p>🙏 Gracias por elegirnos siempre. ¡Nos encanta verte por aquí!</p>
+                                      <p>Saludos,</p>
+                                      <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
+                                      <div class="message-timestamp">07/12/2024, 17:25</div>
+                                    </div>
+                                  
+                                    <!-- Mensaje para promoción especial -->
+                                    <div class="message-bubble message-type-4">
+                                      <p>🎁 ¡Hola!</p>
+                                      <p>¡Tenemos una <strong>promoción especial</strong> para ti! ✨</p>
+                                      <p>🚗 Durante esta semana, disfruta de un <strong>2x1 en lavados premium</strong>. Trae tu auto y el de un amigo para que ambos brillen como nuevos 🧽✨.</p>
+                                      <p>📅 Promoción válida del <strong>7 al 14 de diciembre</strong>. ¡No te la pierdas!</p>
+                                      <p>👉 Para más información, contáctanos por WhatsApp o visítanos en el local.</p>
+                                      <p>🎉 ¡Te esperamos!</p>
+                                      <p>Saludos,</p>
+                                      <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
+                                      <div class="message-timestamp">07/12/2024, 17:30</div>
+                                    </div>
+                                </div>
+                                  
+
                                 <!-- Mensajes se llenarán dinámicamente -->
                             </div>
                             <div class="whatsapp-chat-footer">
