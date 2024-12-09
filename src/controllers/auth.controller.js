@@ -107,6 +107,7 @@ async function getLocales(req, res) {
   try {
     const locales = await Admin.find();
     res.status(200).json(locales);
+    
   } catch (error) {
     console.error('Error al obtener locales:', error.message);
     res.status(500).json({ error: 'Error al obtener locales' });
@@ -140,6 +141,8 @@ async function cargarLocales() {
 
 //FUNCION PARA TRAER INFO DE UN LOCAL---->
 async function getLocalDetails(req, res) {
+
+  
   const { id } = req.params;
 
   try {
@@ -147,7 +150,6 @@ async function getLocalDetails(req, res) {
     if (!local) {
       return res.status(404).json({ error: 'Local no encontrado' });
     }
-
     res.status(200).json(local);  // Devolver los detalles completos del local
   } catch (error) {
     console.error('Error al obtener los detalles del local:', error);
@@ -355,6 +357,84 @@ async function handleLavadoMessage(body, fromWithPrefix) {
     }
   } catch (error) {
     console.error("Error al manejar el mensaje de lavado:", error);
+  }
+}
+
+
+async function actualizarLavadosConHistorial() {
+  try {
+    // Obtener todos los administradores
+    const admins = await Admin.find();
+
+    for (const admin of admins) {
+      let lavadosActualizados = false;
+
+      for (const lavado of admin.lavados) {
+        // Verifica si el historial ya tiene entradas
+        if (!lavado.historialLavados || lavado.historialLavados.length === 0) {
+          // Crear el primer registro basado en el lavado actual
+          const primerLavado = {
+            confirmacionPorCliente: lavado.textConfirmation || false,
+            tipoDeLavado: lavado.tipoDeLavado,
+            fechaIngreso: lavado.fechaDeAlta || faker.date.past(),
+            fechaEgreso: faker.date.recent(),
+            tiempoEspera: faker.random.number({ min: 30, max: 120 }),
+            observacion: lavado.observacion || "Sin observaciones adicionales",
+            mensajes: lavado.mensajesEnviados.map(mensaje => ({
+              body: mensaje.body,
+              fecha: mensaje.fecha
+            }))
+          };
+
+          // Generar entre 1 y 3 lavados adicionales aleatorios
+          const numeroLavadosExtras = faker.random.number({ min: 1, max: 3 });
+          const lavadosExtras = [];
+
+          for (let i = 0; i < numeroLavadosExtras; i++) {
+            const nuevoLavado = {
+              confirmacionPorCliente: faker.random.boolean(),
+              tipoDeLavado: faker.random.arrayElement(['Básico', 'Completo', 'Premium']),
+              fechaIngreso: faker.date.past(),
+              fechaEgreso: faker.date.recent(),
+              tiempoEspera: faker.random.number({ min: 30, max: 120 }),
+              observacion: faker.lorem.sentence(),
+              mensajes: [
+                {
+                  body: faker.lorem.sentence(),
+                  fecha: faker.date.recent().toISOString(),
+                },
+              ],
+            };
+            lavadosExtras.push(nuevoLavado);
+          }
+
+          // Actualizar el historialLavados del lavado actual
+          lavado.historialLavados = [primerLavado, ...lavadosExtras];
+
+          // Actualizar campos adicionales si es necesario
+          lavado.lavadosAcumulados = lavado.historialLavados.length;
+          lavado.promedioTiempo =
+            lavado.historialLavados.reduce((sum, lav) => sum + lav.tiempoEspera, 0) /
+            lavado.historialLavados.length;
+
+          lavadosActualizados = true;
+        }
+      }
+
+      // Guardar los cambios en el administrador si se actualizó algún lavado
+      if (lavadosActualizados) {
+        await admin.save();
+        console.log(`Historial de lavados actualizado para el admin con email: ${admin.email}`);
+      }
+    }
+
+    console.log('Actualización completada.');
+  } catch (error) {
+    console.error('Error al actualizar lavados:', error);
+  } finally {
+    // Cerrar la conexión a la base de datos
+    await mongoose.connection.close();
+    console.log('Conexión a la base de datos cerrada.');
   }
 }
 
@@ -1066,6 +1146,8 @@ async function getLavados(req, res) {
 
 
 
+
+
 //AGREGAR CLIENTE
 async function agregarCliente(req, res) {
   const { nombre, comensales, observacion } = req.body;
@@ -1307,5 +1389,6 @@ export const methods = {
   getLavados,
   actualizarSelectedLavado,
   qrScanUpdateLavados,
-  enviarAvisoRetiroLavado
+  enviarAvisoRetiroLavado,
+  actualizarLavadosConHistorial
 };

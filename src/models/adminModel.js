@@ -62,35 +62,38 @@ const reservaSchema = new mongoose.Schema({
 
 // Esquema para los lavados
 const lavadoSchema = new mongoose.Schema({
+  fechaDeAlta: { type: Date, default: Date.now }, //  Fecha de alta del cliente = lavado
+  nombre: { type: String, required: true },         // Nombre del cliente
+  patente: { type: String, required: true },        // Patente del vehículo
   solicitudBaja: { type: Boolean, default: false },
-  from: { type: String, default: '' },
-  historialPedidos: [{
-    tagNumber: { type: Number, default: null },
-    fechaPedido: { type: Date, default: null },
-    fechaRetiro: { type: Date, default: null },
-    tiempoEspera: { type: Number, default: 0 },
-    estadoPorBarra: { type: String, default: '' },
+  from: { type: String, default: '' },              // telefono
+  historialLavados: [{
     confirmacionPorCliente: { type: Boolean, default: false },
+    tipoDeLavado: { type: String, required: null },
+    fechaIngreso: { type: Date, default: null },
+    fechaEgreso: { type: Date, default: null },
+    tiempoEspera: { type: Number, default: 0 },
+    observacion: { type: String, default: '' },       // Observaciones adicionales
     mensajes: [{
       body: { type: String, default: '' },
       fecha: { type: String, default: '' }
-    }]
+    }],
+    puntuacion: { type: Number, default: 0 }
   }],
+  lavadosAcumulados: { type: Number, default: 0 },
   promedioTiempo: { type: Number, default: 0 },
   mensajesEnviados: [{
     fecha: { type: String, required: true },
     body: { type: String, required: true }
   }],
-  nombre: { type: String, required: true },         // Nombre del cliente
-  patente: { type: String, required: true },        // Patente del vehículo
   tipoDeLavado: { type: String, required: true },   // Tipo de lavado (Básico, Completo, etc.)
   observacion: { type: String, default: '' },       // Observaciones adicionales
-  fechaRegistro: { type: Date, default: Date.now }, // Fecha del registro del lavado
   estado: { type: String, default: 'Pendiente' },    // Estado del lavado (Pendiente, Completado, etc.)
-  modelo: { type: String, required: true },         // modelo de vehiculo
+  modelo: { type: String, required: true },         // modelo de vehiculo FORD 208, 
   selected: { type: Boolean, default: false },
   textConfirmation: { type: Boolean, default: false },
-  numeroDeFila: { type: Number, default: 0 }
+  numeroDeFila: { type: Number, default: 0 },
+  puntuacionPromedio: { type: Number, default: 0 }
 });
 
 // Esquema para los pagos

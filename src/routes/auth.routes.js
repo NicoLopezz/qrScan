@@ -36,7 +36,6 @@ router.get('/login', (req, res) => {
 });
 router.post('/login', autenthication.login);
 
-
 //Ruta para el usuario Administrador
 router.get('/dashboardLocalAdmin/:user', autenthication.validateUser, (req, res) => {
     res.sendFile(path.join(__dirname, '../../public/pages/dashboardAdmin.html'));
