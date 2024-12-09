@@ -42,6 +42,8 @@ router.get('/dashboardLocalAdmin/:user', autenthication.validateUser, (req, res)
 });
 
 
+router.post('/enviarMensajesTemplates', autenthication.enviarMensajesTemplates);
+
 
 // Ruta para agregar un mensaje desde el dashboard local admin
 router.post('/dashboardLocalAdmin/:adminId/addMessage', autenthication.addMessage);

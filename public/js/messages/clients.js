@@ -1,4 +1,6 @@
 // Función para renderizar la lista de clientes en `clientList`
+let selectedClients = []; // Arreglo global para almacenar clientes seleccionados
+
 export function displayClientList(clientes, handleClientClick) {
     const clientList = document.getElementById("clientList");
     clientList.innerHTML = ""; // Limpiar la lista antes de llenarla
@@ -45,9 +47,12 @@ export function displayClientList(clientes, handleClientClick) {
         checkbox.addEventListener('change', () => {
             if (checkbox.checked) {
                 li.classList.add('selected-client'); // Pintar si está seleccionado
+                selectedClients.push(cliente); // Agregar cliente al arreglo
             } else {
                 li.classList.remove('selected-client'); // Despintar si no está seleccionado
+                selectedClients = selectedClients.filter(c => c !== cliente); // Eliminar cliente del arreglo
             }
+            console.log('Clientes seleccionados:', selectedClients); // Mostrar los clientes seleccionados en consola
             updateSelectedCount(); // Actualizar el contador de clientes seleccionados
         });
 
@@ -62,6 +67,7 @@ export function displayClientList(clientes, handleClientClick) {
         clientList.appendChild(li); // Agregar cada cliente a la lista en el DOM
     });
 }
+
 
 // Función para mostrar los datos del cliente en el HTML
 // Función para mostrar los datos del cliente en el HTML
@@ -158,22 +164,56 @@ export function filterClients(query, handleClientClick) {
 // Función para seleccionar todos los clientes
 export function selectAllClients() {
     const checkboxes = document.querySelectorAll('.client-checkbox');
-    checkboxes.forEach(checkbox => {
-        checkbox.checked = true;
-        checkbox.closest('li').classList.add('selected-client'); // Pintar como seleccionado
+    const clientsList = document.querySelectorAll('.client-item');
+
+    // Limpiar el arreglo y agregar todos los clientes seleccionados
+    selectedClients = []; 
+
+    clientsList.forEach(clientItem => {
+        const checkbox = clientItem.querySelector('.client-checkbox');
+        const cliente = getClientDataFromElement(clientItem); // Función auxiliar para obtener los datos del cliente
+
+        // Seleccionar el cliente solo si está disponible
+        if (checkbox && cliente) {
+            checkbox.checked = true;
+            clientItem.classList.add('selected-client'); // Pintar como seleccionado
+            selectedClients.push(cliente); // Agregar al arreglo global
+        }
     });
+
+    console.log('Todos los clientes seleccionados:', selectedClients); // Mostrar en consola
     updateSelectedCount(); // Actualizar el contador de seleccionados
+}
+
+function getClientDataFromElement(clientElement) {
+    const clientName = clientElement.querySelector('.client-name')?.textContent || 'Sin nombre';
+    const clientNumber = clientElement.querySelector('.client-number')?.textContent || 'Sin teléfono';
+
+    return { nombre: clientName, from: clientNumber }; // Devuelve un objeto con los datos mínimos
 }
 
 // Función para deseleccionar todos los clientes
 export function deselectAllClients() {
     const checkboxes = document.querySelectorAll('.client-checkbox');
-    checkboxes.forEach(checkbox => {
-        checkbox.checked = false;
-        checkbox.closest('li').classList.remove('selected-client'); // Despintar como no seleccionado
+    const clientsList = document.querySelectorAll('.client-item');
+
+    // Vaciar el arreglo global
+    selectedClients = [];
+
+    clientsList.forEach(clientItem => {
+        const checkbox = clientItem.querySelector('.client-checkbox');
+
+        // Deseleccionar el cliente solo si está disponible
+        if (checkbox) {
+            checkbox.checked = false;
+            clientItem.classList.remove('selected-client'); // Despintar como no seleccionado
+        }
     });
+
+    console.log('Ningún cliente seleccionado:', selectedClients); // Mostrar en consola
     updateSelectedCount(); // Actualizar el contador de seleccionados
 }
+
 
 // Función para actualizar el contador de clientes seleccionados y cambiar el botón de enviar
 export function updateSelectedCount() {
@@ -193,6 +233,85 @@ export function updateSelectedCount() {
     }
 }
 
+
+
+    // LOGICA PARA ENVIAR LAS TEMPLATES DESDE MENSJAES.
+// Obtener el mensaje activo
+function obtenerMensajeActivo() {
+    const mensajeActivo = document.querySelector('.message-bubble.active');
+    if (!mensajeActivo) {
+        console.warn('No hay ningún mensaje activo.');
+        return null;
+    }
+
+    // Extraer y formatear el contenido del mensaje activo
+    const textoPlano = Array.from(mensajeActivo.children)
+        .map(parrafo => {
+            let texto = parrafo.innerHTML.trim(); // Extraer contenido HTML del párrafo
+
+            // Manejar enlaces (<a href="URL">Texto</a>) para convertirlos en Texto (URL)
+            texto = texto.replace(/<a href="(.*?)".*?>(.*?)<\/a>/g, '$2 ($1)');
+
+            // Reemplazos dinámicos para negritas y emojis
+            texto = texto
+                .replace(/<strong>(.*?)<\/strong>/g, '*$1*') // Convertir <strong> en negritas (*texto*)
+                .replace(/CARWASH PREMIUM/g, '*CARWASH PREMIUM*') // Negrita en "CARWASH PREMIUM"
+                .replace(/10% de descuento/g, '*10% de descuento*') // Negrita en promociones
+                .replace(/lavado premium gratis/g, '*lavado premium gratis*') // Negrita en recompensas
+                .replace(/2x1 en lavados premium/g, '*2x1 en lavados premium*') // Negrita en promociones
+                .replace(/Ven cuando quieras/g, '*Ven cuando quieras*') // Negrita en instrucciones importantes
+                .replace(/\.\s/g, '.\n'); // Añadir saltos de línea después de puntos finales
+            
+            return texto; // Devolver el texto plano ya formateado
+        })
+        .join('\n\n'); // Unir los párrafos con doble salto de línea
+
+    return textoPlano; // Devuelve el mensaje formateado para WhatsApp
+}
+
+
+
+// Función para enviar mensajes a clientes seleccionados
+document.getElementById('sendButton').addEventListener('click', async () => {
+    try {
+        if (selectedClients.length === 0) {
+            showNotification("No hay clientes seleccionados.", "error");
+            return;
+        }
+
+        const mensajeActivo = obtenerMensajeActivo();
+        if (!mensajeActivo) {
+            showNotification("No hay ningún mensaje activo para enviar.", "error");
+            return;
+        }
+
+        // Recorrer el arreglo de clientes seleccionados y enviar los mensajes
+        for (const cliente of selectedClients) {
+            const response = await fetch(`/api/enviarMensajesTemplates`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    clienteId: cliente._id, // ID del cliente
+                    mensaje: mensajeActivo, // Contenido del mensaje activo
+                }),
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                console.log(`Mensaje enviado a ${cliente.nombre} (${cliente.from})`);
+            } else {
+                console.error(`Error al enviar mensaje a ${cliente.nombre}: ${result.message}`);
+            }
+        }
+
+        showNotification("Mensajes enviados exitosamente.");
+    } catch (error) {
+        console.error("Error al enviar los mensajes:", error);
+        showNotification("Ocurrió un error al intentar enviar los mensajes.", "error");
+    }
+});
 
 
 

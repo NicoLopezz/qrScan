@@ -225,46 +225,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 
-    // LOGICA PARA ENVIAR LAS TEMPLATES DESDE MENSJAES.
-    document.getElementById('sendButtoon').addEventListener('click', async () => {
-        try {
-            const clienteId = lavadoSeleccionado; // Asegura que ya tienes el cliente seleccionado
-    
-            // Solicitud al servidor para enviar el mensaje
-            const response = await fetch(`/api/enviarAvisoRetiroLavado`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ clienteId })
-            });
-    
-            const result = await response.json();
-            if (result.success) {
-                showNotification("Mensaje enviado al cliente exitosamente.");
-    
-                // Inicia la cuenta regresiva solo si el mensaje fue enviado con éxito
-                iniciarCuentaRegresiva();
-    
-                // Aplicar el estilo de resaltado a la fila del cliente
-                const filaCliente = document.getElementById(`cliente-row-${clienteId}`);
-                if (filaCliente) {
-                    filaCliente.classList.add('highlight-row');
-                }
-    
-                // Cambiar el color de la columna "Tiempo" a rojo
-                const tiempoCelda = document.getElementById(`tiempo-cliente-${clienteId}`);
-                if (tiempoCelda) {
-                    tiempoCelda.classList.add('red-text');
-                }
-            } else {
-                showNotification("Hubo un problema al enviar el mensaje.", "error");
-            }
-        } catch (error) {
-            showNotification("Ocurrió un error al intentar enviar el mensaje.", "error");
-            console.error('Error al enviar el mensaje:', error);
-        }
-    });
 
 
 
