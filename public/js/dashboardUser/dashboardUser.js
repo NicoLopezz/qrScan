@@ -343,7 +343,7 @@ function handleOption(option) {
 
 document.addEventListener("DOMContentLoaded", () => {
   const mainContent = document.querySelector('.content-container');
-  const sectionDashboard = document.getElementById('section-dashboard');
+  const sectionDashboard = document.getElementById('section-lavaderos');
 
   // Función para actualizar el overflow
   function updateOverflow() {

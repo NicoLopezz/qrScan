@@ -56,7 +56,11 @@ async function cargarLavados() {
 
         if (!lavados.length) {
             console.warn('No se encontraron lavaderos asociados al administrador.');
+            return;
         }
+
+        // Ordenar los lavados por fechaDeAlta (más reciente primero)
+        lavados.sort((a, b) => new Date(b.fechaDeAlta).getTime() - new Date(a.fechaDeAlta).getTime());
 
         // Limpiar la tabla antes de agregar las filas
         const tablaLavados = document.getElementById('tablaLavados');
@@ -66,7 +70,7 @@ async function cargarLavados() {
         }
         tablaLavados.innerHTML = '';
 
-        // Iterar sobre los lavados y agregarlos a la tabla
+        // Iterar sobre los lavados ordenados y agregarlos a la tabla
         lavados.forEach(lavado => {
             agregarFilaTablaLavados(lavado);
         });
@@ -74,6 +78,7 @@ async function cargarLavados() {
         console.error('Error al cargar lavaderos:', error);
     }
 }
+
 
 
 // Función para seleccionar un cliente y mostrar sus detalles en la tarjeta sin iniciar automáticamente la cuenta regresiva
@@ -211,18 +216,24 @@ function agregarLavado() {
     const tipoDeLavado = document.getElementById('selectServicio').value;
     const observacion = document.getElementById('inputObservation').value.trim();
 
+
     // Verificar si los valores están llegando correctamente
     console.log("Nombre:", nombre);
     console.log("Modelo:", modelo);
     console.log("Patente:", patente);
     console.log("Tipo de Lavado:", tipoDeLavado);
     console.log("Observación:", observacion);
+    
+    
+    
 
     // Validar los campos del formulario
     if (!nombre || !modelo || !patente || !tipoDeLavado) {
         showNotification("Por favor, completa todos los campos obligatorios para el lavado.", "error");
         return;
     }
+
+    
 
     // Enviar solicitud al servidor
     fetch('/api/admins/agregarLavado', {
@@ -239,6 +250,7 @@ function agregarLavado() {
     })
     .then(response => {
         if (!response.ok) {
+            
             throw new Error("No se pudo completar la operación.");
         }
         return response.json();
@@ -246,10 +258,13 @@ function agregarLavado() {
     .then(data => {
         if (data.success) {
             showNotification("Lavado agregado con éxito");
+            handleOption2("tabla")
             const nuevoLavado = { _id: data.id, nombre, modelo, patente, tipoDeLavado, observacion };
             agregarFilaTablaLavados(nuevoLavado);
-            window.location.reload();ß
+            // window.location.reload();
+            cargarLavados()
             limpiarFormularioLavado();
+            
         } else {
             showNotification(data.error || "Error al agregar el lavado.", "error");
         }
@@ -259,6 +274,62 @@ function agregarLavado() {
         // showNotification("Error de red o servidor. Intenta nuevamente.", "error");
     });
 }
+
+function handleOption2(option) {
+
+    
+    console.log("Ejecutando handleOption2 con opción:", option);
+    // Aquí coloca la lógica necesaria
+    // Seleccionamos los elementos necesarios
+    const tarjetaYqr = document.querySelector("#tarjetaYqr");
+    const tabla = document.querySelector("#tablaLavados2");
+    const highlight = document.querySelector('.background-highlight');
+  
+    // Lógica para mostrar/ocultar elementos
+    if (option === 'reservas') {
+      if (tarjetaYqr) {
+        tarjetaYqr.style.display = "grid"; // Hace visible tarjetaYqr
+      }
+      if (tabla) {
+        tabla.style.display = "none"; // Oculta tabla
+      }
+  
+      // Mover el highlight
+      if (highlight) {
+        highlight.style.transform = 'translateX(0)';
+      }
+    } else if (option === 'tabla') {
+      if (tabla) {
+        tabla.style.display = "grid"; // Hace visible tabla
+      }
+      if (tarjetaYqr) {
+        tarjetaYqr.style.display = "none"; // Oculta tarjetaYqr
+      }
+  
+      // Mover el highlight
+      if (highlight) {
+        highlight.style.transform = 'translateX(100%)';
+      }
+    }
+  }
+
+
+  function limpiarFormularioLavado() {
+    // Selecciona los campos del formulario
+    const nombre = document.getElementById('inputNombre2');
+    const modelo = document.getElementById('inputModelo');
+    const patente = document.getElementById('inputPatente');
+    const tipoDeLavado = document.getElementById('selectServicio');
+    const observacion = document.getElementById('inputObservation');
+
+    // Resetea los valores a vacíos o su estado predeterminado
+    if (nombre) nombre.value = '';
+    if (modelo) modelo.value = '';
+    if (patente) patente.value = '';
+    if (tipoDeLavado) tipoDeLavado.selectedIndex = 0; // Selecciona el primer valor
+    if (observacion) observacion.value = '';
+}
+  
 
 
 // Función para generar QR y actualizar la reserva seleccionada
