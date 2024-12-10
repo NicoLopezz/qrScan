@@ -12,6 +12,9 @@ export function displayClientList(clientes, handleClientClick) {
         return;
     }
 
+    // Ordenar clientes por fechaDeAlta (de más nuevo a más viejo)
+    clientes.sort((a, b) => new Date(b.fechaDeAlta) - new Date(a.fechaDeAlta));
+
     clientes.forEach(cliente => {
         const li = document.createElement("li");
         li.classList.add("client-item");
@@ -68,9 +71,37 @@ export function displayClientList(clientes, handleClientClick) {
     });
 }
 
+// Agregar el MutationObserver
+document.addEventListener("DOMContentLoaded", () => {
+    const sectionMensajes = document.getElementById("section-mensajes");
 
-// Función para mostrar los datos del cliente en el HTML
-// Función para mostrar los datos del cliente en el HTML
+    // Observador para detectar cambios en las clases de la sección
+    const observer = new MutationObserver((mutationsList) => {
+        mutationsList.forEach((mutation) => {
+            if (mutation.attributeName === "class") {
+                if (sectionMensajes.classList.contains("active")) {
+                    // Refrescar la tabla cuando la sección está activa
+                    refreshClientList();
+                }
+            }
+        });
+    });
+
+    // Configuración del observador
+    observer.observe(sectionMensajes, { attributes: true });
+
+    // Función para refrescar la lista de clientes
+    function refreshClientList() {
+        console.log("Sección activa: refrescando tabla de clientes...");
+
+        displayClientList(clientes, handleClientClick);
+    }
+});
+
+
+
+
+
 // Función para mostrar los datos del cliente en el HTML
 function mostrarDatosCliente(cliente) {
     // Seleccionar los elementos HTML
@@ -140,18 +171,6 @@ function mostrarDatosCliente(cliente) {
 
     console.log('Datos del cliente mostrados en el HTML:', cliente);
 }
-
-
-
-// Función para formatear fechas en formato dd/mm/yyyy
-function formatFecha(fecha) {
-    const date = new Date(fecha);
-    const dia = String(date.getDate()).padStart(2, '0');
-    const mes = String(date.getMonth() + 1).padStart(2, '0');
-    const anio = date.getFullYear();
-    return `${dia}/${mes}/${anio}`;
-}
-
 
 // Función para filtrar los clientes en base a la búsqueda
 export function filterClients(query, handleClientClick) {
@@ -241,10 +260,17 @@ export function updateSelectedCount() {
 
     // LOGICA PARA ENVIAR LAS TEMPLATES DESDE MENSJAES.
 // Obtener el mensaje activo
-function obtenerMensajeActivo() {
-    const mensajeActivo = document.querySelector('.message-bubble.active');
+function obtenerMensajeActivo(contenedorId) {
+    const contenedor = document.querySelector(`#${contenedorId}`);
+    if (!contenedor) {
+        console.warn(`No se encontró el contenedor con id ${contenedorId}.`);
+        return null;
+    }
+
+    // Obtener el mensaje activo dentro del contenedor
+    const mensajeActivo = contenedor.querySelector('.message-bubble.active');
     if (!mensajeActivo) {
-        console.warn('No hay ningún mensaje activo.');
+        console.warn(`No hay ningún mensaje activo en el contenedor ${contenedorId}.`);
         return null;
     }
 
@@ -274,48 +300,59 @@ function obtenerMensajeActivo() {
 }
 
 
-
 // Función para enviar mensajes a clientes seleccionados
-document.getElementById('sendButton').addEventListener('click', async () => {
-    try {
-        if (selectedClients.length === 0) {
-            showNotification("No hay clientes seleccionados.", "error");
-            return;
-        }
+const sendButtons = document.querySelectorAll('#sendButton, #sendButton2');
 
-        const mensajeActivo = obtenerMensajeActivo();
-        if (!mensajeActivo) {
-            showNotification("No hay ningún mensaje activo para enviar.", "error");
-            return;
-        }
+// Agregar el evento de clic a cada botón
+sendButtons.forEach((button) => {
+    button.addEventListener('click', async () => {
+        try {
+            // Determinar el contenedor según el botón clicado
+            const contenedorId = button.id === 'sendButton' ? 'chatDesktop' : 'chatMovil';
 
-        // Recorrer el arreglo de clientes seleccionados y enviar los mensajes
-        for (const cliente of selectedClients) {
-            const response = await fetch(`/api/enviarMensajesTemplates`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    clienteId: cliente._id, // ID del cliente
-                    mensaje: mensajeActivo, // Contenido del mensaje activo
-                }),
-            });
-
-            const result = await response.json();
-            if (result.success) {
-                console.log(`Mensaje enviado a ${cliente.nombre} (${cliente.from})`);
-            } else {
-                console.error(`Error al enviar mensaje a ${cliente.nombre}: ${result.message}`);
+            // Verificar si hay clientes seleccionados
+            if (selectedClients.length === 0) {
+                showNotification("No hay clientes seleccionados.", "error");
+                return;
             }
-        }
 
-        showNotification("Mensajes enviados exitosamente.");
-    } catch (error) {
-        console.error("Error al enviar los mensajes:", error);
-        showNotification("Ocurrió un error al intentar enviar los mensajes.", "error");
-    }
+            // Obtener el mensaje activo del contenedor correspondiente
+            const mensajeActivo = obtenerMensajeActivo(contenedorId);
+            if (!mensajeActivo) {
+                showNotification("No hay ningún mensaje activo para enviar.", "error");
+                return;
+            }
+
+            // Recorrer el arreglo de clientes seleccionados y enviar los mensajes
+            for (const cliente of selectedClients) {
+                const response = await fetch(`/api/enviarMensajesTemplates`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        clienteId: cliente._id, // ID del cliente
+                        mensaje: mensajeActivo, // Contenido del mensaje activo
+                    }),
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    deselectAllClients()
+                    console.log(`Mensaje enviado a ${cliente.nombre} (${cliente.from})`);
+                } else {
+                    console.error(`Error al enviar mensaje a ${cliente.nombre}: ${result.message}`);
+                }
+            }
+
+            showNotification("Mensajes enviados exitosamente.");
+        } catch (error) {
+            console.error("Error al enviar los mensajes:", error);
+            showNotification("Ocurrió un error al intentar enviar los mensajes.", "error");
+        }
+    });
 });
+
 
 
 
