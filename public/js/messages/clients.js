@@ -221,15 +221,19 @@ export function updateSelectedCount() {
     const selectedTotal = selectedCheckboxes.length;
 
     const sendButton = document.getElementById('sendButton');
+    const sendButton2 = document.getElementById('sendButton2');
     sendButton.textContent = `Enviar (${selectedTotal})`;
+    sendButton2.textContent = `Enviar (${selectedTotal})`;
 
     // Cambiar el color del botón de enviar dependiendo del número de clientes seleccionados
     if (selectedTotal > 1) {
         sendButton.classList.add('multiple-selected'); // Cambiar a violeta para difusión
         sendButton.style.backgroundColor = "#6b00ad";
+        sendButton2.style.backgroundColor = "#6b00ad";
     } else {
         sendButton.classList.remove('multiple-selected'); // Volver al color verde si no es difusión
         sendButton.style.backgroundColor = "#25D366";
+        sendButton2.style.backgroundColor = "#25D366";
     }
 }
 

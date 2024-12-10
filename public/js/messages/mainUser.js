@@ -206,23 +206,26 @@ document.addEventListener("DOMContentLoaded", async () => {
         aplicarFiltro(selectedValue);
     });
 
-    // Función para activar un mensaje específico y desactivar los demás
     function activarMensaje(selectedType) {
-        // Obtener todos los mensajes
-        const messages = document.querySelectorAll('.message-bubble');
-
-        // Desactivar todos los mensajes (quitar clase 'active')
-        messages.forEach(message => message.classList.remove('active'));
-
-        // Activar el mensaje seleccionado si existe
-        const mensajeSeleccionado = document.querySelector(`.message-type-${selectedType}`);
-        if (mensajeSeleccionado) {
-            mensajeSeleccionado.classList.add('active');
-        } else {
+        // Seleccionar todos los contenedores que tienen mensajes (chatDesktop y chatMovil)
+        const containers = document.querySelectorAll('#chatDesktop, #chatMovil');
+    
+        // Iterar por cada contenedor para aplicar los cambios
+        containers.forEach(container => {
+            // Obtener todos los mensajes dentro de este contenedor
+            const messages = container.querySelectorAll('.message-bubble');
+            
+            // Desactivar todos los mensajes en este contenedor
             messages.forEach(message => message.classList.remove('active'));
-        }
+    
+            // Activar el mensaje específico
+            const mensajeSeleccionado = container.querySelector(`.message-type-${selectedType}`);
+            if (mensajeSeleccionado) {
+                mensajeSeleccionado.classList.add('active');
+            }
+        });
     }
-
+    
 
 
 

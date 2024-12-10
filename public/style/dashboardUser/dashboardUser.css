@@ -23,6 +23,15 @@ body {
   display: none;
 }
 
+#chatMovil{
+  display: none;
+}
+
+#chatDesktop{
+  display: block;
+}
+
+
 
 #btnGenerarQRlavado{
   padding: 12px 25px;

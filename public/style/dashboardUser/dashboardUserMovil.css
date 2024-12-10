@@ -565,11 +565,14 @@
         padding: 20px;
         background-color: #e5ded8;
         overflow-y: auto;
+        /* height: 82%; */
     }
 
     .whatsapp-chat-header {
         display: none;
     }
+
+    
 
     .cardM {
         display: none;
@@ -694,6 +697,17 @@
         width: 100px;
     }
 
+    #chatDesktop{
+        display: none;
+    }
+
+    #chatMovil{
+        display: grid;
+        width: 95%;
+        overflow-y: auto;
+        height: 20rem;
+      }
+
     .select-buttons {
         justify-content: space-between;
         margin-left: 10% !important;
@@ -787,9 +801,13 @@
         background-color: #f6f6f6;
         border-top: 1px solid #ddd;
         bottom: 0;
-        width: 100%;
+        width: 92%;
         box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
         justify-content: center;
+        height: 5rem;
+        position: absolute;
+        bottom: 0;
+        margin-bottom: 32%;
     }
 
     .selected-client {
