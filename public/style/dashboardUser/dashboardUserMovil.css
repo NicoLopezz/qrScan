@@ -663,9 +663,9 @@
         background-color: #ffffff;
         border-radius: 10px;
         box-shadow: 7px 12px 15px 9px rgba(0, 0, 0, 0.1);
-        margin-top: 0px;
+        margin-top: -30px !important;
         width: 92%;
-        height: 55%;
+        height: 50% !important;
     }
 
     .client-info-box h3 {
@@ -882,6 +882,34 @@
         text-decoration: underline;
     }
 
+    #profile-section-container {
+        display: flex;
+        justify-content: space-between;
+        padding: 40px;
+        font-family: 'Montserrat', sans-serif;
+        gap: 70px;
+        padding: 0;
+    }
+
+    .menu-item {
+        background-color: transparent; /* Fondo transparente o el color deseado */
+        transition: background-color 0.3s ease; /* Suaviza cambios */
+      }
+      
+      .menu-item:hover,
+      .menu-item:focus,
+      .menu-item:active {
+        background-color: rgba(255, 255, 255, 0); /* Ajusta el fondo en estados interactivos */
+      }
+      .menu-item:focus {
+        outline: none; /* Elimina el contorno */
+        box-shadow: none; /* Previene sombras no deseadas */
+      }
+      .menu-item {
+        -webkit-tap-highlight-color: transparent !important; /* Quita el resaltado en móviles */
+      }
+      
+      
 
 }
 
@@ -903,6 +931,9 @@
     margin-left: 2%;
     background-color: #6b00ad;
 }
+
+
+
 
 
 
