@@ -15,7 +15,7 @@ body, html {
     padding: 0;
     height: 100%;
     font-family: 'Montserrat', sans-serif;
-    background-color: rgb(231 231 231);
+    background-color: rgb(231 231 231) !important;
 }
 
 /* Contenedor principal que contiene todo el contenido */

@@ -19,6 +19,73 @@ body {
   display: none;
 }
 
+#qrOverlay{
+  display: none;
+}
+
+
+#btnGenerarQRlavado{
+  padding: 12px 25px;
+  margin-top: 15px;
+  font-size: 1.1em;
+  color: #fff;
+  background-color: #6b00ad;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  width: 180px;
+}
+
+/* Estilo para la tarjeta */
+#tarjetaCliente {
+  display: flex;
+  flex-direction: column; /* Asegura que los elementos se apilen verticalmente */
+  align-items: flex-start; /* Justifica el texto a la izquierda */
+  text-align: left; /* Asegura que el texto esté alineado a la izquierda */
+  gap: 15px; /* Espaciado entre los elementos */
+  padding: 15px; /* Espaciado interno */
+  border: 1px solid #ccc; /* Borde opcional para la tarjeta */
+  border-radius: 8px; /* Bordes redondeados opcionales */
+  width: 100%; /* Ajusta el ancho de la tarjeta según tu diseño */
+  box-sizing: border-box; /* Incluye padding en el cálculo del tamaño */
+}
+
+/* Estilo para los botones */
+#tarjetaCliente button {
+  align-self: center; /* Centra los botones horizontalmente */
+  padding: 10px 20px; /* Espaciado interno del botón */
+  border: none; /* Sin bordes por defecto */
+  border-radius: 5px; /* Bordes redondeados para los botones */
+  /* background-color: #007bff; Color de fondo del botón */
+  color: white; /* Color del texto del botón */
+  cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+  font-size: 14px; /* Tamaño de la fuente */
+  text-align: center; /* Centra el texto dentro del botón */
+}
+
+/* Asegúrate de apuntar solo al título dentro de la tarjeta */
+.tarjetaCliente > h3 {
+  text-align: center !important; /* Forzar la alineación centrada */
+  margin-bottom: 20px; /* Espaciado inferior */
+  color: #6b00ad; /* Color del título (opcional) */
+}
+
+
+
+#btnAvisoLavado2{
+  padding: 12px 25px;
+    margin-top: 15px;
+    font-size: 1.1em;
+    color: #fff;
+    background-color: #28a745;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    width: 180px;
+}
+
 
 .container {
   display: flex;
@@ -30,7 +97,7 @@ body {
 
 /* Contenedor principal que contiene todo el contenido */
 .content-container {
-  background-color: var(--white-color);
+  background-color: #efefef;
   padding: 25px;
   border-radius: 15px;
   max-width: 1500px;
