@@ -134,12 +134,14 @@ function toggleFaq(element) {
         element.classList.add('active');
     }
 }
-// Agregar evento click a todos los elementos de pregunta
-document.querySelectorAll('.faq-item').forEach(item => {
-    item.addEventListener('click', function () {
-        toggleFaq(item);
-    });
-});
+
+
+// // Agregar evento click a todos los elementos de pregunta
+// document.querySelectorAll('.faq-item').forEach(item => {
+//     item.addEventListener('click', function () {
+//         toggleFaq(item);
+//     });
+// });
 
 document.addEventListener('DOMContentLoaded', function () {
     const body = document.body;

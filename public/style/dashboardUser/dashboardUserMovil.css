@@ -6,6 +6,7 @@
         padding: 0;
         height: 100%;
         /* overflow: hidden; */
+        background-color: #fff !important;
     }
 
     #sidebar {
@@ -20,8 +21,8 @@
 
         font-size: 18px;
         color: white;
-
         padding: 25px;
+        border: none;
     }
 
     .nav-menu {
@@ -33,6 +34,19 @@
         /* transform: scale(1.05); */
     }
 
+
+    .content-container {
+        background-color: var(--white-color);
+        padding: 25px;
+        border-radius: 15px;
+        max-width: 1500px;
+        margin: 40px auto;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-left: 230px;
+        margin-top: 40px;
+        height: 95%;
+        width: 94%;
+    }
 
 
 
@@ -202,6 +216,12 @@
         /* Alinea las observaciones a la derecha */
         font-weight: bold;
     }
+
+    .select-button:hover {
+        background-color: #6d00af;
+        color: white;
+    }
+    
 
 
     .tarjeta {
@@ -612,6 +632,7 @@
 
     #clientList {
         padding-left: 10px;
+        background-color: #fff;
     }
 
     .clear-search {
@@ -666,6 +687,11 @@
         background-color: #f9f9f9;
         transition: background-color 0.3s, box-shadow 0.3s;
         display: none;
+    }
+
+
+    .card{
+        width: 100px;
     }
 
     .select-buttons {
@@ -830,6 +856,10 @@
         border-style: solid;
         border-width: 10px 10px 0 0;
         border-color: #dcf8c6 transparent transparent transparent;
+    }
+
+    #tarjetaOcultar{
+        display: none;
     }
 
     .message-timestamp {

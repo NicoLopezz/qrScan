@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="/style/dashboardAdmin/sidebar.css">
     <link rel="stylesheet" href="/style/dashboardAdmin/dashboard2.css">
     <link rel="stylesheet" href="/style/dashboardAdmin/faq.css">
+    <link rel="stylesheet" href="/style/dashboardAdmin/mensajes.css">
     <link rel="stylesheet" href="/style/dashboardAdmin/clientInfomsj.css">
     <link rel="stylesheet" href="/style/dashboardAdmin/profile.css">
     <link rel="stylesheet" href="/style/dashboardUser/reservas.css">
@@ -124,22 +125,29 @@
         </div>
         <nav>
             <ul>
-                <li class="menu-item" data-section="pedidos">
+                <!-- <li class="menu-item" data-section="pedidos">
                     <i class="fas fa-shopping-cart"></i> Pedidos
-                </li>
-                <li class="menu-item mensajes" data-section="mensajes">
+                </li> -->
+                <!-- <li class="menu-item mensajes" data-section="mensajes">
                     <i class="fas fa-clipboard-check"></i> Reservas
+                </li> -->
+                <li class="menu-item" data-section="dashboard">
+                    <i class="fas fa-home"></i> Dashboard
                 </li>
                 <li class="menu-item mensajes" data-section="lavaderos">
                     <i class="fas fa-car"></i> Lavaderos
                 </li>
-                <li class="menu-item" data-section="qr">
-                    <a href="../qrScan" class="no-decoration">
-                        <i class="fas fa-question-circle"></i> Pedidos QR
-                    </a>
+                <li class="menu-item mensajes" data-section="mensajes">
+                    <i class="fas fa-comments"></i> Mensajes
+                </li>
+                <li class="menu-item" data-section="users">
+                    <i class="fas fa-user-plus"></i> Users
                 </li>
                 <li class="menu-item" data-section="faq">
                     <i class="fas fa-question-circle"></i> FAQ
+                </li>
+                <li class="menu-item" data-section="profile">
+                    <i class="fas fa-user"></i> Profile
                 </li>
                 <li class="menu-item" data-section="logout">
                     <a href="../login" class="no-decoration">
@@ -201,6 +209,33 @@
                             <p class="card-number">35"30'</p>
                         </div>
                     </div>
+                    <div class="card" id="tarjetaOcultar">
+                        <div class="icon-container">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Calificacion <br> Promedio </h3>
+                            <p class="card-number">4,5</p>
+                        </div>
+                    </div>
+                    <div class="card" id="tarjetaOcultar">
+                        <div class="icon-container">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Servicio <br> Preferido</h3>
+                            <p class="card-number">Estandar</p>
+                        </div>
+                    </div>
+                    <div class="card" id="tarjetaOcultar">
+                        <div class="icon-container">
+                            <i class="fas fa-ticket-alt"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Promocion <br> activa</h3>
+                            <p class="card-number">Jueves 10% off</p>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="charts-and-counter">
@@ -210,22 +245,6 @@
                     </div>
                 </div>
 
-                <div class="table-section">
-                    <h2>Listado de Clientes</h2>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Teléfono</th>
-                                <th>Calificacion</th>
-                                <th>Puntuación</th>
-                            </tr>
-                        </thead>
-                        <tbody id="clientTableBody">
-                            <!-- Las filas de clientes se cargarán aquí dinámicamente -->
-                        </tbody>
-                    </table>
-                </div>
 
             </div>
 
@@ -495,7 +514,7 @@
                             <li><strong>Nombre:</strong> Bar La Esquina</li>
                             <li><strong>Teléfono app:</strong> +54 9 11 8765 4321</li>
                             <li><strong>Correo Principal:</strong> juan.perez@example.com</li>
-                            <li><strong>Dirección:</strong> Av. Siempre Viva 123, Buenos Aires</li>
+                            <li><strong>Dirección:</strong> Av. Corrientes 123, Buenos Aires</li>
                             <li><strong>Correo Principal:</strong> contacto@laesquina.com</li>
                             <li><strong>Pass actual:</strong> •••••••••</li>
                         </ul>
@@ -568,19 +587,66 @@
                         <!-- Panel principal (Área de chat) -->
                         <div class="whatsapp-chat-panel">
                             <div class="whatsapp-chat-header">
-                                <img src="/img/userIcon.png" alt="Foto de perfil" id="profilePic">
+                                <!-- <img src="/img/userIcon.png" alt="Foto de perfil" id="profilePic"> -->
                                 <div class="whatsapp-header-info">
                                     <span id="phoneNumber">Selecciona un cliente</span>
                                     <span class="whatsapp-status">En línea</span>
                                 </div>
                             </div>
                             <div id="chatHistory" class="whatsapp-chat-history">
+
+                                <div class="whatsapp-container">
+                                    <!-- Mensaje para cliente que no ha venido hace tiempo -->
+                                    <div class="message-bubble message-type-1">
+                                      <p>🚗✨ ¡Hola, hace tiempo que no vemos tu auto brillar como se merece en <strong>CARWASH PREMIUM</strong> 🧽.</p>
+                                      <p>¡Te extrañamos! Por eso queremos darte un <strong>10% de descuento</strong> en tu próximo lavado 🤑 para que tu auto vuelva a lucir impecable.</p>
+                                      <p>📅 Ven cuando quieras, estaremos encantados de ayudarte a dejar tu coche como nuevo.</p>
+                                      <p>¡Te esperamos!</p>
+                                      <p>Saludos,</p>
+                                      <p><strong>El equipo de CARWASH PREMIUM</strong></p>
+                                    </div>
+                                  
+                                    <!-- Mensaje para cliente con calificación baja -->
+                                    <div class="message-bubble message-type-2">
+                                      <p>👋 ¡Hola,!</p>
+                                      <p>En <strong>CARWASH PREMIUM</strong> 🧽 nos importa mucho tu experiencia, y hemos notado que tu última calificación fue algo baja.</p>
+                                      <p>y queremos saber más para mejorar nuestro servicio. ¿Nos cuentas qué pasó? 💬</p>
+                                      <p>👉 Puedes enviarnos tus comentarios de forma rápida aquí: <a href="https://www.google.com/forms" target="_blank">Google Form</a></p>
+                                      <p>O mándanos un mensaje directo en Instagram: <a href="https://www.instagram.com/carwashpremium" target="_blank">@carwashpremium</a> 📲</p>
+                                      <p>Valoramos tu opinión nos ayuda a crecer y mejorar!</p>
+                                      <p>Saludos,</p>
+                                      <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
+                                    </div>
+                                  
+                                    <!-- Mensaje para cliente frecuente -->
+                                    <div class="message-bubble message-type-3">
+                                      <p>🎉 ¡Hola!</p>
+                                      <p>En <strong>CARWASH PREMIUM</strong> 🧽 queremos agradecerte por ser uno de nuestros clientes más frecuentes. ¡Eres parte de nuestra familia! 💚</p>
+                                      <p>🚗 Como muestra de nuestro agradecimiento, te regalamos un <strong>lavado premium gratis</strong> en tu próxima visita. ¡Porque tu auto merece lo mejor! ✨</p>
+                                      <p>📅 Pásate por el local cuando quieras y menciona este mensaje para canjear tu recompensa.</p>
+                                      <p>🙏 Gracias por elegirnos siempre. ¡Nos encanta verte por aquí!</p>
+                                      <p>Saludos,</p>
+                                      <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
+                                    </div>
+                                  
+                                    <!-- Mensaje para promoción especial -->
+                                    <div class="message-bubble message-type-4">
+                                      <p>🎁 ¡Hola!</p>
+                                      <p>¡Tenemos una <strong>promoción especial</strong> para ti! ✨</p>
+                                      <p>🚗 Durante esta semana, disfruta de un <strong>2x1 en lavados premium</strong>. Trae tu auto y el de un amigo para que ambos brillen como nuevos 🧽✨.</p>
+                                      <p>📅 Promoción válida del <strong>7 al 14 de diciembre</strong>. ¡No te la pierdas!</p>
+                                      <p>👉 Para más información, contáctanos por WhatsApp o visítanos en el local.</p>
+                                      <p>🎉 ¡Te esperamos!</p>
+                                      <p>Saludos,</p>
+                                      <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
+                                    </div>
+                                </div>
                                 <!-- Mensajes se llenarán dinámicamente -->
                             </div>
                             <div class="whatsapp-chat-footer">
-                                <input type="text" id="messageInput2" placeholder="Escribe un mensaje..."
-                                    class="whatsapp-message-input">
-                                <button id="sendButton2" class="whatsapp-send-button">
+                                <!-- <input type="text" id="messageInput2" placeholder="Escribe un mensaje..."
+                                    class="whatsapp-message-input"> -->
+                                <button id="sendButton" class="whatsapp-send-button">
                                     Enviar (<span id="selectedCount">0</span>)
                                 </button>
                             </div>
@@ -629,17 +695,23 @@
                                 </tr>
                             </table>
                         </div>
+                        
+                        
 
+
+
+                        <!-- VERSION DE MOVIL -->
                         <!-- Panel principal (Área de chat) -->
                         <div class="whatsapp-chat-panel2">
                             <div class="whatsapp-chat-header">
-                                <img src="/img/userIcon.png" alt="Foto de perfil" id="profilePic">
+                                <!-- <img src="/img/userIcon.png" alt="Foto de perfil" id="profilePic"> -->
                                 <div class="whatsapp-header-info">
                                     <span id="phoneNumber">Selecciona un cliente</span>
                                     <span class="whatsapp-status">En línea</span>
                                 </div>
                             </div>
                             <div id="chatHistory" class="whatsapp-chat-history">
+
                                 
                                 <div class="whatsapp-container">
                                     <!-- Mensaje para cliente que no ha venido hace tiempo -->

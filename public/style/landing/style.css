@@ -53,18 +53,29 @@ h1 {
     margin-bottom: 1.5rem;
 }
 
+
+.rectangle h1 {
+    font-size: 25px;
+    font-weight: 600;
+    /* letter-spacing: -1px; */
+    margin-bottom: 0rem;
+}
+
+
+
 h2 {
     font-size: 45px;
     font-weight: 300;
     color: #633991;
     letter-spacing: -1px;
     margin-bottom: 1rem;
+    font-weight: 900;
 }
 
 h3 {
     color: #633991;
     font-size: 33px;
-    font-weight: 500;
+    font-weight: 900;
 }
 
 h4 {
@@ -82,12 +93,67 @@ h5 {
 
 p {
     color: #959094;
-    font-size: 20px;
+    font-size: 15px;
 }
 
-.tag-line-body {
-    /* background-color: grey; */
-}
+
+.user-info-container {
+    max-width: 400px; /* Tamaño máximo de la tarjeta */
+    margin: 20px auto; /* Centra la tarjeta */
+    padding: 20px;
+    background-color: #fff; /* Fondo blanco */
+    border-radius: 12px; /* Bordes redondeados */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra */
+    font-family: 'Arial', sans-serif; /* Fuente limpia */
+  }
+  
+  .user-info-container h2 {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    text-align: center; /* Título centrado */
+    margin-bottom: 20px; /* Espaciado debajo del título */
+  }
+  
+  .user-info {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 104%;
+    margin-top: 10%;
+  }
+  
+  .user-info li {
+    display: flex; /* Organiza título y valor horizontalmente */
+    justify-content: space-between; /* Título a la izquierda, valor a la derecha */
+    align-items: center; /* Centra verticalmente */
+    padding: 10px 0; /* Espaciado entre filas */
+    border-bottom: 1px solid #ddd; /* Línea divisoria */
+  }
+  
+  .user-info li:last-child {
+    border-bottom: none; /* Elimina la línea divisoria del último elemento */
+  }
+  
+  .user-info strong {
+    font-weight: bold;
+    color: #333; /* Color del título */
+  }
+  
+  .user-info span {
+    color: #555; /* Color del texto */
+    text-align: right; /* Alinea el valor a la derecha */
+  }
+  
+  .user-info .highlight {
+    background-color: #f7f9ff; /* Fondo claro */
+    padding: 5px 10px;
+    border-radius: 6px; /* Bordes redondeados */
+    font-weight: bold;
+    color: #333;
+  }
+  
+
 
 p.lead {
     color: #e38cb7;
@@ -900,6 +966,7 @@ header {
     color: #7a767a;
     font-weight: 300;
 }
+
 
 .owl-next.disabled,
 .owl-prev.disabled {

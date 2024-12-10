@@ -45,7 +45,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: "Helvetica Neue", Arial, sans-serif;
 }
 
 .whatsapp-simulator-box {
@@ -69,11 +68,37 @@
 }
 
 .whatsapp-sidebar-header {
-    display: flex;
+    display: grid;
     align-items: center;
     padding: 10px;
     background-color: #ededed;
     border-bottom: 1px solid #ddd;
+}
+
+.whatsapp-chat-panel2{
+    display: none;
+}
+
+#searchInput{
+    display: none;
+}
+
+.message-bubble {
+    background-color: #dcf8c6;
+    border-radius: 10px;
+    padding: 10px 15px;
+    max-width: 100%;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.15);
+    position: relative;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #000;
+    display: none;
+}
+
+.message-bubble.active {
+    display: block;
+    /* Muestra el mensaje activo */
 }
 
 .whatsapp-profile-pic-sidebar {
@@ -81,6 +106,38 @@
     height: 40px;
     border-radius: 50%;
     margin-right: 10px;
+    display: none;
+}
+
+.message-bubble::before {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 10px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 10px 10px 0 0;
+    border-color: #dcf8c6 transparent transparent transparent;
+}
+.message-timestamp {
+    font-size: 12px;
+    color: #54656f;
+    text-align: right;
+    margin-top: 5px;
+}
+
+strong {
+    color: #075e54;
+}
+
+a {
+    color: #128c7e;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
 }
 
 /* Estilo para la barra de búsqueda */
@@ -166,6 +223,7 @@ li:hover {
     padding: 10px;
     background-color: #f6f6f6;
     border-bottom: 1px solid #ddd;
+    display: none;
 }
 
 .whatsapp-chat-header img {
@@ -248,6 +306,7 @@ li:hover {
     padding: 10px;
     background-color: #f6f6f6;
     border-top: 1px solid #ddd;
+    justify-content: flex-end;
 }
 
 .whatsapp-footer-icon {
@@ -298,6 +357,7 @@ li:hover {
     padding: 10px;
     border-bottom: 1px solid #ddd;
     cursor: pointer;
+    height: 60px;
 }
 
 .client-item:hover {
@@ -319,14 +379,80 @@ li:hover {
 }
 
 /* Estilos para los botones de selección */
+/* Contenedor general */
 .select-buttons {
     display: flex;
-    justify-content: space-between;
-    padding: 10px 0;
-}
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin: 20px auto;
+  }
+  
+  /* Estilo del select */
+  .filter-select {
+    width: 100%;
+    max-width: 300px;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: 2px solid #6b00ad;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #333;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+  }
+  
+  .filter-select:hover {
+    border-color: #ff914d;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .filter-select:focus {
+    outline: none;
+    border-color: #55a834;
+  }
+  
+  /* Botones */
+  .select-button {
+    width: 100%;
+    max-width: 300px;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    background: #6b00ad;
+    color: #fff;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .select-button:hover {
+    background: #ff914d;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  }
+  
+  .select-button:active {
+    transform: translateY(2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Botón deshabilitado */
+  
+  .select-button:disabled {
+    background: #d9d6f6;
+    color: #888;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  
 
 .select-button {
-    background-color: #f0f0f0;
+    background-color: #6d00af;
     border: 1px solid #ddd;
     border-radius: 5px;
     padding: 5px 10px;
@@ -335,5 +461,5 @@ li:hover {
 }
 
 .select-button:hover {
-    background-color: #e0e0e0;
+    background-color: #ff9843;
 }

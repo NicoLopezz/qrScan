@@ -49,7 +49,7 @@ async function cargarLavados() {
     try {
         const response = await fetch(`/api/admins/${adminId}/lavados`);
         if (!response.ok) throw new Error('No se pudo cargar los lavaderos');
-        
+
         const data = await response.json();
         console.log('Respuesta del servidor:', data); // Verifica los datos recibidos
         lavados = data;
@@ -132,7 +132,7 @@ function agregarFilaTabla(reserva) {
     row.id = `cliente-row-${reserva._id}`;
 
     // Verificar si el teléfono está vacío y si el estado de confirmación es true o false
-    const telefono = reserva.from 
+    const telefono = reserva.from
         ? `...${reserva.from.slice(-4)}`  // Mostrar solo los últimos 4 dígitos
         : 'Vacío';
     const confirmo = reserva.textConfirmation ? 'Sí' : 'No';
@@ -144,7 +144,7 @@ function agregarFilaTabla(reserva) {
         <td>${confirmo}</td>
         <td id="tiempo-cliente-${reserva._id}">5:00</td>
     `;
-    
+
     // Agregar evento de clic para cargar datos en la tarjeta
     row.addEventListener('click', () => seleccionarCliente(reserva._id));
     tablaClientes.appendChild(row);
@@ -191,20 +191,20 @@ function agregarCliente() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nombre, comensales, observacion })
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            showNotification("Cliente agregado con éxito");
-            const nuevoCliente = { _id: data.id, nombre, comensales, observacion };
-            reservas.push(nuevoCliente);
-            agregarFilaTabla(nuevoCliente);
-            // Recargar la página después de agregar el cliente
-            window.location.reload();
-        } else {
-            showNotification("Error al agregar cliente.", "error");
-        }
-    })
-    .catch(error => console.error("Error:", error));
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification("Cliente agregado con éxito");
+                const nuevoCliente = { _id: data.id, nombre, comensales, observacion };
+                reservas.push(nuevoCliente);
+                agregarFilaTabla(nuevoCliente);
+                // Recargar la página después de agregar el cliente
+                window.location.reload();
+            } else {
+                showNotification("Error al agregar cliente.", "error");
+            }
+        })
+        .catch(error => console.error("Error:", error));
 }
 
 
@@ -223,9 +223,9 @@ function agregarLavado() {
     console.log("Patente:", patente);
     console.log("Tipo de Lavado:", tipoDeLavado);
     console.log("Observación:", observacion);
-    
-    
-    
+
+
+
 
     // Validar los campos del formulario
     if (!nombre || !modelo || !patente || !tipoDeLavado) {
@@ -233,7 +233,7 @@ function agregarLavado() {
         return;
     }
 
-    
+
 
     // Enviar solicitud al servidor
     fetch('/api/admins/agregarLavado', {
@@ -248,73 +248,77 @@ function agregarLavado() {
             observacion
         })
     })
-    .then(response => {
-        if (!response.ok) {
-            
-            throw new Error("No se pudo completar la operación.");
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            showNotification("Lavado agregado con éxito");
-            handleOption2("tabla")
-            const nuevoLavado = { _id: data.id, nombre, modelo, patente, tipoDeLavado, observacion };
-            agregarFilaTablaLavados(nuevoLavado);
-            // window.location.reload();
-            cargarLavados()
-            limpiarFormularioLavado();
-            
-        } else {
-            showNotification(data.error || "Error al agregar el lavado.", "error");
-        }
-    })
-    .catch(error => {
-        console.error("Error:", error);
-        // showNotification("Error de red o servidor. Intenta nuevamente.", "error");
-    });
+        .then(response => {
+            if (!response.ok) {
+
+                throw new Error("No se pudo completar la operación.");
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                showNotification("Lavado agregado con éxito");
+
+                // Verificar si es versión móvil
+                if (window.innerWidth <= 768) {
+                    handleOption2("tabla");
+                }
+                const nuevoLavado = { _id: data.id, nombre, modelo, patente, tipoDeLavado, observacion };
+                agregarFilaTablaLavados(nuevoLavado);
+                // window.location.reload();
+                cargarLavados()
+                limpiarFormularioLavado();
+
+            } else {
+                showNotification(data.error || "Error al agregar el lavado.", "error");
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            // showNotification("Error de red o servidor. Intenta nuevamente.", "error");
+        });
 }
 
 function handleOption2(option) {
 
-    
+
     console.log("Ejecutando handleOption2 con opción:", option);
     // Aquí coloca la lógica necesaria
     // Seleccionamos los elementos necesarios
     const tarjetaYqr = document.querySelector("#tarjetaYqr");
     const tabla = document.querySelector("#tablaLavados2");
     const highlight = document.querySelector('.background-highlight');
-  
+
     // Lógica para mostrar/ocultar elementos
     if (option === 'reservas') {
-      if (tarjetaYqr) {
-        tarjetaYqr.style.display = "grid"; // Hace visible tarjetaYqr
-      }
-      if (tabla) {
-        tabla.style.display = "none"; // Oculta tabla
-      }
-  
-      // Mover el highlight
-      if (highlight) {
-        highlight.style.transform = 'translateX(0)';
-      }
+        if (tarjetaYqr) {
+            tarjetaYqr.style.display = "grid"; // Hace visible tarjetaYqr
+        }
+        if (tabla) {
+            tabla.style.display = "none"; // Oculta tabla
+        }
+
+        // Mover el highlight
+        if (highlight) {
+            highlight.style.transform = 'translateX(0)';
+        }
     } else if (option === 'tabla') {
-      if (tabla) {
-        tabla.style.display = "grid"; // Hace visible tabla
-      }
-      if (tarjetaYqr) {
-        tarjetaYqr.style.display = "none"; // Oculta tarjetaYqr
-      }
-  
-      // Mover el highlight
-      if (highlight) {
-        highlight.style.transform = 'translateX(100%)';
-      }
+        if (tabla) {
+            tabla.style.display = "grid"; // Hace visible tabla
+        }
+        if (tarjetaYqr) {
+            tarjetaYqr.style.display = "none"; // Oculta tarjetaYqr
+        }
+
+        // Mover el highlight
+        if (highlight) {
+            highlight.style.transform = 'translateX(100%)';
+        }
     }
-  }
+}
 
 
-  function limpiarFormularioLavado() {
+function limpiarFormularioLavado() {
     // Selecciona los campos del formulario
     const nombre = document.getElementById('inputNombre2');
     const modelo = document.getElementById('inputModelo');
@@ -329,7 +333,7 @@ function handleOption2(option) {
     if (tipoDeLavado) tipoDeLavado.selectedIndex = 0; // Selecciona el primer valor
     if (observacion) observacion.value = '';
 }
-  
+
 
 
 // Función para generar QR y actualizar la reserva seleccionada

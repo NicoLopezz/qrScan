@@ -62,7 +62,7 @@ form {
     width: 100%; /* Asegura que ocupe todo el ancho del formulario */
     max-width: 400px; /* Máximo ancho */
     padding: 10px; /* Espaciado interno */
-    font-size: 16px; /* Tamaño del texto */
+    font-size: 14px; /* Tamaño del texto */
     border: 2px solid #d3d3d3; /* Borde limpio */
     border-radius: 5px; /* Esquinas redondeadas */
     background-color: #f9f9f9; /* Fondo claro */
@@ -111,11 +111,12 @@ form {
     background-color: #6b00ad;
     color: white;
     padding: 10px 20px;
-    font-size: 16px;
+    font-size: 13px;
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    width: 45%;
+    width: 71%;
+    font-weight: 800;
   }
   
   button#btnAgregar:hover {
@@ -174,6 +175,7 @@ input[type="text"], input[type="number"] {
     color: #555;
     background-color: #f9f9f9;
     transition: background-color 0.3s, box-shadow 0.3s;
+    /* display: none; */
 }
 
 input[type="text"]:focus, input[type="number"]:focus {
@@ -337,7 +339,7 @@ th, td {
 }
 
 th {
-    background-color: #6b00ad; /* Fondo violeta para el encabezado */
+    
     color: #fff;
     font-weight: bold;
     position: sticky;

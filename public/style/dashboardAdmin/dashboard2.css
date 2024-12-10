@@ -24,7 +24,7 @@
 .card {
     background-color: #fff;
     padding: 20px;
-    border-radius: 15px;
+    border-radius: 15px !important;
     text-align: center;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     display: flex;
@@ -32,6 +32,7 @@
     justify-content: center;
     align-items: center;
     gap: 10px;
+    width: 210px;
 }
 
 .icon-container {
@@ -59,7 +60,7 @@
 }
 
 .card-number {
-    font-size: 50px;
+    font-size: 30px;
     color: #ff914d;
     font-weight: bold;
     margin-top: -5px;
@@ -184,4 +185,6 @@ canvas {
     padding: 50px;
     border-radius: 20px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    padding-top: 10px;
+    width: 60%;
 }
