@@ -333,17 +333,15 @@ async function handleLavadoMessage(body, fromWithPrefix) {
 
       // Crear el mensaje personalizado para confirmación
       // const responseMessage = `Hola! ${lavado.nombre}, tu servicio de lavado ha sido confirmado. 
-
-      const responseMessage = `
-      *Aquí está el detalle de tu servicio ${lavado.nombre}:*
+      const responseMessage = 
+      `*Aquí está el detalle de tu servicio ${lavado.nombre}:*
       
       🚗 *Vehículo:* ${lavado.modelo}
       🧼 *Tipo de lavado:* ${lavado.tipoDeLavado}
       📄 *Patente:* ${lavado.patente}
       📝 *Observación:* ${lavado.observacion || 'Sin observaciones'}
       
-      Te avisaremos cuando este listo para ser retirado.
-      `.replace(/^\s+/gm, '');
+      Te avisaremos cuando este listo para ser retirado.`.trim();
       
       
 

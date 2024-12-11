@@ -8,6 +8,11 @@
         /* overflow: hidden; */
         background-color: #fff !important;
     }
+    
+    element.style {
+        overflow: none;
+    }
+
 
     #sidebar {
         display: none;
