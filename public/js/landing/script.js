@@ -136,13 +136,6 @@ function toggleFaq(element) {
 }
 
 
-// // Agregar evento click a todos los elementos de pregunta
-// document.querySelectorAll('.faq-item').forEach(item => {
-//     item.addEventListener('click', function () {
-//         toggleFaq(item);
-//     });
-// });
-
 document.addEventListener('DOMContentLoaded', function () {
     const body = document.body;
 
@@ -161,7 +154,6 @@ document.addEventListener('DOMContentLoaded', function () {
     window.addEventListener('resize', adjustOffset);
 });
 
-//ASI FUNCIONAAAAAA!
 function showContent(number) {
     // Remover la clase 'active' de todos los botones
     const buttons = document.querySelectorAll('.number-btn');
@@ -191,10 +183,4 @@ function showContent(number) {
 }
 
 
-
-
-
-
-
-console.log("Archivo JavaScript cargado correctamente");
 

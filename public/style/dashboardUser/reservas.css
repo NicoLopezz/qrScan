@@ -126,7 +126,7 @@ form {
   /* Ajustes para pantallas pequeñas */
   @media (max-width: 768px) {
     #selectServicio {
-      font-size: 14px; /* Tamaño de texto más pequeño */
+      font-size: 12px; /* Tamaño de texto más pequeño */
       width: 65%; /* Asegura que no ocupe más espacio */
       margin: 0 auto; /* Centra el select */
       text-align: center;
