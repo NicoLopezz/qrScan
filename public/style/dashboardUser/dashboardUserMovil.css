@@ -33,7 +33,14 @@
         padding: 80px 0 !important;
         position: fixed !important;
         width: 95% !important;
-    }
+        }
+
+        #section-dashboard{
+            margin-top: -30% !important;
+            padding: 80px 0 !important;
+            position: fixed !important;
+            width: 95% !important;
+            }
 
 
     .content-container {
@@ -516,9 +523,12 @@
         justify-content: center;
         align-items: center;
         gap: 20px;
-        margin-top: 10rem;
+        margin-top: 8rem;
         margin-bottom: 3rem;
         /* margin-bottom: -100px; */
+        width: 75%;
+        margin-left: 15%;
+    }
     }
 
     .charts canvas {
