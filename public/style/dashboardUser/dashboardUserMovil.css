@@ -540,6 +540,10 @@
         width: 95% !important;
     }
 
+    #section-faq{
+        margin-top: 10px !important
+    }
+
 
     .tarjeta {
         display: flex;
