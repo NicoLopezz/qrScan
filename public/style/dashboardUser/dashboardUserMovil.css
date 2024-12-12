@@ -532,6 +532,15 @@
     }
 
 @media (max-width: 400px){
+
+    .section {
+        margin-top: -5rem !important;
+        padding: 80px 0 !important;
+        position: fixed !important;
+        width: 95% !important;
+    }
+
+
     .tarjeta {
         display: flex;
         flex-direction: column;
@@ -543,6 +552,53 @@
         scale: 0.85;
         /* display: none; */
     }
+
+    .navbar {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem 1rem;
+        flex-wrap: nowrap;
+        width: auto;
+        margin-top: -10% !important;
+        height: 5rem;
+    }
+
+    .whatsapp-chat-footer {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        background-color: #f6f6f6;
+        border-top: 1px solid #ddd;
+        bottom: 0;
+        width: 92%;
+        box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
+        justify-content: center;
+        height: 5rem !important ;
+        position: absolute;
+        bottom: 5rem !important;
+        margin-bottom: 0%;
+    }
+
+    #section-mensajesMovil {
+        display: grid;
+        grid-template-columns: 50% 20%;
+        gap: 40px;
+        justify-items: center;
+        margin-left: 15%;
+        margin-top: 0%;
+    }
+
+    #chatMovil {
+        display: grid;
+        width: 95%;
+        overflow-y: auto;
+        height: 15rem !important;
+    }
+
+
+
 } 
 
     .charts canvas {
