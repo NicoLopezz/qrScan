@@ -531,6 +531,20 @@
     }
     }
 
+@media (max-width: 400px){
+    .tarjeta {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 25px;
+        height: fit-content;
+        width: 100%;
+        margin-top: -7%;
+        scale: 0.85;
+        /* display: none; */
+    }
+} 
+
     .charts canvas {
         width: 100%;
         /* Ocupan todo el ancho disponible */

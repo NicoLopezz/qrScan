@@ -41,7 +41,7 @@ export const sendWhatsAppTemplateMessage = async (to, templateParams) => {
         await client.messages.create({
             from: 'whatsapp:+5491135254661', // Número de WhatsApp de Twilio (sandbox o producción)
             to: `${to}`,           // El número de WhatsApp del destinatario, con el formato correcto
-            contentSid: 'HX2128ee0f7561acec9cf339335d7e9fb5', // El SID de la plantilla
+            contentSid: 'HX44c6ba98aab36cb65ddd698044da3e70', // El SID de la plantilla
             contentVariables: JSON.stringify({
                 1: templateParams[0],   // Parsea los parámetros de la plantilla, asegurando que coincidan
                 2: templateParams[1],   // con los campos que definiste en la plantilla.
