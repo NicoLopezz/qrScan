@@ -83,10 +83,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     function loadClientData(client) {
         document.getElementById('client-name').textContent = client.nombre || "No Disponible"; // Nombre fijo por ahora
         document.getElementById('client-phone').textContent = client.from || "Número no disponible";
-        document.getElementById('client-score').textContent = client.promedioTiempo || 'N/A';
+        document.getElementById('client-score').textContent = client.calidad || 'N/A';
         document.getElementById('client-loyalty').innerHTML = generateStars(client.visits || 3);
-        document.getElementById('client-address').textContent = client.address || 'A determinar';
-        document.getElementById('client-local').textContent = client.local || 'A determinar';
+        // document.getElementById('client-address').textContent = client.address || 'A determinar';
+        // document.getElementById('client-local').textContent = client.localName || 'A determinar';
         document.getElementById('client-resent').textContent = client.resent || 'A determinar';
     }
 

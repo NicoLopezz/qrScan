@@ -156,6 +156,13 @@ async function getLocalDetails(req, res) {
 };
 
 
+
+
+
+
+
+
+
 async function reciveMessage(req, res) {
   res.status(200).send('<Response></Response>');
 
@@ -220,28 +227,43 @@ async function reciveMessage(req, res) {
 // Función para actualizar la encuesta en la base de datos
 async function actualizarEncuestaEnDB(from, palabraClave) {
   try {
-    // Extrae el número sin el prefijo 'whatsapp:'
     const numeroCliente = from.replace('whatsapp:', '');
 
-    // Busca al admin y al cliente asociado
+    // Mapeo de palabras clave a puntuaciones
+    const calidadMap = {
+      bueno: 4, // Opcional: asignar un valor intermedio si "bueno" debe considerarse
+      regular: 3,
+      excelente: 5
+    };
+
+    // Validar si la palabra clave tiene una puntuación asignada
+    if (!calidadMap[palabraClave.toLowerCase()]) {
+      console.log(`La palabra clave "${palabraClave}" no es válida.`);
+      return;
+    }
+
+    // Buscar al admin con un lavado correspondiente al cliente
     const admin = await Admin.findOne({ 'lavados.from': numeroCliente });
 
     if (admin) {
-      // Encuentra el lavado asociado al cliente
-      const lavado = admin.lavados.find(lavado => lavado.from === numeroCliente);
+      // Encontrar el lavado más reciente o correcto
+      const lavado = admin.lavados
+        .filter(l => l.from === numeroCliente) // Filtrar todos los lavados del cliente
+        .sort((a, b) => b.fechaDeAlta - a.fechaDeAlta)[0]; // Ordenar y tomar el más reciente
 
       if (lavado) {
-        console.log(`Actualizando encuesta para el cliente ${lavado.nombre} con la respuesta: ${palabraClave}`);
+        console.log(`Actualizando calidad para el cliente ${lavado.nombre} con la respuesta: ${palabraClave}`);
 
-        // Agrega la respuesta de la encuesta en el campo `feedback` (puedes cambiar el nombre)
-        lavado.feedback = palabraClave;
+        // Actualizar los campos de calidad y puntuación
+        lavado.calidad = palabraClave.toLowerCase();
+        lavado.puntuacionCalidad = calidadMap[palabraClave.toLowerCase()];
 
-        // Guarda los cambios en la base de datos
+        // Guardar los cambios
         await admin.save();
 
         console.log("Encuesta actualizada correctamente en la base de datos.");
       } else {
-        console.log("No se encontró el lavado asociado al cliente.");
+        console.log("No se encontró un lavado asociado al cliente.");
       }
     } else {
       console.log("No se encontró ningún admin con un lavado asociado al cliente.");
@@ -250,8 +272,6 @@ async function actualizarEncuestaEnDB(from, palabraClave) {
     console.error("Error al actualizar la encuesta en la base de datos:", error);
   }
 }
-
-
 
 
 // Función para manejar mensajes de "reserva"
@@ -402,8 +422,6 @@ async function handleLavadoMessage(body, fromWithPrefix) {
 }
 
 
-
-
 // Función para enviar mensaje de cuenta regresiva
 async function enviarMensajeCuentaRegresiva(req, res) {
   try {
@@ -448,12 +466,6 @@ async function enviarMensajeCuentaRegresiva(req, res) {
 
 
 
-
-
-
-
-
-
 // Función para enviar mensaje de cuenta regresiva
 async function enviarAvisoRetiroLavado(req, res) {
   try {
@@ -474,9 +486,25 @@ async function enviarAvisoRetiroLavado(req, res) {
       const lavado = admin.lavados.find(lavado => lavado._id.toString() === clienteId);
 
       if (lavado) {
-        // Crear el mensaje con los datos del cliente y del lavado
-        // Crear el mensaje con los datos del cliente y del lavado
-        const mensaje = `Hola, ${lavado.nombre} 👋, ¡tenemos buenas noticias! 🎉  
+        // Encontrar el primer elemento de historialLavados que tenga fechaEgreso null
+        const historialDisponible = lavado.historialLavados.find(h => h.fechaEgreso === null);
+
+        if (historialDisponible) {
+          // Guardar la fecha de egreso (momento actual)
+          const fechaActual = new Date();
+          historialDisponible.fechaEgreso = fechaActual;
+
+          // Calcular la diferencia en minutos entre fechaIngreso y fechaEgreso
+          const fechaIngreso = new Date(historialDisponible.fechaIngreso);
+          const diferenciaMinutos = Math.floor((fechaActual - fechaIngreso) / 60000);
+
+          historialDisponible.tiempoEspera = diferenciaMinutos;
+
+          // Guardar los cambios en la base de datos
+          await admin.save();
+
+          // Crear el mensaje con los datos del cliente y del lavado
+          const mensaje = `Hola, ${lavado.nombre} 👋, ¡tenemos buenas noticias! 🎉  
 Tu vehículo con patente **${lavado.patente}** está listo para ser retirado. 🧼🚗  
 
 Gracias por confiar en nosotros y por elegir nuestro servicio.
@@ -487,13 +515,19 @@ Con este lavado, ya tienes **1 de 3 estrellas** ⭐.
 
 ¡Gracias por tu preferencia y esperamos verte pronto! 🌟`;
 
+          // Enviar el mensaje al número de WhatsApp almacenado en el campo `from`
+          await sendWhatsAppMessage(`whatsapp:${lavado.from}`, mensaje);
 
-
-        // Enviar el mensaje al número de WhatsApp almacenado en el campo `from`
-        await sendWhatsAppMessage(`whatsapp:${lavado.from}`, mensaje);
-
-        console.log(`Aviso de retiro de lavado enviado a ${lavado.from} para el cliente ${lavado.nombre}`);
-        res.json({ success: true, message: "Mensaje enviado con éxito" });
+          console.log(`Aviso de retiro de lavado enviado a ${lavado.from} para el cliente ${lavado.nombre}`);
+          res.json({
+            success: true,
+            message: "Mensaje enviado con éxito",
+            tiempoEspera: diferenciaMinutos
+          });
+        } else {
+          console.log("No se encontró un historial de lavado disponible para actualizar.");
+          res.status(404).json({ success: false, message: "No hay historial de lavado disponible." });
+        }
       } else {
         console.log("No se encontró el lavado con el ID proporcionado en el documento del admin.");
         res.status(404).json({ success: false, message: "Lavado no encontrado" });
@@ -1175,7 +1209,6 @@ async function getReservas(req, res) {
 }
 
 
-
 // Obtener lavaderos de un administrador específico
 async function getLavados(req, res) {
   const { adminId } = req.params;
@@ -1187,42 +1220,24 @@ async function getLavados(req, res) {
       return res.status(404).json({ error: 'Admin no encontrado' });
     }
 
-    // Iterar sobre los lavados y generar datos faltantes
+    // Iterar sobre los lavados y agregar datos en historialLavados si no existe
     admin.lavados.forEach(lavado => {
       // Generar historialLavados si no existe o está vacío
       if (!lavado.historialLavados || lavado.historialLavados.length === 0) {
         lavado.historialLavados = [
           {
-            confirmacionPorCliente: Math.random() < 0.5,
-            tipoDeLavado: ["lavado-básico", "lavado-premium", "lavado-en-profundidad"][
-              Math.floor(Math.random() * 3)
-            ],
-            fechaIngreso: generarFechaAleatoria(),
-            fechaEgreso: generarFechaAleatoria(),
-            tiempoEspera: 0, // Se calculará después
-            observacion: ["Cliente satisfecho", "Cliente en espera", "Sin comentarios"][
-              Math.floor(Math.random() * 3)
-            ],
-            mensajes: [
-              {
-                body: "Gracias por elegirnos",
-                fecha: new Date().toISOString()
-              }
-            ],
-            puntuacion: Math.floor(Math.random() * 5) + 1
+            confirmacionPorCliente: false,
+            tipoDeLavado: lavado.tipoDeLavado || '',
+            fechaIngreso: lavado.fechaDeAlta || new Date(),
+            fechaEgreso: null, // Dejar el campo vacío
+            tiempoEspera: 0, // Por ahora 0
+            observacion: lavado.observacion || 'Sin observación',
+            mensajes: lavado.mensajesEnviados || [],
+            calidad: lavado.calidad || '',
+            puntuacionCalidad: lavado.puntuacionCalidad || 0
           }
         ];
-
-        // Calcular tiempo de espera
-        const historial = lavado.historialLavados[0];
-        historial.tiempoEspera = Math.floor(
-          (new Date(historial.fechaEgreso) - new Date(historial.fechaIngreso)) / 60000
-        );
       }
-
-      // Completar otros campos faltantes
-      lavado.lavadosAcumulados = lavado.lavadosAcumulados || Math.floor(Math.random() * 15) + 1;
-      lavado.promedioTiempo = lavado.promedioTiempo || Math.floor(Math.random() * 100);
     });
 
     // Guardar los cambios si hubo modificaciones
@@ -1235,73 +1250,6 @@ async function getLavados(req, res) {
     res.status(500).json({ error: 'Error al obtener los lavaderos' });
   }
 }
-
-// Función para generar fechas aleatorias
-function generarFechaAleatoria() {
-  const fechaBase = new Date();
-  const randomDiasAtras = Math.floor(Math.random() * 90); // Hasta 90 días atrás
-  const randomHoras = Math.floor(Math.random() * 24); // Hasta 24 horas
-  const randomMinutos = Math.floor(Math.random() * 60); // Hasta 60 minutos
-
-  const fecha = new Date(fechaBase);
-  fecha.setDate(fechaBase.getDate() - randomDiasAtras);
-  fecha.setHours(randomHoras);
-  fecha.setMinutes(randomMinutos);
-
-  return fecha.toISOString();
-}
-
-
-
-// // Obtener e imprimir el historial de lavados para un administrador específico
-// async function imprimirHistorialLavados(adminId) {
-//   try {
-//     // Buscar al administrador por su ID y seleccionar el campo lavados
-//     const admin = await Admin.findById(adminId).select('lavados');
-//     if (!admin) {
-//       console.log('Admin no encontrado');
-//       return;
-//     }
-
-//     // Validar que haya lavados
-//     if (!admin.lavados || admin.lavados.length === 0) {
-//       console.log('No se encontraron lavados para este admin.');
-//       return;
-//     }
-
-//     // Recorrer los lavados
-//     admin.lavados.forEach((lavado, indexLavado) => {
-//       console.log(`Lavado ${indexLavado + 1}:`);
-//       console.log(`  - Nombre: ${lavado.nombre}`);
-//       console.log(`  - Patente: ${lavado.patente}`);
-//       console.log(`  - Tipo de lavado: ${lavado.tipoDeLavado}`);
-//       console.log(`  - Modelo: ${lavado.modelo}`);
-
-//       // Validar que tenga historial de lavados
-//       if (!lavado.historialLavados || lavado.historialLavados.length === 0) {
-//         console.log('  - Sin historial de lavados.');
-//       } else {
-//         // Recorrer el historial de lavados
-//         lavado.historialLavados.forEach((historial, indexHistorial) => {
-//           console.log(`  Historial ${indexHistorial + 1}:`);
-//           console.log(`    - Fecha de ingreso: ${historial.fechaIngreso || 'No registrada'}`);
-//           console.log(`    - Fecha de egreso: ${historial.fechaEgreso || 'No registrada'}`);
-//           console.log(`    - Tiempo de espera: ${historial.tiempoEspera || 'No registrado'} minutos`);
-//           console.log(`    - Observación: ${historial.observacion || 'Sin observaciones'}`);
-//           console.log(`    - Puntuación: ${historial.puntuacion || 'No registrada'}`);
-//         });
-//       }
-//     });
-//   } catch (error) {
-//     console.error('Error al obtener e imprimir el historial de lavados:', error);
-//   }
-// }
-
-
-
-
-
-
 
 
 
@@ -1353,7 +1301,6 @@ async function agregarLavado(req, res) {
       estado: 'Pendiente' // Estado inicial por defecto
     });
     await admin.save();
-
     res.status(201).json({ success: true, message: 'Lavado agregado con éxito' });
   } catch (error) {
     console.error('Error al agregar lavado:', error);

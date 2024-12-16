@@ -132,43 +132,49 @@ function mostrarDatosCliente(cliente) {
     // Asignar valores al HTML
     clientNameElem.textContent = cliente.nombre || 'Sin nombre';
     clientPhoneElem.textContent = cliente.from || 'Sin teléfono';
-    clientScoreElem.textContent = cliente.puntuacionPromedio 
-        ? `${cliente.puntuacionPromedio}/5` 
-        : 'Sin calificación';
+    clientScoreElem.textContent = cliente.calidad || 'Sin encuesta';
 
-    // Generar estrellas de fidelidad
-    const fidelidad = cliente.lavadosAcumulados || 0;
-    clientLoyaltyElem.innerHTML = `<span class="stars">${'⭐'.repeat(fidelidad)}${'☆'.repeat(5 - fidelidad)}</span>`;
 
-    // Último lavado (fecha más reciente en historialLavados)
+    // Generar autos de fidelidad
+    const historialLavados = cliente.historialLavados || []; // Verificar si el arreglo existe
+    const cantidadLavados = historialLavados.length; // Obtener el largo del arreglo
+
+    // Crear una cadena con autos 🚗
+    const autosHTML = `<span class="cars">${'🚗'.repeat(cantidadLavados)}</span>`;
+
+    // Insertar en el elemento HTML
+    clientLoyaltyElem.innerHTML = autosHTML;
+
+    // Último lavado (fecha de ingreso más reciente en historialLavados)
     let ultimoLavado = null;
+
     if (cliente.historialLavados && cliente.historialLavados.length > 0) {
-        // Obtener el lavado con la fecha de egreso más reciente
-        ultimoLavado = cliente.historialLavados.reduce((prev, current) => 
-            new Date(prev.fechaEgreso) > new Date(current.fechaEgreso) ? prev : current
+        // Obtener el lavado con la fecha de ingreso más reciente
+        ultimoLavado = cliente.historialLavados.reduce((prev, current) =>
+            new Date(prev.fechaIngreso) > new Date(current.fechaIngreso) ? prev : current
         );
 
-        // Formatear y mostrar la fecha del último lavado
-        clientLastWashElem.textContent = formatFecha(ultimoLavado.fechaEgreso);
+        // Formatear y mostrar la fecha del último lavado (fechaIngreso)
+        clientLastWashElem.textContent = formatFecha(ultimoLavado.fechaIngreso);
 
         // Log de validación por cliente
-        console.log(`Último lavado registrado (${cliente.nombre}):`, ultimoLavado.fechaEgreso);
+        console.log(`Último lavado registrado (${cliente.nombre}):`, ultimoLavado.fechaIngreso);
     } else {
         clientLastWashElem.textContent = 'Sin registros';
         console.log(`No hay lavados registrados para ${cliente.nombre || 'Cliente desconocido'}.`);
     }
 
+
     // Último mensaje (fecha más reciente en mensajesEnviados)
     let ultimoMensaje = null;
     if (cliente.mensajesEnviados && cliente.mensajesEnviados.length > 0) {
-        ultimoMensaje = cliente.mensajesEnviados.reduce((prev, current) => 
+        ultimoMensaje = cliente.mensajesEnviados.reduce((prev, current) =>
             new Date(prev.fecha) > new Date(current.fecha) ? prev : current
         );
         clientLastMessageElem.textContent = formatFecha(ultimoMensaje.fecha);
     } else {
         clientLastMessageElem.textContent = 'Sin mensajes';
     }
-
     console.log('Datos del cliente mostrados en el HTML:', cliente);
 }
 
@@ -186,7 +192,7 @@ export function selectAllClients() {
     const clientsList = document.querySelectorAll('.client-item');
 
     // Limpiar el arreglo y agregar todos los clientes seleccionados
-    selectedClients = []; 
+    selectedClients = [];
 
     clientsList.forEach(clientItem => {
         const checkbox = clientItem.querySelector('.client-checkbox');
@@ -258,7 +264,7 @@ export function updateSelectedCount() {
 
 
 
-    // LOGICA PARA ENVIAR LAS TEMPLATES DESDE MENSJAES.
+// LOGICA PARA ENVIAR LAS TEMPLATES DESDE MENSJAES.
 // Obtener el mensaje activo
 function obtenerMensajeActivo(contenedorId) {
     const contenedor = document.querySelector(`#${contenedorId}`);
@@ -291,7 +297,7 @@ function obtenerMensajeActivo(contenedorId) {
                 .replace(/2x1 en lavados premium/g, '*2x1 en lavados premium*') // Negrita en promociones
                 .replace(/Ven cuando quieras/g, '*Ven cuando quieras*') // Negrita en instrucciones importantes
                 .replace(/\.\s/g, '.\n'); // Añadir saltos de línea después de puntos finales
-            
+
             return texto; // Devolver el texto plano ya formateado
         })
         .join('\n\n'); // Unir los párrafos con doble salto de línea

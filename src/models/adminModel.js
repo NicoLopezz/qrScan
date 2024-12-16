@@ -76,11 +76,12 @@ const lavadoSchema = new mongoose.Schema({
     fechaEgreso: { type: Date, default: null },
     tiempoEspera: { type: Number, default: 0 },
     observacion: { type: String, default: '' },       // Observaciones adicionales
+    calidad: { type: String, default: '' },              // telefono
+    puntuacionCalidad: { type: Number, default: 0 },
     mensajes: [{
       body: { type: String, default: '' },
       fecha: { type: String, default: '' }
     }],
-    puntuacion: { type: Number, default: 0 }
   }],
   lavadosAcumulados: { type: Number, default: 0 },
   promedioTiempo: { type: Number, default: 0 },
