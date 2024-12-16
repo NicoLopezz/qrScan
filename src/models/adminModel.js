@@ -67,6 +67,8 @@ const lavadoSchema = new mongoose.Schema({
   patente: { type: String, required: true },        // Patente del vehículo
   solicitudBaja: { type: Boolean, default: false },
   from: { type: String, default: '' },              // telefono
+  calidad: { type: String, default: '' },              // telefono
+  puntuacionCalidad: { type: Number, default: 0 },
   historialLavados: [{
     confirmacionPorCliente: { type: Boolean, default: false },
     tipoDeLavado: { type: String, required: null },
