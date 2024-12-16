@@ -84,6 +84,8 @@ router.patch('/lavados/:lavadoId/actualizarSelectedLavado', autenthication.actua
 router.delete('/reservas/:clienteId/eliminar', autenthication.eliminarCliente);
 
 
+router.post('/enviarEncuesta', autenthication.enviarEncuesta)
+
 
 
 

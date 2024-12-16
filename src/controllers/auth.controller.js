@@ -188,15 +188,30 @@ async function reciveMessage(req, res) {
     } else if (body.toLowerCase().includes('ya lo tengo')) {
       await handleConfirmationMessage(from, body);
     } else if (body.toLowerCase().includes('lavado')) {
-      console.log("DETECTE LA PALABRA LAVADO!")
+      console.log("DETECTE LA PALABRA LAVADO!");
       await handleLavadoMessage(body, from, localAdmin);
     } else if (body.toLowerCase().includes('baja')) {
       await handleBajaRequest(from);
+    } else if (
+      ['excelente', 'regular', 'bueno'].some(palabra =>
+        body.toLowerCase().includes(palabra)
+      )
+    ) {
+      console.log("Respuesta de encuesta detectada:", body);
+
+      // Mensaje de agradecimiento
+      const mensajeAgradecimiento = `¡Muchas gracias por completar nuestra encuesta! 🥳 Tu opinión es muy valiosa para nosotros.`;
+
+      await sendWhatsAppMessage(`whatsapp:${from}`, mensajeAgradecimiento);
     } else {
       console.log('Mensaje no reconocido:', body);
       // Respuesta para mensajes no reconocidos
-      await sendWhatsAppMessage(`whatsapp:${from}`, "Lo siento, no pudimos entender tu mensaje. Por favor, usa una palabra clave válida o contacta a soporte.");
+      await sendWhatsAppMessage(
+        `whatsapp:${from}`,
+        "Lo siento, no pudimos entender tu mensaje. Por favor, usa una palabra clave válida o contacta a soporte."
+      );
     }
+
   } catch (error) {
     console.error('Error al procesar el mensaje:', error.message);
   }
@@ -333,18 +348,13 @@ async function handleLavadoMessage(body, fromWithPrefix) {
 
       // Crear el mensaje personalizado para confirmación
       // const responseMessage = `Hola! ${lavado.nombre}, tu servicio de lavado ha sido confirmado. 
-      const responseMessage = 
-      `*Aquí está el detalle de tu servicio ${lavado.nombre}:*\n
+      const responseMessage =
+        `*Aquí está el detalle de tu servicio ${lavado.nombre}:*\n
       🚗 *Vehículo:* ${lavado.modelo}
       🧼 *Tipo de lavado:* ${lavado.tipoDeLavado}
       📄 *Patente:* ${lavado.patente}
       📝 *Observación:* ${lavado.observacion || 'Sin observaciones'}\n
       Te avisaremos cuando este listo para ser retirado.`.trim();
-      
-      
-
-
-
 
       // Enviar un mensaje de confirmación al cliente
       await sendWhatsAppMessage(`whatsapp:${from}`, responseMessage);
@@ -402,6 +412,14 @@ async function enviarMensajeCuentaRegresiva(req, res) {
   }
 }
 
+
+
+
+
+
+
+
+
 // Función para enviar mensaje de cuenta regresiva
 async function enviarAvisoRetiroLavado(req, res) {
   try {
@@ -455,6 +473,62 @@ Con este lavado, ya tienes **1 de 3 estrellas** ⭐.
     res.status(500).json({ success: false, message: "Error al enviar el mensaje" });
   }
 }
+
+
+// Función para enviar mensaje de cuenta regresiva
+async function enviarEncuesta(req, res) {
+  try {
+    const { clienteId } = req.body;
+
+    if (!clienteId) {
+      console.error("No se recibió clienteId en la solicitud");
+      return res.status(400).json({ success: false, message: "No se recibió clienteId" });
+    }
+
+    // Buscar el admin que tenga un lavado con el ID del cliente proporcionado
+    const admin = await Admin.findOne({ 'lavados._id': clienteId });
+
+    if (admin) {
+      console.log("Admin encontrado:", admin._id);
+
+      // Encontrar el lavado específico dentro de `admin.lavados` con el clienteId
+      const lavado = admin.lavados.find(lavado => lavado._id.toString() === clienteId);
+
+      if (lavado) {
+        // Parámetros de la plantilla
+        const templateParams = [
+          lavado.nombre,               // Nombre del cliente
+          lavado.patente,              // Patente del vehículo
+          '1 de 3 estrellas'           // Información sobre la promoción o cualquier otro detalle
+        ];
+
+        // Enviar el mensaje utilizando la plantilla
+        await sendWhatsAppTemplateMessage(`whatsapp:${lavado.from}`, templateParams);
+
+        console.log(`Mensaje de plantilla enviado a ${lavado.from} para el cliente ${lavado.nombre}`);
+        res.json({ success: true, message: "Mensaje de plantilla enviado con éxito" });
+      } else {
+        console.log("No se encontró el lavado con el ID proporcionado en el documento del admin.");
+        res.status(404).json({ success: false, message: "Lavado no encontrado" });
+      }
+    } else {
+      console.log("No se encontró ningún admin con un lavado coincidente.");
+      res.status(404).json({ success: false, message: "Admin no encontrado" });
+    }
+  } catch (error) {
+    console.error("Error al enviar el mensaje:", error);
+    res.status(500).json({ success: false, message: "Error al enviar el mensaje" });
+  }
+}
+
+
+
+
+
+
+
+
+
 
 
 async function enviarMensajesTemplates(req, res) {
@@ -1429,5 +1503,6 @@ export const methods = {
   actualizarSelectedLavado,
   qrScanUpdateLavados,
   enviarAvisoRetiroLavado,
-  enviarMensajesTemplates
+  enviarMensajesTemplates,
+  enviarEncuesta
 };
