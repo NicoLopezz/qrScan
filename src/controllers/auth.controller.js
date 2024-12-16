@@ -198,22 +198,56 @@ async function reciveMessage(req, res) {
       )
     ) {
       console.log("Respuesta de encuesta detectada:", body);
-
-      // Mensaje de agradecimiento
-      const mensajeAgradecimiento = `¡Muchas gracias por completar nuestra encuesta! 🥳 Tu opinión es muy valiosa para nosotros.`;
-
-      await sendWhatsAppMessage(`whatsapp:${from}`, mensajeAgradecimiento);
-    } else {
-      console.log('Mensaje no reconocido:', body);
-      // Respuesta para mensajes no reconocidos
-      await sendWhatsAppMessage(
-        `whatsapp:${from}`,
-        "Lo siento, no pudimos entender tu mensaje. Por favor, usa una palabra clave válida o contacta a soporte."
+    
+      const palabraClave = ['excelente', 'regular', 'bueno'].find(palabra =>
+        body.toLowerCase().includes(palabra)
       );
+    
+      // Actualizar la base de datos con la palabra clave
+      await actualizarEncuestaEnDB(from, palabraClave);
+    
+      // Mensaje de agradecimiento
+      const mensajeAgradecimiento = `¡Muchas gracias por completar nuestra encuesta! 🥳 Tu opinión "${palabraClave}" es muy valiosa para nosotros.`;
+    
+      await sendWhatsAppMessage(`whatsapp:${from}`, mensajeAgradecimiento);
     }
-
   } catch (error) {
     console.error('Error al procesar el mensaje:', error.message);
+  }
+}
+
+
+// Función para actualizar la encuesta en la base de datos
+async function actualizarEncuestaEnDB(from, palabraClave) {
+  try {
+    // Extrae el número sin el prefijo 'whatsapp:'
+    const numeroCliente = from.replace('whatsapp:', '');
+
+    // Busca al admin y al cliente asociado
+    const admin = await Admin.findOne({ 'lavados.from': numeroCliente });
+
+    if (admin) {
+      // Encuentra el lavado asociado al cliente
+      const lavado = admin.lavados.find(lavado => lavado.from === numeroCliente);
+
+      if (lavado) {
+        console.log(`Actualizando encuesta para el cliente ${lavado.nombre} con la respuesta: ${palabraClave}`);
+
+        // Agrega la respuesta de la encuesta en el campo `feedback` (puedes cambiar el nombre)
+        lavado.feedback = palabraClave;
+
+        // Guarda los cambios en la base de datos
+        await admin.save();
+
+        console.log("Encuesta actualizada correctamente en la base de datos.");
+      } else {
+        console.log("No se encontró el lavado asociado al cliente.");
+      }
+    } else {
+      console.log("No se encontró ningún admin con un lavado asociado al cliente.");
+    }
+  } catch (error) {
+    console.error("Error al actualizar la encuesta en la base de datos:", error);
   }
 }
 
