@@ -184,7 +184,7 @@
                         </div>
                         <div class="card-content">
                             <h3 class="titleCard">Total <br> Clientes</h3>
-                            <p id="totalPedidos" class="card-number">114</p>
+                            <p id="totalPedidos" class="card-number"></p>
                         </div>
                     </div>
                     <div class="card">
@@ -192,8 +192,8 @@
                             <i class="fas fa-users"></i>
                         </div>
                         <div class="card-content">
-                            <h3>Nuevos Clientes</h3>
-                            <p id="clientCount" class="card-number">56</p>
+                            <h3>Clientes del dia</h3>
+                            <p id="clientCount" class="card-number"></p>
                         </div>
                     </div>
                     <div class="card">
@@ -202,7 +202,7 @@
                         </div>
                         <div class="card-content">
                             <h3>Tiempo <br> Lavado</h3>
-                            <p class="card-number">35"30'</p>
+                            <p class="card-number" id="tiempoPromedio"></p>
                         </div>
                     </div>
                     <div class="card" id="tarjetaOcultar">
@@ -211,7 +211,7 @@
                         </div>
                         <div class="card-content">
                             <h3>Calificacion <br> Promedio </h3>
-                            <p class="card-number">4,5</p>
+                            <p class="card-number" id="calificacionPromedio"></p>
                         </div>
                     </div>
                     <div class="card" id="tarjetaOcultar">
@@ -220,7 +220,7 @@
                         </div>
                         <div class="card-content">
                             <h3>Servicio <br> Preferido</h3>
-                            <p class="card-number">Estandar</p>
+                            <p class="card-number" id="ServicioMasPedido"></p>
                         </div>
                     </div>
                     <div class="card" id="tarjetaOcultar">
@@ -229,7 +229,7 @@
                         </div>
                         <div class="card-content">
                             <h3>Promocion <br> activa</h3>
-                            <p class="card-number">Jueves 10% off</p>
+                            <p class="card-number" id="promoActiva">Jueves 10% off</p>
                         </div>
                     </div>
                 </div>
@@ -674,13 +674,14 @@
                                         <span class="stars"></span> <!-- Ejemplo de 3 de 5 estrellas -->
                                     </td>
                                 </tr>
+
                                 <tr>
                                     <th>Ultimo <br> Lavado</th>
                                     <td id="client-resent"></td>
                                 </tr>
                                 <tr>
-                                    <th>Ultimo <br> Mensaje</th>
-                                    <td id="client-resent-mensaje"></td>
+                                    <th>Tiempo <br> Lavado <br> Promedio</th>
+                                    <td id="client-resent-tiempooLavado"></td>
                                 </tr>
                             </table>
                         </div>

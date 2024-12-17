@@ -110,7 +110,7 @@ function mostrarDatosCliente(cliente) {
     const clientScoreElem = document.getElementById('client-score');
     const clientLoyaltyElem = document.getElementById('client-loyalty');
     const clientLastWashElem = document.getElementById('client-resent'); // Último lavado
-    const clientLastMessageElem = document.getElementById('client-resent-mensaje'); // Último mensaje (reutilizado)
+    const clientTiempoLavado = document.getElementById('client-resent-tiempooLavado'); // Último mensaje (reutilizado)
 
     // Función para formatear una fecha al formato deseado
     function formatFecha(fecha) {
@@ -165,17 +165,21 @@ function mostrarDatosCliente(cliente) {
     }
 
 
-    // Último mensaje (fecha más reciente en mensajesEnviados)
-    let ultimoMensaje = null;
-    if (cliente.mensajesEnviados && cliente.mensajesEnviados.length > 0) {
-        ultimoMensaje = cliente.mensajesEnviados.reduce((prev, current) =>
-            new Date(prev.fecha) > new Date(current.fecha) ? prev : current
+    // Obtener el tiempo de espera más reciente del historial de lavados
+    let ultimoHistorial = null;
+
+    if (cliente.historialLavados && cliente.historialLavados.length > 0) {
+        // Buscar el historial con la fecha de egreso más reciente
+        ultimoHistorial = cliente.historialLavados.reduce((prev, current) =>
+            new Date(prev.fechaEgreso) > new Date(current.fechaEgreso) ? prev : current
         );
-        clientLastMessageElem.textContent = formatFecha(ultimoMensaje.fecha);
+
+        // Mostrar el tiempo de espera en el elemento HTML
+        clientTiempoLavado.textContent = `${ultimoHistorial.tiempoEspera} minutos`;
     } else {
-        clientLastMessageElem.textContent = 'Sin mensajes';
+        clientTiempoLavado.textContent = 'Sin registros de tiempo';
     }
-    console.log('Datos del cliente mostrados en el HTML:', cliente);
+
 }
 
 // Función para filtrar los clientes en base a la búsqueda

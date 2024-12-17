@@ -129,6 +129,14 @@ body {
   height: 85%;
 }
 
+#ServicioMasPedido{
+  font-size: 1.3rem !important;
+}
+
+#promoActiva{
+  font-size: 1.3rem !important;
+}
+
 .section-mensajes {
   display: grid;
   grid-template-columns: 55% 1fr;

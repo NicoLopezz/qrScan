@@ -231,7 +231,7 @@ async function actualizarEncuestaEnDB(from, palabraClave) {
 
     // Mapeo de palabras clave a puntuaciones
     const calidadMap = {
-      bueno: 4, // Opcional: asignar un valor intermedio si "bueno" debe considerarse
+      bueno: 4,
       regular: 3,
       excelente: 5
     };
@@ -248,23 +248,28 @@ async function actualizarEncuestaEnDB(from, palabraClave) {
     if (admin) {
       // Encontrar el lavado más reciente o correcto
       const lavado = admin.lavados
-        .filter(l => l.from === numeroCliente) // Filtrar todos los lavados del cliente
-        .sort((a, b) => b.fechaDeAlta - a.fechaDeAlta)[0]; // Ordenar y tomar el más reciente
+        .filter(l => l.from === numeroCliente)
+        .sort((a, b) => b.fechaDeAlta - a.fechaDeAlta)[0];
 
+      // Actualizar el lavado más reciente
       if (lavado) {
         console.log(`Actualizando calidad para el cliente ${lavado.nombre} con la respuesta: ${palabraClave}`);
 
-        // Actualizar los campos de calidad y puntuación
         lavado.calidad = palabraClave.toLowerCase();
         lavado.puntuacionCalidad = calidadMap[palabraClave.toLowerCase()];
-
-        // Guardar los cambios
-        await admin.save();
-
-        console.log("Encuesta actualizada correctamente en la base de datos.");
-      } else {
-        console.log("No se encontró un lavado asociado al cliente.");
       }
+
+      // Actualizar el primer elemento del array de lavados
+      if (admin.lavados.length > 0) {
+        console.log('Actualizando el primer elemento del array de lavados.');
+        admin.lavados[0].calidad = palabraClave.toLowerCase();
+        admin.lavados[0].puntuacionCalidad = calidadMap[palabraClave.toLowerCase()];
+      }
+
+      // Guardar los cambios
+      await admin.save();
+
+      console.log("Encuesta actualizada correctamente en la base de datos.");
     } else {
       console.log("No se encontró ningún admin con un lavado asociado al cliente.");
     }
@@ -272,6 +277,7 @@ async function actualizarEncuestaEnDB(from, palabraClave) {
     console.error("Error al actualizar la encuesta en la base de datos:", error);
   }
 }
+
 
 
 // Función para manejar mensajes de "reserva"
