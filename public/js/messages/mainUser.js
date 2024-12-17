@@ -194,6 +194,109 @@ function calcularCalificacionPromedio(lavados) {
     }
 }
 
+// Función para manejar filtros de lavados y visibilidad de mensajes
+function aplicarFiltro(selectedValue) {
+    // Siempre partimos de los datos originales
+    let lavadosFiltrados = [...lavadosCargados];
+
+    // Ocultar todos los mensajes antes de aplicar el filtro
+    activarMensaje(null);
+
+    // Aplicar el filtro correspondiente
+    switch (selectedValue) {
+        case 'low-comments':
+            // Filtrar lavados con puntuación promedio baja
+            lavadosFiltrados = lavadosCargados.filter(lavado => lavado.puntuacionPromedio <= 3);
+            activarMensaje(2);
+            break;
+
+            case 'no-service-15':
+                // Filtrar lavados con más de 15 días desde el último servicio
+                lavadosFiltrados = lavadosCargados.filter(lavado => {
+                    const hoy = new Date();
+            
+                    // Validar que 'historialLavados' existe y es un array con elementos
+                    if (!lavado.historialLavados || !Array.isArray(lavado.historialLavados) || lavado.historialLavados.length === 0) {
+                        console.warn('Lavado sin historial de lavados o vacío:', lavado);
+                        return false; // Excluir si no hay historial
+                    }
+            
+                    // Obtener el último lavado (fechaEgreso más reciente)
+                    const ultimoHistorial = lavado.historialLavados.reduce((ultimo, actual) => {
+                        const fechaEgresoUltimo = new Date(ultimo.fechaEgreso);
+                        const fechaEgresoActual = new Date(actual.fechaEgreso);
+                        return fechaEgresoActual > fechaEgresoUltimo ? actual : ultimo;
+                    });
+            
+                    const fechaUltimoLavado = new Date(ultimoHistorial.fechaEgreso);
+                    if (isNaN(fechaUltimoLavado)) {
+                        console.warn('Fecha de egreso inválida:', ultimoHistorial.fechaEgreso);
+                        return false; // Excluir si la fecha es inválida
+                    }
+            
+                    // Calcular la diferencia en días
+                    const diferenciaDias = (hoy - fechaUltimoLavado) / (1000 * 60 * 60 * 24);
+                    return diferenciaDias > 15;
+                });
+            
+                activarMensaje(1); // Activar mensaje tipo 1
+                break;
+            
+
+        case 'frequent':
+            // Filtrar lavados de clientes frecuentes
+            lavadosFiltrados = lavadosCargados.filter(lavado => lavado.lavadosAcumulados >= 3);
+            activarMensaje(3);
+            break;
+
+        case 'promo-1':
+            // Mostrar todos los datos
+            lavadosFiltrados = [...lavadosCargados]; // Copia completa de los datos originales
+            activarMensaje(4);
+            break;
+
+        case 'ninguno': // Opción para restablecer todo
+            // Mostrar todos los datos
+            lavadosFiltrados = [...lavadosCargados]; // Copia completa de los datos originales
+            activarMensaje(null); // No activa ningún mensaje
+            break;
+
+        default:
+            break;
+    }
+
+    // Renderizar la tabla con los lavados filtrados
+    displayClientList(lavadosFiltrados, handleClientClick);
+}
+
+
+
+// Manejar el cambio en el filtro
+filterSelect.addEventListener('change', () => {
+    const selectedValue = filterSelect.value;
+    aplicarFiltro(selectedValue);
+});
+
+function activarMensaje(selectedType) {
+    // Seleccionar todos los contenedores que tienen mensajes (chatDesktop y chatMovil)
+    const containers = document.querySelectorAll('#chatDesktop, #chatMovil');
+
+    // Iterar por cada contenedor para aplicar los cambios
+    containers.forEach(container => {
+        // Obtener todos los mensajes dentro de este contenedor
+        const messages = container.querySelectorAll('.message-bubble');
+        
+        // Desactivar todos los mensajes en este contenedor
+        messages.forEach(message => message.classList.remove('active'));
+
+        // Activar el mensaje específico
+        const mensajeSeleccionado = container.querySelector(`.message-type-${selectedType}`);
+        if (mensajeSeleccionado) {
+            mensajeSeleccionado.classList.add('active');
+        }
+    });
+}
+
 
 // ========================== EVENTOS ==========================
 function inicializarEventosBusqueda() {
@@ -236,6 +339,8 @@ function handleClientClick(client) {
     setCurrentClient(client);
     loadClientData(client);
 }
+
+
 
 function loadClientData(client) {
     document.getElementById('client-name').textContent = client.nombre || "No Disponible";
