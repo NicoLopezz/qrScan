@@ -200,7 +200,7 @@ function aplicarFiltro(selectedValue) {
     // Siempre partimos de los datos originales
     let lavadosFiltrados = [...lavadosCargados];
 
-    // Ocultar todos los mensajes antes de aplicar el filtro
+    // Ocultar todos los mensajes antes de aplicar el filtro!!
     activarMensaje(null);
 
     // Aplicar el filtro correspondiente
