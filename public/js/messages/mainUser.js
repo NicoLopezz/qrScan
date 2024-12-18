@@ -9,6 +9,7 @@ let lavadosCargados = [];
 document.addEventListener("DOMContentLoaded", async () => {
     const adminId = getCookie('adminId');
     if (!adminId) {
+        
         console.error('No se encontró el adminId en las cookies.');
         return;
     }
