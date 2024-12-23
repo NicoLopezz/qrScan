@@ -82,8 +82,6 @@ router.patch('/lavados/:lavadoId/actualizarSelectedLavado', autenthication.actua
 
 // En auth.routes.js o en el archivo de rutas correspondiente
 router.delete('/reservas/:clienteId/eliminar', autenthication.eliminarCliente);
-
-
 router.post('/enviarEncuesta', autenthication.enviarEncuesta)
 
 
@@ -97,7 +95,19 @@ router.post('/admins/agregarCliente', autenthication.agregarCliente);
 router.post('/admins/agregarLavado', autenthication.agregarLavado);
 
 
+// Endpoint para Ventas
+//-> CREAR Y OBTENER ARQUEOS
+router.post('/arqueos', autenthication.crearArqueo);
+router.get('/arqueos', autenthication.getArqueos);
+router.post('/cerrarArqueo/:arqueoId', autenthication.cerrarArqueo);
 
+
+
+
+
+//->CREAR Y OBTENER MOVS.
+router.post("/movimientos", autenthication.crearMovimiento);
+router.get("/movimientos", autenthication.getMovimientos);
 
 
 

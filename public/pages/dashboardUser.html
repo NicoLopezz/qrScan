@@ -32,6 +32,7 @@
     <link rel="stylesheet" href="/style/dashboardUser/dashboardUserMovil.css">
     <link rel="stylesheet" href="/style/dashboardUser/dashboardUserDesktopMix.css">
     <link rel="stylesheet" href="/style/qrScan/qrScan.css">
+    <link rel="stylesheet" href="/style/ventas/ventas.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&display=swap" rel="stylesheet">
 
@@ -131,10 +132,13 @@
                     <i class="fas fa-home"></i> Dashboard
                 </li>
                 <li class="menu-item mensajes" data-section="lavaderos">
-                    <i class="fas fa-car"></i> Lavaderos
+                    <i class="fas fa-car"></i> Lavadero
                 </li>
                 <li class="menu-item mensajes" data-section="mensajes">
                     <i class="fas fa-comments"></i> Mensajes
+                </li>
+                <li class="menu-item" data-section="ventas">
+                    <i class="fas fa-money-bill-wave"></i> Salon
                 </li>
                 <li class="menu-item" data-section="users">
                     <i class="fas fa-user-plus"></i> Users
@@ -368,7 +372,7 @@
             </div>
 
             <!-- Sección Lavaderos -->
-            <div id="section-lavaderos" class="section active">
+            <div id="section-lavaderos" class="section">
                 <div class="container" id="containerUser">
 
                     <!-- Tabla de Datos -->
@@ -497,6 +501,183 @@
                 </div>
             </div>
 
+            <!-- Sección VENTAS-->
+            <div id="section-ventas" class="section-active">
+                <!DOCTYPE html>
+                <html lang="en">
+
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Gestión de Caja</title>
+                    <link rel="stylesheet" href="styles.css">
+                </head>
+
+                <body>
+                    <div class="container" id="container-ventas">
+                        <!-- Columna Izquierda -->
+                        <div class="left-column">
+                            <!-- Tabs -->
+                            <div class="tabs">
+                                <div id="caja-mayor" class="tab active">Caja Mayor</div>
+                                <div id="caja-menor" class="tab">Caja Menor</div>
+                            </div>
+                            <!-- Opciones -->
+                            <div class="options">
+                                <div id="ventas" class="option disabled">Ventas</div>
+                                <div id="movimientos" class="option">Movimientos</div>
+                                <div id="arqueo" class="option">Arqueo</div>
+                            </div>
+                            <!-- Tabla Dinámica -->
+                            <div class="table-section">
+                                <!-- Tabla Ventas -->
+                                <table id="table-ventas" class="data-table hidden">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Usuario</th>
+                                            <th>Monto</th>
+                                            <th>Medio de Pago</th>
+                                            <th>Descripción</th>
+                                            <th>Fecha</th>
+                                            <th>Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                                <!-- Tabla Movimientos -->
+                                <table id="table-movimientos" class="data-table hidden">
+                                    <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>Monto</th>
+                                            <th>Tipo</th>
+                                            <th>Medio de Pago</th>
+                                            <th>Descripción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                                <!-- Tabla Arqueo -->
+                                <table id="table-arqueo" class="data-table hidden">
+                                    <thead>
+                                        <tr>
+                                            <th>Hora de apertura</th>
+                                            <th>Hora de cierre</th>
+                                            <th>Sistema</th>
+                                            <th>Usuario</th>
+                                            <th>Diferencia</th>
+                                            <th>Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+
+                        <!-- Columna Derecha -->
+                        <div class="right-column">
+                            <div id="details">
+                                <h3>Datos dependiendo que toque</h3>
+                                <p>Seleccione una fila para ver más información aquí.</p>
+                            </div>
+
+                            <!-- Botones Específicos -->
+                            <div id="buttons-container">
+                                <button id="btn-nuevo-arqueo" class="action-btn hidden">Nuevo Arqueo</button>
+                                <button id="btn-nuevo-movimiento" class="action-btn hidden">Nuevo Movimiento</button>
+                                <button id="btn-nueva-venta" class="action-btn hidden">Nueva Venta</button>
+                            </div>
+
+                            <!-- Formularios Dinámicos -->
+                            <div id="formularios-container" class="hidden">
+                                <!-- Formulario para Nuevo Arqueo -->
+                                <form id="form-arqueo" class="hidden">
+                                    <h4>Nuevo Arqueo</h4>
+                                    <label>Hora de Apertura (Actual):</label>
+                                    <input type="datetime-local" id="hora-apertura" required />
+
+                                    <label>Monto Inicial:</label>
+                                    <input type="number" id="monto-inicial" placeholder="Ingrese monto inicial"
+                                        required />
+
+                                    <div class="form-actions">
+                                        <button type="submit" class="submit-btn">Iniciar Arqueo</button>
+                                        <button type="button" class="cancel-btn" id="cancel-arqueo">Cancelar</button>
+                                    </div>
+                                </form>
+
+                                <!-- Formulario para Nuevo Movimiento -->
+                                <form id="form-movimiento" class="hidden">
+                                    <h4>Nuevo Movimiento</h4>
+                                    <label>Monto:</label>
+                                    <input type="number" id="monto-movimiento" placeholder="Ingrese monto" />
+                                  
+                                    <label>Tipo de Movimiento:</label>
+                                    <select id="tipo-movimiento">
+                                      <option value="ingreso">Ingreso</option>
+                                      <option value="egreso">Egreso</option>
+                                    </select>
+                                  
+                                    <label>Medio de pago:</label>
+                                    <select id="medio-pago">
+                                      <option value="efectivo">Efectivo</option>
+                                      <option value="debito">Débito</option>
+                                      <option value="credito">Crédito</option>
+                                      <option value="mercado pago">Mercado Pago</option>
+                                      <option value="otro">Otro</option>
+                                    </select>
+                                  
+                                    <label>Descripción:</label>
+                                    <input type="text" id="descripcion-movimiento" placeholder="Descripción del movimiento" />
+                                  
+                                    <div class="form-actions">
+                                      <button type="submit" class="submit-btn">Agregar Movimiento</button>
+                                      <button type="button" class="cancel-btn" id="cancel-movimiento">Cancelar</button>
+                                    </div>
+                                  </form>
+                                  
+                                <!-- Formulario para Nueva Venta -->
+                                <form id="form-venta" class="hidden">
+                                    <h4>Nueva Venta</h4>
+                                    <label>Monto de la Venta:</label>
+                                    <input type="number" id="monto-venta" placeholder="Ingrese monto" required />
+
+                                    <label>Medio de Pago:</label>
+                                    <select id="medio-pago">
+                                        <option value="efectivo">Efectivo</option>
+                                        <option value="tarjeta">Tarjeta</option>
+                                        <option value="transferencia">Transferencia</option>
+                                    </select>
+
+                                    <label>Descripción:</label>
+                                    <input type="text" id="descripcion-venta" placeholder="Descripción de la venta" />
+
+                                    <div class="form-actions">
+                                        <button type="submit" class="submit-btn">Registrar Venta</button>
+                                        <button type="button" class="cancel-btn" id="cancel-venta">Cancelar</button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Detalles dinamicos -->
+                            <div class="details-section"></div>
+                            
+
+                        </div>
+
+
+
+
+                    </div>
+                    <script src="script.js"></script>
+                </body>
+
+                </html>
+
+            </div>
+
             <!-- Sección Profile -->
             <div id="section-profile" class="section">
                 <div id="profile-section-container">
@@ -569,7 +750,7 @@
                                         <option value="promo-1">Promo #1</option>
                                         <option value="ninguno">Ninguno</option>
                                     </select>
-                                    
+
                                     <button id="selectAllButton" class="select-button">Todos</button>
                                     <button id="deselectAllButton" class="select-button">Ninguno</button>
                                 </div>
@@ -595,47 +776,64 @@
                                 <div class="whatsapp-container">
                                     <!-- Mensaje para cliente que no ha venido hace tiempo -->
                                     <div class="message-bubble message-type-1">
-                                      <p>🚗✨ ¡Hola, hace tiempo que no vemos tu auto brillar como se merece en <strong>CARWASH PREMIUM</strong> 🧽.</p>
-                                      <p>¡Te extrañamos! Por eso queremos darte un <strong>10% de descuento</strong> en tu próximo lavado 🤑 para que tu auto vuelva a lucir impecable.</p>
-                                      <p>📅 Ven cuando quieras, estaremos encantados de ayudarte a dejar tu coche como nuevo.</p>
-                                      <p>¡Te esperamos!</p>
-                                      <p>Saludos,</p>
-                                      <p><strong>El equipo de CARWASH PREMIUM</strong></p>
+                                        <p>🚗✨ ¡Hola, hace tiempo que no vemos tu auto brillar como se merece en
+                                            <strong>CARWASH PREMIUM</strong> 🧽.
+                                        </p>
+                                        <p>¡Te extrañamos! Por eso queremos darte un <strong>10% de descuento</strong>
+                                            en tu próximo lavado 🤑 para que tu auto vuelva a lucir impecable.</p>
+                                        <p>📅 Ven cuando quieras, estaremos encantados de ayudarte a dejar tu coche como
+                                            nuevo.</p>
+                                        <p>¡Te esperamos!</p>
+                                        <p>Saludos,</p>
+                                        <p><strong>El equipo de CARWASH PREMIUM</strong></p>
                                     </div>
-                                  
+
                                     <!-- Mensaje para cliente con calificación baja -->
                                     <div class="message-bubble message-type-2">
-                                      <p>👋 ¡Hola,!</p>
-                                      <p>En <strong>CARWASH PREMIUM</strong> 🧽 nos importa mucho tu experiencia, y hemos notado que tu última calificación fue algo baja.</p>
-                                      <p>y queremos saber más para mejorar nuestro servicio. ¿Nos cuentas qué pasó? 💬</p>
-                                      <p>👉 Puedes enviarnos tus comentarios de forma rápida aquí: <a href="https://www.google.com/forms" target="_blank">Google Form</a></p>
-                                      <p>O mándanos un mensaje directo en Instagram: <a href="https://www.instagram.com/carwashpremium" target="_blank">@carwashpremium</a> 📲</p>
-                                      <p>Valoramos tu opinión nos ayuda a crecer y mejorar!</p>
-                                      <p>Saludos,</p>
-                                      <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
+                                        <p>👋 ¡Hola,!</p>
+                                        <p>En <strong>CARWASH PREMIUM</strong> 🧽 nos importa mucho tu experiencia, y
+                                            hemos notado que tu última calificación fue algo baja.</p>
+                                        <p>y queremos saber más para mejorar nuestro servicio. ¿Nos cuentas qué pasó? 💬
+                                        </p>
+                                        <p>👉 Puedes enviarnos tus comentarios de forma rápida aquí: <a
+                                                href="https://www.google.com/forms" target="_blank">Google Form</a></p>
+                                        <p>O mándanos un mensaje directo en Instagram: <a
+                                                href="https://www.instagram.com/carwashpremium"
+                                                target="_blank">@carwashpremium</a> 📲</p>
+                                        <p>Valoramos tu opinión nos ayuda a crecer y mejorar!</p>
+                                        <p>Saludos,</p>
+                                        <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
                                     </div>
-                                  
+
                                     <!-- Mensaje para cliente frecuente -->
                                     <div class="message-bubble message-type-3">
-                                      <p>🎉 ¡Hola!</p>
-                                      <p>En <strong>CARWASH PREMIUM</strong> 🧽 queremos agradecerte por ser uno de nuestros clientes más frecuentes. ¡Eres parte de nuestra familia! 💚</p>
-                                      <p>🚗 Como muestra de nuestro agradecimiento, te regalamos un <strong>lavado premium gratis</strong> en tu próxima visita. ¡Porque tu auto merece lo mejor! ✨</p>
-                                      <p>📅 Pásate por el local cuando quieras y menciona este mensaje para canjear tu recompensa.</p>
-                                      <p>🙏 Gracias por elegirnos siempre. ¡Nos encanta verte por aquí!</p>
-                                      <p>Saludos,</p>
-                                      <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
+                                        <p>🎉 ¡Hola!</p>
+                                        <p>En <strong>CARWASH PREMIUM</strong> 🧽 queremos agradecerte por ser uno de
+                                            nuestros clientes más frecuentes. ¡Eres parte de nuestra familia! 💚</p>
+                                        <p>🚗 Como muestra de nuestro agradecimiento, te regalamos un <strong>lavado
+                                                premium gratis</strong> en tu próxima visita. ¡Porque tu auto merece lo
+                                            mejor! ✨</p>
+                                        <p>📅 Pásate por el local cuando quieras y menciona este mensaje para canjear tu
+                                            recompensa.</p>
+                                        <p>🙏 Gracias por elegirnos siempre. ¡Nos encanta verte por aquí!</p>
+                                        <p>Saludos,</p>
+                                        <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
                                     </div>
-                                  
+
                                     <!-- Mensaje para promoción especial -->
                                     <div class="message-bubble message-type-4">
-                                      <p>🎁 ¡Hola!</p>
-                                      <p>¡Tenemos una <strong>promoción especial</strong> para ti! ✨</p>
-                                      <p>🚗 Durante esta semana, disfruta de un <strong>2x1 en lavados premium</strong>. Trae tu auto y el de un amigo para que ambos brillen como nuevos 🧽✨.</p>
-                                      <p>📅 Promoción válida del <strong>7 al 14 de diciembre</strong>. ¡No te la pierdas!</p>
-                                      <p>👉 Para más información, contáctanos por WhatsApp o visítanos en el local.</p>
-                                      <p>🎉 ¡Te esperamos!</p>
-                                      <p>Saludos,</p>
-                                      <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
+                                        <p>🎁 ¡Hola!</p>
+                                        <p>¡Tenemos una <strong>promoción especial</strong> para ti! ✨</p>
+                                        <p>🚗 Durante esta semana, disfruta de un <strong>2x1 en lavados
+                                                premium</strong>. Trae tu auto y el de un amigo para que ambos brillen
+                                            como nuevos 🧽✨.</p>
+                                        <p>📅 Promoción válida del <strong>7 al 14 de diciembre</strong>. ¡No te la
+                                            pierdas!</p>
+                                        <p>👉 Para más información, contáctanos por WhatsApp o visítanos en el local.
+                                        </p>
+                                        <p>🎉 ¡Te esperamos!</p>
+                                        <p>Saludos,</p>
+                                        <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
                                     </div>
                                 </div>
                                 <!-- Mensajes se llenarán dinámicamente -->
@@ -685,8 +883,8 @@
                                 </tr>
                             </table>
                         </div>
-                        
-                        
+
+
 
 
 
@@ -702,54 +900,71 @@
                             </div>
                             <div id="chatHistory" class="whatsapp-chat-history">
 
-                                
+
                                 <div class="whatsapp-container">
                                     <!-- Mensaje para cliente que no ha venido hace tiempo -->
-                                    <div class="message-bubble message-type-1 active" >
-                                      <p>🚗✨ ¡Hola, hace tiempo que no vemos tu auto brillar como se merece en <strong>CARWASH PREMIUM</strong> 🧽.</p>
-                                      <p>¡Te extrañamos! Por eso queremos darte un <strong>10% de descuento</strong> en tu próximo lavado 🤑 para que tu auto vuelva a lucir impecable.</p>
-                                      <p>📅 Ven cuando quieras, estaremos encantados de ayudarte a dejar tu coche como nuevo.</p>
-                                      <p>¡Te esperamos!</p>
-                                      <p>Saludos,</p>
-                                      <p><strong>El equipo de CARWASH PREMIUM</strong></p>
+                                    <div class="message-bubble message-type-1 active">
+                                        <p>🚗✨ ¡Hola, hace tiempo que no vemos tu auto brillar como se merece en
+                                            <strong>CARWASH PREMIUM</strong> 🧽.
+                                        </p>
+                                        <p>¡Te extrañamos! Por eso queremos darte un <strong>10% de descuento</strong>
+                                            en tu próximo lavado 🤑 para que tu auto vuelva a lucir impecable.</p>
+                                        <p>📅 Ven cuando quieras, estaremos encantados de ayudarte a dejar tu coche como
+                                            nuevo.</p>
+                                        <p>¡Te esperamos!</p>
+                                        <p>Saludos,</p>
+                                        <p><strong>El equipo de CARWASH PREMIUM</strong></p>
                                     </div>
-                                  
+
                                     <!-- Mensaje para cliente con calificación baja -->
                                     <div class="message-bubble message-type-2">
-                                      <p>👋 ¡Hola,!</p>
-                                      <p>En <strong>CARWASH PREMIUM</strong> 🧽 nos importa mucho tu experiencia, y hemos notado que tu última calificación fue algo baja.</p>
-                                      <p>y queremos saber más para mejorar nuestro servicio. ¿Nos cuentas qué pasó? 💬</p>
-                                      <p>👉 Puedes enviarnos tus comentarios de forma rápida aquí: <a href="https://www.google.com/forms" target="_blank">Google Form</a></p>
-                                      <p>O mándanos un mensaje directo en Instagram: <a href="https://www.instagram.com/carwashpremium" target="_blank">@carwashpremium</a> 📲</p>
-                                      <p>Valoramos tu opinión nos ayuda a crecer y mejorar!</p>
-                                      <p>Saludos,</p>
-                                      <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
+                                        <p>👋 ¡Hola,!</p>
+                                        <p>En <strong>CARWASH PREMIUM</strong> 🧽 nos importa mucho tu experiencia, y
+                                            hemos notado que tu última calificación fue algo baja.</p>
+                                        <p>y queremos saber más para mejorar nuestro servicio. ¿Nos cuentas qué pasó? 💬
+                                        </p>
+                                        <p>👉 Puedes enviarnos tus comentarios de forma rápida aquí: <a
+                                                href="https://www.google.com/forms" target="_blank">Google Form</a></p>
+                                        <p>O mándanos un mensaje directo en Instagram: <a
+                                                href="https://www.instagram.com/carwashpremium"
+                                                target="_blank">@carwashpremium</a> 📲</p>
+                                        <p>Valoramos tu opinión nos ayuda a crecer y mejorar!</p>
+                                        <p>Saludos,</p>
+                                        <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
                                     </div>
-                                  
+
                                     <!-- Mensaje para cliente frecuente -->
                                     <div class="message-bubble message-type-3">
-                                      <p>🎉 ¡Hola!</p>
-                                      <p>En <strong>CARWASH PREMIUM</strong> 🧽 queremos agradecerte por ser uno de nuestros clientes más frecuentes. ¡Eres parte de nuestra familia! 💚</p>
-                                      <p>🚗 Como muestra de nuestro agradecimiento, te regalamos un <strong>lavado premium gratis</strong> en tu próxima visita. ¡Porque tu auto merece lo mejor! ✨</p>
-                                      <p>📅 Pásate por el local cuando quieras y menciona este mensaje para canjear tu recompensa.</p>
-                                      <p>🙏 Gracias por elegirnos siempre. ¡Nos encanta verte por aquí!</p>
-                                      <p>Saludos,</p>
-                                      <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
+                                        <p>🎉 ¡Hola!</p>
+                                        <p>En <strong>CARWASH PREMIUM</strong> 🧽 queremos agradecerte por ser uno de
+                                            nuestros clientes más frecuentes. ¡Eres parte de nuestra familia! 💚</p>
+                                        <p>🚗 Como muestra de nuestro agradecimiento, te regalamos un <strong>lavado
+                                                premium gratis</strong> en tu próxima visita. ¡Porque tu auto merece lo
+                                            mejor! ✨</p>
+                                        <p>📅 Pásate por el local cuando quieras y menciona este mensaje para canjear tu
+                                            recompensa.</p>
+                                        <p>🙏 Gracias por elegirnos siempre. ¡Nos encanta verte por aquí!</p>
+                                        <p>Saludos,</p>
+                                        <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
                                     </div>
-                                  
+
                                     <!-- Mensaje para promoción especial -->
                                     <div class="message-bubble message-type-4">
-                                      <p>🎁 ¡Hola!</p>
-                                      <p>¡Tenemos una <strong>promoción especial</strong> para ti! ✨</p>
-                                      <p>🚗 Durante esta semana, disfruta de un <strong>2x1 en lavados premium</strong>. Trae tu auto y el de un amigo para que ambos brillen como nuevos 🧽✨.</p>
-                                      <p>📅 Promoción válida del <strong>7 al 14 de diciembre</strong>. ¡No te la pierdas!</p>
-                                      <p>👉 Para más información, contáctanos por WhatsApp o visítanos en el local.</p>
-                                      <p>🎉 ¡Te esperamos!</p>
-                                      <p>Saludos,</p>
-                                      <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
+                                        <p>🎁 ¡Hola!</p>
+                                        <p>¡Tenemos una <strong>promoción especial</strong> para ti! ✨</p>
+                                        <p>🚗 Durante esta semana, disfruta de un <strong>2x1 en lavados
+                                                premium</strong>. Trae tu auto y el de un amigo para que ambos brillen
+                                            como nuevos 🧽✨.</p>
+                                        <p>📅 Promoción válida del <strong>7 al 14 de diciembre</strong>. ¡No te la
+                                            pierdas!</p>
+                                        <p>👉 Para más información, contáctanos por WhatsApp o visítanos en el local.
+                                        </p>
+                                        <p>🎉 ¡Te esperamos!</p>
+                                        <p>Saludos,</p>
+                                        <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
                                     </div>
                                 </div>
-                                  
+
 
                                 <!-- Mensajes se llenarán dinámicamente -->
                             </div>
@@ -872,6 +1087,8 @@
     <script src="/js/qrScan/qrGeneratorReservas.js"></script>
     <script src="/js/qrScan/qrGeneratorLavados.js"></script>
     <script src="/js/dashboardAdmin/topBar.js"></script>
+    <script src="/js/ventas/ventas.js"></script>
+    <script src="/js/ventas/showDataVentas.js"></script>
 
     <!-- jQuery and Bootstrap -->
 
