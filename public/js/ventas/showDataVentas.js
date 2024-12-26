@@ -1,6 +1,11 @@
 // *** VARIABLES GLOBALES ***
 let cajaTipoActivo = 'CajaMayor'; // Caja activa por defecto
 let currentArqueoId = null; // Variable global para almacenar el ID del arqueo actual
+let currentArqueDiferencia = null; // Variable global para almacenar el ID del arqueo actual
+let currentArqueoEstado = null; // Variable global para almacenar el ID del arqueo actual
+let currentArqueoObservacion = null
+
+
 
 
 // *** EVENTOS: Selección de Caja Mayor o Chica ***
@@ -13,8 +18,6 @@ document.querySelectorAll('.tab').forEach((tab) => {
         fetchArqueos(selectedCaja);
     });
 });
-
-
 
 // *** FUNCIONES: Mostrar/Ocultar Elementos ***
 function hideAllFormsAndButtons() {
@@ -45,17 +48,87 @@ async function fetchArqueos(cajaTipo) {
     }
 }
 
+// *** FUNCIONES: Renderizar Tablas de Arqueos ***
+function renderArqueosTable(arqueos) {
+    const tableBody = document.querySelector('#table-arqueo tbody');
+    tableBody.innerHTML = ''; // Limpiar tabla
+
+    // Ordenar arqueos por fecha de apertura (de más reciente a más antigua)
+    arqueos.sort((a, b) => new Date(b.fechaApertura) - new Date(a.fechaApertura));
+
+    arqueos.forEach((arqueo) => {
+        const row = document.createElement('tr');
+
+        // Formatear valores con símbolo de pesos y formato correcto
+        const formatCurrency = (value) => value != null
+            ? `$${parseFloat(value).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+            : '---';
+
+        const saldoFinalSistema = formatCurrency(arqueo.saldoFinalSistema);
+        const saldoFinalReal = formatCurrency(arqueo.saldoFinalReal);
+        const diferencia = formatCurrency(arqueo.diferencia || 0);
+
+        row.innerHTML = `
+            <td>${new Date(arqueo.fechaApertura).toLocaleString()}</td>
+            <td>${arqueo.fechaCierre ? new Date(arqueo.fechaCierre).toLocaleString() : '---'}</td>
+            <td>${saldoFinalSistema}</td>
+            <td>${saldoFinalReal}</td>
+            <td style="${arqueo.diferencia > 0 
+                ? 'color: #55a834 !important; ' // Verde oscuro si es positiva
+                : arqueo.diferencia < 0 
+                    ? 'color: #f54335 !important; ' // Rojo oscuro si es negativa
+                    : 'color: #383d41 !important; '}">${diferencia}</td>
+            <td style="${arqueo.estado === 'cerrado' 
+                ? 'color: #f54335 !important; font-weight: bold !important;' // Rojo oscuro si está cerrado
+                : 'color: #55a834 !important; font-weight: bold !important;'}">${arqueo.estado}</td>
+        `;
+
+        row.addEventListener('click', () => displayArqueoDetails(arqueo));
+        document.querySelector('.details-section').dataset.arqueoId = arqueo._id; // Almacena el arqueoId
+
+        tableBody.appendChild(row);
+
+        // Evento al hacer clic en la fila para seleccionar
+        row.addEventListener('click', () => {
+            // Quitar la clase "selected" de todas las filas
+            document.querySelectorAll('#table-arqueo tbody tr').forEach((r) => {
+                r.classList.remove('selected');
+                r.style.fontWeight = 'normal'; // Resetear el estilo
+            });
+
+            // Agregar la clase "selected" a la fila clicada
+            row.classList.add('selected');
+            row.style.fontWeight = 'bold'; // Cambiar a negrita para destacar
+        });
+    });
+
+    document.getElementById('table-arqueo').classList.remove('hidden');
+    document.getElementById('table-movimientos').classList.add('hidden');
+}
+
+
 // *** FETCH: Movimientos ***
-async function fetchMovimientos(cajaTipo) {
+async function fetchMovimientos() {
+    console.log("la caja actual seleccionada es: " + cajaTipoActivo)
+    console.log("la el arqueoId seleccionado es: " + currentArqueoId)
     try {
-        const response = await fetch(`/api/movimientos?cajaTipo=${cajaTipo}`, {
+        // Verificar que el arqueo ID esté definido
+        if (!currentArqueoId) {
+            console.error('No se ha establecido un ID de arqueo.');
+            showNotification('Por favor, selecciona un arqueo para ver los movimientos.', 'error');
+            return;
+        }
+
+        // Realizar la solicitud al endpoint con cajaTipoActivo y currentArqueoId
+        const response = await fetch(`/api/movimientos?cajaTipo=${cajaTipoActivo}&arqueoId=${currentArqueoId}`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
         });
+
         const data = await response.json();
 
         if (response.ok && data.success) {
-            renderMovimientosTable(data.data);
+            renderMovimientosTable(data.data); // Renderizar movimientos en la tabla
         } else {
             console.error('Error al obtener movimientos:', data.message);
             showNotification(`Error al obtener movimientos: ${data.message}`, 'error');
@@ -66,34 +139,13 @@ async function fetchMovimientos(cajaTipo) {
     }
 }
 
-// *** FUNCIONES: Renderizar Tablas de Arqueos ***
-function renderArqueosTable(arqueos) {
-    const tableBody = document.querySelector('#table-arqueo tbody');
-    tableBody.innerHTML = ''; // Limpiar tabla
-
-    arqueos.forEach((arqueo) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${new Date(arqueo.fechaApertura).toLocaleString()}</td>
-            <td>${arqueo.fechaCierre ? new Date(arqueo.fechaCierre).toLocaleString() : '---'}</td>
-            <td>${arqueo.saldoFinalSistema || '---'}</td>
-            <td>${arqueo.saldoFinalReal || '---'}</td>
-            <td>${arqueo.diferencia || '0.00'}</td>
-            <td>${arqueo.estado}</td>
-        `;
-        row.addEventListener('click', () => displayArqueoDetails(arqueo));
-        document.querySelector('.details-section').dataset.arqueoId = arqueo._id; // Almacena el arqueoId
-        tableBody.appendChild(row);
-    });
-
-    document.getElementById('table-arqueo').classList.remove('hidden');
-    document.getElementById('table-movimientos').classList.add('hidden');
-}
-
 // *** FUNCIONES: Renderizar Tabla de Movimientos ***
 function renderMovimientosTable(movimientos) {
     const tableBody = document.querySelector('#table-movimientos tbody');
     tableBody.innerHTML = '';
+
+    // Ordenar los movimientos por fecha, del más reciente al más antiguo
+    movimientos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
     movimientos.forEach((movimiento) => {
         const row = document.createElement('tr');
@@ -109,6 +161,57 @@ function renderMovimientosTable(movimientos) {
 
     document.getElementById('table-movimientos').classList.remove('hidden');
 }
+
+
+// Evento para manejar el envío del formulario de nuevo movimiento
+const formMovimiento = document.getElementById('form-movimiento');
+
+formMovimiento.addEventListener('submit', async (event) => {
+    event.preventDefault(); // Previene el envío tradicional del formulario
+
+    // Obtén los valores de los campos del formulario
+    const monto = parseFloat(document.getElementById('monto-movimiento').value);
+    const tipo = document.getElementById('tipo-movimiento').value;
+    const medioPago = document.getElementById('medio-pago').value;
+    const descripcion = document.getElementById('descripcion-movimiento').value;
+    const cajaTipo = document.querySelector('.tab.active').id === 'caja-mayor' ? 'CajaMayor' : 'CajaChica';
+
+    // Valida los campos
+    if (!monto || isNaN(monto) || !tipo || !medioPago) {
+        showNotification("Por favor, complete todos los campos requeridos.", "error");
+        return;
+    }
+
+    try {
+        // Realiza el POST al backend
+        const response = await fetch('/api/movimientos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                monto,
+                tipo,
+                medioPago,
+                descripcion,
+                cajaTipo
+            }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+            showNotification('Movimiento creado con éxito.', 'success');
+
+            // Limpia los campos del formulario después de enviar
+            formMovimiento.reset();
+            await fetchMovimientos(cajaTipo);
+        } else {
+            showNotification(`Error al crear el movimiento: ${data.error || 'Error desconocido'}`, 'error');
+        }
+    } catch (error) {
+        console.error('Error al enviar el formulario de movimiento:', error);
+        showNotification('Error al conectarse con el servidor.', 'error');
+    }
+});
 
 // *** FUNCIONES: Mostrar Detalles de Arqueo ***
 function displayArqueoDetails(arqueo) {
@@ -178,7 +281,11 @@ function displayArqueoDetails(arqueo) {
             updateDiferencia(totalSistema);
         });
     });
-    console.log("ARQUEOID DESDE LA FUNCION DISPLAY" + arqueo._id)
+    // console.log("ARQUEOID DESDE LA FUNCION DISPLAY" + arqueo._id)
+    currentArqueoId = arqueo._id
+    currentArqueoEstado = arqueo.estado
+    currentArqueoDiferencia = arqueo.diferencia
+    currentArqueoObservacion = arqueo.observacion
     renderDiferenciaCard(totalSistema, arqueo._id);
 }
 
@@ -269,62 +376,116 @@ function updateTotalUsuario() {
     }
 }
 
-function renderDiferenciaCard(totalSistema) {
-    const detailsSection = document.querySelector('.details-section');
-    const arqueoId = detailsSection.dataset.arqueoId; // Recupera el arqueoId del atributo
 
-    if (!arqueoId) {
-        console.error('Error: arqueoId no encontrado en renderDiferenciaCard.');
+// FUNCION PARA MOSTRAR LA SECCION DE CERRAR ARQUEO
+function renderDiferenciaCard(totalSistema) {
+    if (!currentArqueoId) {
+        console.error('Error: currentArqueoId no encontrado en renderDiferenciaCard.');
         return;
     }
 
-    console.log("arqueoId desde renderDiferenciaCard:", arqueoId);
+    console.log("currentArqueoId desde renderDiferenciaCard:", currentArqueoId);
+    console.log("y su estado es....", currentArqueoEstado);
 
     const totalUsuarioElement = document.getElementById("total-usuario");
     const totalUsuario = parseFloat(
         totalUsuarioElement.textContent.replace("$", "").replace(",", "")
     ) || 0;
 
-    const diferencia = totalSistema - totalUsuario;
+    let diferencia;
+    let diferenciaFormateada;
 
+    if (currentArqueoEstado === "cerrado") {
+        diferencia = currentArqueoDiferencia;
+    } else {
+        diferencia = totalUsuario - totalSistema;
+    }
+
+    // Formatear diferencia
+    diferenciaFormateada = `${diferencia > 0 ? '+' : ''}${diferencia.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+    // Crear contenedor principal
     const diferenciaCard = document.createElement("div");
     diferenciaCard.classList.add("diferencia-card");
 
-    diferenciaCard.innerHTML = `
-        <div>
-            <p id="diferencia" style="font-size: 20px !important; margin-bottom: 0; color: white !important; font-weight: bold;">Diferencia</p>
-            <span id="diferencia-valor">$${diferencia.toLocaleString("es-AR", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-            })}</span>
-        </div>
-        <button id="btn-cerrar-arqueo" style="margin-top: 10px; padding: 8px 16px; color: white; border: none; border-radius: 4px; cursor: pointer;">
-            Cerrar Arqueo
-        </button>
+    // Contenido de la tarjeta
+    let leftColumn = `
+        <div class="diferencia-card-left">
+            <div>
+                <p class="diferencia-titulo">Diferencia</p>
+                <p id="diferencia-valor" class="diferencia-valor">$${diferenciaFormateada}</p>
+            </div>
     `;
 
-    if (diferencia > 0) {
-        diferenciaCard.classList.add("positivo");
-    } else if (diferencia < 0) {
-        diferenciaCard.classList.add("negativo");
+    if (currentArqueoEstado === "cerrado") {
+        leftColumn += `
+            <p class="observacion-texto" style="font-style: italic; font-size: 13px !important">${currentArqueoObservacion || "Sin observación registrada"}</p>
+        `;
     } else {
-        diferenciaCard.classList.add("igual");
+        leftColumn += `
+            <button id="btn-cerrar-arqueo" class="btn-cerrar-arqueo">Cerrar Arqueo</button>
+        `;
     }
 
+    leftColumn += `</div>`;
+
+    const rightColumn = currentArqueoEstado !== "cerrado" ? `
+        <div class="diferencia-card-right">
+            <p class="observacion-titulo">Observación</p>
+            <input 
+                id="observacion2" 
+                type="text" 
+                class="observacion-input" 
+                placeholder="Ej: Sobró efectivo">
+        </div>
+    ` : '';
+
+    diferenciaCard.innerHTML = leftColumn + rightColumn;
+
+    const detailsSection = document.querySelector('.details-section');
     detailsSection.appendChild(diferenciaCard);
 
-    const cerrarArqueoBtn = diferenciaCard.querySelector("#btn-cerrar-arqueo");
-    cerrarArqueoBtn.addEventListener("click", () => {
-        cerrarArqueo(arqueoId, totalSistema, totalUsuario);
-    });
+    // Cambiar color dinámicamente según la diferencia
+    const diferenciaValor = diferenciaCard.querySelector("#diferencia-valor");
+    if (diferencia > 0) {
+        diferenciaValor.style.setProperty("color", "#55a834", "important"); // Verde
+    } else if (diferencia < 0) {
+        diferenciaValor.style.setProperty("color", "#f54335", "important"); // Rojo
+    } else {
+        diferenciaValor.style.setProperty("color", "#383d41", "important"); // Gris
+    }
+
+    // Ocultar o mostrar la tabla según el estado
+    const usuarioArqueoBody = document.getElementById("usuario-arqueo-body");
+    if (currentArqueoEstado === "cerrado" && usuarioArqueoBody) {
+        usuarioArqueoBody.parentElement.style.display = "none"; // Ocultar tabla
+    } else if (usuarioArqueoBody) {
+        usuarioArqueoBody.parentElement.style.display = ""; // Mostrar tabla
+    }
+
+    // Agregar evento al botón solo si el estado no es "cerrado"
+    if (currentArqueoEstado !== "cerrado") {
+        const cerrarArqueoBtn = diferenciaCard.querySelector("#btn-cerrar-arqueo");
+        cerrarArqueoBtn.addEventListener("click", () => {
+            const observacionInput = document.getElementById("observacion2");
+            if (!observacionInput) {
+                console.error("El campo de observación no existe en el DOM.");
+                return;
+            }
+            const observacion = observacionInput.value.trim() || "Sin observación";
+            cerrarArqueo(currentArqueoId, totalSistema, totalUsuario, observacion);
+        });
+    }
 }
 
 
-// *** Función para manejar el cierre del arqueo ***
 
-function cerrarArqueo(arqueoId, totalSistema, totalUsuario) {
-    arqueoId = arqueoId || currentArqueoId; // Usar el ID almacenado globalmente si no se pasa uno
-    console.log("El arqueo ID es desde el front:", arqueoId);
+
+// *** Función para manejar el cierre del arqueo ***
+function cerrarArqueo(currentArqueoId, totalSistema, totalUsuario, observacion) {
+    console.log("El currentArqueoId es desde el front:", currentArqueoId);
+    console.log("El SALDO FINAL ENVIADO POR EL USUARIO ES", totalUsuario);
+    console.log("Observación enviada al backend:", observacion);
 
     const diferencia = totalSistema - totalUsuario;
 
@@ -337,24 +498,27 @@ function cerrarArqueo(arqueoId, totalSistema, totalUsuario) {
         if (!confirmacion) return;
     }
 
-    if (!arqueoId) {
-        console.error('Error: arqueoId no definido.');
+    if (!currentArqueoId) {
+        console.error('Error: currentArqueoId no definido.');
         showNotification('No se puede cerrar el arqueo. ID no válido.', 'error');
         return;
     }
 
-    const url = `/api/cerrarArqueo/${arqueoId}`;
-    console.log('Llamando al endpoint:', url);
+    const url = `/api/cerrarArqueo/${currentArqueoId}`;
+    console.log('Llamando al endpoint con la observación:', observacion);
 
     fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ cajaTipo: cajaTipoActivo }),
+        body: JSON.stringify({
+            cajaTipo: cajaTipoActivo,
+            totalUsuario: totalUsuario,
+            observacion: observacion // Enviar observación al backend
+        }),
     })
         .then((response) => {
-            console.log('Respuesta del servidor:', response);
             if (!response.ok) {
                 return response.json().then((err) => {
                     throw new Error(err.message || 'Error desconocido al cerrar el arqueo');
@@ -365,6 +529,7 @@ function cerrarArqueo(arqueoId, totalSistema, totalUsuario) {
         .then((data) => {
             showNotification('Arqueo cerrado correctamente.', 'success');
             console.log('Arqueo cerrado exitosamente:', data);
+            
             fetchArqueos(cajaTipoActivo);
         })
         .catch((error) => {
@@ -375,9 +540,19 @@ function cerrarArqueo(arqueoId, totalSistema, totalUsuario) {
 
 
 
+
+
+
+
+
+
+
+
+
 // *** Función para Actualizar Dinámicamente la Tarjeta ***
 function updateDiferencia(totalSistema) {
     const diferenciaCard = document.querySelector(".diferencia-card");
     if (diferenciaCard) diferenciaCard.remove(); // Eliminar tarjeta anterior
     renderDiferenciaCard(totalSistema); // Crear y agregar tarjeta actualizada
 }
+

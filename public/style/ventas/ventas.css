@@ -21,6 +21,38 @@
     display: block;
   }
 
+#table-arqueo {
+    border-collapse: collapse !important; /* Quitar espacio entre celdas */
+    border: none !important; /* Quitar borde de la tabla */
+    width: 100%; /* Asegurar que la tabla ocupe todo el ancho disponible (opcional) */
+}
+
+#table-arqueo th, 
+#table-arqueo td {
+    border: none !important; /* Quitar los bordes de las celdas */
+    padding: 8px !important; /* Espaciado interno (opcional, ajustable) */
+}
+
+#table-arqueo tr {
+    border: none !important; /* Quitar bordes entre las filas */
+}
+
+
+
+  /* Estilo para la fila seleccionada */
+#table-arqueo tbody tr.selected {
+    font-weight: bold; /* Negrita */
+    font-style: italic;
+    /* border: 2px solid #000; Opcional: borde para mayor claridad */
+}
+
+
+
+
+/* Hidden class */
+.hidden {
+    display: none;
+}
 
 
   #container-ventas{
@@ -258,8 +290,8 @@ input, select {
   
   
   .arqueo-details h3 {
-    background-color: #f28c33;
-    color: white;
+    /* background-color: #f28c33;
+    color: white; */
     padding: 10px;
     text-align: center;
     border-radius: 5px;
@@ -488,15 +520,75 @@ tr:hover {
 
 .diferencia-card {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    gap: 20px;
     padding: 15px;
-    border-radius: 5px;
-    color: white;
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-top: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+
+.diferencia-card-left,
+.diferencia-card-right {
+    flex: 1;
+}
+
+.diferencia-titulo {
+    font-size: 20px;
+    margin-bottom: 5px;
+    color: black;
+    font-weight: bold;
+}
+
+.diferencia-valor {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Colores según el valor de la diferencia */
+.diferencia-valor.positivo {
+    color: #55a834;
+}
+
+.diferencia-valor.negativo {
+    color: #f54335;
+}
+
+.diferencia-valor.neutro {
+    color: #383d41;
+}
+
+.observacion-titulo {
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: black;
+    font-weight: bold;
+}
+
+.observacion-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Botón cerrar arqueo */
+.btn-cerrar-arqueo {
+    margin-top: 10px;
+    padding: 8px 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: transparent;
+    cursor: pointer;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    font-weight: bold;
+    color: black;
+}
+
+.btn-cerrar-arqueo:hover {
+    background-color: #f0f0f0;
+}
+
 
 .diferencia-card.positivo {
     background-color: #4caf50; /* Verde */
@@ -515,18 +607,25 @@ tr:hover {
 }
 
 #btn-cerrar-arqueo {
-    background-color: transparent; /* Fondo transparente para que se integre con el banner */
-    color: white; /* Texto en blanco */
+    color: #6b00ad; /* Texto en blanco */
     border: 2px solid white; /* Borde blanco para destacarlo */
     padding: 8px 16px; /* Espaciado interno */
     border-radius: 4px; /* Bordes redondeados */
     font-size: 16px; /* Tamaño de fuente */
     cursor: pointer; /* Cambiar cursor a pointer */
     transition: all 0.3s ease; /* Suavizar transiciones */
+    border-radius: 15px;
 }
 
+
+#diferencia-valor {
+    color: inherit; /* No usar esto si quieres que JS tenga control completo */
+}
+
+
+
 #btn-cerrar-arqueo:hover {
-    background-color: rgba(255, 255, 255, 0.2); /* Fondo blanco semitransparente al pasar el cursor */
+    background-color:#6b00ad;
     color: white; /* Mantener el texto en blanco */
 }
 

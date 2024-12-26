@@ -530,6 +530,26 @@
                             </div>
                             <!-- Tabla Dinámica -->
                             <div class="table-section">
+                                <!-- Skeleton Loader -->
+                                <div id="skeleton-loader" class="skeleton-loader hidden">
+                                    <div class="skeleton-row">
+                                        <div class="skeleton-cell"></div>
+                                        <div class="skeleton-cell"></div>
+                                        <div class="skeleton-cell"></div>
+                                        <div class="skeleton-cell"></div>
+                                        <div class="skeleton-cell"></div>
+                                        <div class="skeleton-cell"></div>
+                                    </div>
+                                    <div class="skeleton-row">
+                                        <div class="skeleton-cell"></div>
+                                        <div class="skeleton-cell"></div>
+                                        <div class="skeleton-cell"></div>
+                                        <div class="skeleton-cell"></div>
+                                        <div class="skeleton-cell"></div>
+                                        <div class="skeleton-cell"></div>
+                                    </div>
+                                </div>
+
                                 <!-- Tabla Ventas -->
                                 <table id="table-ventas" class="data-table hidden">
                                     <thead>
@@ -613,31 +633,33 @@
                                     <h4>Nuevo Movimiento</h4>
                                     <label>Monto:</label>
                                     <input type="number" id="monto-movimiento" placeholder="Ingrese monto" />
-                                  
+
                                     <label>Tipo de Movimiento:</label>
                                     <select id="tipo-movimiento">
-                                      <option value="ingreso">Ingreso</option>
-                                      <option value="egreso">Egreso</option>
+                                        <option value="ingreso">Ingreso</option>
+                                        <option value="egreso">Egreso</option>
                                     </select>
-                                  
+
                                     <label>Medio de pago:</label>
                                     <select id="medio-pago">
-                                      <option value="efectivo">Efectivo</option>
-                                      <option value="debito">Débito</option>
-                                      <option value="credito">Crédito</option>
-                                      <option value="mercado pago">Mercado Pago</option>
-                                      <option value="otro">Otro</option>
+                                        <option value="efectivo">Efectivo</option>
+                                        <option value="debito">Débito</option>
+                                        <option value="credito">Crédito</option>
+                                        <option value="mercado pago">Mercado Pago</option>
+                                        <option value="otro">Otro</option>
                                     </select>
-                                  
+
                                     <label>Descripción:</label>
-                                    <input type="text" id="descripcion-movimiento" placeholder="Descripción del movimiento" />
-                                  
+                                    <input type="text" id="descripcion-movimiento"
+                                        placeholder="Descripción del movimiento" />
+
                                     <div class="form-actions">
-                                      <button type="submit" class="submit-btn">Agregar Movimiento</button>
-                                      <button type="button" class="cancel-btn" id="cancel-movimiento">Cancelar</button>
+                                        <button type="submit" class="submit-btn">Agregar Movimiento</button>
+                                        <button type="button" class="cancel-btn"
+                                            id="cancel-movimiento">Cancelar</button>
                                     </div>
-                                  </form>
-                                  
+                                </form>
+
                                 <!-- Formulario para Nueva Venta -->
                                 <form id="form-venta" class="hidden">
                                     <h4>Nueva Venta</h4>
@@ -663,7 +685,7 @@
 
                             <!-- Detalles dinamicos -->
                             <div class="details-section"></div>
-                            
+
 
                         </div>
 

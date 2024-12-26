@@ -177,6 +177,10 @@ options.forEach((option) => {
 // Obtén la referencia al formulario de arqueo
 const formArqueo = document.getElementById("form-arqueo");
 
+
+
+
+// CREAR ARQUEO NUEVO
 // Evento para manejar el envío del formulario
 formArqueo.addEventListener("submit", async (event) => {
     event.preventDefault(); // Previene el envío tradicional del formulario
@@ -207,6 +211,7 @@ formArqueo.addEventListener("submit", async (event) => {
         const data = await response.json();
 
         if (response.ok && data.success) {
+            fetchArqueos(cajaTipoActivo); // Mostrar arqueos
             showNotification("Arqueo iniciado con éxito.");
 
             // Limpia los campos del formulario después de enviar
