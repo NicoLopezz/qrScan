@@ -429,6 +429,7 @@
                         <div class="tarjeta" id="tarjetaReserva">
                             <h3>Agregar Cliente</h3>
                             <input type="text" id="inputNombre2" placeholder="Nombre" required />
+                            <input type="text" id="inputNombre3" placeholder="Empresa" />
                             <input type="text" id="inputModelo" placeholder="Modelo" required />
                             <input type="text" id="inputPatente" placeholder="Patente" required />
                             <select id="selectServicio" required>
@@ -522,34 +523,27 @@
                                 <div id="caja-mayor" class="tab active">Caja Mayor</div>
                                 <div id="caja-menor" class="tab">Caja Menor</div>
                             </div>
+
+
                             <!-- Opciones -->
                             <div class="options">
                                 <div id="ventas" class="option disabled">Ventas</div>
                                 <div id="movimientos" class="option">Movimientos</div>
-                                <div id="arqueo" class="option">Arqueo</div>
+                                <div id="arqueo" class="option">Arqueos</div>
                             </div>
+
+                            <!-- Filtros -->
+                            <div class="filters">
+                                <label for="tipo-caja">Tipo de Caja:</label>
+                                <select id="tipo-caja" class="filter-select">
+                                    <option value="todos">Todos</option>
+                                    <option value="efectivo">Efectivo</option>
+                                    <option value="mercado-pago">Mercado Pago</option>
+                                </select>
+                            </div>
+
                             <!-- Tabla Dinámica -->
                             <div class="table-section">
-                                <!-- Skeleton Loader -->
-                                <div id="skeleton-loader" class="skeleton-loader hidden">
-                                    <div class="skeleton-row">
-                                        <div class="skeleton-cell"></div>
-                                        <div class="skeleton-cell"></div>
-                                        <div class="skeleton-cell"></div>
-                                        <div class="skeleton-cell"></div>
-                                        <div class="skeleton-cell"></div>
-                                        <div class="skeleton-cell"></div>
-                                    </div>
-                                    <div class="skeleton-row">
-                                        <div class="skeleton-cell"></div>
-                                        <div class="skeleton-cell"></div>
-                                        <div class="skeleton-cell"></div>
-                                        <div class="skeleton-cell"></div>
-                                        <div class="skeleton-cell"></div>
-                                        <div class="skeleton-cell"></div>
-                                    </div>
-                                </div>
-
                                 <!-- Tabla Ventas -->
                                 <table id="table-ventas" class="data-table hidden">
                                     <thead>
@@ -584,6 +578,7 @@
                                         <tr>
                                             <th>Hora de apertura</th>
                                             <th>Hora de cierre</th>
+                                            <th>Tipo</th>
                                             <th>Sistema</th>
                                             <th>Usuario</th>
                                             <th>Diferencia</th>
@@ -618,6 +613,12 @@
                                     <label>Hora de Apertura (Actual):</label>
                                     <input type="datetime-local" id="hora-apertura" required />
 
+                                    <label>Tipo:</label>
+                                    <select id="tipo-arqueo">
+                                        <option value="efectivo">Efectivo</option>
+                                        <option value="mercado-pago">Mercado Pago</option>
+                                    </select>
+
                                     <label>Monto Inicial:</label>
                                     <input type="number" id="monto-inicial" placeholder="Ingrese monto inicial"
                                         required />
@@ -643,10 +644,7 @@
                                     <label>Medio de pago:</label>
                                     <select id="medio-pago">
                                         <option value="efectivo">Efectivo</option>
-                                        <option value="debito">Débito</option>
-                                        <option value="credito">Crédito</option>
-                                        <option value="mercado pago">Mercado Pago</option>
-                                        <option value="otro">Otro</option>
+                                        <option value="mercado-pago">Mercado Pago</option>
                                     </select>
 
                                     <label>Descripción:</label>

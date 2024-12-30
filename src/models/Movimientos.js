@@ -7,7 +7,7 @@ const movimientoSchema = new mongoose.Schema({
   tipo: { type: String, enum: ['ingreso', 'egreso'], required: true },
   monto: { type: Number, required: true },
   descripcion: { type: String, default: '' },
-  medioPago: { type: String, enum: ['efectivo', 'debito', 'credito', 'mercado pago', 'otro'], default: 'efectivo' },
+  medioPago: { type: String, enum: ['efectivo', 'debito', 'credito', 'mercado-pago', 'otro'], default: 'efectivo' },
   fecha: { type: Date, default: Date.now },
 });
 

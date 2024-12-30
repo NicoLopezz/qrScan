@@ -13,6 +13,7 @@ const arqueoChicaSchema = new mongoose.Schema({
   movimientos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movimiento' }], // Referencia a movimientos
   ventas: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Venta' }], // Referencia a ventas
   observacion: { type: String, default: '' }, // Nueva observación
+  tipo: { type: String, enum: ['efectivo', 'mercado-pago'], default: 'efectivo' }
 });
 
 export default mongoose.model('ArqueoChica', arqueoChicaSchema, 'ArqueosChica');

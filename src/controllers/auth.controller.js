@@ -1579,9 +1579,14 @@ async function addMessage(req, res) {
 
 
 async function crearArqueo(req, res) {
-  const { cajaTipo, saldoInicial, horaApertura } = req.body; // Incluimos horaApertura desde el body
+  const { cajaTipo, saldoInicial, horaApertura, tipo } = req.body; // Incluimos "tipo" desde el body
   const adminId = req.cookies.adminId; // Admin desde la cookie
   console.log("Datos recibidos en crearArqueo:", req.body);
+
+  if (!['efectivo', 'mercado-pago'].includes(req.body.tipoArqueo)) {
+    return res.status(400).json({ success: false, message: 'Tipo de arqueo inválido.' });
+  }
+  
 
   try {
     // Verificar Admin
@@ -1615,6 +1620,7 @@ async function crearArqueo(req, res) {
         saldoInicial,
         usuarioId: admin._id,
         fechaApertura, // Asignamos la fecha de apertura
+        tipo, // Asignamos el tipo de arqueo (efectivo o mercado-pago)
       });
 
       await arqueo.save();
@@ -1647,6 +1653,7 @@ async function crearArqueo(req, res) {
         saldoInicial,
         usuarioId: admin._id,
         fechaApertura, // Asignamos la fecha de apertura
+        tipo: req.body.tipoArqueo
       });
 
       await arqueo.save();
@@ -1666,6 +1673,7 @@ async function crearArqueo(req, res) {
     });
   }
 }
+
 
 async function getArqueos(req, res) {
   const adminId = req.cookies.adminId; // Obtener adminId de las cookies
@@ -1742,20 +1750,22 @@ async function getArqueos(req, res) {
 }
 
 
+
+
 // Crear un nuevo movimiento
 async function crearMovimiento(req, res) {
-  const { cajaTipo, tipo, monto, descripcion, medioPago } = req.body;
+  const { cajaTipo, tipo, monto, descripcion, medioPago, currentArqueoId } = req.body;
   const adminId = req.cookies.adminId;
 
   try {
     console.log('Datos recibidos:', req.body); // <-- Verifica qué datos llegan aquí
 
     // Validar entrada
-    if (!adminId || !cajaTipo || !tipo || !monto || !medioPago) {
+    if (!adminId || !cajaTipo || !tipo || !monto || !medioPago || !currentArqueoId) {
       return res.status(400).json({ success: false, message: "Faltan parámetros requeridos." });
     }
 
-    // Buscar arqueo abierto según la caja
+    // Buscar arqueo abierto según la caja y validar que coincida el ID del arqueo
     let arqueoAbierto;
 
     if (cajaTipo === "CajaMayor") {
@@ -1764,10 +1774,14 @@ async function crearMovimiento(req, res) {
         return res.status(404).json({ success: false, message: "Caja mayor no encontrada." });
       }
 
-      // Buscar arqueo con estado "abierto"
-      arqueoAbierto = await ArqueoMayor.findOne({ cajaId: cajaMayor._id, estado: "abierto" });
+      // Buscar arqueo con estado "abierto" y que coincida el ID
+      arqueoAbierto = await ArqueoMayor.findOne({ 
+        cajaId: cajaMayor._id, 
+        estado: "abierto", 
+        _id: currentArqueoId 
+      });
       if (!arqueoAbierto) {
-        return res.status(400).json({ success: false, message: "No hay arqueo abierto en Caja Mayor." });
+        return res.status(400).json({ success: false, message: "No hay arqueo abierto en Caja Mayor con el ID especificado." });
       }
     } else if (cajaTipo === "CajaChica") {
       const cajaChica = await CajaChica.findOne({ adminId }).populate("arqueos");
@@ -1775,10 +1789,14 @@ async function crearMovimiento(req, res) {
         return res.status(404).json({ success: false, message: "Caja chica no encontrada." });
       }
 
-      // Buscar arqueo con estado "abierto"
-      arqueoAbierto = await ArqueoChica.findOne({ cajaId: cajaChica._id, estado: "abierto" });
+      // Buscar arqueo con estado "abierto" y que coincida el ID
+      arqueoAbierto = await ArqueoChica.findOne({ 
+        cajaId: cajaChica._id, 
+        estado: "abierto", 
+        _id: currentArqueoId 
+      });
       if (!arqueoAbierto) {
-        return res.status(400).json({ success: false, message: "No hay arqueo abierto en Caja Chica." });
+        return res.status(400).json({ success: false, message: "No hay arqueo abierto en Caja Chica con el ID especificado." });
       }
     } else {
       return res.status(400).json({ success: false, message: "Tipo de caja inválido. Use CajaMayor o CajaChica." });
@@ -1817,6 +1835,7 @@ async function crearMovimiento(req, res) {
     res.status(500).json({ success: false, message: "Error interno del servidor.", details: error.message });
   }
 }
+
 
 
 // Obtener los movimientos de un arqueo abierto
@@ -1868,6 +1887,71 @@ async function getMovimientos(req, res) {
   }
 }
 
+// Obtener todos los movimientos de las cajas abiertas
+async function getMovimientosAbiertos(req, res) {
+  const adminId = req.cookies.adminId; // Obtener adminId desde las cookies
+  const { cajaTipo } = req.query; // Obtener cajaTipo desde la query
+
+  // Validar que adminId y cajaTipo existan
+  if (!adminId || !cajaTipo) {
+    return res.status(400).json({ success: false, message: "Faltan parámetros requeridos (adminId, cajaTipo)." });
+  }
+
+  try {
+    let movimientos = [];
+
+    // Buscar movimientos dependiendo del tipo de caja
+    if (cajaTipo === "CajaMayor") {
+      const cajaMayor = await CajaMayor.findOne({ adminId });
+      if (!cajaMayor) {
+        return res.status(404).json({ success: false, message: "No se encontró CajaMayor para este admin." });
+      }
+
+      // Buscar arqueos abiertos de CajaMayor
+      const arqueosAbiertos = await ArqueoMayor.find({ cajaId: cajaMayor._id, estado: "abierto" }).populate("movimientos").exec();
+      
+      // Recopilar todos los movimientos
+      arqueosAbiertos.forEach((arqueo) => {
+        movimientos = movimientos.concat(arqueo.movimientos);
+      });
+
+    } else if (cajaTipo === "CajaChica") {
+      const cajaChica = await CajaChica.findOne({ adminId });
+      if (!cajaChica) {
+        return res.status(404).json({ success: false, message: "No se encontró CajaChica para este admin." });
+      }
+
+      // Buscar arqueos abiertos de CajaChica
+      const arqueosAbiertos = await ArqueoChica.find({ cajaId: cajaChica._id, estado: "abierto" }).populate("movimientos").exec();
+      
+      // Recopilar todos los movimientos
+      arqueosAbiertos.forEach((arqueo) => {
+        movimientos = movimientos.concat(arqueo.movimientos);
+      });
+
+    } else {
+      return res.status(400).json({ success: false, message: "Tipo de caja inválido. Use CajaMayor o CajaChica." });
+    }
+
+    // Verificar si hay movimientos
+    if (movimientos.length === 0) {
+      return res.status(404).json({ success: false, message: "No se encontraron movimientos en cajas abiertas." });
+    }
+
+    // Devolver los movimientos relacionados a cajas abiertas
+    res.status(200).json({ success: true, data: movimientos });
+  } catch (error) {
+    console.error("Error al obtener movimientos de cajas abiertas:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error interno del servidor.",
+      details: error.message,
+    });
+  }
+}
+
+
+
 
 
 
@@ -1902,5 +1986,6 @@ export const methods = {
   getArqueos,
   crearMovimiento,
   getMovimientos,
-  cerrarArqueo
+  cerrarArqueo,
+  getMovimientosAbiertos
 };

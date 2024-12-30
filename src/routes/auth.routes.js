@@ -99,6 +99,7 @@ router.post('/admins/agregarLavado', autenthication.agregarLavado);
 //-> CREAR Y OBTENER ARQUEOS
 router.post('/arqueos', autenthication.crearArqueo);
 router.get('/arqueos', autenthication.getArqueos);
+// router.get('/tiposArqueosAbiertos', autenthication.getTiposArqueosAbiertos);
 router.post('/cerrarArqueo/:arqueoId', autenthication.cerrarArqueo);
 
 
@@ -108,6 +109,7 @@ router.post('/cerrarArqueo/:arqueoId', autenthication.cerrarArqueo);
 //->CREAR Y OBTENER MOVS.
 router.post("/movimientos", autenthication.crearMovimiento);
 router.get("/movimientos", autenthication.getMovimientos);
+router.get("/movimientosAbiertos", autenthication.getMovimientosAbiertos);
 
 
 

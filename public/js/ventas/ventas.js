@@ -190,8 +190,10 @@ formArqueo.addEventListener("submit", async (event) => {
     const saldoInicial = parseFloat(document.getElementById("monto-inicial").value); // Renombrado como saldoInicial
     const cajaTipo = document.querySelector(".tab.active").id === "caja-mayor" ? "CajaMayor" : "CajaChica";
 
+    // Nuevo campo: tipoArqueo
+    const tipoArqueo = document.getElementById("tipo-arqueo").value;
     // Valida los campos
-    if (!horaApertura || isNaN(saldoInicial)) {
+    if (!horaApertura || isNaN(saldoInicial) || !tipoArqueo) {
         showNotification("Por favor, complete todos los campos requeridos.", "error");
         return;
     }
@@ -204,11 +206,13 @@ formArqueo.addEventListener("submit", async (event) => {
             body: JSON.stringify({
                 horaApertura,
                 saldoInicial, // Aquí lo renombramos correctamente
-                cajaTipo
+                cajaTipo,
+                tipoArqueo // Incluye el nuevo campo
             })
         });
 
         const data = await response.json();
+        
 
         if (response.ok && data.success) {
             fetchArqueos(cajaTipoActivo); // Mostrar arqueos
@@ -224,5 +228,6 @@ formArqueo.addEventListener("submit", async (event) => {
         showNotification("Error al conectarse con el servidor.", "error");
     }
 });
+
 
 
