@@ -212,6 +212,7 @@ function agregarLavado() {
     // Obtener valores del formulario
     const nombre = document.getElementById('inputNombre2').value.trim();
     const modelo = document.getElementById('inputModelo').value.trim();
+    const empresa = document.getElementById('empresa').value.trim();
     const patente = document.getElementById('inputPatente').value.trim();
     const tipoDeLavado = document.getElementById('selectServicio').value;
     const observacion = document.getElementById('inputObservation').value.trim();
@@ -221,6 +222,7 @@ function agregarLavado() {
     console.log("Nombre:", nombre);
     console.log("Modelo:", modelo);
     console.log("Patente:", patente);
+    console.log("Empresa:", empresa);
     console.log("Tipo de Lavado:", tipoDeLavado);
     console.log("Observación:", observacion);
 
@@ -244,6 +246,7 @@ function agregarLavado() {
             nombre,
             modelo,
             patente,
+            empresa,
             tipoDeLavado,
             observacion
         })
@@ -263,7 +266,7 @@ function agregarLavado() {
                 if (window.innerWidth <= 768) {
                     handleOption2("tabla");
                 }
-                const nuevoLavado = { _id: data.id, nombre, modelo, patente, tipoDeLavado, observacion };
+                const nuevoLavado = { _id: data.id, nombre, modelo, patente, empresa, tipoDeLavado, observacion };
                 agregarFilaTablaLavados(nuevoLavado);
                 // window.location.reload();
                 cargarLavados()

@@ -647,6 +647,32 @@
                                         <option value="mercado-pago">Mercado Pago</option>
                                     </select>
 
+                                    <!-- Estado de Pago -->
+                                    <div class="checkbox-group">
+                                        <label>Estado de Pago:</label>
+                                        <div>
+                                            <label>
+                                                <input type="checkbox" id="estado-abonado" name="estado-pago"
+                                                    value="abonado">
+                                                Abonado
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <label>
+                                                <input type="checkbox" id="estado-no-abonado" name="estado-pago"
+                                                    value="no-abonado">
+                                                No Abonado
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <label>
+                                                <input type="checkbox" id="estado-pendiente" name="estado-pago"
+                                                    value="pendiente">
+                                                Pendiente
+                                            </label>
+                                        </div>
+                                    </div>
+
                                     <label>Descripción:</label>
                                     <input type="text" id="descripcion-movimiento"
                                         placeholder="Descripción del movimiento" />
@@ -657,6 +683,7 @@
                                             id="cancel-movimiento">Cancelar</button>
                                     </div>
                                 </form>
+
 
                                 <!-- Formulario para Nueva Venta -->
                                 <form id="form-venta" class="hidden">

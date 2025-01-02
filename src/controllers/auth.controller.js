@@ -1406,7 +1406,7 @@ async function agregarCliente(req, res) {
 
 // AGREGAR LAVADO
 async function agregarLavado(req, res) {
-  const { nombre, modelo, patente, tipoDeLavado, observacion } = req.body;
+  const { nombre, modelo, patente, empresa, tipoDeLavado, observacion } = req.body;
 
   try {
     // Lógica para agregar el lavado
@@ -1422,6 +1422,7 @@ async function agregarLavado(req, res) {
       nombre,
       modelo,
       patente,
+      empresa,
       tipoDeLavado,
       observacion,
       estado: 'Pendiente' // Estado inicial por defecto
@@ -1754,18 +1755,24 @@ async function getArqueos(req, res) {
 
 // Crear un nuevo movimiento
 async function crearMovimiento(req, res) {
-  const { cajaTipo, tipo, monto, descripcion, medioPago, currentArqueoId } = req.body;
+  const { cajaTipo, tipo, monto, descripcion, medioPago, estadoPago } = req.body; // Agregamos estadoPago
   const adminId = req.cookies.adminId;
 
   try {
     console.log('Datos recibidos:', req.body); // <-- Verifica qué datos llegan aquí
 
     // Validar entrada
-    if (!adminId || !cajaTipo || !tipo || !monto || !medioPago || !currentArqueoId) {
+    if (!adminId || !cajaTipo || !tipo || !monto || !medioPago || !estadoPago) { // Validar estadoPago
       return res.status(400).json({ success: false, message: "Faltan parámetros requeridos." });
     }
 
-    // Buscar arqueo abierto según la caja y validar que coincida el ID del arqueo
+    // Validar que el estadoPago tenga un valor válido
+    const estadosValidos = ["abonado", "no-abonado", "pendiente"];
+    if (!estadosValidos.includes(estadoPago)) {
+      return res.status(400).json({ success: false, message: "Estado de pago inválido." });
+    }
+
+    // Buscar arqueo abierto según el tipo de caja (efectivo o mercado-pago)
     let arqueoAbierto;
 
     if (cajaTipo === "CajaMayor") {
@@ -1774,14 +1781,15 @@ async function crearMovimiento(req, res) {
         return res.status(404).json({ success: false, message: "Caja mayor no encontrada." });
       }
 
-      // Buscar arqueo con estado "abierto" y que coincida el ID
+      // Buscar arqueo con estado "abierto" y el medio de pago correspondiente
       arqueoAbierto = await ArqueoMayor.findOne({ 
         cajaId: cajaMayor._id, 
         estado: "abierto", 
-        _id: currentArqueoId 
+        tipo: medioPago // Filtrar por el tipo de medio de pago
       });
+
       if (!arqueoAbierto) {
-        return res.status(400).json({ success: false, message: "No hay arqueo abierto en Caja Mayor con el ID especificado." });
+        return res.status(400).json({ success: false, message: "No hay arqueo abierto en Caja Mayor para el tipo especificado." });
       }
     } else if (cajaTipo === "CajaChica") {
       const cajaChica = await CajaChica.findOne({ adminId }).populate("arqueos");
@@ -1789,14 +1797,15 @@ async function crearMovimiento(req, res) {
         return res.status(404).json({ success: false, message: "Caja chica no encontrada." });
       }
 
-      // Buscar arqueo con estado "abierto" y que coincida el ID
+      // Buscar arqueo con estado "abierto" y el medio de pago correspondiente
       arqueoAbierto = await ArqueoChica.findOne({ 
         cajaId: cajaChica._id, 
         estado: "abierto", 
-        _id: currentArqueoId 
+        tipo: medioPago // Filtrar por el tipo de medio de pago
       });
+
       if (!arqueoAbierto) {
-        return res.status(400).json({ success: false, message: "No hay arqueo abierto en Caja Chica con el ID especificado." });
+        return res.status(400).json({ success: false, message: "No hay arqueo abierto en Caja Chica para el tipo especificado." });
       }
     } else {
       return res.status(400).json({ success: false, message: "Tipo de caja inválido. Use CajaMayor o CajaChica." });
@@ -1815,6 +1824,7 @@ async function crearMovimiento(req, res) {
       monto,
       descripcion,
       medioPago,
+      estadoPago, // Guardar el nuevo campo en la base de datos
     });
 
     await nuevoMovimiento.save();
@@ -1835,6 +1845,8 @@ async function crearMovimiento(req, res) {
     res.status(500).json({ success: false, message: "Error interno del servidor.", details: error.message });
   }
 }
+
+
 
 
 

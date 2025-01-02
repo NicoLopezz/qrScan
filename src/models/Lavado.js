@@ -4,6 +4,7 @@ const lavadoSchema = new mongoose.Schema({
   fechaDeAlta: { type: Date, default: Date.now },
   nombre: { type: String, required: true },
   patente: { type: String, required: true },
+  empresa: { type: String, required: false },
   solicitudBaja: { type: Boolean, default: false },
   from: { type: String, default: '' },
   calidad: { type: String, default: '' },

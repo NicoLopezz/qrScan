@@ -5,12 +5,7 @@ let currentArqueDiferencia = null; // Variable global para almacenar el ID del a
 let currentArqueoEstado = null; // Variable global para almacenar el ID del arqueo actual
 let currentArqueoObservacion = null
 
-// Evento para manejar el envío del formulario de nuevo movimiento
-const formMovimiento = document.getElementById('form-movimiento');
-
-
-
-
+let currentFiltroMovimiento = "Todos"; // Variable global para almacenar el ID del arqueo 
 
 
 
@@ -25,6 +20,30 @@ document.querySelectorAll('.tab').forEach((tab) => {
     });
 });
 
+// Asegurar que solo un checkbox pueda estar seleccionado a la vez
+document.querySelectorAll('input[name="estado-pago"]').forEach((checkbox) => {
+    checkbox.addEventListener('change', (event) => {
+        if (event.target.checked) {
+            document.querySelectorAll('input[name="estado-pago"]').forEach((cb) => {
+                if (cb !== event.target) cb.checked = false; // Desmarcar los otros
+            });
+        }
+    });
+});
+
+//FUNCIONES PARA TRAER LOS LAVADOS A VENTAS.
+// *** Función para obtener y renderizar los lavados ***
+
+async function fetchAndRenderLavados() {
+    try {
+        const response = await fetch("http://localhost:3000/api/admins/6760a78e7f72b5a2c6b67e34/lavados");
+        const lavados = await response.json();
+
+        renderLavadosTable(lavados);
+    } catch (error) {
+        console.error("Error al obtener los lavados:", error);
+    }
+}
 // *** FUNCIONES: Mostrar/Ocultar Elementos ***
 function hideAllFormsAndButtons() {
     document.querySelectorAll('#buttons-container .action-btn').forEach((button) => (button.style.display = 'none'));
@@ -32,6 +51,47 @@ function hideAllFormsAndButtons() {
     document.querySelector('.details-section').style.display = 'none';
     document.getElementById('details').style.display = 'none';
 }
+
+
+
+//--------------
+
+// *** Llamar a la función al cargar la página ***
+document.addEventListener("DOMContentLoaded", fetchAndRenderLavados);
+// *** Función para renderizar lavados en la tabla ***
+function renderLavadosTable(lavados) {
+    const tableBody = document.querySelector("#table-ventas tbody");
+    tableBody.innerHTML = "";
+
+    if (lavados.length > 0) {
+        lavados.sort((a, b) => new Date(b.fechaHora) - new Date(a.fechaHora)); // Ordenar por fecha/hora descendente
+
+        lavados.forEach(lavado => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${lavado.nombre || "---"}</td>
+                <td>${lavado.patente || "---"}</td>
+                <td>${lavado.empresa || "---"}</td>
+                <td>${new Date(lavado.fechaDeAlta).toLocaleString() || "---"}</td>
+                <td>$${lavado.monto || "---"}</td>
+                <td>${lavado.estado || "---"}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+    } else {
+        const noDataRow = document.createElement("tr");
+        noDataRow.innerHTML = '<td colspan="6" class="no-data">No hay lavados disponibles.</td>';
+        tableBody.appendChild(noDataRow);
+    }
+}
+// -------------
+
+
+
+
+
+
+
 
 // *** FETCH: Obtener Arqueos por Caja ***
 async function fetchArqueos(cajaTipo) {
@@ -53,7 +113,6 @@ async function fetchArqueos(cajaTipo) {
         showNotification('Error al conectarse con el servidor.', 'error');
     }
 }
-
 // *** FUNCIONES: Renderizar Tablas de Arqueos ***
 function renderArqueosTable(arqueos) {
     const tableBody = document.querySelector('#table-arqueo tbody');
@@ -117,161 +176,6 @@ function renderArqueosTable(arqueos) {
     document.getElementById('table-arqueo').classList.remove('hidden');
     document.getElementById('table-movimientos').classList.add('hidden');
 }
-
-
-
-
-let currentFiltroMovimiento = "Todos"; // Variable global para almacenar el ID del arqueo 
-
-// *** Función para obtener y renderizar movimientos según el filtro ***
-async function fetchMovimientos() {
-    console.log("Filtro seleccionado:", currentFiltroMovimiento);
-    console.log("Tipo de caja activa:", cajaTipoActivo);
-
-    try {
-        // Construir la URL base
-        let url = `/api/movimientosAbiertos?cajaTipo=${cajaTipoActivo}`;
-
-        console.log("URL generada:", url);
-
-        // Hacer la solicitud
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
-        });
-
-        const data = await response.json();
-        console.log("Datos obtenidos desde el backend:", data);
-
-        if (response.ok && data.success) {
-            let movimientos = data.data;
-
-            // Aplicar el filtro según el tipo seleccionado
-            if (currentFiltroMovimiento === "efectivo") {
-                movimientos = movimientos.filter(mov => mov.medioPago === "efectivo");
-            } else if (currentFiltroMovimiento === "mercado-pago") {
-                movimientos = movimientos.filter(mov => mov.medioPago === "mercado-pago");
-            }
-
-            console.log("Movimientos después del filtro:", movimientos);
-
-            // Renderizar los movimientos en la tabla
-            renderMovimientosTable(movimientos);
-        } else {
-            console.error("Error al obtener movimientos:", data.message);
-            showNotification(`Error al obtener movimientos: ${data.message}`, "error");
-        }
-    } catch (error) {
-        console.error("Error al realizar el fetch:", error);
-        showNotification("Error al conectarse con el servidor.", "error");
-    }
-}
-
-// *** Función para renderizar movimientos en la tabla ***
-function renderMovimientosTable(movimientos) {
-    const tableBody = document.querySelector("#table-movimientos tbody");
-    tableBody.innerHTML = "";
-
-    if (movimientos.length > 0) {
-        movimientos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha)); // Ordenar por fecha descendente
-
-        movimientos.forEach(movimiento => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${new Date(movimiento.fecha).toLocaleString()}</td>
-                <td>$${movimiento.monto || "---"}</td>
-                <td>${movimiento.tipo || "---"}</td>
-                <td>
-                    ${
-                        movimiento.medioPago === "efectivo"
-                            ? '<img src="../img/cashLogo2.svg" alt="Efectivo" style="width: 30px; height: auto;" class="icon">'
-                            : movimiento.medioPago === "mercado-pago"
-                            ? '<img src="../img/logoMp.svg" alt="Mercado Pago" style="width: 30px; height: auto;" class="icon">'
-                            : "---"
-                    }
-                </td>
-                <td>${movimiento.descripcion || "---"}</td>
-            `;
-            tableBody.appendChild(row);
-        });
-    } else {
-        const noDataRow = document.createElement("tr");
-        noDataRow.innerHTML = '<td colspan="5" class="no-data">No hay movimientos disponibles.</td>';
-        tableBody.appendChild(noDataRow);
-    }
-}
-
-// *** Evento para manejar el cambio en el filtro ***
-document.getElementById("tipo-caja").addEventListener("change", function (event) {
-    const selectedValue = event.target.value;
-
-    if (selectedValue === "efectivo") {
-        currentFiltroMovimiento = "efectivo";
-    } else if (selectedValue === "mercado-pago") {
-        currentFiltroMovimiento = "mercado-pago";
-    } else {
-        currentFiltroMovimiento = "Todos";
-    }
-
-    console.log("Filtro cambiado a:", currentFiltroMovimiento);
-    fetchMovimientos(); // Ejecutar fetchMovimientos después de cambiar el filtro
-});
-
-
-
-
-
-formMovimiento.addEventListener('submit', async (event) => {
-    event.preventDefault(); // Previene el envío tradicional del formulario
-
-    // Obtén los valores de los campos del formulario
-    const monto = parseFloat(document.getElementById('monto-movimiento').value);
-    const tipo = document.getElementById('tipo-movimiento').value;
-    const medioPago = document.getElementById('medio-pago').value;
-    const descripcion = document.getElementById('descripcion-movimiento').value;
-    const cajaTipo = document.querySelector('.tab.active').id === 'caja-mayor' ? 'CajaMayor' : 'CajaChica';
-
-    // Valida los campos
-    if (!monto || isNaN(monto) || !tipo || !medioPago) {
-        showNotification("Por favor, complete todos los campos requeridos.", "error");
-        return;
-    }
-
-    try {
-        // Realiza el POST al backend
-        const response = await fetch('/api/movimientos', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                monto,
-                tipo,
-                medioPago,
-                descripcion,
-                cajaTipo,
-                currentArqueoId
-            }),
-        });
-
-        const data = await response.json();
-
-        if (response.ok && data.success) {
-            showNotification('Movimiento creado con éxito.', 'success');
-
-            // Limpia los campos del formulario después de enviar
-            formMovimiento.reset();
-            await fetchMovimientos(cajaTipo);
-        } else {
-            showNotification(`Error al crear el movimiento: ${data.error || 'Error desconocido'}`, 'error');
-        }
-    } catch (error) {
-        console.error('Error al enviar el formulario de movimiento:', error);
-        showNotification('Error al conectarse con el servidor.', 'error');
-    }
-});
-
-
-
-
 // *** FUNCIONES: Mostrar Detalles de Arqueo ***
 function displayArqueoDetails(arqueo) {
     hideAllFormsAndButtons();
@@ -347,9 +251,6 @@ function displayArqueoDetails(arqueo) {
     currentArqueoObservacion = arqueo.observacion
     renderDiferenciaCard(totalSistema, arqueo._id);
 }
-
-
-
 // *** Función para Generar Fila Principal con Evento de Clic ***
 function generateDynamicRowWithClick(tipo, concepto, total, detallesPorMedio) {
     const row = `
@@ -371,7 +272,6 @@ function generateDynamicRowWithClick(tipo, concepto, total, detallesPorMedio) {
 
     return row;
 }
-
 // *** Función para Alternar Detalles de Filas ***
 function toggleDetails(tipo, detalles) {
     const targetRow = document.querySelector(`.${tipo}-row`);
@@ -395,7 +295,6 @@ function toggleDetails(tipo, detalles) {
         });
     }
 }
-
 // *** Función para Calcular Totales por Medio de Pago ***
 function calcularTotalesPorMedioPago(movimientos) {
     return movimientos.reduce((totales, movimiento) => {
@@ -403,7 +302,6 @@ function calcularTotalesPorMedioPago(movimientos) {
         return totales;
     }, {});
 }
-
 // *** Función para Generar Filas de "Según Usuario" ***
 function generateUsuarioRows(ingresosPorMedio, egresosPorMedio) {
     const medios = { ...ingresosPorMedio, ...egresosPorMedio };
@@ -421,7 +319,6 @@ function generateUsuarioRows(ingresosPorMedio, egresosPorMedio) {
         )
         .join('');
 }
-
 // *** Función para Actualizar el Total Usuario ***
 function updateTotalUsuario() {
     let totalUsuario = 0;
@@ -436,8 +333,6 @@ function updateTotalUsuario() {
         totalUsuarioElement.innerHTML = `<strong>$${totalUsuario.toFixed(2)}</strong>`;
     }
 }
-
-
 // FUNCION PARA MOSTRAR LA SECCION DE CERRAR ARQUEO
 function renderDiferenciaCard(totalSistema) {
     if (!currentArqueoId) {
@@ -538,10 +433,6 @@ function renderDiferenciaCard(totalSistema) {
         });
     }
 }
-
-
-
-
 // *** Función para manejar el cierre del arqueo ***
 function cerrarArqueo(currentArqueoId, totalSistema, totalUsuario, observacion) {
     console.log("El currentArqueoId es desde el front:", currentArqueoId);
@@ -598,8 +489,6 @@ function cerrarArqueo(currentArqueoId, totalSistema, totalUsuario, observacion) 
             showNotification(`Error al realizar el cierre del arqueo: ${error.message}`, 'error');
         });
 }
-
-
 // *** Función para Actualizar Dinámicamente la Tarjeta ***
 function updateDiferencia(totalSistema) {
     const diferenciaCard = document.querySelector(".diferencia-card");
@@ -609,45 +498,202 @@ function updateDiferencia(totalSistema) {
 
 
 
-//MOVIMIENTO FILTRO:
 
-// // *** Función para obtener arqueos abiertos y actualizar el select ***
-// async function updateTipoArqueoOptions() {
-//     try {
-//         // Realizar el fetch para obtener arqueos abiertos
-//         const response = await fetch(`/api/arqueosAbiertos`, {
-//             method: 'GET',
-//             headers: { 'Content-Type': 'application/json' },
-//         });
 
-//         const data = await response.json();
 
-//         if (response.ok && data.success) {
-//             const arqueosAbiertos = data.data;
 
-//             // Extraer tipos únicos de arqueos con estado "abierto"
-//             const tiposUnicos = [...new Set(arqueosAbiertos.map(arqueo => arqueo.tipo))];
 
-//             // Seleccionar el elemento <select>
-//             const tipoArqueoSelect = document.getElementById('tipo-arqueo');
-//             tipoArqueoSelect.innerHTML = ''; // Limpiar las opciones anteriores
 
-//             // Crear opciones dinámicamente
-//             tiposUnicos.forEach(tipo => {
-//                 const option = document.createElement('option');
-//                 option.value = tipo;
-//                 option.textContent = tipo === 'efectivo' ? 'Efectivo' : 'Mercado Pago'; // Opcional: transformar nombres
-//                 tipoArqueoSelect.appendChild(option);
-//             });
 
-//             console.log('Opciones actualizadas:', tiposUnicos);
-//         } else {
-//             console.error('Error al obtener arqueos abiertos:', data.message);
-//         }
-//     } catch (error) {
-//         console.error('Error al realizar el fetch para arqueos abiertos:', error);
+// *** Evento para manejar el cambio en el filtro ***
+document.getElementById("tipo-caja").addEventListener("change", function (event) {
+    const selectedValue = event.target.value;
+
+    if (selectedValue === "efectivo") {
+        currentFiltroMovimiento = "efectivo";
+    } else if (selectedValue === "mercado-pago") {
+        currentFiltroMovimiento = "mercado-pago";
+    } else {
+        currentFiltroMovimiento = "Todos";
+    }
+
+    console.log("Filtro cambiado a:", currentFiltroMovimiento);
+    fetchMovimientos(); // Ejecutar fetchMovimientos después de cambiar el filtro
+});
+
+// *** Función para obtener y renderizar movimientos según el filtro ***
+async function fetchMovimientos() {
+    console.log("Filtro seleccionado:", currentFiltroMovimiento);
+    console.log("Tipo de caja activa:", cajaTipoActivo);
+
+    try {
+        // Construir la URL base
+        let url = `/api/movimientosAbiertos?cajaTipo=${cajaTipoActivo}`;
+
+        console.log("URL generada:", url);
+
+        // Hacer la solicitud
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+        const data = await response.json();
+        console.log("Datos obtenidos desde el backend:", data);
+
+        if (response.ok && data.success) {
+            let movimientos = data.data;
+
+            // Aplicar el filtro según el tipo seleccionado
+            if (currentFiltroMovimiento === "efectivo") {
+                movimientos = movimientos.filter(mov => mov.medioPago === "efectivo");
+            } else if (currentFiltroMovimiento === "mercado-pago") {
+                movimientos = movimientos.filter(mov => mov.medioPago === "mercado-pago");
+            }
+
+            console.log("Movimientos después del filtro:", movimientos);
+
+            // Renderizar los movimientos en la tabla
+            renderMovimientosTable(movimientos);
+        } else {
+            console.error("Error al obtener movimientos:", data.message);
+            showNotification(`Error al obtener movimientos: ${data.message}`, "error");
+        }
+    } catch (error) {
+        console.error("Error al realizar el fetch:", error);
+        showNotification("Error al conectarse con el servidor.", "error");
+    }
+}
+// *** Función para renderizar movimientos en la tabla ***
+function renderMovimientosTable(movimientos) {
+    const tableBody = document.querySelector("#table-movimientos tbody");
+    tableBody.innerHTML = "";
+
+    if (movimientos.length > 0) {
+        movimientos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha)); // Ordenar por fecha descendente
+
+        movimientos.forEach(movimiento => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${new Date(movimiento.fecha).toLocaleString()}</td>
+                <td>$${movimiento.monto || "---"}</td>
+                <td>${movimiento.tipo || "---"}</td>
+                <td>
+                    ${
+                        movimiento.medioPago === "efectivo"
+                            ? '<img src="../img/cashLogo2.svg" alt="Efectivo" style="width: 30px; height: auto;" class="icon">'
+                            : movimiento.medioPago === "mercado-pago"
+                            ? '<img src="../img/logoMp.svg" alt="Mercado Pago" style="width: 30px; height: auto;" class="icon">'
+                            : "---"
+                    }
+                </td>
+                <td>${movimiento.descripcion || "---"}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+    } else {
+        const noDataRow = document.createElement("tr");
+        noDataRow.innerHTML = '<td colspan="5" class="no-data">No hay movimientos disponibles.</td>';
+        tableBody.appendChild(noDataRow);
+    }
+}
+
+// Evento para manejar el envío del formulario de nuevo movimiento
+//CREA EL NUEVO MOV
+const formMovimiento = document.getElementById('form-movimiento'); 
+// Escucha el evento submit
+// formMovimiento.addEventListener('submit', (event) => {
+//     console.log('Evento submit capturado.');
+//     event.preventDefault(); // Previene el refresco de la página
+//     console.log('Formulario enviado sin refrescar la página.');
+
+//     // Obtén los valores de los campos
+//     const monto = parseFloat(document.getElementById('monto-movimiento').value);
+//     const tipo = document.getElementById('tipo-movimiento').value;
+//     const medioPago = document.getElementById('medio-pago').value;
+//     const descripcion = document.getElementById('descripcion-movimiento').value;
+
+//     // Validar los datos
+//     if (!monto || isNaN(monto) || !tipo || !medioPago || !descripcion) {
+//         alert('Por favor, completa todos los campos antes de enviar.');
+//         return;
 //     }
-// }
 
-// // Llamar a la función al cargar la página o en eventos específicos
-// updateTipoArqueoOptions();
+//     // Simular el envío de datos
+//     console.log('Datos enviados:', { monto, tipo, medioPago, descripcion });
+
+//     // Opcional: Limpia el formulario
+//     formMovimiento.reset();
+//     alert('Movimiento creado con éxito.');
+// });
+formMovimiento.addEventListener('submit', async (event) => {
+    event.preventDefault(); // Previene el envío tradicional del formulario
+
+    // Obtén los valores de los campos del formulario
+    const monto = parseFloat(document.getElementById('monto-movimiento').value);
+    const tipo = document.getElementById('tipo-movimiento').value;
+    const medioPago = document.getElementById('medio-pago').value;
+    const descripcion = document.getElementById('descripcion-movimiento').value;
+    const cajaTipo = document.querySelector('.tab.active').id === 'caja-mayor' ? 'CajaMayor' : 'CajaChica';
+
+    // Obtén el estado de pago seleccionado
+    const estadoPago = document.querySelector('input[name="estado-pago"]:checked');
+
+    // Valida los campos
+    if (!monto || isNaN(monto) || !tipo || !medioPago || !estadoPago) {
+        showNotification("Por favor, complete todos los campos requeridos, incluido el estado de pago.", "error");
+        return;
+    }
+
+    try {
+        // Realiza el POST al backend
+        const response = await fetch('/api/movimientos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                monto,
+                tipo,
+                medioPago,
+                descripcion,
+                cajaTipo,
+                estadoPago: estadoPago.value, // Incluye el estado de pago en la solicitud
+                // currentArqueoId (agregar si es necesario)
+            }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+            showNotification('Movimiento creado con éxito.', 'success');
+
+            // Limpia los campos del formulario después de enviar
+            formMovimiento.reset();
+            await fetchMovimientos(cajaTipo);
+        } else {
+            showNotification(`Error al crear el movimiento: ${data.error || 'Error desconocido'}`, 'error');
+        }
+    } catch (error) {
+        console.error('Error al enviar el formulario de movimiento:', error);
+        showNotification('Error al conectarse con el servidor.', 'error');
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
