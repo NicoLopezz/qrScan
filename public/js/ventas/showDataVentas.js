@@ -5,7 +5,7 @@ let currentArqueDiferencia = null; // Variable global para almacenar el ID del a
 let currentArqueoEstado = null; // Variable global para almacenar el ID del arqueo actual
 let currentArqueoObservacion = null
 
-let currentFiltroMovimiento = "Todos"; // Variable global para almacenar el ID del arqueo 
+let currentFiltroMovimiento = "todos"; // Variable global para almacenar el ID del arqueo 
 
 
 
@@ -19,6 +19,16 @@ document.querySelectorAll('.tab').forEach((tab) => {
         fetchArqueos(selectedCaja);
     });
 });
+
+function toggleDateInputs(value) {
+    const fechaPersonalizada = document.getElementById('fecha-personalizada');
+    if (value === 'determinar') {
+        fechaPersonalizada.classList.remove('hidden');
+    } else {
+        fechaPersonalizada.classList.add('hidden');
+    }
+}
+
 
 // Asegurar que solo un checkbox pueda estar seleccionado a la vez
 document.querySelectorAll('input[name="estado-pago"]').forEach((checkbox) => {
@@ -505,7 +515,12 @@ function updateDiferencia(totalSistema) {
 
 
 
-// *** Evento para manejar el cambio en el filtro ***
+// Variables globales para los filtros
+let currentFiltroIngreso = "todos"; // Para "Tipo de Ingreso"
+let currentFiltroEstado = "todos"; // Para "Estado"
+let currentFiltroFecha = { tipo: "hoy", desde: null, hasta: null }; // Para Fecha
+
+// *** Evento para manejar el cambio en el filtro Tipo de Caja ***
 document.getElementById("tipo-caja").addEventListener("change", function (event) {
     const selectedValue = event.target.value;
 
@@ -514,22 +529,69 @@ document.getElementById("tipo-caja").addEventListener("change", function (event)
     } else if (selectedValue === "mercado-pago") {
         currentFiltroMovimiento = "mercado-pago";
     } else {
-        currentFiltroMovimiento = "Todos";
+        currentFiltroMovimiento = "todos";
     }
 
-    console.log("Filtro cambiado a:", currentFiltroMovimiento);
+    console.log("Filtro Tipo de Caja cambiado a:", currentFiltroMovimiento);
+    fetchMovimientos(); // Ejecutar fetchMovimientos después de cambiar el filtro
+});
+
+// *** Evento para manejar el cambio en el filtro Tipo de Ingreso ***
+document.getElementById("tipo-ingreso").addEventListener("change", function (event) {
+    currentFiltroIngreso = event.target.value;
+    console.log("Filtro Tipo de Ingreso cambiado a:", currentFiltroIngreso);
+    fetchMovimientos(); // Ejecutar fetchMovimientos después de cambiar el filtro
+});
+
+// *** Evento para manejar el cambio en el filtro Estado ***
+document.getElementById("estado").addEventListener("change", function (event) {
+    currentFiltroEstado = event.target.value;
+    console.log("Filtro Estado cambiado a:", currentFiltroEstado);
+    fetchMovimientos(); // Ejecutar fetchMovimientos después de cambiar el filtro
+});
+
+// *** Evento para manejar el cambio en el filtro Fecha ***
+document.getElementById("filtro-fecha").addEventListener("change", function (event) {
+    const selectedValue = event.target.value;
+
+    if (selectedValue === "hoy") {
+        currentFiltroFecha = { tipo: "hoy", desde: null, hasta: null };
+        document.getElementById("fecha-personalizada").classList.add("hidden");
+    } else if (selectedValue === "determinar") {
+        currentFiltroFecha = { tipo: "determinar", desde: null, hasta: null };
+        document.getElementById("fecha-personalizada").classList.remove("hidden");
+    }
+
+    console.log("Filtro Fecha cambiado a:", currentFiltroFecha);
+    fetchMovimientos(); // Ejecutar fetchMovimientos después de cambiar el filtro
+});
+
+// *** Eventos para los inputs de Fecha Personalizada ***
+document.getElementById("fecha-desde").addEventListener("change", function (event) {
+    currentFiltroFecha.desde = event.target.value;
+    console.log("Fecha Desde cambiada a:", currentFiltroFecha.desde);
+    fetchMovimientos(); // Ejecutar fetchMovimientos después de cambiar el filtro
+});
+
+document.getElementById("fecha-hasta").addEventListener("change", function (event) {
+    currentFiltroFecha.hasta = event.target.value;
+    console.log("Fecha Hasta cambiada a:", currentFiltroFecha.hasta);
     fetchMovimientos(); // Ejecutar fetchMovimientos después de cambiar el filtro
 });
 
 // *** Función para obtener y renderizar movimientos según el filtro ***
+
 async function fetchMovimientos() {
-    console.log("Filtro seleccionado:", currentFiltroMovimiento);
+    console.log("Filtros seleccionados:");
+    console.log("Tipo de Caja:", currentFiltroMovimiento);
+    console.log("Tipo de Ingreso:", currentFiltroIngreso);
+    console.log("Estado:", currentFiltroEstado);
+    console.log("Fecha:", currentFiltroFecha);
     console.log("Tipo de caja activa:", cajaTipoActivo);
 
     try {
         // Construir la URL base
         let url = `/api/movimientosAbiertos?cajaTipo=${cajaTipoActivo}`;
-
         console.log("URL generada:", url);
 
         // Hacer la solicitud
@@ -544,14 +606,41 @@ async function fetchMovimientos() {
         if (response.ok && data.success) {
             let movimientos = data.data;
 
-            // Aplicar el filtro según el tipo seleccionado
-            if (currentFiltroMovimiento === "efectivo") {
-                movimientos = movimientos.filter(mov => mov.medioPago === "efectivo");
-            } else if (currentFiltroMovimiento === "mercado-pago") {
-                movimientos = movimientos.filter(mov => mov.medioPago === "mercado-pago");
+            // Aplicar filtros
+            if (currentFiltroMovimiento !== "todos") {
+                movimientos = movimientos.filter(mov => mov.medioPago === currentFiltroMovimiento);
+                console.log("Después de filtrar por Tipo de Caja:", movimientos);
             }
 
-            console.log("Movimientos después del filtro:", movimientos);
+            if (currentFiltroIngreso !== "todos") {
+                movimientos = movimientos.filter(mov => mov.tipo === currentFiltroIngreso);
+                console.log("Después de filtrar por Tipo de Ingreso:", movimientos);
+            }
+
+            if (currentFiltroEstado === "todos") {
+                movimientos = movimientos.filter(mov =>
+                    mov.estadoPago === "abonado" || mov.estadoPago === "no-abonado" || mov.estadoPago === "pendiente"
+                );
+                console.log("Después de filtrar por Estado (Todos):", movimientos);
+            } else {
+                movimientos = movimientos.filter(mov => mov.estadoPago === currentFiltroEstado);
+                console.log("Después de filtrar por Estado Específico:", movimientos);
+            }
+
+            if (currentFiltroFecha.tipo === "hoy") {
+                const hoy = new Date().toISOString().split("T")[0];
+                movimientos = movimientos.filter(mov => mov.fecha.startsWith(hoy));
+                console.log("Después de filtrar por Fecha (Hoy):", movimientos);
+            } else if (currentFiltroFecha.tipo === "determinar") {
+                const { desde, hasta } = currentFiltroFecha;
+                movimientos = movimientos.filter(mov => {
+                    const fechaMov = new Date(mov.fecha).toISOString().split("T")[0];
+                    return (!desde || fechaMov >= desde) && (!hasta || fechaMov <= hasta);
+                });
+                console.log("Después de filtrar por Fecha (Rango):", movimientos);
+            }
+
+            console.log("Movimientos después de aplicar todos los filtros:", movimientos);
 
             // Renderizar los movimientos en la tabla
             renderMovimientosTable(movimientos);
@@ -564,6 +653,13 @@ async function fetchMovimientos() {
         showNotification("Error al conectarse con el servidor.", "error");
     }
 }
+
+
+
+
+
+
+
 // *** Función para renderizar movimientos en la tabla ***
 function renderMovimientosTable(movimientos) {
     const tableBody = document.querySelector("#table-movimientos tbody");
@@ -588,44 +684,23 @@ function renderMovimientosTable(movimientos) {
                     }
                 </td>
                 <td>${movimiento.descripcion || "---"}</td>
+                <td>${movimiento.estadoPago || "---"}</td> <!-- Nueva columna para Estado -->
             `;
             tableBody.appendChild(row);
         });
     } else {
         const noDataRow = document.createElement("tr");
-        noDataRow.innerHTML = '<td colspan="5" class="no-data">No hay movimientos disponibles.</td>';
+        noDataRow.innerHTML = '<td colspan="6" class="no-data">No hay movimientos disponibles.</td>'; // Ajustar colspan a 6
         tableBody.appendChild(noDataRow);
     }
 }
 
+
 // Evento para manejar el envío del formulario de nuevo movimiento
 //CREA EL NUEVO MOV
 const formMovimiento = document.getElementById('form-movimiento'); 
-// Escucha el evento submit
-// formMovimiento.addEventListener('submit', (event) => {
-//     console.log('Evento submit capturado.');
-//     event.preventDefault(); // Previene el refresco de la página
-//     console.log('Formulario enviado sin refrescar la página.');
 
-//     // Obtén los valores de los campos
-//     const monto = parseFloat(document.getElementById('monto-movimiento').value);
-//     const tipo = document.getElementById('tipo-movimiento').value;
-//     const medioPago = document.getElementById('medio-pago').value;
-//     const descripcion = document.getElementById('descripcion-movimiento').value;
-
-//     // Validar los datos
-//     if (!monto || isNaN(monto) || !tipo || !medioPago || !descripcion) {
-//         alert('Por favor, completa todos los campos antes de enviar.');
-//         return;
-//     }
-
-//     // Simular el envío de datos
-//     console.log('Datos enviados:', { monto, tipo, medioPago, descripcion });
-
-//     // Opcional: Limpia el formulario
-//     formMovimiento.reset();
-//     alert('Movimiento creado con éxito.');
-// });
+//CREAR MOVIMIENTO
 formMovimiento.addEventListener('submit', async (event) => {
     event.preventDefault(); // Previene el envío tradicional del formulario
 

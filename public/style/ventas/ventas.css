@@ -37,6 +37,28 @@
     border: none !important; /* Quitar bordes entre las filas */
 }
 
+.filters{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.filter-select {
+    padding: 10px;
+    font-size: 13px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 80%;
+    max-width: 300px;
+    cursor: pointer;
+    background-color: #fff;
+    color: #333;
+    margin-left: -3rem;
+    margin-bottom: 0.5rem;
+}
+
+
+
+
 
 
   /* Estilo para la fila seleccionada */

@@ -527,20 +527,54 @@
 
                             <!-- Opciones -->
                             <div class="options">
-                                <div id="ventas" class="option disabled">Ventas</div>
+                                <div id="ventas" class="option disabled">Lavados</div>
                                 <div id="movimientos" class="option">Movimientos</div>
                                 <div id="arqueo" class="option">Arqueos</div>
                             </div>
 
                             <!-- Filtros -->
                             <div class="filters">
+                                <!-- Filtro Tipo de Caja -->
                                 <label for="tipo-caja">Tipo de Caja:</label>
                                 <select id="tipo-caja" class="filter-select">
                                     <option value="todos">Todos</option>
                                     <option value="efectivo">Efectivo</option>
                                     <option value="mercado-pago">Mercado Pago</option>
                                 </select>
+
+                                <!-- Filtro Tipo de Ingreso -->
+                                <label for="tipo-ingreso">Tipo:</label>
+                                <select id="tipo-ingreso" class="filter-select">
+                                    <option value="todos">Todos</option>
+                                    <option value="ingreso">Ingreso</option>
+                                    <option value="egreso">Egreso</option>
+                                </select>
+
+                                <!-- Filtro Estado -->
+                                <label for="estado">Estado:</label>
+                                <select id="estado" class="filter-select">
+                                    <option value="todos">Todos</option>
+                                    <option value="abonado">Abonado</option>
+                                    <option value="no-abonado">No Abonado</option>
+                                    <option value="pendiente">Pendiente</option>
+                                </select>
+
+                                <!-- Filtro Fecha -->
+                                <label for="filtro-fecha">Fecha:</label>
+                                <select id="filtro-fecha" class="filter-select" onchange="toggleDateInputs(this.value)">
+                                    <option value="hoy">Hoy</option>
+                                    <option value="determinar">Determinar</option>
+                                </select>
+
+                                <!-- Inputs para fecha personalizada -->
+                                <div id="fecha-personalizada" class="hidden">
+                                    <label for="fecha-desde">Desde:</label>
+                                    <input type="date" id="fecha-desde" class="date-input">
+                                    <label for="fecha-hasta">Hasta:</label>
+                                    <input type="date" id="fecha-hasta" class="date-input">
+                                </div>
                             </div>
+
 
                             <!-- Tabla Dinámica -->
                             <div class="table-section">
@@ -548,7 +582,7 @@
                                 <table id="table-ventas" class="data-table hidden">
                                     <thead>
                                         <tr>
-                                            <th>ID</th>
+                                            <!-- <th>ID</th> -->
                                             <th>Usuario</th>
                                             <th>Monto</th>
                                             <th>Medio de Pago</th>
@@ -568,6 +602,7 @@
                                             <th>Tipo</th>
                                             <th>Medio de Pago</th>
                                             <th>Descripción</th>
+                                            <th>Estado</th>
                                         </tr>
                                     </thead>
                                     <tbody></tbody>
