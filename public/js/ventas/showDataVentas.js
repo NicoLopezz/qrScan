@@ -516,9 +516,11 @@ function updateDiferencia(totalSistema) {
 
 
 // Variables globales para los filtros
+
 let currentFiltroIngreso = "todos"; // Para "Tipo de Ingreso"
 let currentFiltroEstado = "todos"; // Para "Estado"
 let currentFiltroFecha = { tipo: "hoy", desde: null, hasta: null }; // Para Fecha
+let currentFiltroMedioPago = "todos"; // Para "Medio de Pago"
 
 // *** Evento para manejar el cambio en el filtro Tipo de Caja ***
 document.getElementById("tipo-caja").addEventListener("change", function (event) {
@@ -579,14 +581,21 @@ document.getElementById("fecha-hasta").addEventListener("change", function (even
     fetchMovimientos(); // Ejecutar fetchMovimientos después de cambiar el filtro
 });
 
-// *** Función para obtener y renderizar movimientos según el filtro ***
+// *** Evento para manejar el cambio en el filtro Medio de Pago ***
+document.getElementById("medio-de-pago").addEventListener("change", function (event) {
+    currentFiltroMedioPago = event.target.value;
+    console.log("Filtro Medio de Pago cambiado a:", currentFiltroMedioPago);
+    fetchMovimientos(); // Ejecutar fetchMovimientos después de cambiar el filtro
+});
 
+// *** Función para obtener y renderizar movimientos según el filtro ***
 async function fetchMovimientos() {
     console.log("Filtros seleccionados:");
     console.log("Tipo de Caja:", currentFiltroMovimiento);
     console.log("Tipo de Ingreso:", currentFiltroIngreso);
     console.log("Estado:", currentFiltroEstado);
     console.log("Fecha:", currentFiltroFecha);
+    console.log("Medio de Pago:", currentFiltroMedioPago);
     console.log("Tipo de caja activa:", cajaTipoActivo);
 
     try {
@@ -627,6 +636,11 @@ async function fetchMovimientos() {
                 console.log("Después de filtrar por Estado Específico:", movimientos);
             }
 
+            if (currentFiltroMedioPago !== "todos") {
+                movimientos = movimientos.filter(mov => mov.medioPago === currentFiltroMedioPago);
+                console.log("Después de filtrar por Medio de Pago:", movimientos);
+            }
+
             if (currentFiltroFecha.tipo === "hoy") {
                 const hoy = new Date().toISOString().split("T")[0];
                 movimientos = movimientos.filter(mov => mov.fecha.startsWith(hoy));
@@ -653,6 +667,7 @@ async function fetchMovimientos() {
         showNotification("Error al conectarse con el servidor.", "error");
     }
 }
+
 
 
 
@@ -752,6 +767,8 @@ formMovimiento.addEventListener('submit', async (event) => {
         showNotification('Error al conectarse con el servidor.', 'error');
     }
 });
+
+
 
 
 

@@ -60,6 +60,68 @@ options.forEach((option) => {
 });
 
 
+//SOLAPA PARA FILTROS VER U OCULTAR.
+
+
+
+
+// Seleccionar el botón de la solapa, contenedores de filtros y tablas
+const toggleFiltersButton = document.getElementById("toggle-filters");
+const filtersMovs = document.getElementById("filtersMovs");
+const filtersArqueos = document.getElementById("filtersArqueos");
+const tableMovimientos = document.getElementById("table-movimientos");
+const tableArqueo = document.getElementById("table-arqueo");
+
+// Función para ocultar todos los filtros
+function hideAllFilters() {
+    filtersMovs.classList.add("hidden");
+    filtersArqueos.classList.add("hidden");
+    console.log("Todos los filtros están ocultos.");
+}
+
+// Función para identificar qué filtros están activos según la tabla visible
+function identifyActiveFilters() {
+    if (!tableMovimientos.classList.contains("hidden")) {
+        console.log("La tabla activa es la de Movimientos. Los filtros a mostrar son los de Movimientos.");
+        return "movimientos";
+    } else if (!tableArqueo.classList.contains("hidden")) {
+        console.log("La tabla activa es la de Arqueos. Los filtros a mostrar son los de Arqueos.");
+        return "arqueos";
+    }
+    return null; // Por si ninguna tabla está visible
+}
+
+// Manejar el clic en el botón de la solapa
+toggleFiltersButton.addEventListener("click", () => {
+    const currentText = toggleFiltersButton.textContent.trim();
+
+    if (currentText === "Mostrar Filtros") {
+        toggleFiltersButton.textContent = "Ocultar Filtros";
+
+        const activeFilters = identifyActiveFilters(); // Identificar filtros activos
+        if (activeFilters === "movimientos") {
+            filtersMovs.classList.remove("hidden");
+            filtersArqueos.classList.add("hidden");
+        } else if (activeFilters === "arqueos") {
+            filtersArqueos.classList.remove("hidden");
+            filtersMovs.classList.add("hidden");
+        }
+        console.log(`Mostrando filtros de ${activeFilters}.`);
+    } else {
+        toggleFiltersButton.textContent = "Mostrar Filtros";
+        hideAllFilters(); // Ocultar todos los filtros
+        console.log("Ocultando todos los filtros.");
+    }
+});
+
+// Asegurarse de que los filtros estén ocultos al cargar la página
+document.addEventListener("DOMContentLoaded", () => {
+    hideAllFilters(); // Ocultar todos los filtros al cargar
+    toggleFiltersButton.textContent = "Mostrar Filtros"; // Establecer el texto inicial del botón
+    console.log("Filtros iniciales ocultos y el texto del botón establecido a 'Mostrar Filtros'.");
+});
+
+
 
 // *** EVENTOS: Opciones de Movimientos, Ventas, Arqueos ***
 document.querySelectorAll('.option').forEach((option) => {
@@ -116,9 +178,6 @@ function showFormsAndButtons(clickedButtonId) {
     });
 }
 
-
-
-
 document.addEventListener("DOMContentLoaded", () => {
     const btnNuevoArqueo = document.getElementById("btn-nuevo-arqueo");
     const formArqueo = document.getElementById("form-arqueo");
@@ -155,9 +214,11 @@ options.forEach((option) => {
     option.addEventListener('click', () => {
         if (option.classList.contains('disabled')) return;
 
+        // Activar la opción seleccionada
         options.forEach((o) => o.classList.remove('active'));
         option.classList.add('active');
 
+        // Mostrar/Ocultar tablas según la opción seleccionada
         tables.forEach((table) => table.classList.add('hidden'));
         if (option.id === 'ventas') {
             document.getElementById('table-ventas').classList.remove('hidden');
@@ -166,11 +227,9 @@ options.forEach((option) => {
         } else if (option.id === 'arqueo') {
             document.getElementById('table-arqueo').classList.remove('hidden');
         }
-
-        // Actualizar el botón dinámico
-        // updateActionButton(option.id);
     });
 });
+
 
 
 

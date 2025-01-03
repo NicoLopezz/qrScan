@@ -532,8 +532,11 @@
                                 <div id="arqueo" class="option">Arqueos</div>
                             </div>
 
-                            <!-- Filtros -->
-                            <div class="filters">
+                            <!-- Botón para desplegar/ocultar filtros -->
+                            <button id="toggle-filters" class="toggle-button">Mostrar Filtros</button>
+
+                            <!-- Filtros Movimientos -->
+                            <div class="filters hidden" id="filtersMovs">
                                 <!-- Filtro Tipo de Caja -->
                                 <label for="tipo-caja">Tipo de Caja:</label>
                                 <select id="tipo-caja" class="filter-select">
@@ -548,6 +551,14 @@
                                     <option value="todos">Todos</option>
                                     <option value="ingreso">Ingreso</option>
                                     <option value="egreso">Egreso</option>
+                                </select>
+
+                                <!-- Filtro Medio de pago -->
+                                <label for="medio-de-pago">Medio de Pago:</label>
+                                <select id="medio-de-pago" class="filter-select">
+                                    <option value="todos">Todos</option>
+                                    <option value="efectivo">efectivo</option>
+                                    <option value="mercado-pago">mercado-pago</option>
                                 </select>
 
                                 <!-- Filtro Estado -->
@@ -574,6 +585,39 @@
                                     <input type="date" id="fecha-hasta" class="date-input">
                                 </div>
                             </div>
+
+                            <!-- Filtros Arqueos -->
+                            <div class="filters hidden" id="filtersArqueos">
+                                <!-- Filtro Tipo de Arqueo -->
+                                <label for="tipo-arqueo">Tipo:</label>
+                                <select id="tipo-arqueo" class="filter-select">
+                                    <option value="todos">Todos</option>
+                                    <option value="efectivo">Efectivo</option>
+                                    <option value="mercado-pago">Mercado Pago</option>
+                                    <option value="otro">Otro</option>
+                                </select>
+
+                                <!-- Filtro Hora de Apertura -->
+                                <label for="hora-apertura">Hora de Apertura:</label>
+                                <input type="datetime-local" id="hora-apertura" class="datetime-input"
+                                    placeholder="Seleccione fecha y hora">
+
+                                <!-- Filtro Hora de Cierre -->
+                                <label for="hora-cierre">Hora de Cierre:</label>
+                                <input type="datetime-local" id="hora-cierre" class="datetime-input"
+                                    placeholder="Seleccione fecha y hora">
+
+                                <!-- Filtro Estado -->
+                                <label for="estado-arqueo">Estado:</label>
+                                <select id="estado-arqueo" class="filter-select">
+                                    <option value="todos">Todos</option>
+                                    <option value="abierto">Abierto</option>
+                                    <option value="cerrado">Cerrado</option>
+                                </select>
+                            </div>
+
+
+
 
 
                             <!-- Tabla Dinámica -->
