@@ -247,6 +247,22 @@
 }
 
 
+.filter-button {
+    background-color: #ff914d;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.filter-button:hover {
+    background-color: #d97740;
+}
+
+
+
   /* Formularios Dinámicos */
 #formularios-container {
     margin-top: 15px;

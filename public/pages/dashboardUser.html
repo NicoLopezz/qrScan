@@ -584,6 +584,9 @@
                                     <label for="fecha-hasta">Hasta:</label>
                                     <input type="date" id="fecha-hasta" class="date-input">
                                 </div>
+
+                                <!-- Botón para limpiar filtros -->
+                                <button id="reset-filters-movimientos" class="filter-button">Limpiar Filtros</button>
                             </div>
 
                             <!-- Filtros Arqueos -->
@@ -598,14 +601,13 @@
                                 </select>
 
                                 <!-- Filtro Hora de Apertura -->
-                                <label for="hora-apertura">Hora de Apertura:</label>
-                                <input type="datetime-local" id="hora-apertura" class="datetime-input"
-                                    placeholder="Seleccione fecha y hora">
+                                <label for="hora-apertura">Fecha Apertura:</label>
+                                <input type="datetime-local" id="hora-apertura"
+                                    placeholder="Seleccione hora de apertura">
 
                                 <!-- Filtro Hora de Cierre -->
-                                <label for="hora-cierre">Hora de Cierre:</label>
-                                <input type="datetime-local" id="hora-cierre" class="datetime-input"
-                                    placeholder="Seleccione fecha y hora">
+                                <label for="hora-cierre">Fecha Cierre:</label>
+                                <input type="datetime-local" id="hora-cierre" placeholder="Seleccione hora de cierre">
 
                                 <!-- Filtro Estado -->
                                 <label for="estado-arqueo">Estado:</label>
@@ -614,6 +616,11 @@
                                     <option value="abierto">Abierto</option>
                                     <option value="cerrado">Cerrado</option>
                                 </select>
+
+
+                                <!-- Botón para limpiar filtros -->
+                                <button id="reset-filters-arqueos" class="filter-button">Limpiar Filtros</button>
+
                             </div>
 
 
@@ -1215,6 +1222,7 @@
     <script src="/js/dashboardAdmin/topBar.js"></script>
     <script src="/js/ventas/ventas.js"></script>
     <script src="/js/ventas/showDataVentas.js"></script>
+    <script src="/js/ventas/filtros.js"></script>
 
     <!-- jQuery and Bootstrap -->
 
