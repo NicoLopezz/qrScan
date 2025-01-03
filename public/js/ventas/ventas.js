@@ -63,14 +63,11 @@ options.forEach((option) => {
 //SOLAPA PARA FILTROS VER U OCULTAR.
 
 
-
-
-// Seleccionar el botón de la solapa, contenedores de filtros y tablas
+// Seleccionar el botón de la solapa, contenedores de filtros y opciones
 const toggleFiltersButton = document.getElementById("toggle-filters");
 const filtersMovs = document.getElementById("filtersMovs");
 const filtersArqueos = document.getElementById("filtersArqueos");
-const tableMovimientos = document.getElementById("table-movimientos");
-const tableArqueo = document.getElementById("table-arqueo");
+// const options = document.querySelectorAll(".option");
 
 // Función para ocultar todos los filtros
 function hideAllFilters() {
@@ -79,16 +76,26 @@ function hideAllFilters() {
     console.log("Todos los filtros están ocultos.");
 }
 
-// Función para identificar qué filtros están activos según la tabla visible
-function identifyActiveFilters() {
-    if (!tableMovimientos.classList.contains("hidden")) {
-        console.log("La tabla activa es la de Movimientos. Los filtros a mostrar son los de Movimientos.");
-        return "movimientos";
-    } else if (!tableArqueo.classList.contains("hidden")) {
-        console.log("La tabla activa es la de Arqueos. Los filtros a mostrar son los de Arqueos.");
-        return "arqueos";
+// Función para identificar y mostrar dinámicamente el filtro activo
+function updateActiveFilters() {
+    const activeOption = document.querySelector(".option.active"); // Identificar opción activa
+    const currentText = toggleFiltersButton.textContent.trim();
+
+    if (currentText === "Ocultar Filtros") {
+        // Mostrar dinámicamente el filtro correspondiente
+        if (activeOption.id === "movimientos") {
+            filtersMovs.classList.remove("hidden");
+            filtersArqueos.classList.add("hidden");
+            console.log("Mostrando filtros de Movimientos.");
+        } else if (activeOption.id === "arqueo") {
+            filtersArqueos.classList.remove("hidden");
+            filtersMovs.classList.add("hidden");
+            console.log("Mostrando filtros de Arqueos.");
+        }
+    } else {
+        // Si el botón está en "Mostrar Filtros", asegurarse de que todo esté oculto
+        hideAllFilters();
     }
-    return null; // Por si ninguna tabla está visible
 }
 
 // Manejar el clic en el botón de la solapa
@@ -97,16 +104,7 @@ toggleFiltersButton.addEventListener("click", () => {
 
     if (currentText === "Mostrar Filtros") {
         toggleFiltersButton.textContent = "Ocultar Filtros";
-
-        const activeFilters = identifyActiveFilters(); // Identificar filtros activos
-        if (activeFilters === "movimientos") {
-            filtersMovs.classList.remove("hidden");
-            filtersArqueos.classList.add("hidden");
-        } else if (activeFilters === "arqueos") {
-            filtersArqueos.classList.remove("hidden");
-            filtersMovs.classList.add("hidden");
-        }
-        console.log(`Mostrando filtros de ${activeFilters}.`);
+        updateActiveFilters(); // Mostrar el filtro activo según la opción activa
     } else {
         toggleFiltersButton.textContent = "Mostrar Filtros";
         hideAllFilters(); // Ocultar todos los filtros
@@ -114,12 +112,26 @@ toggleFiltersButton.addEventListener("click", () => {
     }
 });
 
+// Evento para alternar entre opciones dinámicamente
+options.forEach((option) => {
+    option.addEventListener("click", () => {
+        options.forEach((o) => o.classList.remove("active")); // Quitar clase active de todas las opciones
+        option.classList.add("active"); // Agregar clase active a la opción seleccionada
+        console.log(`La opción activa ahora es: ${option.id}`);
+        updateActiveFilters(); // Actualizar dinámicamente el filtro visible
+    });
+});
+
 // Asegurarse de que los filtros estén ocultos al cargar la página
 document.addEventListener("DOMContentLoaded", () => {
     hideAllFilters(); // Ocultar todos los filtros al cargar
-    toggleFiltersButton.textContent = "Mostrar Filtros"; // Establecer el texto inicial del botón
+    toggleFiltersButton.textContent = "Mostrar Filtros"; // Texto inicial del botón
     console.log("Filtros iniciales ocultos y el texto del botón establecido a 'Mostrar Filtros'.");
 });
+
+
+
+
 
 
 
