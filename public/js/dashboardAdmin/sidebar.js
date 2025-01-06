@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Mostrar la sección correspondiente
             document.querySelectorAll('.section').forEach(section => {
                 section.classList.remove('active');
+                 cargarLavados();
             });
             document.getElementById(`section-${sectionId}`).classList.add('active');
         });

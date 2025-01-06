@@ -37,7 +37,7 @@
     border: none !important; /* Quitar bordes entre las filas */
 }
 
-.filters{
+/* .filters{
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
 }
@@ -54,7 +54,52 @@
     color: #333;
     margin-left: -3rem;
     margin-bottom: 0.5rem;
+} */
+
+.filters {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr; /* Cuatro columnas de igual tamaño */
+    grid-template-rows: auto; /* Altura de filas automática */
+    gap: 1rem; /* Espacio entre filas y columnas */
+    align-items: center; /* Centrar verticalmente los elementos */
 }
+
+.filter-input, .filter-select, .datetime-input, .filter-button {
+    width: 100%; /* Asegura que todos los inputs ocupen su espacio completo */
+    padding: 0.5rem; /* Espaciado interno */
+    font-size: 1rem; /* Tamaño de texto consistente */
+    box-sizing: border-box; /* Incluye padding y borde en el ancho total */
+}
+
+#fecha-personalizada-lavados {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Dos columnas para los campos Desde y Hasta */
+    gap: 1rem; /* Espacio entre los inputs */
+}
+
+.filter-button {
+    grid-column: span 2; /* Botón ocupa dos columnas */
+    justify-self: center; /* Centra el botón */
+    background-color: #f68b28; /* Color personalizado */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.7rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.filter-button:hover {
+    background-color: #d97720; /* Color al pasar el mouse */
+}
+
+.datetime-input {
+    font-size: 1rem;
+}
+
+
+
 
 
 

@@ -41,19 +41,9 @@ document.querySelectorAll('input[name="estado-pago"]').forEach((checkbox) => {
     });
 });
 
-//FUNCIONES PARA TRAER LOS LAVADOS A VENTAS.
-// *** Función para obtener y renderizar los lavados ***
 
-async function fetchAndRenderLavados() {
-    try {
-        const response = await fetch("http://localhost:3000/api/admins/6760a78e7f72b5a2c6b67e34/lavados");
-        const lavados = await response.json();
 
-        renderLavadosTable(lavados);
-    } catch (error) {
-        console.error("Error al obtener los lavados:", error);
-    }
-}
+
 // *** FUNCIONES: Mostrar/Ocultar Elementos ***
 function hideAllFormsAndButtons() {
     document.querySelectorAll('#buttons-container .action-btn').forEach((button) => (button.style.display = 'none'));
@@ -64,8 +54,7 @@ function hideAllFormsAndButtons() {
 
 
 
-//--------------
-
+//--------------LAVADOS DE LA SECTION DE SALON
 // *** Llamar a la función al cargar la página ***
 document.addEventListener("DOMContentLoaded", fetchAndRenderLavados);
 // *** Función para renderizar lavados en la tabla ***
@@ -92,6 +81,20 @@ function renderLavadosTable(lavados) {
         const noDataRow = document.createElement("tr");
         noDataRow.innerHTML = '<td colspan="6" class="no-data">No hay lavados disponibles.</td>';
         tableBody.appendChild(noDataRow);
+    }
+}
+
+
+//FUNCIONES PARA TRAER LOS LAVADOS A VENTAS.
+
+async function fetchAndRenderLavados() {
+    try {
+        const response = await fetch("http://localhost:3000/api/admins/6760a78e7f72b5a2c6b67e34/lavados");
+        const lavados = await response.json();
+
+        renderLavadosTable(lavados);
+    } catch (error) {
+        console.error("Error al obtener los lavados:", error);
     }
 }
 // -------------
@@ -123,7 +126,6 @@ async function fetchArqueos(cajaTipo) {
         showNotification('Error al conectarse con el servidor.', 'error');
     }
 }
-
 
 // *** FUNCIONES: Renderizar Tablas de Arqueos ***
 function renderArqueosTable(arqueos) {

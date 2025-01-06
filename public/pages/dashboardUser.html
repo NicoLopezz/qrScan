@@ -503,7 +503,7 @@
             </div>
 
             <!-- Sección VENTAS-->
-            <div id="section-ventas" class="section-active">
+            <div id="section-ventas" class="section">
                 <!DOCTYPE html>
                 <html lang="en">
 
@@ -534,6 +534,42 @@
 
                             <!-- Botón para desplegar/ocultar filtros -->
                             <button id="toggle-filters" class="toggle-button">Mostrar Filtros</button>
+
+
+                            <!-- Filtros Lavados -->
+                            <div class="filters" id="filtersLavados">
+                                <!-- Filtro Patente -->
+                                <label for="patente-lavados">Patente:</label>
+                                <input type="text" id="patente-lavados" class="filter-input" placeholder="Buscar por patente...">
+                            
+                                <!-- Filtro Estado -->
+                                <label for="estado-lavados">Estado:</label>
+                                <select id="estado-lavados" class="filter-select">
+                                    <option value="todos">Todos</option>
+                                    <option value="pendiente">Pendiente</option>
+                                    <option value="abonado">Abonado</option>
+                                    <option value="no-abonado">No Abonado</option>
+                                </select>
+                            
+                                <!-- Filtro Fecha -->
+                                <label for="filtro-fecha-lavados">Fecha:</label>
+                                <select id="filtro-fecha-lavados" class="filter-select">
+                                    <option value="hoy">Hoy</option>
+                                    <option value="determinar">Determinar</option>
+                                </select>
+                            
+                                <!-- Inputs para fecha personalizada -->
+                                <div id="fecha-personalizada-lavados" class="hidden">
+                                    <label for="fecha-desde-lavados">Desde:</label>
+                                    <input type="date" id="fecha-desde-lavados" class="datetime-input">
+                                    <label for="fecha-hasta-lavados">Hasta:</label>
+                                    <input type="date" id="fecha-hasta-lavados" class="datetime-input">
+                                </div>
+                            
+                                <!-- Botón para limpiar filtros -->
+                                <button id="reset-filters-lavados" class="filter-button">Limpiar Filtros</button>
+                            </div>
+                            
 
                             <!-- Filtros Movimientos -->
                             <div class="filters hidden" id="filtersMovs">
@@ -635,10 +671,10 @@
                                         <tr>
                                             <!-- <th>ID</th> -->
                                             <th>Usuario</th>
-                                            <th>Monto</th>
-                                            <th>Medio de Pago</th>
-                                            <th>Descripción</th>
+                                            <th>Patente</th>
+                                            <th>Empresa</th>
                                             <th>Fecha</th>
+                                            <th>Medio de Pago</th>
                                             <th>Estado</th>
                                         </tr>
                                     </thead>
@@ -1222,7 +1258,7 @@
     <script src="/js/dashboardAdmin/topBar.js"></script>
     <script src="/js/ventas/ventas.js"></script>
     <script src="/js/ventas/showDataVentas.js"></script>
-    <script src="/js/ventas/filtros.js"></script>
+    <script src="/js/ventas/filtros.js" defer></script>
 
     <!-- jQuery and Bootstrap -->
 

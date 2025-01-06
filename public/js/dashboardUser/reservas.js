@@ -12,35 +12,35 @@ let lavados = [];
 let cuentaRegresivaEnPausa = false; // Variable para controlar el estado de pausa
 
 // Función para cargar reservas desde la base de datos
-async function cargarReservas() {
-    const adminId = getCookie('adminId'); // Obtén el adminId de la cookie
+// async function cargarReservas() {
+//     const adminId = getCookie('adminId'); // Obtén el adminId de la cookie
 
-    try {
-        const response = await fetch(`/api/admins/${adminId}/reservas`);
-        if (!response.ok) throw new Error('No se pudo cargar las reservas');
-        reservas = await response.json();
+//     try {
+//         const response = await fetch(`/api/admins/${adminId}/reservas`);
+//         if (!response.ok) throw new Error('No se pudo cargar las reservas');
+//         reservas = await response.json();
 
-        // Limpiar la tabla antes de agregar las filas
-        tablaClientes.innerHTML = '';
+//         // Limpiar la tabla antes de agregar las filas
+//         tablaClientes.innerHTML = '';
 
-        // Iterar sobre las reservas y agregarlas a la tabla
-        reservas.forEach(reserva => {
-            agregarFilaTabla(reserva);
+//         // Iterar sobre las reservas y agregarlas a la tabla
+//         reservas.forEach(reserva => {
+//             agregarFilaTabla(reserva);
 
-            // Cargar tiempo restante desde localStorage
-            const tiempoRestante = localStorage.getItem(`cliente-${reserva._id}-tiempoRestante`);
-            intervalos[reserva._id] = {
-                tiempoRestante: tiempoRestante ? parseInt(tiempoRestante) : 300, // 5 minutos si no está en localStorage
-                intervalo: null
-            };
+//             // Cargar tiempo restante desde localStorage
+//             const tiempoRestante = localStorage.getItem(`cliente-${reserva._id}-tiempoRestante`);
+//             intervalos[reserva._id] = {
+//                 tiempoRestante: tiempoRestante ? parseInt(tiempoRestante) : 300, // 5 minutos si no está en localStorage
+//                 intervalo: null
+//             };
 
-            // Mostrar el tiempo actual en la tabla sin iniciar el temporizador
-            actualizarTiempoTabla(reserva._id, intervalos[reserva._id].tiempoRestante);
-        });
-    } catch (error) {
-        console.error('Error al cargar reservas:', error);
-    }
-}
+//             // Mostrar el tiempo actual en la tabla sin iniciar el temporizador
+//             actualizarTiempoTabla(reserva._id, intervalos[reserva._id].tiempoRestante);
+//         });
+//     } catch (error) {
+//         console.error('Error al cargar reservas:', error);
+//     }
+// }
 
 // Función para cargar lavados desde la base de datos
 async function cargarLavados() {
@@ -78,8 +78,6 @@ async function cargarLavados() {
         console.error('Error al cargar lavaderos:', error);
     }
 }
-
-
 
 // Función para seleccionar un cliente y mostrar sus detalles en la tarjeta sin iniciar automáticamente la cuenta regresiva
 function seleccionarCliente(clienteId) {
@@ -212,7 +210,7 @@ function agregarLavado() {
     // Obtener valores del formulario
     const nombre = document.getElementById('inputNombre2').value.trim();
     const modelo = document.getElementById('inputModelo').value.trim();
-    const empresa = document.getElementById('empresa').value.trim();
+    const empresa = document.getElementById('inputNombre3').value.trim();
     const patente = document.getElementById('inputPatente').value.trim();
     const tipoDeLavado = document.getElementById('selectServicio').value;
     const observacion = document.getElementById('inputObservation').value.trim();
@@ -692,9 +690,3 @@ document.getElementById('btnAvisoLavado').addEventListener('click', async () => 
         console.error('Error al enviar el mensaje:', error);
     }
 });
-
-
-
-
-
-

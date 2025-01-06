@@ -63,54 +63,10 @@ options.forEach((option) => {
 //SOLAPA PARA FILTROS VER U OCULTAR.
 
 
-// Seleccionar el botón de la solapa, contenedores de filtros y opciones
-const toggleFiltersButton = document.getElementById("toggle-filters");
-const filtersMovs = document.getElementById("filtersMovs");
-const filtersArqueos = document.getElementById("filtersArqueos");
-// const options = document.querySelectorAll(".option");
 
-// Función para ocultar todos los filtros
-function hideAllFilters() {
-    filtersMovs.classList.add("hidden");
-    filtersArqueos.classList.add("hidden");
-    console.log("Todos los filtros están ocultos.");
-}
 
-// Función para identificar y mostrar dinámicamente el filtro activo
-function updateActiveFilters() {
-    const activeOption = document.querySelector(".option.active"); // Identificar opción activa
-    const currentText = toggleFiltersButton.textContent.trim();
 
-    if (currentText === "Ocultar Filtros") {
-        // Mostrar dinámicamente el filtro correspondiente
-        if (activeOption.id === "movimientos") {
-            filtersMovs.classList.remove("hidden");
-            filtersArqueos.classList.add("hidden");
-            console.log("Mostrando filtros de Movimientos.");
-        } else if (activeOption.id === "arqueo") {
-            filtersArqueos.classList.remove("hidden");
-            filtersMovs.classList.add("hidden");
-            console.log("Mostrando filtros de Arqueos.");
-        }
-    } else {
-        // Si el botón está en "Mostrar Filtros", asegurarse de que todo esté oculto
-        hideAllFilters();
-    }
-}
 
-// Manejar el clic en el botón de la solapa
-toggleFiltersButton.addEventListener("click", () => {
-    const currentText = toggleFiltersButton.textContent.trim();
-
-    if (currentText === "Mostrar Filtros") {
-        toggleFiltersButton.textContent = "Ocultar Filtros";
-        updateActiveFilters(); // Mostrar el filtro activo según la opción activa
-    } else {
-        toggleFiltersButton.textContent = "Mostrar Filtros";
-        hideAllFilters(); // Ocultar todos los filtros
-        console.log("Ocultando todos los filtros.");
-    }
-});
 
 // Evento para alternar entre opciones dinámicamente
 options.forEach((option) => {
@@ -241,9 +197,6 @@ options.forEach((option) => {
         }
     });
 });
-
-
-
 
 // Obtén la referencia al formulario de arqueo
 const formArqueo = document.getElementById("form-arqueo");
