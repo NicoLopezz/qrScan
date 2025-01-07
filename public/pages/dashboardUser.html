@@ -35,6 +35,9 @@
     <link rel="stylesheet" href="/style/ventas/ventas.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+
 
 
     <!-- Bootstrap JS -->
@@ -511,7 +514,7 @@
                     <meta charset="UTF-8">
                     <meta name="viewport" content="width=device-width, initial-scale=1.0">
                     <title>Gestión de Caja</title>
-                    <link rel="stylesheet" href="styles.css">
+                    <!-- <link rel="stylesheet" href="styles.css"> -->
                 </head>
 
                 <body>
@@ -540,8 +543,9 @@
                             <div class="filters" id="filtersLavados">
                                 <!-- Filtro Patente -->
                                 <label for="patente-lavados">Patente:</label>
-                                <input type="text" id="patente-lavados" class="filter-input" placeholder="Buscar por patente...">
-                            
+                                <input type="text" id="patente-lavados" class="filter-input"
+                                    placeholder="Buscar por patente...">
+
                                 <!-- Filtro Estado -->
                                 <label for="estado-lavados">Estado:</label>
                                 <select id="estado-lavados" class="filter-select">
@@ -550,14 +554,14 @@
                                     <option value="abonado">Abonado</option>
                                     <option value="no-abonado">No Abonado</option>
                                 </select>
-                            
+
                                 <!-- Filtro Fecha -->
                                 <label for="filtro-fecha-lavados">Fecha:</label>
                                 <select id="filtro-fecha-lavados" class="filter-select">
                                     <option value="hoy">Hoy</option>
                                     <option value="determinar">Determinar</option>
                                 </select>
-                            
+
                                 <!-- Inputs para fecha personalizada -->
                                 <div id="fecha-personalizada-lavados" class="hidden">
                                     <label for="fecha-desde-lavados">Desde:</label>
@@ -565,11 +569,11 @@
                                     <label for="fecha-hasta-lavados">Hasta:</label>
                                     <input type="date" id="fecha-hasta-lavados" class="datetime-input">
                                 </div>
-                            
+
                                 <!-- Botón para limpiar filtros -->
                                 <button id="reset-filters-lavados" class="filter-button">Limpiar Filtros</button>
                             </div>
-                            
+
 
                             <!-- Filtros Movimientos -->
                             <div class="filters hidden" id="filtersMovs">
@@ -724,91 +728,98 @@
                             <div id="buttons-container">
                                 <button id="btn-nuevo-arqueo" class="action-btn hidden">Nuevo Arqueo</button>
                                 <button id="btn-nuevo-movimiento" class="action-btn hidden">Nuevo Movimiento</button>
-                                <button id="btn-nueva-venta" class="action-btn hidden">Nueva Venta</button>
+                                <!-- <button id="btn-nueva-venta" class="action-btn hidden">Nuevo Lavado</button> -->
                             </div>
 
                             <!-- Formularios Dinámicos -->
-                            <div id="formularios-container" class="hidden">
+                            <div id="formularios-container">
                                 <!-- Formulario para Nuevo Arqueo -->
-                                <form id="form-arqueo" class="hidden">
-                                    <h4>Nuevo Arqueo</h4>
-                                    <label>Hora de Apertura (Actual):</label>
-                                    <input type="datetime-local" id="hora-apertura" required />
+                                <form id="form-arqueo" class="form-container">
+                                    <h4>NUEVO ARQUEO</h4>
 
-                                    <label>Tipo:</label>
-                                    <select id="tipo-arqueo">
-                                        <option value="efectivo">Efectivo</option>
-                                        <option value="mercado-pago">Mercado Pago</option>
-                                    </select>
+                                    <div class="form-row">
+                                        <label for="hora-apertura">Hora de Apertura (Actual):</label>
+                                        <input type="datetime-local" id="hora-apertura" required />
+                                    </div>
 
-                                    <label>Monto Inicial:</label>
-                                    <input type="number" id="monto-inicial" placeholder="Ingrese monto inicial"
-                                        required />
+                                    <div class="form-row">
+                                        <label for="tipo-arqueo">Tipo:</label>
+                                        <select id="tipo-arqueo">
+                                            <option value="efectivo">Efectivo</option>
+                                            <option value="mercado-pago">Mercado Pago</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <label for="monto-inicial">Monto Inicial:</label>
+                                        <input type="number" id="monto-inicial" placeholder="Ej: $50.000"
+                                            required />
+                                    </div>
 
                                     <div class="form-actions">
-                                        <button type="submit" class="submit-btn">Iniciar Arqueo</button>
-                                        <button type="button" class="cancel-btn" id="cancel-arqueo">Cancelar</button>
+                                        <button type="button" class="btn btn-cancel" id="cancel-arqueo">CANCELAR</button>
+                                        <button type="submit" class="btn btn-save">CREAR</button>
                                     </div>
                                 </form>
+
 
                                 <!-- Formulario para Nuevo Movimiento -->
-                                <form id="form-movimiento" class="hidden">
-                                    <h4>Nuevo Movimiento</h4>
-                                    <label>Monto:</label>
-                                    <input type="number" id="monto-movimiento" placeholder="Ingrese monto" />
+                                <form id="form-movimiento" class="form-layout">
+                                    <h4>NUEVO MOVIMIENTO</h4>
 
-                                    <label>Tipo de Movimiento:</label>
-                                    <select id="tipo-movimiento">
-                                        <option value="ingreso">Ingreso</option>
-                                        <option value="egreso">Egreso</option>
-                                    </select>
-
-                                    <label>Medio de pago:</label>
-                                    <select id="medio-pago">
-                                        <option value="efectivo">Efectivo</option>
-                                        <option value="mercado-pago">Mercado Pago</option>
-                                    </select>
-
-                                    <!-- Estado de Pago -->
-                                    <div class="checkbox-group">
-                                        <label>Estado de Pago:</label>
-                                        <div>
-                                            <label>
-                                                <input type="checkbox" id="estado-abonado" name="estado-pago"
-                                                    value="abonado">
-                                                Abonado
-                                            </label>
-                                        </div>
-                                        <div>
-                                            <label>
-                                                <input type="checkbox" id="estado-no-abonado" name="estado-pago"
-                                                    value="no-abonado">
-                                                No Abonado
-                                            </label>
-                                        </div>
-                                        <div>
-                                            <label>
-                                                <input type="checkbox" id="estado-pendiente" name="estado-pago"
-                                                    value="pendiente">
-                                                Pendiente
-                                            </label>
-                                        </div>
+                                    <div class="form-row">
+                                        <label for="descripcion-movimiento">Descripción:</label>
+                                        <input type="text" id="descripcion-movimiento" placeholder="Ej: Cafe cortado">
                                     </div>
 
-                                    <label>Descripción:</label>
-                                    <input type="text" id="descripcion-movimiento"
-                                        placeholder="Descripción del movimiento" />
+                                    <div class="form-row">
+                                        <label for="monto-movimiento">Monto:</label>
+                                        <input type="number" id="monto-movimiento" placeholder="Ej: $1200 ">
+                                    </div>
+
+                                    <div class="form-row">
+                                        <label for="tipo-movimiento">Tipo de Movimiento:</label>
+                                        <select id="tipo-movimiento">
+                                            <option value="">Seleccione un tipo</option>
+                                            <option value="ingreso">Ingreso</option>
+                                            <option value="egreso">Egreso</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <label for="medio-pago">Medio de Pago:</label>
+                                        <select id="medio-pago">
+                                            <option value="">Seleccione un medio</option>
+                                            <option value="efectivo">Efectivo</option>
+                                            <option value="mercado-pago">Mercado Pago</option>
+                                            <option value="transferencia">Transferencia</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <label>Estado de Pago:</label>
+                                        <div class="checkbox-group">
+                                            <label><input type="radio" name="estado-pago" value="pendiente">
+                                                Pendiente</label>
+                                            <label><input type="radio" name="estado-pago" value="abonado">
+                                                Abonado</label>
+                                            <label><input type="radio" name="estado-pago" value="no-abonado"> No
+                                                Abonado</label>
+                                        </div>
+                                    </div>
 
                                     <div class="form-actions">
-                                        <button type="submit" class="submit-btn">Agregar Movimiento</button>
-                                        <button type="button" class="cancel-btn"
-                                            id="cancel-movimiento">Cancelar</button>
+                                        <button type="button" class="btn btn-cancel">Cancelar</button>
+                                        <button type="submit" class="btn btn-save">Guardar</button>
                                     </div>
                                 </form>
+
+
+
 
 
                                 <!-- Formulario para Nueva Venta -->
-                                <form id="form-venta" class="hidden">
+                                <!-- <form id="form-venta" class="hidden">
                                     <h4>Nueva Venta</h4>
                                     <label>Monto de la Venta:</label>
                                     <input type="number" id="monto-venta" placeholder="Ingrese monto" required />
@@ -827,11 +838,44 @@
                                         <button type="submit" class="submit-btn">Registrar Venta</button>
                                         <button type="button" class="cancel-btn" id="cancel-venta">Cancelar</button>
                                     </div>
-                                </form>
+                                </form> -->
                             </div>
 
                             <!-- Detalles dinamicos -->
                             <div class="details-section"></div>
+                            <div class="movimiento-details">
+                                <h4>EDITAR MOVIMIENTO</h4>
+                                <div class="movimiento-row">
+                                    <div class="movimiento-title">Descripción:</div>
+                                    <div class="movimiento-detail editable" id="descripcion-detalle">Leche <i
+                                            class="fas fa-pencil-alt edit-icon"
+                                            onclick="editarDetalle('descripcion-detalle')"></i></div>
+                                </div>
+                                <div class="movimiento-row">
+                                    <div class="movimiento-title">Monto:</div>
+                                    <div class="movimiento-detail editable" id="monto-detalle">$12300 <i
+                                            class="fas fa-pencil-alt edit-icon"
+                                            onclick="editarDetalle('monto-detalle')"></i></div>
+                                </div>
+                                <div class="movimiento-row">
+                                    <div class="movimiento-title">Estado:</div>
+                                    <div class="movimiento-detail editable">
+                                        <select id="estado-detalle" class="estado-select">
+                                            <option value="abonado">Abonado</option>
+                                            <option value="no-abonado">No-abonado</option>
+                                            <option value="pendiente">Pendiente</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                <div class="buttons-row">
+                                    <button type="button" class="btn btn-cancel" id="delete-button"
+                                        onclick="handleConfirm(this, 'Eliminar', event)">Eliminar</button>
+                                    <button type="button" class="btn btn-save" id="modify-button"
+                                        onclick="handleConfirm(this, 'Modificar', event)">Modificar</button>
+                                </div>
+                            </div>
 
 
                         </div>
@@ -840,7 +884,7 @@
 
 
                     </div>
-                    <script src="script.js"></script>
+                    <!-- <script src="script.js"></script> -->
                 </body>
 
                 </html>

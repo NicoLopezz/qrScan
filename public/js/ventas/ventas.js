@@ -30,22 +30,20 @@ tabs.forEach((tab) => {
 // Seleccionar elementos
 const btnNuevoArqueo = document.getElementById('btn-nuevo-arqueo');
 const btnNuevoMovimiento = document.getElementById('btn-nuevo-movimiento');
-const btnNuevaVenta = document.getElementById('btn-nueva-venta');
+// const btnNuevaVenta = document.getElementById('btn-nueva-venta');
 
 // Función para actualizar botones según la opción seleccionada
 function actualizarBotones(opcionSeleccionada) {
     // Ocultar todos los botones
     btnNuevoArqueo.classList.add('hidden');
     btnNuevoMovimiento.classList.add('hidden');
-    btnNuevaVenta.classList.add('hidden');
+    // btnNuevaVenta.classList.add('hidden');
 
     // Mostrar el botón correspondiente
     if (opcionSeleccionada === 'arqueo') {
         btnNuevoArqueo.classList.remove('hidden');
     } else if (opcionSeleccionada === 'movimientos') {
         btnNuevoMovimiento.classList.remove('hidden');
-    } else if (opcionSeleccionada === 'ventas') {
-        btnNuevaVenta.classList.remove('hidden');
     }
 }
 
@@ -122,7 +120,7 @@ function showFormsAndButtons(clickedButtonId) {
     const botonesYForms = [
         { btnId: 'btn-nuevo-arqueo', formId: 'form-arqueo' },
         { btnId: 'btn-nuevo-movimiento', formId: 'form-movimiento' },
-        { btnId: 'btn-nueva-venta', formId: 'form-venta' },
+        // { btnId: 'btn-nueva-venta', formId: 'form-venta' },
     ];
 
     // Iterar sobre la lista de botones y formularios

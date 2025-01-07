@@ -4,8 +4,9 @@ let currentArqueoId = null; // Variable global para almacenar el ID del arqueo a
 let currentArqueDiferencia = null; // Variable global para almacenar el ID del arqueo actual
 let currentArqueoEstado = null; // Variable global para almacenar el ID del arqueo actual
 let currentArqueoObservacion = null
-
 let currentFiltroMovimiento = "todos"; // Variable global para almacenar el ID del arqueo 
+let currentMovimiento = null; // Variable global para almacenar el ID del arqueo 
+let currentMovimientoCajaId = null; // Variable global para almacenar el ID del arqueo 
 
 
 
@@ -84,9 +85,6 @@ function renderLavadosTable(lavados) {
     }
 }
 
-
-//FUNCIONES PARA TRAER LOS LAVADOS A VENTAS.
-
 async function fetchAndRenderLavados() {
     try {
         const response = await fetch("http://localhost:3000/api/admins/6760a78e7f72b5a2c6b67e34/lavados");
@@ -158,12 +156,12 @@ function renderArqueosTable(arqueos) {
             </td>
             <td>${saldoFinalSistema}</td>
             <td>${saldoFinalReal}</td>
-            <td style="${arqueo.diferencia > 0 
+            <td style="${arqueo.diferencia > 0
                 ? 'color: #55a834 !important;' // Verde oscuro si es positiva
-                : arqueo.diferencia < 0 
+                : arqueo.diferencia < 0
                     ? 'color: #f54335 !important;' // Rojo oscuro si es negativa
                     : 'color: #383d41 !important;'}">${diferencia}</td>
-            <td style="${arqueo.estado === 'cerrado' 
+            <td style="${arqueo.estado === 'cerrado'
                 ? 'color: #f54335 !important; font-weight: bold !important;' // Rojo oscuro si está cerrado
                 : 'color: #55a834 !important; font-weight: bold !important;'}">${arqueo.estado}</td>
         `;
@@ -190,6 +188,8 @@ function renderArqueosTable(arqueos) {
     document.getElementById('table-arqueo').classList.remove('hidden');
     document.getElementById('table-movimientos').classList.add('hidden');
 }
+
+
 // *** FUNCIONES: Mostrar Detalles de Arqueo ***
 function displayArqueoDetails(arqueo) {
     hideAllFormsAndButtons();
@@ -265,6 +265,8 @@ function displayArqueoDetails(arqueo) {
     currentArqueoObservacion = arqueo.observacion
     renderDiferenciaCard(totalSistema, arqueo._id);
 }
+
+
 // *** Función para Generar Fila Principal con Evento de Clic ***
 function generateDynamicRowWithClick(tipo, concepto, total, detallesPorMedio) {
     const row = `
@@ -495,7 +497,7 @@ function cerrarArqueo(currentArqueoId, totalSistema, totalUsuario, observacion) 
         .then((data) => {
             showNotification('Arqueo cerrado correctamente.', 'success');
             console.log('Arqueo cerrado exitosamente:', data);
-            
+
             fetchArqueos(cajaTipoActivo);
         })
         .catch((error) => {
@@ -524,6 +526,7 @@ function updateDiferencia(totalSistema) {
 
 
 // *** Función para renderizar movimientos en la tabla ***
+
 function renderMovimientosTable(movimientos) {
     const tableBody = document.querySelector("#table-movimientos tbody");
     tableBody.innerHTML = "";
@@ -538,18 +541,35 @@ function renderMovimientosTable(movimientos) {
                 <td>$${movimiento.monto || "---"}</td>
                 <td>${movimiento.tipo || "---"}</td>
                 <td>
-                    ${
-                        movimiento.medioPago === "efectivo"
-                            ? '<img src="../img/cashLogo2.svg" alt="Efectivo" style="width: 30px; height: auto;" class="icon">'
-                            : movimiento.medioPago === "mercado-pago"
-                            ? '<img src="../img/logoMp.svg" alt="Mercado Pago" style="width: 30px; height: auto;" class="icon">'
-                            : "---"
-                    }
+                    ${movimiento.medioPago === "efectivo"
+                    ? '<img src="../img/cashLogo2.svg" alt="Efectivo" style="width: 30px; height: auto;" class="icon">'
+                    : movimiento.medioPago === "mercado-pago"
+                        ? '<img src="../img/logoMp.svg" alt="Mercado Pago" style="width: 30px; height: auto;" class="icon">'
+                        : "---"
+                }
                 </td>
                 <td>${movimiento.descripcion || "---"}</td>
                 <td>${movimiento.estadoPago || "---"}</td> <!-- Nueva columna para Estado -->
             `;
             tableBody.appendChild(row);
+
+            // Evento al hacer clic en la fila para seleccionar
+            row.addEventListener('click', () => {
+                // Quitar la clase "selected" de todas las filas
+                document.querySelectorAll('#table-movimientos tbody tr').forEach((r) => {
+                    r.classList.remove('selected');
+                    r.style.fontWeight = 'normal'; // Resetear el estilo
+                });
+
+                // Agregar la clase "selected" a la fila clicada
+                row.classList.add('selected');
+                currentMovimiento = movimiento._id
+                currentMovimientoCajaId = movimiento.cajaId;
+                row.style.fontWeight = 'bold'; // Cambiar a negrita para destacar
+
+                // Actualizar los detalles editables
+                actualizarDetallesMovimiento(movimiento);
+            });
         });
     } else {
         const noDataRow = document.createElement("tr");
@@ -558,10 +578,180 @@ function renderMovimientosTable(movimientos) {
     }
 }
 
+function actualizarDetallesMovimiento(movimiento) {
+    // Actualizar los campos editables en el detalle de movimientos
+    const descripcion = document.getElementById('descripcion-detalle');
+    const monto = document.getElementById('monto-detalle');
+    const estado = document.getElementById('estado-detalle');
+
+    // Actualizar el contenido de los detalles con la información del movimiento
+    descripcion.innerHTML = `${movimiento.descripcion || "---"} <i class="fas fa-pencil-alt edit-icon" onclick="editarDetalle('descripcion-detalle')"></i>`;
+    monto.innerHTML = `$${movimiento.monto || "---"} <i class="fas fa-pencil-alt edit-icon" onclick="editarDetalle('monto-detalle')"></i>`;
+
+    // Actualizar el valor del select para estado
+    if (estado && estado.tagName === "SELECT") {
+        estado.value = movimiento.estadoPago || "pendiente"; // Asegurarte de que coincida con las opciones disponibles
+    } else {
+        console.error("Elemento de estado no encontrado o no es un select.");
+    }
+}
+
+
+function handleConfirm(button, actionType, event) {
+    // Prevenir comportamiento predeterminado
+    if (event) event.preventDefault();
+
+    // Cambiar el texto del botón a "seguro?"
+    if (!button.classList.contains('confirm')) {
+        button.textContent = `seguro?`;
+        button.classList.add('confirm');
+
+        // Agregar evento para volver al estado original si no se confirma
+        setTimeout(() => {
+            if (button.classList.contains('confirm')) {
+                resetButton(button, actionType);
+            }
+        }, 3000); // Tiempo para cancelar (3 segundos)
+    } else {
+        // Acción confirmada
+        if (actionType === 'Eliminar') {
+            eliminarMovimiento(); // Ejecutar lógica de eliminación
+        } else if (actionType === 'Modificar') {
+            guardarCambios(); // Ejecutar lógica de modificación
+        }
+        resetButton(button, actionType);
+    }
+}
+
+
+let isDeleting = false; // Bandera para evitar múltiples ejecucione
+
+async function eliminarMovimiento() {
+    try {
+        // Validar que los valores existan
+        if (!currentMovimiento || !currentMovimientoCajaId) {
+            alert("No se seleccionó un movimiento para eliminar.");
+            return;
+        }
+
+        // Llamar al backend para eliminar el movimiento
+        const response = await fetch(`/api/movimientosEliminar`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                movimientoId: currentMovimiento,
+                cajaId: currentMovimientoCajaId,
+            }),
+        });
+
+        const data = await response.json();
+
+        // Manejar la respuesta del backend
+        if (response.ok && data.success) {
+            alert("Movimiento eliminado con éxito.");
+            // Llamar a fetchMovimientos para actualizar la tabla con datos actualizados
+            await fetchMovimientos();
+        } else {
+            console.error(`Error al eliminar el movimiento: ${data.message}`);
+            alert(`Error al eliminar el movimiento: ${data.message}`);
+        }
+    } catch (error) {
+        console.error("Error al intentar eliminar el movimiento:", error);
+        alert("Error al intentar eliminar el movimiento.");
+    }
+}
+
+async function guardarCambios() {
+    try {
+        // Validar que los valores existan
+        if (!currentMovimiento || !currentMovimientoCajaId) {
+            alert("No se seleccionó un movimiento para modificar.");
+            return;
+        }
+
+        // Obtener los valores actuales de los campos editables
+        const descripcion = document.getElementById("descripcion-detalle").textContent.trim();
+        const monto = document.getElementById("monto-detalle").textContent.replace("$", "").trim();
+        const estadoPago = document.getElementById("estado-detalle").value; // Ahora usamos estadoPago desde el <select>
+
+        // Validar que al menos un campo tenga cambios
+        if (!descripcion || !monto || !estadoPago) {
+            alert("Todos los campos deben estar completos.");
+            return;
+        }
+
+        // Llamar al backend para modificar el movimiento
+        const response = await fetch(`/api/movimientosModificar`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                movimientoId: currentMovimiento,
+                cajaId: currentMovimientoCajaId,
+                descripcion,
+                monto: parseFloat(monto), // Convertir a número
+                estadoPago, // Enviar el campo corregido
+            }),
+        });
+
+        const data = await response.json();
+
+        // Manejar la respuesta del backend
+        if (data.success) {
+            alert("Movimiento modificado con éxito.");
+            // Lógica para actualizar la tabla o la vista (si es necesario)
+            fetchMovimientos(); // Refrescar los movimientos después de modificar
+        } else {
+            alert(`Error al modificar el movimiento: ${data.message}`);
+        }
+    } catch (error) {
+        console.error("Error al intentar modificar el movimiento:", error);
+        alert("Error al intentar modificar el movimiento.");
+    }
+}
+
+
+
+function resetButton(button, actionType) {
+    button.textContent = actionType;
+    button.classList.remove('confirm');
+}
+
+
+
+
+
+//MovimientoDisplay
+function editarDetalle(id) {
+    const elemento = document.getElementById(id);
+    const contenido = elemento.textContent.trim();
+    const input = document.createElement('input');
+    input.type = id === 'monto-detalle' ? 'number' : 'text';
+    input.value = contenido;
+    input.className = 'editable-input';
+    elemento.innerHTML = '';
+    elemento.appendChild(input);
+    input.focus();
+
+    input.addEventListener('blur', () => {
+        elemento.innerHTML = input.value + ' <i class="fas fa-pencil-alt edit-icon" onclick="editarDetalle(\'' + id + '\')"></i>';
+    });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    // Aquí llamas a la función con el ID que deseas editar automáticamente
+    editarDetalle('descripcion-detalle');
+});
+
+
+
 
 // Evento para manejar el envío del formulario de nuevo movimiento
 //CREA EL NUEVO MOV
-const formMovimiento = document.getElementById('form-movimiento'); 
+const formMovimiento = document.getElementById('form-movimiento');
 
 //CREAR MOVIMIENTO
 formMovimiento.addEventListener('submit', async (event) => {

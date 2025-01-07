@@ -93,6 +93,7 @@ router.get('/admins/:adminId/reservas', autenthication.getReservas);
 router.get('/admins/:adminId/lavados', autenthication.getLavados);
 router.post('/admins/agregarCliente', autenthication.agregarCliente);
 router.post('/admins/agregarLavado', autenthication.agregarLavado);
+router.post('/admins/agregarLavado', autenthication.agregarLavado);
 
 
 // Endpoint para Ventas
@@ -110,6 +111,10 @@ router.post('/cerrarArqueo/:arqueoId', autenthication.cerrarArqueo);
 router.post("/movimientos", autenthication.crearMovimiento);
 router.get("/movimientos", autenthication.getMovimientos);
 router.get("/movimientosAbiertos", autenthication.getMovimientosAbiertos);
+router.delete("/movimientosEliminar", autenthication.eliminarMovimiento);
+router.put("/movimientosModificar", autenthication.modificarMovimiento);
+
+
 
 
 

@@ -527,7 +527,7 @@ window.agregarCliente = agregarCliente;
 window.generarQR = generarQR;
 
 // Llamar a la función para cargar las reservas al cargar la página
-document.addEventListener('DOMContentLoaded', cargarReservas);
+// document.addEventListener('DOMContentLoaded', cargarReservas);
 document.addEventListener('DOMContentLoaded', cargarLavados);
 
 // Modificar el evento del botón para iniciar la cuenta regresiva y aplicar el estilo
