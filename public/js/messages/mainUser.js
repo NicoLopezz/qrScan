@@ -42,7 +42,6 @@ async function fetchUserInfo(adminId) {
         if (!response.ok) throw new Error('Error al obtener la información del usuario.');
 
         const data = await response.json();
-        console.log('Datos recibidos de la API:', data);
         return data;
     } catch (error) {
         console.error('Error al obtener la información del usuario:', error);
@@ -75,20 +74,14 @@ function mostrarClientesDelDia(lavados) {
 
     const hoy = new Date();
     const fechaActualLocal = `${hoy.getFullYear()}-${(hoy.getMonth() + 1).toString().padStart(2, '0')}-${hoy.getDate().toString().padStart(2, '0')}`;
-    console.log("Fecha actual (local):", fechaActualLocal);
-
     const clientesDelDia = lavados.filter(lavado => {
         if (lavado.fechaDeAlta) {
             const fechaAlta = new Date(lavado.fechaDeAlta);
             const fechaAltaLocal = `${fechaAlta.getFullYear()}-${(fechaAlta.getMonth() + 1).toString().padStart(2, '0')}-${fechaAlta.getDate().toString().padStart(2, '0')}`;
-            console.log(`Verificando fecha: ${fechaAltaLocal} contra ${fechaActualLocal}`);
             return fechaAltaLocal === fechaActualLocal;
         }
         return false;
     });
-
-    console.log('Clientes del día encontrados:', clientesDelDia.length);
-
     if (clientCountElem) {
         clientCountElem.textContent = clientesDelDia.length;
     } else {
@@ -116,9 +109,6 @@ function calcularServicioMasPedido(lavados) {
     const servicioMasPedido = Object.keys(contadorServicios).reduce((max, tipo) => {
         return contadorServicios[tipo] > contadorServicios[max] ? tipo : max;
     }, Object.keys(contadorServicios)[0]);
-
-    console.log('Servicio más pedido calculado:', servicioMasPedido);
-
     // Actualizar el elemento en el DOM
     if (servicioElem) {
         servicioElem.textContent = servicioMasPedido;
@@ -158,8 +148,6 @@ function calcularTiempoPromedio(lavados) {
 
     // Mostrar el tiempo promedio en el formato correcto
     const tiempoFormateado = `${horas}"${minutos}'`;
-    console.log('Tiempo promedio calculado:', tiempoFormateado);
-
     if (tiempoLavadoElem) {
         tiempoLavadoElem.textContent = tiempoFormateado;
     } else {
@@ -181,12 +169,8 @@ function calcularCalificacionPromedio(lavados) {
     const totalPuntuacion = lavados.reduce((total, lavado) => {
         return total + (lavado.puntuacionCalidad || 0);
     }, 0);
-
     // Calcular el promedio
     const promedioPuntuacion = (totalPuntuacion / lavados.length).toFixed(1); // Redondear a un decimal
-
-    console.log('Calificación promedio calculada:', promedioPuntuacion);
-
     // Actualizar el elemento en el DOM
     if (calificacionElem) {
         calificacionElem.textContent = promedioPuntuacion;

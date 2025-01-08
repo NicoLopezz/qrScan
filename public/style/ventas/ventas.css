@@ -370,10 +370,6 @@ i.edit-icon {
 
 
 
-/* Hidden class */
-.hidden {
-    display: none;
-}
 
 
 #container-ventas {
@@ -465,9 +461,6 @@ th {
     color: white;
 }
 
-.hidden {
-    display: none;
-}
 
 /* Columna Derecha */
 .right-column {
@@ -524,10 +517,6 @@ h3 {
 .action-btn:hover {
     background-color: #469028;
     transform: scale(1.03);
-}
-
-.hidden {
-    display: none;
 }
 
 .toggle-button {
@@ -627,7 +616,7 @@ select {
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 #diferencia-valor {
@@ -651,10 +640,21 @@ select {
 }
 
 
+#movimiento-details {
+    display: none !important; /* Oculto por defecto */
+}
+
+#movimiento-details.visible {
+    display: block !important; /* Mostrado */
+}
+
+
+
+
 .form-layout {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 0px;
     width: 90%;
     max-width: 600px;
     margin: 0 auto;

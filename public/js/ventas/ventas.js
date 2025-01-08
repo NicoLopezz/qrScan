@@ -2,7 +2,94 @@
 const tabs = document.querySelectorAll('.tab');
 const options = document.querySelectorAll('.option');
 const tables = document.querySelectorAll('.data-table');
-const actionButton = document.getElementById('action-button'); // Botón dinámico
+const horaApertura = document.getElementById("hora-apertura-arqueo");
+const actionButton = document.getElementById('action-button');
+// Seleccionar elementos
+const btnNuevoArqueo = document.getElementById('btn-nuevo-arqueo');
+const btnNuevoMovimiento = document.getElementById('btn-nuevo-movimiento');
+// Obtén la referencia al formulario de arqueo
+const formArqueo = document.getElementById("form-arqueo");
+
+document.addEventListener("DOMContentLoaded", () => {
+    if (horaApertura) {
+        horaApertura.addEventListener("change", (event) => {
+            console.log("Cambio detectado en hora-apertura-arqueo:");
+            console.log("Valor seleccionado:", event.target.value);
+        });
+    } else {
+        console.error("El campo hora-apertura-arqueo no se encontró en el DOM.");
+    }
+
+    if (formArqueo) {
+        formArqueo.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const horaAperturaValue = horaApertura.value;
+            console.log("Valor enviado de hora-apertura-arqueo:", horaAperturaValue);
+        });
+    } else {
+        console.error("El formulario form-arqueo no se encontró en el DOM.");
+    }
+});
+
+// CREAR ARQUEO NUEVO
+formArqueo.addEventListener("submit", async (event) => {
+    event.preventDefault(); // Previene el envío tradicional del formulario
+
+    // Obtén los valores de los campos del formulario
+    const horaApertura = document.getElementById("hora-apertura-arqueo").value;
+    const saldoInicial = parseFloat(document.getElementById("monto-inicial").value); // Renombrado como saldoInicial
+    const cajaTipo = document.querySelector(".tab.active").id === "caja-mayor" ? "CajaMayor" : "CajaChica";
+
+    // Nuevo campo: tipoArqueo
+    const tipoArqueo = document.getElementById("tipo-arqueo-nuevo").value;
+
+    // Valida los campos
+    if (!horaApertura || isNaN(saldoInicial) || !tipoArqueo) {
+        console.log("LOS DATOS QUE ESTAN LLEGANDO SON:");
+        console.log("Hora de apertura:", horaApertura);
+        console.log("Saldo inicial:", saldoInicial);
+        console.log("Tipo de arqueo:", tipoArqueo);
+        showNotification("Por favor, complete todos los campos requeridos.", "error");
+        return;
+    }
+
+
+
+    try {
+        // Realiza el POST al backend
+        const response = await fetch("/api/arqueos", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                horaApertura,
+                saldoInicial, // Aquí lo renombramos correctamente
+                cajaTipo,
+                tipoArqueo // Incluye el nuevo campo
+            })
+        });
+
+        console.log("LOS DATOS ENVIADOS AL BACKEND SON:");
+        console.log("Hora de apertura:", horaApertura);
+        console.log("Saldo inicial:", saldoInicial);
+        console.log("Tipo de arqueo:", tipoArqueo);
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+            fetchArqueos(cajaTipoActivo); // Mostrar arqueos
+            showNotification("Arqueo iniciado con éxito.");
+            // Limpia los campos del formulario después de enviar
+            formArqueo.reset();
+        } else {
+            showNotification(`Error al iniciar el arqueo: ${data.error || "Error desconocido"}`, "error");
+        }
+    } catch (error) {
+        console.error("Error al enviar el formulario de arqueo:", error);
+        showNotification("Error al conectarse con el servidor.", "error");
+    }
+});
+
+
 
 // Función para manejar Tabs (Caja Mayor / Menor)
 tabs.forEach((tab) => {
@@ -27,10 +114,6 @@ tabs.forEach((tab) => {
     });
 });
 
-// Seleccionar elementos
-const btnNuevoArqueo = document.getElementById('btn-nuevo-arqueo');
-const btnNuevoMovimiento = document.getElementById('btn-nuevo-movimiento');
-// const btnNuevaVenta = document.getElementById('btn-nueva-venta');
 
 // Función para actualizar botones según la opción seleccionada
 function actualizarBotones(opcionSeleccionada) {
@@ -46,7 +129,6 @@ function actualizarBotones(opcionSeleccionada) {
         btnNuevoMovimiento.classList.remove('hidden');
     }
 }
-
 
 // Manejar clics en las opciones (Ventas, Movimientos, Arqueo)
 options.forEach((option) => {
@@ -79,40 +161,47 @@ options.forEach((option) => {
 // Asegurarse de que los filtros estén ocultos al cargar la página
 document.addEventListener("DOMContentLoaded", () => {
     hideAllFilters(); // Ocultar todos los filtros al cargar
-    toggleFiltersButton.textContent = "Mostrar Filtros"; // Texto inicial del botón
-    console.log("Filtros iniciales ocultos y el texto del botón establecido a 'Mostrar Filtros'.");
+    toggleFiltersButton.textContent = "Mostrar Filtros"; // Texto inicial del botón");
 });
-
-
-
-
-
-
 
 // *** EVENTOS: Opciones de Movimientos, Ventas, Arqueos ***
 document.querySelectorAll('.option').forEach((option) => {
     option.addEventListener('click', (event) => {
         const selectedOption = event.target.id; // 'movimientos', 'ventas', 'arqueo'
 
-        if (selectedOption === 'movimientos') {
-            showFormsAndButtons('btn-nuevo-movimiento'); // Mostrar solo el botón y formulario de movimientos
-            document.querySelector('.details-section').style.display = 'none';
-            document.getElementById('details').style.display = 'none';
+        // Obtener referencias a los elementos necesarios
+        const movimientoDetails = document.getElementById('movimiento-details');
+        const detailsSection = document.querySelector('.details-section');
+        const details = document.getElementById('details');
 
+        if (selectedOption === 'movimientos') {
+            showFormsAndButtons('btn-nuevo-movimiento'); // Mostrar botón y formulario de movimientos
+            detailsSection.style.display = 'none';
+            details.style.display = 'none';
+
+            // Mostrar el detalle de movimiento
+            movimientoDetails.classList.add('visible');
             fetchMovimientos(cajaTipoActivo); // Mostrar movimientos
         } else if (selectedOption === 'arqueo') {
-            showFormsAndButtons('btn-nuevo-arqueo'); // Mostrar solo el botón y formulario de arqueo
-            document.querySelector('.details-section').style.display = 'none';
-            document.getElementById('details').style.display = 'none';
+            showFormsAndButtons('btn-nuevo-arqueo'); // Mostrar botón y formulario de arqueos
+            detailsSection.style.display = 'none';
+            details.style.display = 'none';
+
+            // Ocultar el detalle de movimiento
+            // movimientoDetails.classList.remove('visible');
             fetchArqueos(cajaTipoActivo); // Mostrar arqueos
         } else if (selectedOption === 'ventas') {
-            showFormsAndButtons('btn-nueva-venta'); // Mostrar solo el botón y formulario de ventas
-            document.querySelector('.details-section').style.display = 'none';
-            document.getElementById('details').style.display = 'none';
+            showFormsAndButtons('btn-nueva-venta'); // Mostrar botón y formulario de ventas
+            detailsSection.style.display = 'none';
+            details.style.display = 'none';
+
+            // Ocultar el detalle de movimiento
+            movimientoDetails.classList.remove('visible');
             // Lógica para ventas, si la necesitas
         }
     });
 });
+
 
 // *** FUNCIONES: Mostrar Elementos Ocultos ***
 function showFormsAndButtons(clickedButtonId) {
@@ -186,66 +275,49 @@ options.forEach((option) => {
 
         // Mostrar/Ocultar tablas según la opción seleccionada
         tables.forEach((table) => table.classList.add('hidden'));
+
+        // Obtener el elemento movimiento-details
+        const movimientoDetails = document.getElementById('movimiento-details');
+
+        // Mostrar/Ocultar según la opción seleccionada
         if (option.id === 'ventas') {
             document.getElementById('table-ventas').classList.remove('hidden');
+            if (movimientoDetails) movimientoDetails.classList.add('hidden');
         } else if (option.id === 'movimientos') {
             document.getElementById('table-movimientos').classList.remove('hidden');
+            if (movimientoDetails) movimientoDetails.classList.remove('hidden');
         } else if (option.id === 'arqueo') {
-            document.getElementById('table-arqueo').classList.remove('hidden');
+            document.getElementById('table-arqueo').classList.remove('visible');
+            if (movimientoDetails) movimientoDetails.classList.remove('visible');
+            if (movimientoDetails) movimientoDetails.classList.add('hidden');
+        } else {
+            // Por si se selecciona otra opción no contemplada
+            if (movimientoDetails) movimientoDetails.classList.add('hidden');
         }
     });
 });
 
-// Obtén la referencia al formulario de arqueo
-const formArqueo = document.getElementById("form-arqueo");
 
-// CREAR ARQUEO NUEVO
-formArqueo.addEventListener("submit", async (event) => {
-    event.preventDefault(); // Previene el envío tradicional del formulario
 
-    // Obtén los valores de los campos del formulario
-    const horaApertura = document.getElementById("hora-apertura").value;
-    const saldoInicial = parseFloat(document.getElementById("monto-inicial").value); // Renombrado como saldoInicial
-    const cajaTipo = document.querySelector(".tab.active").id === "caja-mayor" ? "CajaMayor" : "CajaChica";
 
-    // Nuevo campo: tipoArqueo
-    const tipoArqueo = document.getElementById("tipo-arqueo").value;
-    // Valida los campos
-    if (!horaApertura || isNaN(saldoInicial) || !tipoArqueo) {
-        showNotification("Por favor, complete todos los campos requeridos.", "error");
-        return;
-    }
 
-    try {
-        // Realiza el POST al backend
-        const response = await fetch("/api/arqueos", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                horaApertura,
-                saldoInicial, // Aquí lo renombramos correctamente
-                cajaTipo,
-                tipoArqueo // Incluye el nuevo campo
-            })
-        });
 
-        const data = await response.json();
-        
 
-        if (response.ok && data.success) {
-            fetchArqueos(cajaTipoActivo); // Mostrar arqueos
-            showNotification("Arqueo iniciado con éxito.");
 
-            // Limpia los campos del formulario después de enviar
-            formArqueo.reset();
-        } else {
-            showNotification(`Error al iniciar el arqueo: ${data.error || "Error desconocido"}`, "error");
-        }
-    } catch (error) {
-        console.error("Error al enviar el formulario de arqueo:", error);
-        showNotification("Error al conectarse con el servidor.", "error");
-    }
-});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

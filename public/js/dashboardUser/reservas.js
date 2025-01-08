@@ -51,7 +51,6 @@ async function cargarLavados() {
         if (!response.ok) throw new Error('No se pudo cargar los lavaderos');
 
         const data = await response.json();
-        console.log('Respuesta del servidor:', data); // Verifica los datos recibidos
         lavados = data;
 
         if (!lavados.length) {

@@ -17,14 +17,12 @@ let currentFiltroHoraCierre = { desde: null, hasta: null }; // Para "Hora de Cie
 const toggleFiltersButton = document.getElementById("toggle-filters");
 const filtersMovs = document.getElementById("filtersMovs");
 const filtersArqueos = document.getElementById("filtersArqueos");
-// const options = document.querySelectorAll(".option");
 
 // Función para ocultar todos los filtros
 function hideAllFilters() {
     filtersMovs.classList.add("hidden");
     filtersArqueos.classList.add("hidden");
     filtersLavados.classList.add("hidden");
-    console.log("Todos los filtros están ocultos.");
 }
 
 // Función para identificar y mostrar dinámicamente el filtro activo
@@ -73,21 +71,20 @@ toggleFiltersButton.addEventListener("click", () => {
 });
 
 
-// *** Evento para manejar el cambio en el filtro Tipo de Caja ***
-document.getElementById("tipo-caja").addEventListener("change", function (event) {
-    const selectedValue = event.target.value;
+// // *** Evento para manejar el cambio en el filtro Tipo de Caja ***
+// document.getElementById("tipo-arqueo-movimiento").addEventListener("change", function (event) {
+//     const selectedValue = event.target.value;
 
-    if (selectedValue === "efectivo") {
-        currentFiltroMovimiento = "efectivo";
-    } else if (selectedValue === "mercado-pago") {
-        currentFiltroMovimiento = "mercado-pago";
-    } else {
-        currentFiltroMovimiento = "todos";
-    }
-
-    console.log("Filtro Tipo de Caja cambiado a:", currentFiltroMovimiento);
-    fetchMovimientos(); // Ejecutar fetchMovimientos después de cambiar el filtro
-});
+//     if (selectedValue === "abierto") {
+//         currentFiltroMovimiento = "abierto";
+//     } else if (selectedValue === "cerrado") {
+//         currentFiltroMovimiento = "cerrado";
+//     } else {
+//         currentFiltroMovimiento = "abierto";
+//     }
+//     console.log("CAMBIO DE TIPO DE ARQUEO:", currentFiltroMovimiento);
+//     fetchMovimientos(); // Ejecutar fetchMovimientos después de cambiar el filtro
+// });
 
 // *** Evento para manejar el cambio en el filtro Tipo de Ingreso ***
 document.getElementById("tipo-ingreso").addEventListener("change", function (event) {
@@ -142,7 +139,7 @@ document.getElementById("medio-de-pago").addEventListener("change", function (ev
 // *** Función para obtener y renderizar movimientos según el filtro ***
 async function fetchMovimientos() {
     console.log("Filtros seleccionados:");
-    console.log("Tipo de Caja:", currentFiltroMovimiento);
+    console.log("Movimientos en Arqueos estado: ", currentFiltroMovimiento);
     console.log("Tipo de Ingreso:", currentFiltroIngreso);
     console.log("Estado:", currentFiltroEstado);
     console.log("Fecha:", currentFiltroFecha);
@@ -167,7 +164,9 @@ async function fetchMovimientos() {
             let movimientos = data.data;
 
             // Aplicar filtros
+            console.log(currentFiltroMovimiento + "12312313-------MOSTRNADO LA FUNCION DE if (currentFiltroMovimiento)")
             if (currentFiltroMovimiento !== "todos") {
+                console.log("MOSTRNADO LA FUNCION DE if (currentFiltroMovimiento)")
                 movimientos = movimientos.filter(mov => mov.medioPago === currentFiltroMovimiento);
                 console.log("Después de filtrar por Tipo de Caja:", movimientos);
             }
@@ -206,12 +205,13 @@ async function fetchMovimientos() {
             }
 
             console.log("Movimientos después de aplicar todos los filtros:", movimientos);
-
             // Renderizar los movimientos en la tabla
             renderMovimientosTable(movimientos);
         } else {
             console.error("Error al obtener movimientos:", data.message);
             showNotification(`Error al obtener movimientos: ${data.message}`, "error");
+            // Renderizar los movimientos en la tabla
+            renderMovimientosTable(movimientos);
         }
     } catch (error) {
         console.error("Error al realizar el fetch:", error);
@@ -364,14 +364,14 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log("Reiniciando filtros de movimientos...");
 
             // Reiniciar valores globales de filtros
-            currentFiltroMovimiento = "todos";
+            currentFiltroMovimiento = "abiertos";
             currentFiltroIngreso = "todos";
             currentFiltroEstado = "todos";
             currentFiltroMedioPago = "todos";
             currentFiltroFecha = { tipo: "hoy", desde: null, hasta: null };
 
             // Reiniciar los valores de los elementos de entrada visual
-            const tipoCaja = document.getElementById("tipo-caja");
+            const tipoCaja = document.getElementById("tipo-arqueo-movimiento");
             const tipoIngreso = document.getElementById("tipo-ingreso");
             const medioPago = document.getElementById("medio-de-pago");
             const estado = document.getElementById("estado");
@@ -408,8 +408,10 @@ document.addEventListener("DOMContentLoaded", () => {
 //FILTROS DE LAVADOS----->
 // Variables globales para filtros de Lavados
 let filtroPatenteLavados = "";
+let filtroEmpresaLavados = "";
 let filtroEstadoLavados = "todos";
 let filtroFechaLavados = { tipo: "hoy", desde: null, hasta: null };
+
 let tbodyVentas = document.querySelector("#table-ventas tbody");
 
 // *** Evento para manejar el filtro de Patente (en vivo) ***
@@ -418,6 +420,16 @@ document.getElementById("patente-lavados").addEventListener("input", function (e
     console.log("Filtro Patente cambiado a:", filtroPatenteLavados);
     cargarLavadosConFiltros(); // Ejecutar al cambiar el filtro
 });
+
+// *** Evento para manejar el filtro de Empresa (en vivo) ***
+document.getElementById("empresa-lavados").addEventListener("input", function (event) {
+    filtroEmpresaLavados = event.target.value.toLowerCase().trim();
+    console.log("Filtro Empresa cambiado a:", filtroEmpresaLavados);
+    cargarLavadosConFiltros(); // Ejecutar al cambiar el filtro
+});
+
+
+
 
 // *** Evento para manejar el cambio en el filtro Estado ***
 document.getElementById("estado-lavados").addEventListener("change", function (event) {
@@ -492,6 +504,7 @@ function aplicarFiltrosLavados(lavados) {
     console.log("Patente:", filtroPatenteLavados);
     console.log("Estado:", filtroEstadoLavados);
     console.log("Fecha:", filtroFechaLavados);
+    console.log("Empresa:", filtroEmpresaLavados);
 
     // Filtrar por patente
     if (filtroPatenteLavados) {
@@ -521,9 +534,18 @@ function aplicarFiltrosLavados(lavados) {
         console.log("Después de filtrar por Fecha (Rango):", lavados);
     }
 
+    // Filtrar por empresa
+    if (filtroEmpresaLavados) {
+        lavados = lavados.filter((lavado) =>
+            lavado.empresa && lavado.empresa.toLowerCase().includes(filtroEmpresaLavados)
+        );
+        console.log("Después de filtrar por Empresa:", lavados);
+    }
+
     console.log("Lavados después de aplicar filtros:", lavados);
     return lavados;
 }
+
 
 // // Función para limpiar la tabla de lavados
 function limpiarTablaLavados() {
@@ -534,35 +556,6 @@ function limpiarTablaLavados() {
     }
     tableBody.innerHTML = ""; // Limpia la tabla
 }
-
-// Obtener los tbody de cada tabla
-
-
-
-
-// // // Función para actualizar la tabla de lavados con los datos filtrados
-// function actualizarTablaLavados(lavados) {
-//     limpiarTablaLavados(); // Limpia la tabla antes de agregar las filas
-
-//     const tableBody = document.querySelector("#table-ventas tbody");
-//     if (!tableBody) {
-//         console.error("El tbody de la tabla no existe en el DOM.");
-//         return;
-//     }
-
-//     // Verifica si hay datos para mostrar
-//     if (!lavados.length) {
-//         const fila = document.createElement("tr");
-//         fila.innerHTML = `<td colspan="6" class="no-data">No se encontraron resultados.</td>`;
-//         tableBody.appendChild(fila);
-//         return;
-//     }
-
-//     // Iterar sobre los lavados filtrados y agregarlos a la tabla
-//     lavados.forEach((lavado) => {
-//         agregarFilaTablaLavados(lavado);
-//     });
-// }
 
 function actualizarTabla(lavados, tbody) {
     if (!tbody) {
@@ -586,8 +579,6 @@ function actualizarTabla(lavados, tbody) {
         agregarFilaTabla(lavado, tbody);
     });
 }
-
-
 
 function agregarFilaTabla(lavado, tbody) {
     if (!tbody) {
@@ -625,23 +616,6 @@ function agregarFilaTabla(lavado, tbody) {
 
 actualizarTabla(ventas, tbodyVentas);
 
-// // // Función para agregar una fila a la tabla de lavados
-// function agregarFilaTablaLavados(lavado) {
-//     const tableBody = document.querySelector("#table-ventas tbody");
-//     const fila = document.createElement("tr");
-
-//     // Agregar columnas a la fila
-//     fila.innerHTML = `
-//         <td>${lavado.usuario || "---"}</td>
-//         <td>${lavado.patente || "---"}</td>
-//         <td>${lavado.empresa || "---"}</td>
-//         <td>${new Date(lavado.fechaDeAlta).toLocaleDateString() || "---"}</td>
-//         <td>${lavado.medioDePago || "---"}</td>
-//         <td>${lavado.estado || "---"}</td>
-//     `;
-
-//     tableBody.appendChild(fila);
-// }
 
 // // *** Función para limpiar los filtros de Lavados ***
 document.getElementById("reset-filters-lavados").addEventListener("click", function () {

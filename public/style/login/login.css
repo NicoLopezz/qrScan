@@ -18,7 +18,7 @@ body {
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
-    background-image: url('/img/fondoLogin.jpg') !important;
+    /* background-image: url('/img/fondoLogin.jpg') !important; */
     background-size: cover !important;
 }
 

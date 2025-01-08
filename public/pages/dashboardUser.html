@@ -546,6 +546,11 @@
                                 <input type="text" id="patente-lavados" class="filter-input"
                                     placeholder="Buscar por patente...">
 
+                                <label for="empresa-lavados">Empresa:</label>
+                                <input type="text" id="empresa-lavados" class="filter-input"
+                                    placeholder="Buscar por nombre de la empresa...">
+
+
                                 <!-- Filtro Estado -->
                                 <label for="estado-lavados">Estado:</label>
                                 <select id="estado-lavados" class="filter-select">
@@ -578,12 +583,12 @@
                             <!-- Filtros Movimientos -->
                             <div class="filters hidden" id="filtersMovs">
                                 <!-- Filtro Tipo de Caja -->
-                                <label for="tipo-caja">Tipo de Caja:</label>
-                                <select id="tipo-caja" class="filter-select">
+                                <!-- <label for="tipo-arqueo-movimiento">Arqueos:</label>
+                                <select id="tipo-arqueo-movimiento" class="filter-select">
+                                    <option value="abierto">Abiertos</option>
+                                    <option value="cerrado">Cerrados</option>
                                     <option value="todos">Todos</option>
-                                    <option value="efectivo">Efectivo</option>
-                                    <option value="mercado-pago">Mercado Pago</option>
-                                </select>
+                                </select> -->
 
                                 <!-- Filtro Tipo de Ingreso -->
                                 <label for="tipo-ingreso">Tipo:</label>
@@ -734,17 +739,18 @@
                             <!-- Formularios Dinámicos -->
                             <div id="formularios-container">
                                 <!-- Formulario para Nuevo Arqueo -->
-                                <form id="form-arqueo" class="form-container">
+                                <form id="form-arqueo" class="hidden">
                                     <h4>NUEVO ARQUEO</h4>
 
                                     <div class="form-row">
-                                        <label for="hora-apertura">Hora de Apertura (Actual):</label>
-                                        <input type="datetime-local" id="hora-apertura" required />
+                                        <label>Hora de Apertura (Actual):</label>
+                                        <input type="datetime-local" id="hora-apertura-arqueo" required />
+
                                     </div>
 
                                     <div class="form-row">
                                         <label for="tipo-arqueo">Tipo:</label>
-                                        <select id="tipo-arqueo">
+                                        <select id="tipo-arqueo-nuevo">
                                             <option value="efectivo">Efectivo</option>
                                             <option value="mercado-pago">Mercado Pago</option>
                                         </select>
@@ -752,12 +758,12 @@
 
                                     <div class="form-row">
                                         <label for="monto-inicial">Monto Inicial:</label>
-                                        <input type="number" id="monto-inicial" placeholder="Ej: $50.000"
-                                            required />
+                                        <input type="number" id="monto-inicial" placeholder="Ej: $50.000" required />
                                     </div>
 
                                     <div class="form-actions">
-                                        <button type="button" class="btn btn-cancel" id="cancel-arqueo">CANCELAR</button>
+                                        <button type="button" class="btn btn-cancel"
+                                            id="cancel-arqueo">CANCELAR</button>
                                         <button type="submit" class="btn btn-save">CREAR</button>
                                     </div>
                                 </form>
@@ -843,17 +849,17 @@
 
                             <!-- Detalles dinamicos -->
                             <div class="details-section"></div>
-                            <div class="movimiento-details">
+                            <div class="movimiento-details" id="movimiento-details">
                                 <h4>EDITAR MOVIMIENTO</h4>
                                 <div class="movimiento-row">
                                     <div class="movimiento-title">Descripción:</div>
-                                    <div class="movimiento-detail editable" id="descripcion-detalle">Leche <i
-                                            class="fas fa-pencil-alt edit-icon"
+                                    <div class="movimiento-detail editable" id="descripcion-detalle"
+                                        placeholder="Ej: Detalle del movimiento"><i class="fas fa-pencil-alt edit-icon"
                                             onclick="editarDetalle('descripcion-detalle')"></i></div>
                                 </div>
                                 <div class="movimiento-row">
                                     <div class="movimiento-title">Monto:</div>
-                                    <div class="movimiento-detail editable" id="monto-detalle">$12300 <i
+                                    <div class="movimiento-detail editable" id="monto-detalle" placeholder="Ej: 1200"><i
                                             class="fas fa-pencil-alt edit-icon"
                                             onclick="editarDetalle('monto-detalle')"></i></div>
                                 </div>

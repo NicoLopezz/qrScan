@@ -512,19 +512,6 @@ function updateDiferencia(totalSistema) {
     renderDiferenciaCard(totalSistema); // Crear y agregar tarjeta actualizada
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 // *** Función para renderizar movimientos en la tabla ***
 
 function renderMovimientosTable(movimientos) {

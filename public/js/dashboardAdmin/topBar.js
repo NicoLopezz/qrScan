@@ -1,17 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     // Manejar la visibilidad de la topBar al hacer scroll
-
     cargarNombreLocal();
-
-
-    // window.addEventListener('scroll', function() {
-    //     const topBar = document.querySelector('.topBar');
-    //     if (window.scrollY > 10) {
-    //         topBar.style.opacity = '0.0'; // Oculta la barra cuando scroll > 10px
-    //     } else {
-    //         topBar.style.opacity = '1'; // Muestra la barra cuando scroll <= 10px
-    //     }
-    // });
 });
 
 
@@ -19,8 +8,6 @@ document.addEventListener("DOMContentLoaded", () => {
 async function cargarNombreLocal() {
     // Obtener el adminId desde las cookies
     const adminId = getCookie('adminId');
-    console.log("adminId obtenido de las cookies:", adminId);
-
     if (!adminId) {
         console.error('No se encontró el adminId en las cookies.');
         return;
@@ -28,8 +15,6 @@ async function cargarNombreLocal() {
 
     // Obtener la información del usuario
     const userInfo = await fetchUserInfo(adminId);
-    console.log("Información del usuario obtenida:", userInfo);
-
     if (userInfo && userInfo.localName) {
         const localNameElement = document.getElementById("localName");
         if (!localNameElement) {
@@ -37,7 +22,6 @@ async function cargarNombreLocal() {
             return;
         }
         localNameElement.textContent = userInfo.localName;
-        console.log("Nombre del local mostrado en el DOM:", userInfo.localName);
     } else {
         console.error("No se pudo obtener el nombre del local.");
     }
@@ -49,7 +33,6 @@ function getCookie(name) {
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) {
         const cookieValue = parts.pop().split(';').shift();
-        console.log(`Valor de la cookie ${name}:`, cookieValue);
         return cookieValue;
     }
     console.error(`La cookie ${name} no existe.`);
@@ -68,7 +51,6 @@ async function fetchUserInfo(adminId) {
         }
 
         const data = await response.json();
-        console.log("Datos JSON obtenidos (userInfo):", data);
         return data;
     } catch (error) {
         console.error('Error en la solicitud:', error);

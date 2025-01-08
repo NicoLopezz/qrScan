@@ -1627,6 +1627,7 @@ async function crearArqueo(req, res) {
       await arqueo.save();
       cajaMayor.arqueos.push(arqueo._id);
       await cajaMayor.save();
+      
     } else if (cajaTipo === 'CajaChica') {
       console.log("Procesando CajaChica...");
       // Buscar o Crear CajaMayor para la CajaChica
