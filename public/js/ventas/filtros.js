@@ -5,11 +5,7 @@ let currentFiltroEstado = "todos"; // Para "Estado"
 let currentFiltroFecha = { tipo: "hoy", desde: null, hasta: null }; // Para Fecha
 let currentFiltroMedioPago = "todos"; // Para "Medio de Pago"
 
-// Variables globales para los filtros de arqueos
-let currentFiltroTipoArqueo = "todos"; // Para "Tipo de Arqueo"
-let currentFiltroEstadoArqueo = "todos"; // Para "Estado"
-let currentFiltroHoraApertura = { desde: null, hasta: null }; // Para "Hora de Apertura"
-let currentFiltroHoraCierre = { desde: null, hasta: null }; // Para "Hora de Cierre"
+
 
 
 
@@ -238,20 +234,29 @@ document.getElementById("estado-arqueo").addEventListener("change", (event) => {
 });
 
 document.getElementById("hora-apertura").addEventListener("change", (event) => {
-    currentFiltroHoraApertura = event.target.value;
-    console.log("Filtro Hora de Apertura cambiado a:", currentFiltroHoraApertura);
-    fetchArqueosFilter();
+    currentFiltroHoraApertura.desde = event.target.value; // Actualiza solo el campo "desde"
+    console.log("Filtro Hora de Apertura cambiado a:", currentFiltroHoraApertura.desde);
+    fetchArqueosFilter(); // Llama a la función de filtrado
 });
 
 document.getElementById("hora-cierre").addEventListener("change", (event) => {
-    currentFiltroHoraCierre = event.target.value;
-    console.log("Filtro Hora de Cierre cambiado a:", currentFiltroHoraCierre);
-    fetchArqueosFilter();
+    currentFiltroHoraCierre.hasta = event.target.value; // Actualiza solo el campo "hasta"
+    console.log("Filtro Hora de Cierre cambiado a:", currentFiltroHoraCierre.hasta);
+    fetchArqueosFilter(); // Llama a la función de filtrado
 });
 
+
+
+
+
+// Variables globales para los filtros de arqueos
+let currentFiltroTipoArqueo = "todos"; // Para "Tipo de Arqueo"
+let currentFiltroEstadoArqueo = "todos"; // Para "Estado"
+let currentFiltroHoraApertura = { desde: null, hasta: null }; // Para "Hora de Apertura"
+let currentFiltroHoraCierre = { desde: null, hasta: null }; // Para "Hora de Cierre"
+//---->FILTROS DE ARQUEOS
 // *** Función para obtener y filtrar arqueos según los filtros seleccionados ***
-// *** FETCH: Obtener y renderizar arqueos según los filtros ***
-// *** Función para obtener y filtrar arqueos según los filtros seleccionados ***
+// Función para aplicar filtros y renderizar la tabla
 async function fetchArqueosFilter() {
     console.log("Filtros seleccionados:");
     console.log("Tipo de Arqueo:", currentFiltroTipoArqueo);
@@ -272,41 +277,47 @@ async function fetchArqueosFilter() {
         if (response.ok && data.success) {
             let arqueos = data.data;
 
-            // Aplicar filtros
+            // Filtrar por Tipo de Arqueo
             if (currentFiltroTipoArqueo !== "todos") {
                 arqueos = arqueos.filter((arq) => arq.tipo === currentFiltroTipoArqueo);
                 console.log("Después de filtrar por Tipo de Arqueo:", arqueos);
+                renderArqueosTable(arqueos);
             }
 
+            // Filtrar por Estado
             if (currentFiltroEstadoArqueo !== "todos") {
                 arqueos = arqueos.filter((arq) => arq.estado === currentFiltroEstadoArqueo);
                 console.log("Después de filtrar por Estado:", arqueos);
+                renderArqueosTable(arqueos);
             }
 
-            if (currentFiltroHoraApertura) {
-                const aperturaFiltro = new Date(currentFiltroHoraApertura).getTime();
+            // Filtrar por Hora de Apertura
+            if (currentFiltroHoraApertura.desde) {
                 arqueos = arqueos.filter((arq) => {
                     const aperturaArqueo = new Date(arq.fechaApertura).getTime();
-                    return aperturaArqueo >= aperturaFiltro;
+                    const desdeValido = aperturaArqueo >= new Date(currentFiltroHoraApertura.desde).getTime();
+                    return desdeValido;
                 });
                 console.log("Después de filtrar por Hora de Apertura:", arqueos);
+                renderArqueosTable(arqueos);
             }
 
-            if (currentFiltroHoraCierre) {
-                const cierreFiltro = new Date(currentFiltroHoraCierre).getTime();
+            // Filtrar por Hora de Cierre
+            if (currentFiltroHoraCierre.desde || currentFiltroHoraCierre.hasta) {
                 arqueos = arqueos.filter((arq) => {
-                    if (arq.fechaCierre) {
-                        const cierreArqueo = new Date(arq.fechaCierre).getTime();
-                        return cierreArqueo <= cierreFiltro;
-                    }
-                    return false; // Si no tiene fecha de cierre, lo excluye
+                    const cierreArqueo = arq.fechaCierre ? new Date(arq.fechaCierre).getTime() : null;
+                    const desdeValido = currentFiltroHoraCierre.desde
+                        ? cierreArqueo && cierreArqueo >= new Date(currentFiltroHoraCierre.desde).getTime()
+                        : true;
+                    const hastaValido = currentFiltroHoraCierre.hasta
+                        ? cierreArqueo && cierreArqueo <= new Date(currentFiltroHoraCierre.hasta).getTime()
+                        : true;
+                    return desdeValido && hastaValido;
                 });
                 console.log("Después de filtrar por Hora de Cierre:", arqueos);
+                renderArqueosTable(arqueos);
             }
-
             console.log("Arqueos después de aplicar todos los filtros:", arqueos);
-
-            // Renderizar los arqueos en la tabla
             renderArqueosTable(arqueos);
         } else {
             console.error("Error al obtener arqueos:", data.message);
@@ -317,6 +328,8 @@ async function fetchArqueosFilter() {
         showNotification("Error al conectarse con el servidor.", "error");
     }
 }
+
+
 
 // *** Función para reiniciar filtros y activar opción por defecto ***
 document.addEventListener("DOMContentLoaded", () => {
@@ -404,16 +417,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-
 //FILTROS DE LAVADOS----->
 // Variables globales para filtros de Lavados
 let filtroPatenteLavados = "";
 let filtroEmpresaLavados = "";
 let filtroEstadoLavados = "todos";
-let filtroFechaLavados = { tipo: "hoy", desde: null, hasta: null };
+let filtroFechaLavados = { tipo: "hoy", desde: null, hasta: null }; // Por defecto: "hoy"
 
 let tbodyVentas = document.querySelector("#table-ventas tbody");
-
 // *** Evento para manejar el filtro de Patente (en vivo) ***
 document.getElementById("patente-lavados").addEventListener("input", function (event) {
     filtroPatenteLavados = event.target.value.toLowerCase().trim();
@@ -427,9 +438,6 @@ document.getElementById("empresa-lavados").addEventListener("input", function (e
     console.log("Filtro Empresa cambiado a:", filtroEmpresaLavados);
     cargarLavadosConFiltros(); // Ejecutar al cambiar el filtro
 });
-
-
-
 
 // *** Evento para manejar el cambio en el filtro Estado ***
 document.getElementById("estado-lavados").addEventListener("change", function (event) {
@@ -473,14 +481,14 @@ async function cargarLavadosConFiltros() {
 
     try {
         const response = await fetch(`/api/admins/${adminId}/lavados`);
-        if (!response.ok) throw new Error("No se pudo cargar los lavaderos");
+        if (!response.ok) throw new Error("No se pudo cargar los lavados");
 
         const data = await response.json();
         console.log("Respuesta del servidor:", data); // Verifica los datos recibidos
         let lavados = data;
 
         if (!lavados.length) {
-            console.warn("No se encontraron lavaderos asociados al administrador.");
+            console.warn("No se encontraron lavados asociados al administrador.");
             limpiarTablaLavados(); // Limpia la tabla si no hay resultados
             return;
         }
@@ -494,9 +502,10 @@ async function cargarLavadosConFiltros() {
         // Actualizar la tabla
         actualizarTabla(lavados, tbodyVentas);
     } catch (error) {
-        console.error("Error al cargar lavaderos:", error);
+        console.error("Error al cargar lavados:", error);
     }
 }
+
 
 // // Función para aplicar filtros a los lavados
 function aplicarFiltrosLavados(lavados) {
@@ -522,7 +531,7 @@ function aplicarFiltrosLavados(lavados) {
 
     // Filtrar por fecha
     if (filtroFechaLavados.tipo === "hoy") {
-        const hoy = new Date().toISOString().split("T")[0];
+        const hoy = new Date().toISOString().split("T")[0]; // Fecha actual en formato YYYY-MM-DD
         lavados = lavados.filter((lavado) => lavado.fechaDeAlta.startsWith(hoy));
         console.log("Después de filtrar por Fecha (Hoy):", lavados);
     } else if (filtroFechaLavados.tipo === "determinar") {
@@ -585,39 +594,63 @@ function agregarFilaTabla(lavado, tbody) {
         console.error("El tbody de la tabla no existe en el DOM.");
         return;
     }
-
     const fila = document.createElement("tr");
-
     // Determina las columnas de la tabla según el tbody
     if (tbody === tbodyVentas) {
         // Para la tabla de ventas
         fila.innerHTML = `
-            <td>${lavado.nombre || "---"}</td>
-            <td>${lavado.patente || "---"}</td>
-            <td>${lavado.empresa || "---"}</td>
-            <td>${lavado.fechaDeAlta ? new Date(lavado.fechaDeAlta).toLocaleDateString() : "---"}</td>
-            <td>${lavado.medioDePago || "---"}</td>
-            <td>${lavado.estado || "---"}</td>
+        <td>${lavado.nombre || "---"}</td>
+        <td>${lavado.patente || "---"}</td>
+        <td>${lavado.empresa || "---"}</td>
+        <td>${new Date(lavado.fechaDeAlta).toLocaleString() || "---"}</td>
+        <td>
+            ${lavado.medioPago === "efectivo"
+                ? '<img src="../img/cashLogo2.svg" alt="Efectivo" style="width: 30px; height: auto;" class="icon">'
+                : lavado.medioPago === "mercado-pago"
+                    ? '<img src="../img/logoMp.svg" alt="Mercado Pago" style="width: 30px; height: auto;" class="icon">'
+                    : "---"
+            }
+        </td>
+        <td>${lavado.estado || "---"}</td>
         `;
-    } else {
-        // Para otras tablas (por ejemplo, tabla de lavados)
-        fila.innerHTML = `
-            <td>${lavado.nombre || "---"}</td>
-            <td>${lavado.modelo || "---"}</td>
-            <td>${lavado.patente || "---"}</td>
-            <td>${lavado.lavado || "---"}</td>
-            <td>${lavado.observacion || "---"}</td>
-        `;
+
+        // Agregar atributo data-id para identificar la fila
+        const lavadoId = lavado._id || "sin-id";
+        fila.setAttribute("data-id", lavadoId);
+        console.log(`Atributo data-id asignado a la fila: ${lavadoId}`);
+
+        // Agregar evento de clic a la fila
+        fila.addEventListener("click", () => {
+            console.log(`Fila clicada. ID del lavado: ${lavado._id}`);
+
+            // Quitar la clase "selected" de todas las filas
+            document.querySelectorAll("#table-ventas tbody tr").forEach((r) => {
+                r.classList.remove("selected");
+                r.style.fontWeight = "normal"; // Restablecer el estilo
+            });
+
+            // Agregar la clase "selected" a la fila clicada
+            fila.classList.add("selected");
+            fila.style.fontWeight = "bold"; // Destacar la fila seleccionada
+
+            // Actualizar `currentLavadoId` con el ID del lavado seleccionado
+            currentLavadoId = lavado._id;
+
+            // Actualizar los detalles editables
+            actualizarDetallesLavado(lavado);
+        });
+
+
     }
 
     tbody.appendChild(fila);
 }
 
-
 actualizarTabla(ventas, tbodyVentas);
 
 
-// // *** Función para limpiar los filtros de Lavados ***
+
+// //** Función para limpiar los filtros de Lavados ***
 document.getElementById("reset-filters-lavados").addEventListener("click", function () {
     console.log("Reiniciando filtros de Lavados...");
 
@@ -633,7 +666,15 @@ document.getElementById("reset-filters-lavados").addEventListener("click", funct
     document.getElementById("fecha-desde-lavados").value = "";
     document.getElementById("fecha-hasta-lavados").value = "";
     document.getElementById("fecha-personalizada-lavados").classList.add("hidden");
-
     console.log("Filtros de Lavados reiniciados.");
     cargarLavadosConFiltros(); // Cargar los datos nuevamente sin filtros
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Establecer el filtro por defecto en los elementos del DOM
+    document.getElementById("filtro-fecha-lavados").value = "hoy"; // Seleccionar "hoy" en el filtro de fecha
+    document.getElementById("fecha-personalizada-lavados").classList.add("hidden"); // Ocultar las fechas personalizadas
+
+    // Cargar la tabla con el filtro inicial (fecha: hoy)
+    cargarLavadosConFiltros();
 });

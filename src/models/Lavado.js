@@ -32,11 +32,17 @@ const lavadoSchema = new mongoose.Schema({
   tipoDeLavado: { type: String, required: true },
   observacion: { type: String, default: '' },
   estado: { type: String, default: 'Pendiente' },
+  monto: { type: Number, default: 0 },
   modelo: { type: String, required: true },
   selected: { type: Boolean, default: false },
   textConfirmation: { type: Boolean, default: false },
   numeroDeFila: { type: Number, default: 0 },
-  puntuacionPromedio: { type: Number, default: 0 }
+  puntuacionPromedio: { type: Number, default: 0 },
+  medioPago: { type: String, enum: ['efectivo', 'debito', 'credito', 'mercado-pago', '---'], default: '---' },
+  cumpleaños: { type: String, default: '' }
+
 });
+
+
 
 export default lavadoSchema;

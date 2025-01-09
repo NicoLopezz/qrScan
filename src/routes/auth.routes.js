@@ -94,6 +94,9 @@ router.get('/admins/:adminId/lavados', autenthication.getLavados);
 router.post('/admins/agregarCliente', autenthication.agregarCliente);
 router.post('/admins/agregarLavado', autenthication.agregarLavado);
 router.post('/admins/agregarLavado', autenthication.agregarLavado);
+router.put("/lavadosModificar", autenthication.modificarLavado);
+
+
 
 
 // Endpoint para Ventas

@@ -278,16 +278,21 @@ options.forEach((option) => {
 
         // Obtener el elemento movimiento-details
         const movimientoDetails = document.getElementById('movimiento-details');
+        // const agregarLavado = document.getElementById('form-lavado');
+        
 
         // Mostrar/Ocultar según la opción seleccionada
         if (option.id === 'ventas') {
             document.getElementById('table-ventas').classList.remove('hidden');
+            document.getElementById('form-lavado').classList.remove('hidden');
             if (movimientoDetails) movimientoDetails.classList.add('hidden');
         } else if (option.id === 'movimientos') {
             document.getElementById('table-movimientos').classList.remove('hidden');
+            document.getElementById('form-lavado').classList.add('hidden');
             if (movimientoDetails) movimientoDetails.classList.remove('hidden');
         } else if (option.id === 'arqueo') {
             document.getElementById('table-arqueo').classList.remove('visible');
+            document.getElementById('form-lavado').classList.add('hidden');
             if (movimientoDetails) movimientoDetails.classList.remove('visible');
             if (movimientoDetails) movimientoDetails.classList.add('hidden');
         } else {

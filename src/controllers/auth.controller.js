@@ -5,6 +5,7 @@ import CajaChica from '../models/cajaChicaSchema.js';
 import ArqueoMayor from '../models/arqueoMayorSchema.js';
 import ArqueoChica from '../models/arqueoChicaSchema.js';
 import Movimiento from '../models/Movimientos.js';
+import Lavado from '../models/Lavado.js';
 
 
 
@@ -1627,7 +1628,7 @@ async function crearArqueo(req, res) {
       await arqueo.save();
       cajaMayor.arqueos.push(arqueo._id);
       await cajaMayor.save();
-      
+
     } else if (cajaTipo === 'CajaChica') {
       console.log("Procesando CajaChica...");
       // Buscar o Crear CajaMayor para la CajaChica
@@ -2057,6 +2058,84 @@ async function modificarMovimiento(req, res) {
 }
 
 
+// ENDPOINT: Modificar lavado
+async function modificarLavado(req, res) {
+  const { lavadoId, medioPago,patente, estado, monto } = req.body;
+
+  // Log para depurar los datos recibidos
+  console.log("Datos recibidos en el backend:");
+  console.log("Lavado ID:", lavadoId);
+  console.log("Medio de Pago:", medioPago);
+  console.log("Estado:", estado);
+  console.log("Monto:", monto);
+
+  // Validar que los parámetros requeridos estén presentes
+  if (!lavadoId || !medioPago || !estado || monto === undefined || isNaN(parseFloat(monto))) {
+    return res.status(400).json({
+      success: false,
+      message: "Faltan parámetros requeridos (lavadoId, medioPago, estado, monto).",
+    });
+  }
+
+  try {
+    // Buscar el admin que contiene el lavado específico
+    const admin = await Admin.findOne({
+      "lavados._id": lavadoId, // Filtrar por el ID del lavado en el array de lavados
+    });
+
+    // Validar si se encontró el admin con el lavado
+    if (!admin) {
+      console.log("No se encontró ningún admin con un lavado coincidente.");
+      return res.status(404).json({
+        success: false,
+        message: "No se encontró el lavado con el ID especificado.",
+      });
+    }
+
+    console.log("Admin encontrado:", admin._id);
+
+    // Buscar el lavado específico en el array de `lavados`
+    const lavado = admin.lavados.find((lavado) => lavado._id.toString() === lavadoId);
+
+    // Validar si se encontró el lavado
+    if (!lavado) {
+      console.log("No se encontró el lavado específico dentro del documento del admin.");
+      return res.status(404).json({
+        success: false,
+        message: "Lavado no encontrado en los datos del admin.",
+      });
+    }
+
+    // Actualizar los campos del lavado
+    lavado.medioPago = medioPago;
+    lavado.estado = estado;
+    lavado.monto = parseFloat(monto);
+
+    console.log("Campos del lavado actualizados:");
+    console.log("Medio de Pago:", lavado.medioPago);
+    console.log("Estado:", lavado.estado);
+    console.log("Monto:", lavado.monto);
+
+    // Guardar los cambios en la base de datos
+    await admin.save();
+
+    // Responder con éxito y los datos actualizados del lavado
+    res.status(200).json({
+      success: true,
+      message: "Lavado modificado con éxito.",
+      data: lavado,
+    });
+  } catch (error) {
+    console.error("Error al modificar el lavado:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error interno del servidor.",
+      details: error.message,
+    });
+  }
+}
+
+
 
 
 
@@ -2104,5 +2183,6 @@ export const methods = {
   cerrarArqueo,
   getMovimientosAbiertos,
   eliminarMovimiento,
-  modificarMovimiento
+  modificarMovimiento,
+  modificarLavado
 };

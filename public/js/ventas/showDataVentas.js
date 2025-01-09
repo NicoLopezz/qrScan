@@ -7,6 +7,8 @@ let currentArqueoObservacion = null
 let currentFiltroMovimiento = "todos"; // Variable global para almacenar el ID del arqueo 
 let currentMovimiento = null; // Variable global para almacenar el ID del arqueo 
 let currentMovimientoCajaId = null; // Variable global para almacenar el ID del arqueo 
+let currentLavadoId = null; // Variable global para almacenar el ID del 
+// let currentMovimientoCajaId = null; // Variable global para almacenar el ID del 
 
 
 
@@ -53,49 +55,6 @@ function hideAllFormsAndButtons() {
     document.getElementById('details').style.display = 'none';
 }
 
-
-
-//--------------LAVADOS DE LA SECTION DE SALON
-// *** Llamar a la función al cargar la página ***
-document.addEventListener("DOMContentLoaded", fetchAndRenderLavados);
-// *** Función para renderizar lavados en la tabla ***
-function renderLavadosTable(lavados) {
-    const tableBody = document.querySelector("#table-ventas tbody");
-    tableBody.innerHTML = "";
-
-    if (lavados.length > 0) {
-        lavados.sort((a, b) => new Date(b.fechaHora) - new Date(a.fechaHora)); // Ordenar por fecha/hora descendente
-
-        lavados.forEach(lavado => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${lavado.nombre || "---"}</td>
-                <td>${lavado.patente || "---"}</td>
-                <td>${lavado.empresa || "---"}</td>
-                <td>${new Date(lavado.fechaDeAlta).toLocaleString() || "---"}</td>
-                <td>$${lavado.monto || "---"}</td>
-                <td>${lavado.estado || "---"}</td>
-            `;
-            tableBody.appendChild(row);
-        });
-    } else {
-        const noDataRow = document.createElement("tr");
-        noDataRow.innerHTML = '<td colspan="6" class="no-data">No hay lavados disponibles.</td>';
-        tableBody.appendChild(noDataRow);
-    }
-}
-
-async function fetchAndRenderLavados() {
-    try {
-        const response = await fetch("http://localhost:3000/api/admins/6760a78e7f72b5a2c6b67e34/lavados");
-        const lavados = await response.json();
-
-        renderLavadosTable(lavados);
-    } catch (error) {
-        console.error("Error al obtener los lavados:", error);
-    }
-}
-// -------------
 
 
 
@@ -512,8 +471,11 @@ function updateDiferencia(totalSistema) {
     renderDiferenciaCard(totalSistema); // Crear y agregar tarjeta actualizada
 }
 
-// *** Función para renderizar movimientos en la tabla ***
 
+
+
+
+// *** Función para renderizar movimientos en la tabla ***
 function renderMovimientosTable(movimientos) {
     const tableBody = document.querySelector("#table-movimientos tbody");
     tableBody.innerHTML = "";
@@ -688,7 +650,7 @@ async function guardarCambios() {
 
         // Manejar la respuesta del backend
         if (data.success) {
-            alert("Movimiento modificado con éxito.");
+            showNotification('Movimiento modificado con éxito.', 'success');
             // Lógica para actualizar la tabla o la vista (si es necesario)
             fetchMovimientos(); // Refrescar los movimientos después de modificar
         } else {
@@ -696,45 +658,9 @@ async function guardarCambios() {
         }
     } catch (error) {
         console.error("Error al intentar modificar el movimiento:", error);
-        alert("Error al intentar modificar el movimiento.");
+        showNotification(`Error al modificar el movimiento: ${data.error || 'Error desconocido'}`, 'error');
     }
 }
-
-
-
-function resetButton(button, actionType) {
-    button.textContent = actionType;
-    button.classList.remove('confirm');
-}
-
-
-
-
-
-//MovimientoDisplay
-function editarDetalle(id) {
-    const elemento = document.getElementById(id);
-    const contenido = elemento.textContent.trim();
-    const input = document.createElement('input');
-    input.type = id === 'monto-detalle' ? 'number' : 'text';
-    input.value = contenido;
-    input.className = 'editable-input';
-    elemento.innerHTML = '';
-    elemento.appendChild(input);
-    input.focus();
-
-    input.addEventListener('blur', () => {
-        elemento.innerHTML = input.value + ' <i class="fas fa-pencil-alt edit-icon" onclick="editarDetalle(\'' + id + '\')"></i>';
-    });
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-    // Aquí llamas a la función con el ID que deseas editar automáticamente
-    editarDetalle('descripcion-detalle');
-});
-
-
-
 
 // Evento para manejar el envío del formulario de nuevo movimiento
 //CREA EL NUEVO MOV
@@ -792,6 +718,333 @@ formMovimiento.addEventListener('submit', async (event) => {
         showNotification('Error al conectarse con el servidor.', 'error');
     }
 });
+
+
+
+function resetButton(button, actionType) {
+    button.textContent = actionType;
+    button.classList.remove('confirm');
+}
+
+
+
+
+//--------------LAVADOS DE LA SECTION DE SALON
+//MovimientoDisplay
+// *** Llamar a la función al cargar la página ***
+document.addEventListener("DOMContentLoaded", fetchAndRenderLavados);
+// *** Función para renderizar lavados en la tabla ***
+function renderLavadosTable(lavados) {
+    const tableBody = document.querySelector("#table-ventas tbody");
+
+    // Limpia las filas existentes
+    tableBody.innerHTML = "";
+
+    if (lavados.length > 0) {
+        // Ordenar los lavados por fecha/hora descendente
+        lavados.sort((a, b) => new Date(b.fechaHora) - new Date(a.fechaHora));
+
+        lavados.forEach((lavado, index) => {
+            console.log("Lavado procesado:", lavado);
+
+            // Crear una nueva fila
+            const row = document.createElement("tr");
+
+            // Asignar contenido HTML a la fila
+            row.innerHTML = `
+                <td>${lavado.nombre || "---"}</td>
+                <td>${lavado.patente || "---"}</td>
+                <td>${lavado.empresa || "---"}</td>
+                <td>${new Date(lavado.fechaDeAlta).toLocaleString() || "---"}</td>
+                <td>
+                    ${
+                        lavado.medioPago === "efectivo"
+                            ? '<img src="../img/cashLogo2.svg" alt="Efectivo" style="width: 30px; height: auto;" class="icon">'
+                            : lavado.medioPago === "mercado-pago"
+                            ? '<img src="../img/logoMp.svg" alt="Mercado Pago" style="width: 30px; height: auto;" class="icon">'
+                            : "---"
+                    }
+                </td>
+                <td>${lavado.estado || "---"}</td>
+            `;
+
+            // Agregar atributo data-id para identificar la fila
+            const lavadoId = lavado._id || "sin-id";
+            row.setAttribute("data-id", lavadoId);
+            console.log(`Atributo data-id asignado a la fila: ${lavadoId}`);
+
+            // Agregar evento de clic a la fila
+            row.addEventListener("click", () => {
+                console.log(`Fila ${index} clicada. ID del lavado: ${lavado._id}`);
+
+                // Quitar la clase "selected" de todas las filas
+                document.querySelectorAll("#table-ventas tbody tr").forEach((r) => {
+                    r.classList.remove("selected");
+                    r.style.fontWeight = "normal"; // Restablecer el estilo
+                });
+
+                // Agregar la clase "selected" a la fila clicada
+                row.classList.add("selected");
+                row.style.fontWeight = "bold"; // Destacar la fila seleccionada
+
+                // Actualizar `currentLavadoId` con el ID del lavado seleccionado
+                currentLavadoId = lavado._id;
+
+                // Actualizar los detalles editables
+                actualizarDetallesLavado(lavado);
+            });
+
+            // Agregar la fila al cuerpo de la tabla
+            tableBody.appendChild(row);
+        });
+    } else {
+        // Mostrar un mensaje si no hay lavados disponibles
+        const noDataRow = document.createElement("tr");
+        noDataRow.innerHTML =
+            '<td colspan="6" class="no-data">No hay lavados disponibles.</td>';
+        tableBody.appendChild(noDataRow);
+    }
+}
+
+function editarDetalle(id) {
+    const elemento = document.getElementById(id);
+    const contenido = elemento.textContent.trim();
+    const input = document.createElement('input');
+    input.type = id === 'monto-detalle' ? 'number' : 'text';
+    input.value = contenido;
+    input.className = 'editable-input';
+    elemento.innerHTML = '';
+    elemento.appendChild(input);
+    input.focus();
+
+    input.addEventListener('blur', () => {
+        elemento.innerHTML = input.value + ' <i class="fas fa-pencil-alt edit-icon" onclick="editarDetalle(\'' + id + '\')"></i>';
+    });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    // Aquí llamas a la función con el ID que deseas editar automáticamente
+    editarDetalle('descripcion-detalle');
+});
+
+// Obtener referencia al formulario de lavados
+const formLavado = document.getElementById('form-lavado');
+
+// Manejar el evento submit del formulario de lavados
+formLavado.addEventListener('submit', async (event) => {
+    event.preventDefault(); // Previene el envío tradicional del formulario
+
+    // Obtén los valores de los campos del formulario
+    const medioPago = document.getElementById('medio-pago-lavado').value;
+    const monto = parseFloat(document.getElementById('monto-lavado').value);
+    const patente = document.getElementById('patente-lavado').value;
+    const estadoPago = document.querySelector('input[name="estado-pago-lavado"]:checked');
+
+    // Valida los campos
+    if (!currentLavadoId || !medioPago || !estadoPago || isNaN(monto)) {
+        console.log("Datos capturados del formulario de lavado:");
+        console.log("Lavado ID:", currentLavadoId);
+        console.log("Medio de Pago:", medioPago);
+        console.log("Monto:", monto);
+        console.log("Patente:", patente);
+        console.log("Estado de Pago:", estadoPago ? estadoPago.value : null);
+
+        showNotification("Por favor, complete todos los campos requeridos.", "error");
+        return;
+    }
+
+    try {
+        // Datos que se enviarán al backend
+        const payload = {
+            lavadoId: currentLavadoId, // ID del lavado que se desea modificar
+            medioPago,
+            monto,
+            patente,
+            estado: estadoPago.value, // Incluye el estado de pago en la solicitud
+        };
+
+        console.log("Datos enviados al backend (payload):", payload);
+
+        // Realiza el PUT al backend
+        const response = await fetch('/api/lavadosModificar', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+        });
+
+        const data = await response.json();
+
+        console.log("Datos de la respuesta del backend:", data);
+
+        if (response.ok && data.success) {
+            showNotification('Lavado modificado con éxito.', 'success');
+
+            // Llama a la función para crear un movimiento
+            await crearMovimientoDesdeLavado({
+                monto,
+                medioPago,
+                descripcion: `Lavado: ${patente}`, // Descripción incluye el ID o la patente
+                estadoPago: 'abonado', // Siempre será abonado
+                tipo: 'ingreso', // Tipo siempre será ingreso
+            });
+
+            // Obtener y renderizar la tabla actualizada
+            cargarLavadosConFiltros(); // Llama a la función para refrescar la tabla
+
+            // Limpia los campos del formulario después de enviar
+            formLavado.reset();
+        } else {
+            showNotification(`Error al modificar el lavado: ${data.error || 'Error desconocido'}`, 'error');
+        }
+    } catch (error) {
+        console.error('Error al enviar el formulario de lavado:', error);
+        showNotification('Error al conectarse con el servidor.', 'error');
+    }
+});
+
+// Función para crear un movimiento desde un lavado
+async function crearMovimientoDesdeLavado({ monto, medioPago, descripcion, estadoPago, tipo }) {
+    try {
+        const cajaTipo = 'CajaChica'; // O puedes obtenerlo dinámicamente si es necesario
+
+        // Realiza el POST al backend para crear el movimiento
+        const response = await fetch('/api/movimientos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                monto,
+                tipo,
+                medioPago,
+                descripcion,
+                cajaTipo,
+                estadoPago, // Incluye el estado de pago en la solicitud
+            }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+            showNotification('Movimiento creado con éxito.', 'success');
+        } else {
+            showNotification(`Error al crear el movimiento: ${data.error || 'Error desconocido'}`, 'error');
+        }
+    } catch (error) {
+        console.error('Error al crear el movimiento desde lavado:', error);
+        showNotification('Error al conectarse con el servidor.', 'error');
+    }
+}
+
+
+
+
+
+
+
+async function actualizarLavadosTable() {
+    try {
+        // Hacer una solicitud al backend para obtener la lista de lavados actualizada
+        const response = await fetch('/api/lavados'); // Cambia la ruta si es necesario
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+            // Reutilizar la función renderLavadosTable para renderizar la tabla actualizada
+            renderLavadosTable(data.lavados);
+        } else {
+            console.error('Error al obtener la lista de lavados:', data.error || 'Error desconocido');
+            showNotification('Error al actualizar la tabla de lavados.', 'error');
+        }
+    } catch (error) {
+        console.error('Error al actualizar la tabla de lavados:', error);
+        showNotification('Error al conectarse con el servidor.', 'error');
+    }
+}
+// *** Llamar a la función al cargar la página ***
+document.addEventListener("DOMContentLoaded", fetchAndRenderLavados);
+
+
+function actualizarDetallesLavado(lavado) {
+    // Actualizar los campos editables en el detalle de lavados
+    const usuario = document.getElementById('usuario-lavado');
+    const patente = document.getElementById('patente-lavado');
+    const empresa = document.getElementById('empresa-lavado');
+    const fecha = document.getElementById('fecha-lavado');
+    const medioPago = document.getElementById('medio-pago-lavado');
+    const estadoRadios = document.querySelectorAll('input[name="estado-pago-lavado"]');
+    const descripcion = document.getElementById('descripcion-lavado');
+    const monto = document.getElementById('monto-lavado');
+
+    // Convertir la fecha al formato deseado
+    let fechaFormateada = "";
+    if (lavado.fechaDeAlta) {
+        const fechaObj = new Date(lavado.fechaDeAlta);
+        const dia = String(fechaObj.getDate()).padStart(2, '0');
+        const mes = String(fechaObj.getMonth() + 1).padStart(2, '0'); // Los meses comienzan en 0
+        const anio = String(fechaObj.getFullYear()).slice(-2); // Últimos dos dígitos del año
+        const horas = String(fechaObj.getHours()).padStart(2, '0');
+        const minutos = String(fechaObj.getMinutes()).padStart(2, '0');
+        fechaFormateada = `${dia}/${mes}/${anio} ${horas}:${minutos}`;
+    }
+
+    // Actualizar los valores del formulario con los datos del lavado
+    usuario.value = lavado.nombre || "---";
+    patente.value = lavado.patente || "---";
+    empresa.value = lavado.empresa || "---";
+    fecha.value = fechaFormateada || "---";
+
+    // Actualizar el select para medio de pago
+    if (medioPago) {
+        medioPago.value = lavado.medioPago || ""; // Asegurarte de que coincida con las opciones disponibles
+    }
+
+    // Actualizar los radios para estado de pago
+    if (estadoRadios) {
+        estadoRadios.forEach((radio) => {
+            radio.checked = radio.value === lavado.estadoPago;
+        });
+    }
+
+    // Actualizar descripción
+    descripcion.value = lavado.descripcion || "";
+
+    // Actualizar monto
+    monto.value = lavado.monto || "";
+}
+// Función para habilitar la edición de un campo específico
+// function editarDetalle(campoId) {
+//     const campo = document.getElementById(campoId);
+//     if (campo) {
+//         const valorActual = campo.value.trim();
+//         const input = document.createElement('input');
+//         input.type = 'text';
+//         input.value = valorActual;
+//         input.onblur = () => {
+//             campo.value = input.value;
+//             input.remove();
+//         };
+//         campo.parentNode.appendChild(input);
+//         input.focus();
+//     }
+// }
+
+async function fetchAndRenderLavados() {
+    try {
+        const response = await fetch("http://localhost:3000/api/admins/6760a78e7f72b5a2c6b67e34/lavados");
+        const lavados = await response.json();
+
+        renderLavadosTable(lavados);
+    } catch (error) {
+        console.error("Error al obtener los lavados:", error);
+    }
+}
+// -------------
+
+
+
+
+
+
+
+
 
 
 
