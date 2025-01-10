@@ -12,6 +12,8 @@ let currentLavadoId = null; // Variable global para almacenar el ID del
 
 
 
+
+
 // *** EVENTOS: Selección de Caja Mayor o Chica ***
 document.querySelectorAll('.tab').forEach((tab) => {
     tab.addEventListener('click', (event) => {
@@ -86,6 +88,8 @@ async function fetchArqueos(cajaTipo) {
 
 // *** FUNCIONES: Renderizar Tablas de Arqueos ***
 function renderArqueosTable(arqueos) {
+    console.log("Arqueos A LOS CUALES SE LE ESTA APLICANDO EL RENDER!", arqueos);
+    console.trace(); // Muestra el stack trace en la consola
     const tableBody = document.querySelector('#table-arqueo tbody');
     tableBody.innerHTML = ''; // Limpiar tabla
 
@@ -498,7 +502,9 @@ function renderMovimientosTable(movimientos) {
                 }
                 </td>
                 <td>${movimiento.descripcion || "---"}</td>
-                <td>${movimiento.estadoPago || "---"}</td> <!-- Nueva columna para Estado -->
+                <td class="${movimiento.estadoPago === "abonado" ? "estado-abonado" : movimiento.estadoPago === "no-abonado" ? "estado-no-abonado" : ""}">
+                    ${movimiento.estadoPago || "---"}
+                </td>
             `;
             tableBody.appendChild(row);
 
@@ -526,6 +532,7 @@ function renderMovimientosTable(movimientos) {
         tableBody.appendChild(noDataRow);
     }
 }
+
 
 function actualizarDetallesMovimiento(movimiento) {
     // Actualizar los campos editables en el detalle de movimientos
@@ -745,8 +752,6 @@ function renderLavadosTable(lavados) {
         lavados.sort((a, b) => new Date(b.fechaHora) - new Date(a.fechaHora));
 
         lavados.forEach((lavado, index) => {
-            console.log("Lavado procesado:", lavado);
-
             // Crear una nueva fila
             const row = document.createElement("tr");
 
@@ -771,8 +776,7 @@ function renderLavadosTable(lavados) {
             // Agregar atributo data-id para identificar la fila
             const lavadoId = lavado._id || "sin-id";
             row.setAttribute("data-id", lavadoId);
-            console.log(`Atributo data-id asignado a la fila: ${lavadoId}`);
-
+            
             // Agregar evento de clic a la fila
             row.addEventListener("click", () => {
                 console.log(`Fila ${index} clicada. ID del lavado: ${lavado._id}`);

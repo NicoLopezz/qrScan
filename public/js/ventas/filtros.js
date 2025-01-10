@@ -67,21 +67,6 @@ toggleFiltersButton.addEventListener("click", () => {
 });
 
 
-// // *** Evento para manejar el cambio en el filtro Tipo de Caja ***
-// document.getElementById("tipo-arqueo-movimiento").addEventListener("change", function (event) {
-//     const selectedValue = event.target.value;
-
-//     if (selectedValue === "abierto") {
-//         currentFiltroMovimiento = "abierto";
-//     } else if (selectedValue === "cerrado") {
-//         currentFiltroMovimiento = "cerrado";
-//     } else {
-//         currentFiltroMovimiento = "abierto";
-//     }
-//     console.log("CAMBIO DE TIPO DE ARQUEO:", currentFiltroMovimiento);
-//     fetchMovimientos(); // Ejecutar fetchMovimientos después de cambiar el filtro
-// });
-
 // *** Evento para manejar el cambio en el filtro Tipo de Ingreso ***
 document.getElementById("tipo-ingreso").addEventListener("change", function (event) {
     currentFiltroIngreso = event.target.value;
@@ -217,46 +202,65 @@ async function fetchMovimientos() {
 
 
 
-//FILTROS DE ARQEIOS---->
+// FILTROS DE ARQUEOS---->
+// Variables globales para los filtros de arqueos
+let currentFiltroTipoArqueo = "todos"; // Para "Tipo de Arqueo"
+let currentFiltroEstadoArqueo = "todos"; // Para "Estado"
+
+// Establecer el filtro de hora de apertura por defecto (inicio del día de hoy)
+let currentFiltroHoraApertura = { desde: null, hasta: null };
+const hoy = new Date();
+const inicioDia = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate(), 0, 0, 0);
+currentFiltroHoraApertura.desde = inicioDia.toISOString();
+
+// Convertir a la hora local para mostrar correctamente en el input
+const offset = inicioDia.getTimezoneOffset() * 60000; // Obtener el desfase en milisegundos
+const localInicioDia = new Date(inicioDia.getTime() - offset);
+
+// Mostrar el valor predeterminado en el input de fecha para la hora de apertura
+const inputHoraApertura = document.getElementById("hora-apertura");
+if (inputHoraApertura) {
+    inputHoraApertura.value = localInicioDia.toISOString().slice(0, 16); // Formato YYYY-MM-DDTHH:mm
+}
+
+let currentFiltroHoraCierre = { desde: null, hasta: null }; // Para "Hora de Cierre"
 
 
-// *** Eventos para los filtros ***
+
+
+// Detectar cambios en el filtro de Hora de Apertura
+document.getElementById("hora-apertura").addEventListener("change", (event) => {
+    currentFiltroHoraApertura.desde = event.target.value
+        ? new Date(event.target.value).toISOString()
+        : null;
+    console.log("Filtro Hora de Apertura cambiado a:", currentFiltroHoraApertura.desde);
+    fetchArqueosFilter();
+});
+
+// Detectar cambios en el filtro de Hora de Cierre
+document.getElementById("hora-cierre").addEventListener("change", (event) => {
+    currentFiltroHoraCierre.desde = event.target.value
+        ? new Date(event.target.value).toISOString()
+        : null;
+    console.log("Filtro Hora de Cierre cambiado a:", currentFiltroHoraCierre.desde);
+    fetchArqueosFilter();
+});
+
+// Detectar cambios en el filtro de Tipo de Arqueo
 document.getElementById("tipo-arqueo").addEventListener("change", (event) => {
     currentFiltroTipoArqueo = event.target.value;
     console.log("Filtro Tipo de Arqueo cambiado a:", currentFiltroTipoArqueo);
     fetchArqueosFilter();
 });
 
+// Detectar cambios en el filtro de Estado
 document.getElementById("estado-arqueo").addEventListener("change", (event) => {
     currentFiltroEstadoArqueo = event.target.value;
     console.log("Filtro Estado cambiado a:", currentFiltroEstadoArqueo);
     fetchArqueosFilter();
 });
 
-document.getElementById("hora-apertura").addEventListener("change", (event) => {
-    currentFiltroHoraApertura.desde = event.target.value; // Actualiza solo el campo "desde"
-    console.log("Filtro Hora de Apertura cambiado a:", currentFiltroHoraApertura.desde);
-    fetchArqueosFilter(); // Llama a la función de filtrado
-});
-
-document.getElementById("hora-cierre").addEventListener("change", (event) => {
-    currentFiltroHoraCierre.hasta = event.target.value; // Actualiza solo el campo "hasta"
-    console.log("Filtro Hora de Cierre cambiado a:", currentFiltroHoraCierre.hasta);
-    fetchArqueosFilter(); // Llama a la función de filtrado
-});
-
-
-
-
-
-// Variables globales para los filtros de arqueos
-let currentFiltroTipoArqueo = "todos"; // Para "Tipo de Arqueo"
-let currentFiltroEstadoArqueo = "todos"; // Para "Estado"
-let currentFiltroHoraApertura = { desde: null, hasta: null }; // Para "Hora de Apertura"
-let currentFiltroHoraCierre = { desde: null, hasta: null }; // Para "Hora de Cierre"
-//---->FILTROS DE ARQUEOS
 // *** Función para obtener y filtrar arqueos según los filtros seleccionados ***
-// Función para aplicar filtros y renderizar la tabla
 async function fetchArqueosFilter() {
     console.log("Filtros seleccionados:");
     console.log("Tipo de Arqueo:", currentFiltroTipoArqueo);
@@ -318,7 +322,7 @@ async function fetchArqueosFilter() {
                 renderArqueosTable(arqueos);
             }
             console.log("Arqueos después de aplicar todos los filtros:", arqueos);
-            renderArqueosTable(arqueos);
+            // renderArqueosTable(arqueos);
         } else {
             console.error("Error al obtener arqueos:", data.message);
             showNotification(`Error al obtener arqueos: ${data.message}`, "error");
@@ -328,7 +332,6 @@ async function fetchArqueosFilter() {
         showNotification("Error al conectarse con el servidor.", "error");
     }
 }
-
 
 
 // *** Función para reiniciar filtros y activar opción por defecto ***
@@ -484,7 +487,6 @@ async function cargarLavadosConFiltros() {
         if (!response.ok) throw new Error("No se pudo cargar los lavados");
 
         const data = await response.json();
-        console.log("Respuesta del servidor:", data); // Verifica los datos recibidos
         let lavados = data;
 
         if (!lavados.length) {
@@ -509,11 +511,11 @@ async function cargarLavadosConFiltros() {
 
 // // Función para aplicar filtros a los lavados
 function aplicarFiltrosLavados(lavados) {
-    console.log("Aplicando filtros:");
-    console.log("Patente:", filtroPatenteLavados);
-    console.log("Estado:", filtroEstadoLavados);
-    console.log("Fecha:", filtroFechaLavados);
-    console.log("Empresa:", filtroEmpresaLavados);
+    // console.log("Aplicando filtros:");
+    // console.log("Patente:", filtroPatenteLavados);
+    // console.log("Estado:", filtroEstadoLavados);
+    // console.log("Fecha:", filtroFechaLavados);
+    // console.log("Empresa:", filtroEmpresaLavados);
 
     // Filtrar por patente
     if (filtroPatenteLavados) {
@@ -533,7 +535,6 @@ function aplicarFiltrosLavados(lavados) {
     if (filtroFechaLavados.tipo === "hoy") {
         const hoy = new Date().toISOString().split("T")[0]; // Fecha actual en formato YYYY-MM-DD
         lavados = lavados.filter((lavado) => lavado.fechaDeAlta.startsWith(hoy));
-        console.log("Después de filtrar por Fecha (Hoy):", lavados);
     } else if (filtroFechaLavados.tipo === "determinar") {
         const { desde, hasta } = filtroFechaLavados;
         lavados = lavados.filter((lavado) => {
@@ -548,10 +549,7 @@ function aplicarFiltrosLavados(lavados) {
         lavados = lavados.filter((lavado) =>
             lavado.empresa && lavado.empresa.toLowerCase().includes(filtroEmpresaLavados)
         );
-        console.log("Después de filtrar por Empresa:", lavados);
     }
-
-    console.log("Lavados después de aplicar filtros:", lavados);
     return lavados;
 }
 
@@ -617,8 +615,6 @@ function agregarFilaTabla(lavado, tbody) {
         // Agregar atributo data-id para identificar la fila
         const lavadoId = lavado._id || "sin-id";
         fila.setAttribute("data-id", lavadoId);
-        console.log(`Atributo data-id asignado a la fila: ${lavadoId}`);
-
         // Agregar evento de clic a la fila
         fila.addEventListener("click", () => {
             console.log(`Fila clicada. ID del lavado: ${lavado._id}`);

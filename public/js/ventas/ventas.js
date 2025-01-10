@@ -158,6 +158,7 @@ options.forEach((option) => {
     });
 });
 
+
 // Asegurarse de que los filtros estén ocultos al cargar la página
 document.addEventListener("DOMContentLoaded", () => {
     hideAllFilters(); // Ocultar todos los filtros al cargar
@@ -186,10 +187,12 @@ document.querySelectorAll('.option').forEach((option) => {
             showFormsAndButtons('btn-nuevo-arqueo'); // Mostrar botón y formulario de arqueos
             detailsSection.style.display = 'none';
             details.style.display = 'none';
+            console.log(`EJECUTANDO FETCH ARQUEOS DESDE VENTAS JS ---- !!`);
+            fetchArqueosFilter(); // Ejecutar la función de filtros para 
 
             // Ocultar el detalle de movimiento
             // movimientoDetails.classList.remove('visible');
-            fetchArqueos(cajaTipoActivo); // Mostrar arqueos
+            // fetchArqueos(cajaTipoActivo); // Mostrar arqueos
         } else if (selectedOption === 'ventas') {
             showFormsAndButtons('btn-nueva-venta'); // Mostrar botón y formulario de ventas
             detailsSection.style.display = 'none';
@@ -289,6 +292,7 @@ options.forEach((option) => {
         } else if (option.id === 'movimientos') {
             document.getElementById('table-movimientos').classList.remove('hidden');
             document.getElementById('form-lavado').classList.add('hidden');
+            document.getElementById('table-arqueo').classList.add('hidden');
             if (movimientoDetails) movimientoDetails.classList.remove('hidden');
         } else if (option.id === 'arqueo') {
             document.getElementById('table-arqueo').classList.remove('visible');

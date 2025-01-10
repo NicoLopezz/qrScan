@@ -16,7 +16,7 @@ async function cargarNombreLocal() {
     // Obtener la información del usuario
     const userInfo = await fetchUserInfo(adminId);
     if (userInfo && userInfo.localName) {
-        const localNameElement = document.getElementById("localName");
+        const localNameElement = document.getElementById("localName2");
         if (!localNameElement) {
             console.error("No se encontró el elemento con id 'localName' en el DOM.");
             return;

@@ -387,7 +387,7 @@ i.edit-icon {
 }
 
 .tabs {
-    display: flex;
+    display: grid;
     margin-bottom: 10px;
 }
 
@@ -622,6 +622,18 @@ select {
 #diferencia-valor {
     font-size: 20px;
 }
+
+/* Estilos para los estados de pago */
+.estado-abonado {
+    color: #07a507;
+    /* font-weight: bold; */
+}
+
+.estado-no-abonado {
+    color: red;
+    /* font-weight: bold; */
+}
+
 
 
 /* DETALLES DINAMICOS */
