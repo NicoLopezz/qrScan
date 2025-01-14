@@ -134,10 +134,10 @@
                 <li class="menu-item" data-section="dashboard">
                     <i class="fas fa-home"></i> Dashboard
                 </li>
-                <li class="menu-item mensajes" data-section="lavaderos">
+                <li class="menu-item" data-section="lavaderos">
                     <i class="fas fa-car"></i> Lavadero
                 </li>
-                <li class="menu-item mensajes" data-section="mensajes">
+                <li class="menu-item" data-section="mensajes">
                     <i class="fas fa-comments"></i> Mensajes
                 </li>
                 <li class="menu-item" data-section="ventas">
@@ -182,7 +182,7 @@
     <div class="content-container">
         <div class="main-content">
 
-            <!-- Sección Dashboard -->
+            <!-- Sección Dashboard 22-->
             <div id="section-dashboard" class="section">
                 <div class="cards">
                     <div class="card">
@@ -212,6 +212,24 @@
                             <p class="card-number" id="tiempoPromedio"></p>
                         </div>
                     </div>
+                    <div class="card">
+                        <div class="icon-container">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Caja <br>Efectivo</h3>
+                            <p class="card-number" id="cajaChicaActualEfectivo"></p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="icon-container">
+                            <i class="fas fa-landmark"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Caja <br>Mercado-Pago</h3>
+                            <p class="card-number" id="cajaChicaActualMp"></p>
+                        </div>
+                    </div>
                     <div class="card" id="tarjetaOcultar">
                         <div class="icon-container">
                             <i class="fas fa-star"></i>
@@ -221,7 +239,7 @@
                             <p class="card-number" id="calificacionPromedio"></p>
                         </div>
                     </div>
-                    <div class="card" id="tarjetaOcultar">
+                    <!-- <div class="card" id="tarjetaOcultar">
                         <div class="icon-container">
                             <i class="fas fa-bolt"></i>
                         </div>
@@ -229,8 +247,8 @@
                             <h3>Servicio <br> Preferido</h3>
                             <p class="card-number" id="ServicioMasPedido"></p>
                         </div>
-                    </div>
-                    <div class="card" id="tarjetaOcultar">
+                    </div> -->
+                    <!-- <div class="card" id="tarjetaOcultar">
                         <div class="icon-container">
                             <i class="fas fa-ticket-alt"></i>
                         </div>
@@ -238,7 +256,7 @@
                             <h3>Promocion <br> activa</h3>
                             <p class="card-number" id="promoActiva">Jueves 10% off</p>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
 
                 <div class="charts-and-counter">
@@ -249,6 +267,436 @@
                 </div>
 
 
+            </div>
+
+            <!-- Sección Lavaderos -->
+            <div id="section-lavaderos" class="section">
+                <div class="container" id="containerUser">
+
+                    <!-- Tabla de Datos -->
+                    <div class="tabla" id="tablaLavados2">
+                        <h3>Clientes</h3>
+                        <div class="table-container">
+                            <!-- Contenedor para la tabla con scroll -->
+                            <table>
+                                <thead class="cabeceraTabla">
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Modelo</th>
+                                        <th>Patente</th>
+                                        <th>Lavado</th>
+                                        <th>Observación</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaLavados">
+                                    <!-- Filas de datos se agregarán dinámicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+
+
+                    </div>
+
+                    <!-- Tarjeta del Cliente Seleccionado -->
+                    <div class="tarjeta" id="tarjetaCliente">
+                        <h3 id="nombreCliente">Detalles</h3>
+                        <p id="modeloCliente">Modelo: --</p>
+                        <p id="patenteCliente">Patente: --</p>
+                        <p id="observacionCliente">Observación: --</p>
+                        <p id="lavadoCliente">Lavado: --</p>
+
+
+                        <!-- Botón Generar QR -->
+                        <button id="btnGenerarQRlavado" onclick="generarQRlavado()">
+                            <i class="fas fa-qrcode"></i> Generar QR
+                        </button>
+
+                        <!-- Botón Enviar Aviso -->
+                        <button id="btnAvisoLavado2">
+                            <i class="fab fa-whatsapp"></i> Enviar Aviso
+                        </button>
+                        <!-- Botón Enviar Aviso -->
+                        <button id="btnAvisoLavado">
+                            <i class="fab fa-whatsapp"></i> Enviar Encuesta
+                        </button>
+                    </div>
+
+
+                    <!-- Tarjeta Alta Nuevo Lavado -->
+                    <div class="tarjetaYqr" id="tarjetaYqr">
+                        <div class="tarjeta" id="tarjetaReserva">
+                            <h3>Agregar Cliente</h3>
+                            <input type="text" id="inputNombre2" placeholder="Nombre" required />
+                            <input type="text" id="inputNombre3" placeholder="Empresa" />
+                            <input type="text" id="inputModelo" placeholder="Modelo" required />
+                            <input type="text" id="inputPatente" placeholder="Patente" required />
+                            <select id="selectServicio" required>
+                                <option value="" disabled selected>Seleccione el tipo de lavado</option>
+                                <option value="lavado-basico">Lavado Básico</option>
+                                <option value="lavado-completo">Lavado Completo</option>
+                                <option value="lavado-en-profundidad">Lavado en Profundidad</option>
+                                <option value="lavado-con-encerado">Lavado con Encerado</option>
+                            </select>
+                            <input type="text" id="inputObservation" placeholder="Observaciones" />
+                            <button id="btnAgregar" onclick="agregarLavado()">Agregar Lavado</button>
+                        </div>
+                    </div>
+
+
+
+                    <!-- Menú de Navegación MOVIL!-->
+                    <div class="menu-container">
+                        <div class="background-highlight"></div>
+                        <button class="menu-option" onclick="handleOption('reservas')">Nuevo</button>
+                        <div class="btnsMovil">
+                            <!-- Botón Generar QR -->
+                            <button class="btnAction" id="btnGenesrarQRlavado" onclick="generarQRlavado()">
+                                <i class="fas fa-qrcode"></i>
+                            </button>
+                            <!-- Botón Enviar Aviso -->
+                            <button class="btnAction" id="btnAvisoLavado2">
+                                <i class="fab fa-whatsapp"></i>
+                            </button>
+                        </div>
+                        <button class="menu-option" onclick="handleOption('tabla')">Tabla</button>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Sección Mensajes -->
+            <div id="section-mensajes" class="section">
+                <div class="section-mensajes" id="section-mensajesMovil">
+                    <div class="whatsapp-simulator-box">
+                        <!-- Barra lateral izquierda -->
+                        <div class="whatsapp-sidebar">
+                            <div class="whatsapp-sidebar-header">
+                                <img src="/img/logo3d.PNG" alt="Perfil" class="whatsapp-profile-pic-sidebar">
+                                <input type="text" id="searchInput" placeholder="Buscar..." class="whatsapp-search-bar">
+                                <span id="clearSearch" class="clear-search">&times;</span>
+                                <!-- Cruz para limpiar búsqueda -->
+                                <!-- Botones de selección -->
+                                <div class="select-buttons">
+                                    <select id="filterSelect" class="filter-select">
+                                        <option value="" disabled selected>Filtros...</option>
+                                        <option value="low-comments">Puntuacion baja</option>
+                                        <option value="no-service-15">+15 días sin servicio</option>
+                                        <option value="frequent">Frecuentes</option>
+                                        <option value="promo-1">Promo #1</option>
+                                        <option value="ninguno">Ninguno</option>
+                                    </select>
+
+                                    <button id="selectAllButton" class="select-button">Todos</button>
+                                    <button id="deselectAllButton" class="select-button">Ninguno</button>
+                                </div>
+
+                            </div>
+                            <ul id="clientList">
+                                <!-- Se llenará dinámicamente con clientes -->
+                                <!-- Puedes agregar más clientes si lo deseas -->
+                            </ul>
+                        </div>
+
+                        <!-- Panel principal (Área de chat) -->
+                        <div class="whatsapp-chat-panel" id="chatDesktop">
+                            <div class="whatsapp-chat-header">
+                                <!-- <img src="/img/userIcon.png" alt="Foto de perfil" id="profilePic"> -->
+                                <div class="whatsapp-header-info">
+                                    <span id="phoneNumber">Selecciona un cliente</span>
+                                    <span class="whatsapp-status">En línea</span>
+                                </div>
+                            </div>
+                            <div id="chatHistory" class="whatsapp-chat-history">
+
+                                <div class="whatsapp-container">
+                                    <!-- Mensaje para cliente que no ha venido hace tiempo -->
+                                    <div class="message-bubble message-type-1">
+                                        <p>🚗✨ ¡Hola, hace tiempo que no vemos tu auto brillar como se merece en
+                                            <strong>CARWASH PREMIUM</strong> 🧽.
+                                        </p>
+                                        <p>¡Te extrañamos! Por eso queremos darte un <strong>10% de descuento</strong>
+                                            en tu próximo lavado 🤑 para que tu auto vuelva a lucir impecable.</p>
+                                        <p>📅 Ven cuando quieras, estaremos encantados de ayudarte a dejar tu coche como
+                                            nuevo.</p>
+                                        <p>¡Te esperamos!</p>
+                                        <p>Saludos,</p>
+                                        <p><strong>El equipo de CARWASH PREMIUM</strong></p>
+                                    </div>
+
+                                    <!-- Mensaje para cliente con calificación baja -->
+                                    <div class="message-bubble message-type-2">
+                                        <p>👋 ¡Hola,!</p>
+                                        <p>En <strong>CARWASH PREMIUM</strong> 🧽 nos importa mucho tu experiencia, y
+                                            hemos notado que tu última calificación fue algo baja.</p>
+                                        <p>y queremos saber más para mejorar nuestro servicio. ¿Nos cuentas qué pasó? 💬
+                                        </p>
+                                        <p>👉 Puedes enviarnos tus comentarios de forma rápida aquí: <a
+                                                href="https://www.google.com/forms" target="_blank">Google Form</a></p>
+                                        <p>O mándanos un mensaje directo en Instagram: <a
+                                                href="https://www.instagram.com/carwashpremium"
+                                                target="_blank">@carwashpremium</a> 📲</p>
+                                        <p>Valoramos tu opinión nos ayuda a crecer y mejorar!</p>
+                                        <p>Saludos,</p>
+                                        <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
+                                    </div>
+
+                                    <!-- Mensaje para cliente frecuente -->
+                                    <div class="message-bubble message-type-3">
+                                        <p>🎉 ¡Hola!</p>
+                                        <p>En <strong>CARWASH PREMIUM</strong> 🧽 queremos agradecerte por ser uno de
+                                            nuestros clientes más frecuentes. ¡Eres parte de nuestra familia! 💚</p>
+                                        <p>🚗 Como muestra de nuestro agradecimiento, te regalamos un <strong>lavado
+                                                premium gratis</strong> en tu próxima visita. ¡Porque tu auto merece lo
+                                            mejor! ✨</p>
+                                        <p>📅 Pásate por el local cuando quieras y menciona este mensaje para canjear tu
+                                            recompensa.</p>
+                                        <p>🙏 Gracias por elegirnos siempre. ¡Nos encanta verte por aquí!</p>
+                                        <p>Saludos,</p>
+                                        <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
+                                    </div>
+
+                                    <!-- Mensaje para promoción especial -->
+                                    <div class="message-bubble message-type-4">
+                                        <p>🎁 ¡Hola!</p>
+                                        <p>¡Tenemos una <strong>promoción especial</strong> para ti! ✨</p>
+                                        <p>🚗 Durante esta semana, disfruta de un <strong>2x1 en lavados
+                                                premium</strong>. Trae tu auto y el de un amigo para que ambos brillen
+                                            como nuevos 🧽✨.</p>
+                                        <p>📅 Promoción válida del <strong>7 al 14 de diciembre</strong>. ¡No te la
+                                            pierdas!</p>
+                                        <p>👉 Para más información, contáctanos por WhatsApp o visítanos en el local.
+                                        </p>
+                                        <p>🎉 ¡Te esperamos!</p>
+                                        <p>Saludos,</p>
+                                        <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
+                                    </div>
+                                </div>
+                                <!-- Mensajes se llenarán dinámicamente -->
+                            </div>
+                            <div class="whatsapp-chat-footer">
+                                <!-- <input type="text" id="messageInput2" placeholder="Escribe un mensaje..."
+                                    class="whatsapp-message-input"> -->
+                                <button id="sendButton" class="whatsapp-send-button">
+                                    Enviar (<span id="selectedCount">0</span>)
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!--   Box de datos -->
+                    <div class="right-mess-colum">
+                        <div class="client-info-box">
+                            <h3>Datos Clientes</h3>
+                            <table class="client-details">
+                                <tr>
+                                    <th>Nombre</th>
+                                    <td id="client-name"></td>
+                                </tr>
+                                <tr>
+                                    <th>Teléfono</th>
+                                    <td id="client-phone"></td>
+                                </tr>
+                                <tr>
+                                    <th>Evaluacion Prom.</th>
+                                    <td id="client-score"></td>
+                                </tr>
+                                <tr>
+                                    <th>Fidelidad</th>
+                                    <td id="client-loyalty">
+                                        <span class="stars"></span> <!-- Ejemplo de 3 de 5 estrellas -->
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Ultimo <br> Lavado</th>
+                                    <td id="client-resent"></td>
+                                </tr>
+                                <tr>
+                                    <th>Cunpleños</th>
+                                    <td id="client-resent"></td>
+                                </tr>
+                                <tr>
+                                    <th>Tiempo <br> Lavado <br> Promedio</th>
+                                    <td id="client-resent-tiempooLavado"></td>
+                                </tr>
+                            </table>
+                        </div>
+
+
+
+
+
+                        <!-- VERSION DE MOVIL -->
+                        <!-- Panel principal (Área de chat) -->
+                        <div class="whatsapp-chat-panel" id="chatMovil">
+                            <div class="whatsapp-chat-header">
+                                <!-- <img src="/img/userIcon.png" alt="Foto de perfil" id="profilePic"> -->
+                                <div class="whatsapp-header-info">
+                                    <span id="phoneNumber">Selecciona un cliente</span>
+                                    <span class="whatsapp-status">En línea</span>
+                                </div>
+                            </div>
+                            <div id="chatHistory" class="whatsapp-chat-history">
+
+
+                                <div class="whatsapp-container">
+                                    <!-- Mensaje para cliente que no ha venido hace tiempo -->
+                                    <div class="message-bubble message-type-1 active">
+                                        <p>🚗✨ ¡Hola, hace tiempo que no vemos tu auto brillar como se merece en
+                                            <strong>CARWASH PREMIUM</strong> 🧽.
+                                        </p>
+                                        <p>¡Te extrañamos! Por eso queremos darte un <strong>10% de descuento</strong>
+                                            en tu próximo lavado 🤑 para que tu auto vuelva a lucir impecable.</p>
+                                        <p>📅 Ven cuando quieras, estaremos encantados de ayudarte a dejar tu coche como
+                                            nuevo.</p>
+                                        <p>¡Te esperamos!</p>
+                                        <p>Saludos,</p>
+                                        <p><strong>El equipo de CARWASH PREMIUM</strong></p>
+                                    </div>
+
+                                    <!-- Mensaje para cliente con calificación baja -->
+                                    <div class="message-bubble message-type-2">
+                                        <p>👋 ¡Hola,!</p>
+                                        <p>En <strong>CARWASH PREMIUM</strong> 🧽 nos importa mucho tu experiencia, y
+                                            hemos notado que tu última calificación fue algo baja.</p>
+                                        <p>y queremos saber más para mejorar nuestro servicio. ¿Nos cuentas qué pasó? 💬
+                                        </p>
+                                        <p>👉 Puedes enviarnos tus comentarios de forma rápida aquí: <a
+                                                href="https://www.google.com/forms" target="_blank">Google Form</a></p>
+                                        <p>O mándanos un mensaje directo en Instagram: <a
+                                                href="https://www.instagram.com/carwashpremium"
+                                                target="_blank">@carwashpremium</a> 📲</p>
+                                        <p>Valoramos tu opinión nos ayuda a crecer y mejorar!</p>
+                                        <p>Saludos,</p>
+                                        <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
+                                    </div>
+
+                                    <!-- Mensaje para cliente frecuente -->
+                                    <div class="message-bubble message-type-3">
+                                        <p>🎉 ¡Hola!</p>
+                                        <p>En <strong>CARWASH PREMIUM</strong> 🧽 queremos agradecerte por ser uno de
+                                            nuestros clientes más frecuentes. ¡Eres parte de nuestra familia! 💚</p>
+                                        <p>🚗 Como muestra de nuestro agradecimiento, te regalamos un <strong>lavado
+                                                premium gratis</strong> en tu próxima visita. ¡Porque tu auto merece lo
+                                            mejor! ✨</p>
+                                        <p>📅 Pásate por el local cuando quieras y menciona este mensaje para canjear tu
+                                            recompensa.</p>
+                                        <p>🙏 Gracias por elegirnos siempre. ¡Nos encanta verte por aquí!</p>
+                                        <p>Saludos,</p>
+                                        <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
+                                    </div>
+
+                                    <!-- Mensaje para promoción especial -->
+                                    <div class="message-bubble message-type-4">
+                                        <p>🎁 ¡Hola!</p>
+                                        <p>¡Tenemos una <strong>promoción especial</strong> para ti! ✨</p>
+                                        <p>🚗 Durante esta semana, disfruta de un <strong>2x1 en lavados
+                                                premium</strong>. Trae tu auto y el de un amigo para que ambos brillen
+                                            como nuevos 🧽✨.</p>
+                                        <p>📅 Promoción válida del <strong>7 al 14 de diciembre</strong>. ¡No te la
+                                            pierdas!</p>
+                                        <p>👉 Para más información, contáctanos por WhatsApp o visítanos en el local.
+                                        </p>
+                                        <p>🎉 ¡Te esperamos!</p>
+                                        <p>Saludos,</p>
+                                        <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
+                                    </div>
+                                </div>
+
+
+                                <!-- Mensajes se llenarán dinámicamente -->
+                            </div>
+                            <div class="whatsapp-chat-footer">
+                                <input type="text" id="messageInput" placeholder="Escribe un mensaje..."
+                                    class="whatsapp-message-input">
+                                <button id="sendButton2" class="whatsapp-send-button">
+                                    Enviar (<span id="selectedCount">0</span>)
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="cardM">
+                        <div class="icon-container">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 class="titleCard">Mensajes</h3>
+                            <p class="card-number">256/500</p>
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+
+            <!-- Sección para crear un usuario -->
+            <div id="section-users" class="section">
+                <div class="sectionForm">
+                    <div class="formCreateUser">
+                        <h2>Crear Usuario</h2>
+                        <form class="form-create-user">
+                            <label for="email">Email:</label>
+                            <input type="email" id="email" name="email" required>
+
+                            <label for="password">Contraseña:</label>
+                            <input type="password" id="password" name="password" required>
+
+                            <label for="role">Rol:</label>
+                            <select id="role" name="role" required>
+                                <option value="admin">Admin</option>
+                                <option value="editor">Editor</option>
+                                <option value="viewer">Viewer</option>
+                            </select>
+
+                            <button type="submit">Crear Usuario</button>
+                        </form>
+                    </div>
+
+                    <div class="activeUsers">
+                        <h2>Usuarios Activos</h3>
+                            <div class="table-section">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Email</th>
+                                            <th>Rol</th>
+                                            <th>Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>juan.perez@example.com</td>
+                                            <td>Admin</td>
+                                            <td>Activo</td>
+                                        </tr>
+                                        <tr>
+                                            <td>maria.garcia@example.com</td>
+                                            <td>Editor</td>
+                                            <td>Activo</td>
+                                        </tr>
+                                        <tr>
+                                            <td>luis.mendez@example.com</td>
+                                            <td>Viewer</td>
+                                            <td>Activo</td>
+                                        </tr>
+                                        <tr>
+                                            <td>sofia.lopez@example.com</td>
+                                            <td>Admin</td>
+                                            <td>Activo</td>
+                                        </tr>
+                                        <tr>
+                                            <td>pedro.fernandez@example.com</td>
+                                            <td>Viewer</td>
+                                            <td>Activo</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Seccion de pedidos -->
@@ -374,101 +822,6 @@
                 </div>
             </div>
 
-            <!-- Sección Lavaderos -->
-            <div id="section-lavaderos" class="section">
-                <div class="container" id="containerUser">
-
-                    <!-- Tabla de Datos -->
-                    <div class="tabla" id="tablaLavados2">
-                        <h3>Clientes</h3>
-                        <div class="table-container">
-                            <!-- Contenedor para la tabla con scroll -->
-                            <table>
-                                <thead class="cabeceraTabla">
-                                    <tr>
-                                        <th>Nombre</th>
-                                        <th>Modelo</th>
-                                        <th>Patente</th>
-                                        <th>Lavado</th>
-                                        <th>Observación</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tablaLavados">
-                                    <!-- Filas de datos se agregarán dinámicamente -->
-                                </tbody>
-                            </table>
-                        </div>
-
-
-                    </div>
-
-                    <!-- Tarjeta del Cliente Seleccionado -->
-                    <div class="tarjeta" id="tarjetaCliente">
-                        <h3 id="nombreCliente">Detalles</h3>
-                        <p id="modeloCliente">Modelo: --</p>
-                        <p id="patenteCliente">Patente: --</p>
-                        <p id="observacionCliente">Observación: --</p>
-                        <p id="lavadoCliente">Lavado: --</p>
-
-
-                        <!-- Botón Generar QR -->
-                        <button id="btnGenerarQRlavado" onclick="generarQRlavado()">
-                            <i class="fas fa-qrcode"></i> Generar QR
-                        </button>
-
-                        <!-- Botón Enviar Aviso -->
-                        <button id="btnAvisoLavado2">
-                            <i class="fab fa-whatsapp"></i> Enviar Aviso
-                        </button>
-                        <!-- Botón Enviar Aviso -->
-                        <button id="btnAvisoLavado">
-                            <i class="fab fa-whatsapp"></i> Enviar Encuesta
-                        </button>
-                    </div>
-
-
-                    <!-- Tarjeta Alta Nuevo Lavado -->
-                    <div class="tarjetaYqr" id="tarjetaYqr">
-                        <div class="tarjeta" id="tarjetaReserva">
-                            <h3>Agregar Cliente</h3>
-                            <input type="text" id="inputNombre2" placeholder="Nombre" required />
-                            <input type="text" id="inputNombre3" placeholder="Empresa" />
-                            <input type="text" id="inputModelo" placeholder="Modelo" required />
-                            <input type="text" id="inputPatente" placeholder="Patente" required />
-                            <select id="selectServicio" required>
-                                <option value="" disabled selected>Seleccione el tipo de lavado</option>
-                                <option value="lavado-basico">Lavado Básico</option>
-                                <option value="lavado-completo">Lavado Completo</option>
-                                <option value="lavado-en-profundidad">Lavado en Profundidad</option>
-                                <option value="lavado-con-encerado">Lavado con Encerado</option>
-                            </select>
-                            <input type="text" id="inputObservation" placeholder="Observaciones" />
-                            <button id="btnAgregar" onclick="agregarLavado()">Agregar Lavado</button>
-                        </div>
-                    </div>
-
-
-
-                    <!-- Menú de Navegación MOVIL!-->
-                    <div class="menu-container">
-                        <div class="background-highlight"></div>
-                        <button class="menu-option" onclick="handleOption('reservas')">Nuevo</button>
-                        <div class="btnsMovil">
-                            <!-- Botón Generar QR -->
-                            <button class="btnAction" id="btnGenesrarQRlavado" onclick="generarQRlavado()">
-                                <i class="fas fa-qrcode"></i>
-                            </button>
-                            <!-- Botón Enviar Aviso -->
-                            <button class="btnAction" id="btnAvisoLavado2">
-                                <i class="fab fa-whatsapp"></i>
-                            </button>
-                        </div>
-                        <button class="menu-option" onclick="handleOption('tabla')">Tabla</button>
-                    </div>
-
-                </div>
-            </div>
-
             <!-- Sección FAQ -->
             <div id="section-faq" class="section">
                 <h2>Preguntas Frecuentes</h2>
@@ -505,6 +858,57 @@
                 </div>
             </div>
 
+            <!-- Sección Profile -->
+            <div id="section-profile" class="section">
+                <div id="profile-section-container">
+
+                    <!-- Columna izquierda: Información del Usuario -->
+                    <div class="profile-column left-column">
+                        <div class="rect-image">
+                            <div class="rectangle">
+                                <h1 class="titleBox">General</h1>
+                            </div>
+                        </div>
+                        <ul class="user-info">
+                            <li><strong>Nombre Usuario:</strong> Juan Pérez</li>
+                            <li><strong>Teléfono / Local:</strong> +54 9 11 1234 5678</li>
+                            <li><strong>Nombre:</strong> Bar La Esquina</li>
+                            <li><strong>Correo Principal:</strong> juan.perez@example.com</li>
+                            <li><strong>Dirección:</strong> Corrientes 123, Buenos Aires</li>
+                        </ul>
+                    </div>
+
+                    <!-- Columna central: Plan Contratado -->
+                    <div class="profile-column center-column">
+                        <div class="rect-image">
+                            <div class="rectangle">
+                                <h1 class="titleBox">Plan</h1>
+                            </div>
+                        </div>
+                        <ul class="plan-info">
+                            <li><strong>Plan Contratado:</strong> Premium</li>
+                            <li><strong>Fecha de renovación:</strong> 24/11/2024</li>
+                            <li><strong>Mensajes restantes:</strong> 34/500</li>
+                        </ul>
+                    </div>
+
+                    <!-- Columna derecha: Información de Facturación -->
+                    <div class="profile-column right-column">
+                        <div class="rect-image">
+                            <div class="rectangle">
+                                <h1 class="titleBox">Facturacion</h1>
+                            </div>
+                        </div>
+                        <ul class="billing-info">
+                            <li><strong>CBU:</strong> 0123456789012345678901</li>
+                            <li><strong>Alias:</strong> mi.alias.bancario</li>
+                            <li><strong>Medio de Pago:</strong> Tarjeta de Crédito</li>
+                        </ul>
+                    </div>
+
+                </div><!-- Tarjeta del Cliente Seleccionado -->
+            </div>
+
             <!-- Sección VENTAS-->
             <div id="section-ventas" class="section">
                 <!DOCTYPE html>
@@ -521,39 +925,44 @@
                     <div class="container" id="container-ventas">
                         <!-- Columna Izquierda -->
                         <div class="left-column">
-                            <!-- Tabs -->
-                            <div class="tabs">
-                                <div id="caja-mayor" class="tab active">Caja Mayor</div>
-                                <div id="caja-menor" class="tab">Caja Menor</div>
+
+                            <div class="cabecera-contenedera">
+                                <!-- Tabs -->
+                                <div class="tabs">
+                                    <div id="caja-mayor" class="tab active">Caja Mayor</div>
+                                    <div id="caja-menor" class="tab">Caja Menor</div>
+                                </div>
+                                <!-- Opciones -->
+                                <div class="options">
+                                    <div id="ventas" class="option disabled">Lavados</div>
+                                    <div id="movimientos" class="option">Movimientos</div>
+                                    <div id="arqueo" class="option">Arqueos</div>
+                                </div>
+
+                                <!-- Botón para desplegar/ocultar filtros -->
+                                <button id="toggle-filters" class="toggle-button">Ocultar Filtros</button>
                             </div>
 
 
-                            <!-- Opciones -->
-                            <div class="options">
-                                <div id="ventas" class="option disabled">Lavados</div>
-                                <div id="movimientos" class="option">Movimientos</div>
-                                <div id="arqueo" class="option">Arqueos</div>
-                            </div>
 
-                            <!-- Botón para desplegar/ocultar filtros -->
-                            <button id="toggle-filters" class="toggle-button">Mostrar Filtros</button>
 
 
                             <!-- Filtros Lavados -->
                             <div class="filters" id="filtersLavados">
                                 <!-- Filtro Patente -->
-                                <label for="patente-lavados">Patente:</label>
+                                <!-- <label for="patente-lavados">Patente:</label> -->
                                 <input type="text" id="patente-lavados" class="filter-input"
                                     placeholder="Buscar por patente...">
 
-                                <label for="empresa-lavados">Empresa:</label>
+                                <!-- <label for="empresa-lavados">Empresa:</label> -->
                                 <input type="text" id="empresa-lavados" class="filter-input"
-                                    placeholder="Buscar por nombre de la empresa...">
+                                    placeholder="Buscar por empresa...">
 
 
                                 <!-- Filtro Estado -->
-                                <label for="estado-lavados">Estado:</label>
+                                <!-- <label for="estado-lavados">Estado:</label> -->
                                 <select id="estado-lavados" class="filter-select">
+                                    <option value="" disabled selected>Estado:</option>
                                     <option value="todos">Todos</option>
                                     <option value="pendiente">Pendiente</option>
                                     <option value="abonado">Abonado</option>
@@ -561,8 +970,9 @@
                                 </select>
 
                                 <!-- Filtro Fecha -->
-                                <label for="filtro-fecha-lavados">Fecha:</label>
+                                <!-- <label for="filtro-fecha-lavados">Fecha:</label> -->
                                 <select id="filtro-fecha-lavados" class="filter-select">
+                                    <option value="" disabled selected>Por Fecha:</option>
                                     <option value="hoy">Hoy</option>
                                     <option value="determinar">Determinar</option>
                                 </select>
@@ -582,33 +992,28 @@
 
                             <!-- Filtros Movimientos -->
                             <div class="filters hidden" id="filtersMovs">
-                                <!-- Filtro Tipo de Caja -->
-                                <!-- <label for="tipo-arqueo-movimiento">Arqueos:</label>
-                                <select id="tipo-arqueo-movimiento" class="filter-select">
-                                    <option value="abierto">Abiertos</option>
-                                    <option value="cerrado">Cerrados</option>
-                                    <option value="todos">Todos</option>
-                                </select> -->
-
                                 <!-- Filtro Tipo de Ingreso -->
-                                <label for="tipo-ingreso">Tipo:</label>
+                                <!-- <label for="tipo-ingreso">Tipo:</label> -->
                                 <select id="tipo-ingreso" class="filter-select">
+                                    <option value="" disabled selected>Tipo:</option>
                                     <option value="todos">Todos</option>
                                     <option value="ingreso">Ingreso</option>
                                     <option value="egreso">Egreso</option>
                                 </select>
 
                                 <!-- Filtro Medio de pago -->
-                                <label for="medio-de-pago">Medio de Pago:</label>
+                                <!-- <label for="medio-de-pago">Medio de Pago:</label> -->
                                 <select id="medio-de-pago" class="filter-select">
+                                    <option value="" disabled selected>Medio de Pago:</option>
                                     <option value="todos">Todos</option>
                                     <option value="efectivo">efectivo</option>
                                     <option value="mercado-pago">mercado-pago</option>
                                 </select>
 
                                 <!-- Filtro Estado -->
-                                <label for="estado">Estado:</label>
+                                <!-- <label for="estado">Estado:</label> -->
                                 <select id="estado" class="filter-select">
+                                    <option value="" disabled selected>Estado:</option>
                                     <option value="todos">Todos</option>
                                     <option value="abonado">Abonado</option>
                                     <option value="no-abonado">No Abonado</option>
@@ -616,8 +1021,10 @@
                                 </select>
 
                                 <!-- Filtro Fecha -->
-                                <label for="filtro-fecha">Fecha:</label>
+                                <!-- <label for="filtro-fecha">Fecha:</label> -->
+                                
                                 <select id="filtro-fecha" class="filter-select" onchange="toggleDateInputs(this.value)">
+                                    <option value="" disabled selected>Fecha:</option>
                                     <option value="hoy">Hoy</option>
                                     <option value="determinar">Determinar</option>
                                 </select>
@@ -637,29 +1044,38 @@
                             <!-- Filtros Arqueos -->
                             <div class="filters hidden" id="filtersArqueos">
                                 <!-- Filtro Tipo de Arqueo -->
-                                <label for="tipo-arqueo">Tipo:</label>
+                                <!-- <label for="tipo-arqueo">Tipo:</label> -->
                                 <select id="tipo-arqueo" class="filter-select">
+                                    <option value="" disabled selected>Tipo:</option>
                                     <option value="todos">Todos</option>
                                     <option value="efectivo">Efectivo</option>
                                     <option value="mercado-pago">Mercado Pago</option>
                                 </select>
 
-                                <!-- Filtro Hora de Apertura -->
-                                <label for="hora-apertura">Fecha Apertura:</label>
-                                <input type="datetime-local" id="hora-apertura"
-                                    placeholder="Seleccione hora de apertura">
-
-                                <!-- Filtro Hora de Cierre -->
-                                <label for="hora-cierre">Fecha Cierre:</label>
-                                <input type="datetime-local" id="hora-cierre" placeholder="Seleccione hora de cierre">
-
-                                <!-- Filtro Estado -->
-                                <label for="estado-arqueo">Estado:</label>
+                                <!-- <label for="estado-arqueo">Estado:</label> -->
                                 <select id="estado-arqueo" class="filter-select">
+                                    <option value="" disabled selected>Estado:</option>
                                     <option value="todos">Todos</option>
                                     <option value="abierto">Abierto</option>
                                     <option value="cerrado">Cerrado</option>
                                 </select>
+
+                                <!-- Filtro Hora de Apertura -->
+                                <div class="filterFechas">
+                                    <label for="hora-apertura">Fecha Apertura:</label>
+                                    <input type="datetime-local" id="hora-apertura"
+                                        placeholder="Seleccione hora de apertura">
+                                </div>
+
+                                <!-- Filtro Hora de Cierre -->
+                                <div class="filterFechas">
+                                    <label for="hora-cierre">Fecha Cierre:</label>
+                                    <input type="datetime-local" id="hora-cierre"
+                                        placeholder="Seleccione hora de cierre">
+                                </div>
+
+                                <!-- Filtro Estado -->
+
 
 
                                 <!-- Botón para limpiar filtros -->
@@ -855,27 +1271,27 @@
                             </div>
                             <form id="form-lavado" class="form-layout">
                                 <h4>AGREGAR LAVADO</h4>
-                            
+
                                 <div class="form-row">
                                     <label for="usuario-lavado">Usuario:</label>
                                     <input type="text" id="usuario-lavado" value="" readonly>
                                 </div>
-                            
+
                                 <div class="form-row">
                                     <label for="patente-lavado">Patente:</label>
                                     <input type="text" id="patente-lavado" value="" readonly>
                                 </div>
-                            
+
                                 <div class="form-row">
                                     <label for="empresa-lavado">Empresa:</label>
                                     <input type="text" id="empresa-lavado" value="" readonly>
                                 </div>
-                            
+
                                 <div class="form-row">
                                     <label for="fecha-lavado">Fecha:</label>
                                     <input type="text" id="fecha-lavado" value="" readonly>
                                 </div>
-                            
+
                                 <div class="form-row">
                                     <label for="medio-pago-lavado">Medio de Pago:</label>
                                     <select id="medio-pago-lavado">
@@ -885,423 +1301,50 @@
                                         <option value="transferencia">Transferencia</option>
                                     </select>
                                 </div>
-                            
+
                                 <div class="form-row">
                                     <label>Estado de Pago:</label>
                                     <div class="checkbox-group">
-                                        <label><input type="radio" name="estado-pago-lavado" value="pendiente"> Pendiente</label>
-                                        <label><input type="radio" name="estado-pago-lavado" value="abonado"> Abonado</label>
-                                        <label><input type="radio" name="estado-pago-lavado" value="no-abonado"> No Abonado</label>
+                                        <label><input type="radio" name="estado-pago-lavado" value="pendiente">
+                                            Pendiente</label>
+                                        <label><input type="radio" name="estado-pago-lavado" value="abonado">
+                                            Abonado</label>
+                                        <label><input type="radio" name="estado-pago-lavado" value="no-abonado"> No
+                                            Abonado</label>
                                     </div>
                                 </div>
-                            
+
                                 <div class="form-row">
                                     <label for="descripcion-lavado">Descripción:</label>
-                                    <textarea id="descripcion-lavado" placeholder="Ej: Lavado completo, incluye aspirado"></textarea>
+                                    <textarea id="descripcion-lavado"
+                                        placeholder="Ej: Lavado completo, incluye aspirado"></textarea>
                                 </div>
-                            
+
                                 <div class="form-row">
                                     <label for="monto-lavado">Monto:</label>
                                     <input type="number" id="monto-lavado" placeholder="Ej: $1500">
                                 </div>
-                            
+
                                 <div class="form-actions">
                                     <button type="button" class="btn btn-cancel">Cancelar</button>
                                     <button type="submit" class="btn btn-save">Guardar</button>
                                 </div>
                             </form>
-                    </div>
-                    <!-- <script src="script.js"></script> -->
+                        </div>
+                        <!-- <script src="script.js"></script> -->
                 </body>
 
                 </html>
 
             </div>
 
-            <!-- Sección Profile -->
-            <div id="section-profile" class="section">
-                <div id="profile-section-container">
-
-                    <!-- Columna izquierda: Información del Usuario -->
-                    <div class="profile-column left-column">
-                        <div class="rect-image">
-                            <div class="rectangle">
-                                <h1 class="titleBox">General</h1>
-                            </div>
-                        </div>
-                        <ul class="user-info">
-                            <li><strong>Nombre Usuario:</strong> Juan Pérez</li>
-                            <li><strong>Teléfono / Local:</strong> +54 9 11 1234 5678</li>
-                            <li><strong>Nombre:</strong> Bar La Esquina</li>
-                            <li><strong>Correo Principal:</strong> juan.perez@example.com</li>
-                            <li><strong>Dirección:</strong> Corrientes 123, Buenos Aires</li>
-                        </ul>
-                    </div>
-
-                    <!-- Columna central: Plan Contratado -->
-                    <div class="profile-column center-column">
-                        <div class="rect-image">
-                            <div class="rectangle">
-                                <h1 class="titleBox">Plan</h1>
-                            </div>
-                        </div>
-                        <ul class="plan-info">
-                            <li><strong>Plan Contratado:</strong> Premium</li>
-                            <li><strong>Fecha de renovación:</strong> 24/11/2024</li>
-                            <li><strong>Mensajes restantes:</strong> 34/500</li>
-                        </ul>
-                    </div>
-
-                    <!-- Columna derecha: Información de Facturación -->
-                    <div class="profile-column right-column">
-                        <div class="rect-image">
-                            <div class="rectangle">
-                                <h1 class="titleBox">Facturacion</h1>
-                            </div>
-                        </div>
-                        <ul class="billing-info">
-                            <li><strong>CBU:</strong> 0123456789012345678901</li>
-                            <li><strong>Alias:</strong> mi.alias.bancario</li>
-                            <li><strong>Medio de Pago:</strong> Tarjeta de Crédito</li>
-                        </ul>
-                    </div>
-
-                </div><!-- Tarjeta del Cliente Seleccionado -->
-            </div>
-
-            <!-- Sección Mensajes -->
-            <div id="section-mensajes" class="section">
-                <div class="section-mensajes" id="section-mensajesMovil">
-                    <div class="whatsapp-simulator-box">
-                        <!-- Barra lateral izquierda -->
-                        <div class="whatsapp-sidebar">
-                            <div class="whatsapp-sidebar-header">
-                                <img src="/img/logo3d.PNG" alt="Perfil" class="whatsapp-profile-pic-sidebar">
-                                <input type="text" id="searchInput" placeholder="Buscar..." class="whatsapp-search-bar">
-                                <span id="clearSearch" class="clear-search">&times;</span>
-                                <!-- Cruz para limpiar búsqueda -->
-                                <!-- Botones de selección -->
-                                <div class="select-buttons">
-                                    <select id="filterSelect" class="filter-select">
-                                        <option value="" disabled selected>Filtros...</option>
-                                        <option value="low-comments">Puntuacion baja</option>
-                                        <option value="no-service-15">+15 días sin servicio</option>
-                                        <option value="frequent">Frecuentes</option>
-                                        <option value="promo-1">Promo #1</option>
-                                        <option value="ninguno">Ninguno</option>
-                                    </select>
-
-                                    <button id="selectAllButton" class="select-button">Todos</button>
-                                    <button id="deselectAllButton" class="select-button">Ninguno</button>
-                                </div>
-
-                            </div>
-                            <ul id="clientList">
-                                <!-- Se llenará dinámicamente con clientes -->
-                                <!-- Puedes agregar más clientes si lo deseas -->
-                            </ul>
-                        </div>
-
-                        <!-- Panel principal (Área de chat) -->
-                        <div class="whatsapp-chat-panel" id="chatDesktop">
-                            <div class="whatsapp-chat-header">
-                                <!-- <img src="/img/userIcon.png" alt="Foto de perfil" id="profilePic"> -->
-                                <div class="whatsapp-header-info">
-                                    <span id="phoneNumber">Selecciona un cliente</span>
-                                    <span class="whatsapp-status">En línea</span>
-                                </div>
-                            </div>
-                            <div id="chatHistory" class="whatsapp-chat-history">
-
-                                <div class="whatsapp-container">
-                                    <!-- Mensaje para cliente que no ha venido hace tiempo -->
-                                    <div class="message-bubble message-type-1">
-                                        <p>🚗✨ ¡Hola, hace tiempo que no vemos tu auto brillar como se merece en
-                                            <strong>CARWASH PREMIUM</strong> 🧽.
-                                        </p>
-                                        <p>¡Te extrañamos! Por eso queremos darte un <strong>10% de descuento</strong>
-                                            en tu próximo lavado 🤑 para que tu auto vuelva a lucir impecable.</p>
-                                        <p>📅 Ven cuando quieras, estaremos encantados de ayudarte a dejar tu coche como
-                                            nuevo.</p>
-                                        <p>¡Te esperamos!</p>
-                                        <p>Saludos,</p>
-                                        <p><strong>El equipo de CARWASH PREMIUM</strong></p>
-                                    </div>
-
-                                    <!-- Mensaje para cliente con calificación baja -->
-                                    <div class="message-bubble message-type-2">
-                                        <p>👋 ¡Hola,!</p>
-                                        <p>En <strong>CARWASH PREMIUM</strong> 🧽 nos importa mucho tu experiencia, y
-                                            hemos notado que tu última calificación fue algo baja.</p>
-                                        <p>y queremos saber más para mejorar nuestro servicio. ¿Nos cuentas qué pasó? 💬
-                                        </p>
-                                        <p>👉 Puedes enviarnos tus comentarios de forma rápida aquí: <a
-                                                href="https://www.google.com/forms" target="_blank">Google Form</a></p>
-                                        <p>O mándanos un mensaje directo en Instagram: <a
-                                                href="https://www.instagram.com/carwashpremium"
-                                                target="_blank">@carwashpremium</a> 📲</p>
-                                        <p>Valoramos tu opinión nos ayuda a crecer y mejorar!</p>
-                                        <p>Saludos,</p>
-                                        <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
-                                    </div>
-
-                                    <!-- Mensaje para cliente frecuente -->
-                                    <div class="message-bubble message-type-3">
-                                        <p>🎉 ¡Hola!</p>
-                                        <p>En <strong>CARWASH PREMIUM</strong> 🧽 queremos agradecerte por ser uno de
-                                            nuestros clientes más frecuentes. ¡Eres parte de nuestra familia! 💚</p>
-                                        <p>🚗 Como muestra de nuestro agradecimiento, te regalamos un <strong>lavado
-                                                premium gratis</strong> en tu próxima visita. ¡Porque tu auto merece lo
-                                            mejor! ✨</p>
-                                        <p>📅 Pásate por el local cuando quieras y menciona este mensaje para canjear tu
-                                            recompensa.</p>
-                                        <p>🙏 Gracias por elegirnos siempre. ¡Nos encanta verte por aquí!</p>
-                                        <p>Saludos,</p>
-                                        <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
-                                    </div>
-
-                                    <!-- Mensaje para promoción especial -->
-                                    <div class="message-bubble message-type-4">
-                                        <p>🎁 ¡Hola!</p>
-                                        <p>¡Tenemos una <strong>promoción especial</strong> para ti! ✨</p>
-                                        <p>🚗 Durante esta semana, disfruta de un <strong>2x1 en lavados
-                                                premium</strong>. Trae tu auto y el de un amigo para que ambos brillen
-                                            como nuevos 🧽✨.</p>
-                                        <p>📅 Promoción válida del <strong>7 al 14 de diciembre</strong>. ¡No te la
-                                            pierdas!</p>
-                                        <p>👉 Para más información, contáctanos por WhatsApp o visítanos en el local.
-                                        </p>
-                                        <p>🎉 ¡Te esperamos!</p>
-                                        <p>Saludos,</p>
-                                        <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
-                                    </div>
-                                </div>
-                                <!-- Mensajes se llenarán dinámicamente -->
-                            </div>
-                            <div class="whatsapp-chat-footer">
-                                <!-- <input type="text" id="messageInput2" placeholder="Escribe un mensaje..."
-                                    class="whatsapp-message-input"> -->
-                                <button id="sendButton" class="whatsapp-send-button">
-                                    Enviar (<span id="selectedCount">0</span>)
-                                </button>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <!--   Box de datos -->
-                    <div class="right-mess-colum">
-                        <div class="client-info-box">
-                            <h3>Datos Clientes</h3>
-                            <table class="client-details">
-                                <tr>
-                                    <th>Nombre</th>
-                                    <td id="client-name"></td>
-                                </tr>
-                                <tr>
-                                    <th>Teléfono</th>
-                                    <td id="client-phone"></td>
-                                </tr>
-                                <tr>
-                                    <th>Evaluacion Prom.</th>
-                                    <td id="client-score"></td>
-                                </tr>
-                                <tr>
-                                    <th>Fidelidad</th>
-                                    <td id="client-loyalty">
-                                        <span class="stars"></span> <!-- Ejemplo de 3 de 5 estrellas -->
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <th>Ultimo <br> Lavado</th>
-                                    <td id="client-resent"></td>
-                                </tr>
-                                <tr>
-                                    <th>Tiempo <br> Lavado <br> Promedio</th>
-                                    <td id="client-resent-tiempooLavado"></td>
-                                </tr>
-                            </table>
-                        </div>
 
 
 
-
-
-                        <!-- VERSION DE MOVIL -->
-                        <!-- Panel principal (Área de chat) -->
-                        <div class="whatsapp-chat-panel" id="chatMovil">
-                            <div class="whatsapp-chat-header">
-                                <!-- <img src="/img/userIcon.png" alt="Foto de perfil" id="profilePic"> -->
-                                <div class="whatsapp-header-info">
-                                    <span id="phoneNumber">Selecciona un cliente</span>
-                                    <span class="whatsapp-status">En línea</span>
-                                </div>
-                            </div>
-                            <div id="chatHistory" class="whatsapp-chat-history">
-
-
-                                <div class="whatsapp-container">
-                                    <!-- Mensaje para cliente que no ha venido hace tiempo -->
-                                    <div class="message-bubble message-type-1 active">
-                                        <p>🚗✨ ¡Hola, hace tiempo que no vemos tu auto brillar como se merece en
-                                            <strong>CARWASH PREMIUM</strong> 🧽.
-                                        </p>
-                                        <p>¡Te extrañamos! Por eso queremos darte un <strong>10% de descuento</strong>
-                                            en tu próximo lavado 🤑 para que tu auto vuelva a lucir impecable.</p>
-                                        <p>📅 Ven cuando quieras, estaremos encantados de ayudarte a dejar tu coche como
-                                            nuevo.</p>
-                                        <p>¡Te esperamos!</p>
-                                        <p>Saludos,</p>
-                                        <p><strong>El equipo de CARWASH PREMIUM</strong></p>
-                                    </div>
-
-                                    <!-- Mensaje para cliente con calificación baja -->
-                                    <div class="message-bubble message-type-2">
-                                        <p>👋 ¡Hola,!</p>
-                                        <p>En <strong>CARWASH PREMIUM</strong> 🧽 nos importa mucho tu experiencia, y
-                                            hemos notado que tu última calificación fue algo baja.</p>
-                                        <p>y queremos saber más para mejorar nuestro servicio. ¿Nos cuentas qué pasó? 💬
-                                        </p>
-                                        <p>👉 Puedes enviarnos tus comentarios de forma rápida aquí: <a
-                                                href="https://www.google.com/forms" target="_blank">Google Form</a></p>
-                                        <p>O mándanos un mensaje directo en Instagram: <a
-                                                href="https://www.instagram.com/carwashpremium"
-                                                target="_blank">@carwashpremium</a> 📲</p>
-                                        <p>Valoramos tu opinión nos ayuda a crecer y mejorar!</p>
-                                        <p>Saludos,</p>
-                                        <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
-                                    </div>
-
-                                    <!-- Mensaje para cliente frecuente -->
-                                    <div class="message-bubble message-type-3">
-                                        <p>🎉 ¡Hola!</p>
-                                        <p>En <strong>CARWASH PREMIUM</strong> 🧽 queremos agradecerte por ser uno de
-                                            nuestros clientes más frecuentes. ¡Eres parte de nuestra familia! 💚</p>
-                                        <p>🚗 Como muestra de nuestro agradecimiento, te regalamos un <strong>lavado
-                                                premium gratis</strong> en tu próxima visita. ¡Porque tu auto merece lo
-                                            mejor! ✨</p>
-                                        <p>📅 Pásate por el local cuando quieras y menciona este mensaje para canjear tu
-                                            recompensa.</p>
-                                        <p>🙏 Gracias por elegirnos siempre. ¡Nos encanta verte por aquí!</p>
-                                        <p>Saludos,</p>
-                                        <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
-                                    </div>
-
-                                    <!-- Mensaje para promoción especial -->
-                                    <div class="message-bubble message-type-4">
-                                        <p>🎁 ¡Hola!</p>
-                                        <p>¡Tenemos una <strong>promoción especial</strong> para ti! ✨</p>
-                                        <p>🚗 Durante esta semana, disfruta de un <strong>2x1 en lavados
-                                                premium</strong>. Trae tu auto y el de un amigo para que ambos brillen
-                                            como nuevos 🧽✨.</p>
-                                        <p>📅 Promoción válida del <strong>7 al 14 de diciembre</strong>. ¡No te la
-                                            pierdas!</p>
-                                        <p>👉 Para más información, contáctanos por WhatsApp o visítanos en el local.
-                                        </p>
-                                        <p>🎉 ¡Te esperamos!</p>
-                                        <p>Saludos,</p>
-                                        <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
-                                    </div>
-                                </div>
-
-
-                                <!-- Mensajes se llenarán dinámicamente -->
-                            </div>
-                            <div class="whatsapp-chat-footer">
-                                <input type="text" id="messageInput" placeholder="Escribe un mensaje..."
-                                    class="whatsapp-message-input">
-                                <button id="sendButton2" class="whatsapp-send-button">
-                                    Enviar (<span id="selectedCount">0</span>)
-                                </button>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <div class="cardM">
-                        <div class="icon-container">
-                            <i class="fas fa-box"></i>
-                        </div>
-                        <div class="card-content">
-                            <h3 class="titleCard">Mensajes</h3>
-                            <p class="card-number">256/500</p>
-                        </div>
-                    </div>
-
-                </div>
-
-
-            </div>
 
         </div>
 
-        <!-- Sección para crear un usuario -->
-        <div id="section-users" class="section">
-            <div class="sectionForm">
-                <div class="formCreateUser">
-                    <h2>Crear Usuario</h2>
-                    <form class="form-create-user">
-                        <label for="email">Email:</label>
-                        <input type="email" id="email" name="email" required>
 
-                        <label for="password">Contraseña:</label>
-                        <input type="password" id="password" name="password" required>
-
-                        <label for="role">Rol:</label>
-                        <select id="role" name="role" required>
-                            <option value="admin">Admin</option>
-                            <option value="editor">Editor</option>
-                            <option value="viewer">Viewer</option>
-                        </select>
-
-                        <button type="submit">Crear Usuario</button>
-                    </form>
-                </div>
-
-                <div class="activeUsers">
-                    <h2>Usuarios Activos</h3>
-                        <div class="table-section">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Email</th>
-                                        <th>Rol</th>
-                                        <th>Estado</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>juan.perez@example.com</td>
-                                        <td>Admin</td>
-                                        <td>Activo</td>
-                                    </tr>
-                                    <tr>
-                                        <td>maria.garcia@example.com</td>
-                                        <td>Editor</td>
-                                        <td>Activo</td>
-                                    </tr>
-                                    <tr>
-                                        <td>luis.mendez@example.com</td>
-                                        <td>Viewer</td>
-                                        <td>Activo</td>
-                                    </tr>
-                                    <tr>
-                                        <td>sofia.lopez@example.com</td>
-                                        <td>Admin</td>
-                                        <td>Activo</td>
-                                    </tr>
-                                    <tr>
-                                        <td>pedro.fernandez@example.com</td>
-                                        <td>Viewer</td>
-                                        <td>Activo</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                </div>
-            </div>
-        </div>
 
     </div>
     </div>
@@ -1315,7 +1358,7 @@
     <script src="/js/dashboardAdmin/faq.js"></script>
     <script src="/js/dashboardAdmin/sidebar.js"></script>
     <script src="/js/dashboardAdmin/dateTime.js"></script>
-    <!-- <script src="/js/dashboardAdmin/showData.js"></script> -->
+    <script src="/js/dashboardAdmin/showData.js"></script>
     <script src="/js/dashboardUser/reservas.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrious/dist/qrious.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>

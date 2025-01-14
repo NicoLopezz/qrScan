@@ -103,6 +103,7 @@ router.put("/lavadosModificar", autenthication.modificarLavado);
 //-> CREAR Y OBTENER ARQUEOS
 router.post('/arqueos', autenthication.crearArqueo);
 router.get('/arqueos', autenthication.getArqueos);
+router.get('/arqueosBalances', autenthication.getArqueosBalances);
 // router.get('/tiposArqueosAbiertos', autenthication.getTiposArqueosAbiertos);
 router.post('/cerrarArqueo/:arqueoId', autenthication.cerrarArqueo);
 

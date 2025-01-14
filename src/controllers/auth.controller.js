@@ -1852,13 +1852,6 @@ async function crearMovimiento(req, res) {
   }
 }
 
-
-
-
-
-
-
-
 // Obtener los movimientos de un arqueo abierto
 async function getMovimientos(req, res) {
   const adminId = req.cookies.adminId; // Obtener adminId desde las cookies
@@ -2142,6 +2135,111 @@ async function modificarLavado(req, res) {
   }
 }
 
+async function getArqueosBalances(req, res) {
+  const adminId = req.cookies.adminId; // Obtener adminId desde las cookies
+  const { cajaTipo } = req.query; // Obtener cajaTipo desde la query
+
+  // Validar que adminId y cajaTipo existan
+  if (!adminId || !cajaTipo) {
+    return res.status(400).json({ success: false, message: "Faltan parámetros requeridos (adminId, cajaTipo)." });
+  }
+
+  try {
+    let arqueosAbiertos = [];
+
+    // Obtener arqueos abiertos según el tipo de caja
+    if (cajaTipo === "CajaMayor") {
+      const cajaMayor = await CajaMayor.findOne({ adminId });
+      if (!cajaMayor) {
+        return res.status(404).json({ success: false, message: "No se encontró CajaMayor para este admin." });
+      }
+      arqueosAbiertos = await ArqueoMayor.find({ cajaId: cajaMayor._id, estado: "abierto" }).populate("movimientos").exec();
+    } else if (cajaTipo === "CajaChica") {
+      const cajaChica = await CajaChica.findOne({ adminId });
+      if (!cajaChica) {
+        return res.status(404).json({ success: false, message: "No se encontró CajaChica para este admin." });
+      }
+      arqueosAbiertos = await ArqueoChica.find({ cajaId: cajaChica._id, estado: "abierto" }).populate("movimientos").exec();
+    } else {
+      return res.status(400).json({ success: false, message: "Tipo de caja inválido. Use CajaMayor o CajaChica." });
+    }
+
+    // Variables para acumular los datos
+    const resultado = {
+      efectivo: {
+        saldoInicial: 0,
+        ingresos: 0,
+        egresos: 0,
+        balanceActual: 0,
+        movimientosIngresos: [],
+        movimientosEgresos: [],
+      },
+      mercadoPago: {
+        saldoInicial: 0,
+        ingresos: 0,
+        egresos: 0,
+        balanceActual: 0,
+        movimientosIngresos: [],
+        movimientosEgresos: [],
+      },
+    };
+
+    // Procesar arqueos y clasificar movimientos
+    arqueosAbiertos.forEach((arqueo) => {
+      // Sumar el saldo inicial al tipo de pago correspondiente
+      if (arqueo.tipo === "efectivo") {
+        resultado.efectivo.saldoInicial += arqueo.saldoInicial;
+      } else if (arqueo.tipo === "mercado-pago") {
+        resultado.mercadoPago.saldoInicial += arqueo.saldoInicial;
+      }
+
+      // Clasificar movimientos
+      arqueo.movimientos.forEach((mov) => {
+        if (mov.medioPago === "efectivo") {
+          if (mov.tipo === "ingreso") {
+            resultado.efectivo.ingresos += mov.monto;
+            resultado.efectivo.movimientosIngresos.push(mov);
+          } else if (mov.tipo === "egreso") {
+            resultado.efectivo.egresos += mov.monto;
+            resultado.efectivo.movimientosEgresos.push(mov);
+          }
+        } else if (mov.medioPago === "mercado-pago") {
+          if (mov.tipo === "ingreso") {
+            resultado.mercadoPago.ingresos += mov.monto;
+            resultado.mercadoPago.movimientosIngresos.push(mov);
+          } else if (mov.tipo === "egreso") {
+            resultado.mercadoPago.egresos += mov.monto;
+            resultado.mercadoPago.movimientosEgresos.push(mov);
+          }
+        }
+      });
+    });
+
+    // Calcular balances finales
+    resultado.efectivo.balanceActual =
+      resultado.efectivo.saldoInicial + resultado.efectivo.ingresos - resultado.efectivo.egresos;
+    resultado.mercadoPago.balanceActual =
+      resultado.mercadoPago.saldoInicial +
+      resultado.mercadoPago.ingresos -
+      resultado.mercadoPago.egresos;
+
+    // Devolver la respuesta
+    res.status(200).json({ success: true, data: resultado });
+  } catch (error) {
+    console.error("Error al obtener balances:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error interno del servidor.",
+      details: error.message,
+    });
+  }
+}
+
+
+
+
+
+
 
 
 
@@ -2191,5 +2289,6 @@ export const methods = {
   getMovimientosAbiertos,
   eliminarMovimiento,
   modificarMovimiento,
-  modificarLavado
+  modificarLavado,
+  getArqueosBalances
 };
