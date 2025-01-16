@@ -16,9 +16,6 @@ $(document).ready(function () {
         console.error("No se encontró el adminId en las cookies");
         return;  // Evita continuar si no se encuentra la cookie
     }
-
-    console.log("adminId obtenido de la cookie: " + adminId);
-
     //QR PARA LOS
     // Generar la URL del QR con el adminId
     // /api/qrScan
