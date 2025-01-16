@@ -401,11 +401,11 @@ function renderDiferenciaCard(totalSistema) {
     // Agregar evento al botón de Descargar PDF
     const downloadPdfButton = document.getElementById("downloadPdfButton");
     if (downloadPdfButton) {
-        downloadPdfButton.addEventListener("click", () => {
-            console.log("Descargando PDF...");
-            generarPDF(); // Aquí invocas tu lógica de generación de PDF
+        downloadPdfButton.addEventListener("click", async () => {
+            cargarMovimientos(cajaTipoActivo, currentArqueoId); // Carga los movimientos
         });
     }
+
 
     // Agregar evento al botón de Cerrar Arqueo si no está cerrado
     if (currentArqueoEstado !== "cerrado") {
@@ -421,12 +421,6 @@ function renderDiferenciaCard(totalSistema) {
         });
     }
 }
-
-
-
-
-
-
 
 
 // *** Función para manejar el cierre del arqueo ***
