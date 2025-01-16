@@ -299,11 +299,20 @@
 
                     <!-- Tarjeta del Cliente Seleccionado -->
                     <div class="tarjeta" id="tarjetaCliente">
-                        <h3 id="nombreCliente">Detalles</h3>
-                        <p id="modeloCliente">Modelo: --</p>
-                        <p id="patenteCliente">Patente: --</p>
-                        <p id="observacionCliente">Observación: --</p>
-                        <p id="lavadoCliente">Lavado: --</p>
+                        <h3 id="nombreCliente">Detalles de los clientes</h3>
+                        <div class="textTarjeta">
+                            <p id="nombreClienteSelected">Nombre: --</p>
+                            <p id="modeloCliente">Modelo: --</p>
+                            <p id="patenteCliente">Patente: --</p>
+                            <p id="observacionCliente">Observación: --</p>
+                            <p id="lavadoCliente">Lavado: --</p>
+                            <div class="cumpleData">
+                                <p id="cumple">
+                                    Cumpleaños: <span id="cumple-text">--</span>
+                                    <input type="date" id="fecha-desde-lavados" class="datetime-input">
+                                </p>
+                            </div>
+                        </div>
 
 
                         <!-- Botón Generar QR -->
@@ -407,7 +416,6 @@
                                 </div>
                             </div>
                             <div id="chatHistory" class="whatsapp-chat-history">
-
                                 <div class="whatsapp-container">
                                     <!-- Mensaje para cliente que no ha venido hace tiempo -->
                                     <div class="message-bubble message-type-1">
@@ -471,15 +479,17 @@
                                         <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
                                     </div>
                                 </div>
+
+                                <div class="whatsapp-chat-footer">
+                                    <!-- <input type="text" id="messageInput2" placeholder="Escribe un mensaje..."
+                                        class="whatsapp-message-input"> -->
+                                    <button id="sendButton" class="whatsapp-send-button">
+                                        Enviar (<span id="selectedCount">0</span>)
+                                    </button>
+                                </div>
                                 <!-- Mensajes se llenarán dinámicamente -->
                             </div>
-                            <div class="whatsapp-chat-footer">
-                                <!-- <input type="text" id="messageInput2" placeholder="Escribe un mensaje..."
-                                    class="whatsapp-message-input"> -->
-                                <button id="sendButton" class="whatsapp-send-button">
-                                    Enviar (<span id="selectedCount">0</span>)
-                                </button>
-                            </div>
+
 
                         </div>
                     </div>
@@ -893,7 +903,7 @@
                     </div>
 
                     <!-- Columna derecha: Información de Facturación -->
-                    <div class="profile-column right-column">
+                    <div class="profile-column center-column">
                         <div class="rect-image">
                             <div class="rectangle">
                                 <h1 class="titleBox">Facturacion</h1>
@@ -1022,7 +1032,7 @@
 
                                 <!-- Filtro Fecha -->
                                 <!-- <label for="filtro-fecha">Fecha:</label> -->
-                                
+
                                 <select id="filtro-fecha" class="filter-select" onchange="toggleDateInputs(this.value)">
                                     <option value="" disabled selected>Fecha:</option>
                                     <option value="hoy">Hoy</option>
@@ -1373,6 +1383,10 @@
     <script src="/js/ventas/ventas.js"></script>
     <script src="/js/ventas/showDataVentas.js"></script>
     <script src="/js/ventas/filtros.js" defer></script>
+    <script src="/js/resumenPdf/resumenPdf.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
 
     <!-- jQuery and Bootstrap -->
 

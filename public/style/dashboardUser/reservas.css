@@ -95,6 +95,7 @@ form {
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    gap: 20px;
   }
   
   .tarjeta h3 {
@@ -168,7 +169,7 @@ h3 {
 input[type="text"], input[type="number"] {
     width: 100%;
     padding: 10px;
-    margin: 10px 0;
+    /* margin: 10px 0; */
     border: 1px solid #ddd;
     border-radius: 6px;
     font-size: 1em;
@@ -217,7 +218,11 @@ button {
 }
 
 #btnAvisoLavado {
-    background-color: #008000;
+    background-color: #26a745;
+}
+
+.cumpleData{
+    display: flex;
 }
 
 .btnActions {

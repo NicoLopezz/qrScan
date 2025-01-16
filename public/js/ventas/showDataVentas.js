@@ -88,7 +88,6 @@ async function fetchArqueos(cajaTipo) {
 
 // *** FUNCIONES: Renderizar Tablas de Arqueos ***
 function renderArqueosTable(arqueos) {
-    console.log("Arqueos A LOS CUALES SE LE ESTA APLICANDO EL RENDER!", arqueos);
     console.trace(); // Muestra el stack trace en la consola
     const tableBody = document.querySelector('#table-arqueo tbody');
     tableBody.innerHTML = ''; // Limpiar tabla
@@ -221,7 +220,6 @@ function displayArqueoDetails(arqueo) {
             updateDiferencia(totalSistema);
         });
     });
-    // console.log("ARQUEOID DESDE LA FUNCION DISPLAY" + arqueo._id)
     currentArqueoId = arqueo._id
     currentArqueoEstado = arqueo.estado
     currentArqueoDiferencia = arqueo.diferencia
@@ -318,10 +316,6 @@ function renderDiferenciaCard(totalSistema) {
         console.error('Error: currentArqueoId no encontrado en renderDiferenciaCard.');
         return;
     }
-
-    console.log("currentArqueoId desde renderDiferenciaCard:", currentArqueoId);
-    console.log("y su estado es....", currentArqueoEstado);
-
     const totalUsuarioElement = document.getElementById("total-usuario");
     const totalUsuario = parseFloat(
         totalUsuarioElement.textContent.replace("$", "").replace(",", "")
@@ -355,6 +349,12 @@ function renderDiferenciaCard(totalSistema) {
     if (currentArqueoEstado === "cerrado") {
         leftColumn += `
             <p class="observacion-texto" style="font-style: italic; font-size: 13px !important">${currentArqueoObservacion || "Sin observación registrada"}</p>
+            <div class="btn-container">
+            <button id="downloadPdfButton" class="btn-descargar">
+                <i class="icon-pdf"></i>
+                Descargar PDF
+                </button>
+            </div>
         `;
     } else {
         leftColumn += `
@@ -398,7 +398,16 @@ function renderDiferenciaCard(totalSistema) {
         usuarioArqueoBody.parentElement.style.display = ""; // Mostrar tabla
     }
 
-    // Agregar evento al botón solo si el estado no es "cerrado"
+    // Agregar evento al botón de Descargar PDF
+    const downloadPdfButton = document.getElementById("downloadPdfButton");
+    if (downloadPdfButton) {
+        downloadPdfButton.addEventListener("click", () => {
+            console.log("Descargando PDF...");
+            generarPDF(); // Aquí invocas tu lógica de generación de PDF
+        });
+    }
+
+    // Agregar evento al botón de Cerrar Arqueo si no está cerrado
     if (currentArqueoEstado !== "cerrado") {
         const cerrarArqueoBtn = diferenciaCard.querySelector("#btn-cerrar-arqueo");
         cerrarArqueoBtn.addEventListener("click", () => {
@@ -412,12 +421,16 @@ function renderDiferenciaCard(totalSistema) {
         });
     }
 }
+
+
+
+
+
+
+
+
 // *** Función para manejar el cierre del arqueo ***
 function cerrarArqueo(currentArqueoId, totalSistema, totalUsuario, observacion) {
-    console.log("El currentArqueoId es desde el front:", currentArqueoId);
-    console.log("El SALDO FINAL ENVIADO POR EL USUARIO ES", totalUsuario);
-    console.log("Observación enviada al backend:", observacion);
-
     const diferencia = totalSistema - totalUsuario;
 
     if (diferencia !== 0) {
@@ -436,7 +449,6 @@ function cerrarArqueo(currentArqueoId, totalSistema, totalUsuario, observacion) 
     }
 
     const url = `/api/cerrarArqueo/${currentArqueoId}`;
-    console.log('Llamando al endpoint con la observación:', observacion);
 
     fetch(url, {
         method: 'POST',
@@ -459,8 +471,6 @@ function cerrarArqueo(currentArqueoId, totalSistema, totalUsuario, observacion) 
         })
         .then((data) => {
             showNotification('Arqueo cerrado correctamente.', 'success');
-            console.log('Arqueo cerrado exitosamente:', data);
-
             fetchArqueos(cajaTipoActivo);
         })
         .catch((error) => {
@@ -468,6 +478,9 @@ function cerrarArqueo(currentArqueoId, totalSistema, totalUsuario, observacion) 
             showNotification(`Error al realizar el cierre del arqueo: ${error.message}`, 'error');
         });
 }
+
+
+
 // *** Función para Actualizar Dinámicamente la Tarjeta ***
 function updateDiferencia(totalSistema) {
     const diferenciaCard = document.querySelector(".diferencia-card");
@@ -755,20 +768,22 @@ function renderLavadosTable(lavados) {
             // Crear una nueva fila
             const row = document.createElement("tr");
 
+            // Convertir patente a mayúsculas (si existe)
+            const patenteMayuscula = lavado.patente ? lavado.patente.toUpperCase() : "---";
+
             // Asignar contenido HTML a la fila
             row.innerHTML = `
                 <td>${lavado.nombre || "---"}</td>
-                <td>${lavado.patente || "---"}</td>
+                <td>${patenteMayuscula}</td>
                 <td>${lavado.empresa || "---"}</td>
                 <td>${new Date(lavado.fechaDeAlta).toLocaleString() || "---"}</td>
                 <td>
-                    ${
-                        lavado.medioPago === "efectivo"
-                            ? '<img src="../img/cashLogo2.svg" alt="Efectivo" style="width: 30px; height: auto;" class="icon">'
-                            : lavado.medioPago === "mercado-pago"
-                            ? '<img src="../img/logoMp.svg" alt="Mercado Pago" style="width: 30px; height: auto;" class="icon">'
-                            : "---"
-                    }
+                    ${lavado.medioPago === "efectivo"
+                    ? '<img src="../img/cashLogo2.svg" alt="Efectivo" style="width: 30px; height: auto;" class="icon">'
+                    : lavado.medioPago === "mercado-pago"
+                        ? '<img src="../img/logoMp.svg" alt="Mercado Pago" style="width: 30px; height: auto;" class="icon">'
+                        : "---"
+                }
                 </td>
                 <td>${lavado.estado || "---"}</td>
             `;
@@ -776,11 +791,9 @@ function renderLavadosTable(lavados) {
             // Agregar atributo data-id para identificar la fila
             const lavadoId = lavado._id || "sin-id";
             row.setAttribute("data-id", lavadoId);
-            
+
             // Agregar evento de clic a la fila
             row.addEventListener("click", () => {
-                console.log(`Fila ${index} clicada. ID del lavado: ${lavado._id}`);
-
                 // Quitar la clase "selected" de todas las filas
                 document.querySelectorAll("#table-ventas tbody tr").forEach((r) => {
                     r.classList.remove("selected");
@@ -846,13 +859,6 @@ formLavado.addEventListener('submit', async (event) => {
 
     // Valida los campos
     if (!currentLavadoId || !medioPago || !estadoPago || isNaN(monto)) {
-        console.log("Datos capturados del formulario de lavado:");
-        console.log("Lavado ID:", currentLavadoId);
-        console.log("Medio de Pago:", medioPago);
-        console.log("Monto:", monto);
-        console.log("Patente:", patente);
-        console.log("Estado de Pago:", estadoPago ? estadoPago.value : null);
-
         showNotification("Por favor, complete todos los campos requeridos.", "error");
         return;
     }
@@ -866,9 +872,6 @@ formLavado.addEventListener('submit', async (event) => {
             patente,
             estado: estadoPago.value, // Incluye el estado de pago en la solicitud
         };
-
-        console.log("Datos enviados al backend (payload):", payload);
-
         // Realiza el PUT al backend
         const response = await fetch('/api/lavadosModificar', {
             method: 'PUT',
@@ -877,8 +880,6 @@ formLavado.addEventListener('submit', async (event) => {
         });
 
         const data = await response.json();
-
-        console.log("Datos de la respuesta del backend:", data);
 
         if (response.ok && data.success) {
             showNotification('Lavado modificado con éxito.', 'success');

@@ -11,37 +11,6 @@ let reservas = []; // Almacena las reservas desde la base de datos
 let lavados = [];
 let cuentaRegresivaEnPausa = false; // Variable para controlar el estado de pausa
 
-// Función para cargar reservas desde la base de datos
-// async function cargarReservas() {
-//     const adminId = getCookie('adminId'); // Obtén el adminId de la cookie
-
-//     try {
-//         const response = await fetch(`/api/admins/${adminId}/reservas`);
-//         if (!response.ok) throw new Error('No se pudo cargar las reservas');
-//         reservas = await response.json();
-
-//         // Limpiar la tabla antes de agregar las filas
-//         tablaClientes.innerHTML = '';
-
-//         // Iterar sobre las reservas y agregarlas a la tabla
-//         reservas.forEach(reserva => {
-//             agregarFilaTabla(reserva);
-
-//             // Cargar tiempo restante desde localStorage
-//             const tiempoRestante = localStorage.getItem(`cliente-${reserva._id}-tiempoRestante`);
-//             intervalos[reserva._id] = {
-//                 tiempoRestante: tiempoRestante ? parseInt(tiempoRestante) : 300, // 5 minutos si no está en localStorage
-//                 intervalo: null
-//             };
-
-//             // Mostrar el tiempo actual en la tabla sin iniciar el temporizador
-//             actualizarTiempoTabla(reserva._id, intervalos[reserva._id].tiempoRestante);
-//         });
-//     } catch (error) {
-//         console.error('Error al cargar reservas:', error);
-//     }
-// }
-
 // Función para cargar lavados desde la base de datos
 async function cargarLavados() {
     const adminId = getCookie('adminId'); // Obtén el adminId de la cookie
@@ -102,11 +71,16 @@ function seleccionarCliente(clienteId) {
 function seleccionarLavado(lavadoId) {
     lavadoSeleccionado = lavadoId;
     const lavado = lavados.find(l => l._id === lavadoId); // Encuentra el lavado seleccionado
-    console.log(lavadoSeleccionado)
 
     if (lavado) {
+        // Si el campo de nombre está vacío, agregar un valor predeterminado
+        if (!lavado.nombre || lavado.nombre.trim() === '') {
+            lavado.nombre = 'Nombre no especificado'; // Valor predeterminado
+            console.warn(`El lavado con ID ${lavadoId} no tenía nombre, se asignó un valor predeterminado.`);
+        }
+
         // Actualizar detalles en la tarjeta
-        document.getElementById('nombreCliente').textContent = `Nombre: ${lavado.nombre}`;
+        document.getElementById('nombreClienteSelected').textContent = `Nombre: ${lavado.nombre}`;
         document.getElementById('patenteCliente').textContent = `Patente: ${lavado.patente}`;
         document.getElementById('modeloCliente').textContent = `Modelo: ${lavado.modelo}`;
         document.getElementById('lavadoCliente').textContent = `Tipo de Lavado: ${lavado.tipoDeLavado}`;
@@ -122,6 +96,25 @@ function seleccionarLavado(lavadoId) {
         console.error('Lavado no encontrado:', lavadoId);
     }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    const cumpleText = document.getElementById("cumple-text");
+    const fechaInput = document.getElementById("fecha-desde-lavados");
+
+    // Escuchar cambios en el campo de fecha
+    fechaInput.addEventListener("input", () => {
+        const newDate = fechaInput.value; // Obtener la nueva fecha
+        if (newDate) {
+            // Formatear la fecha seleccionada para mostrarla como texto
+            const formattedDate = new Date(newDate).toLocaleDateString();
+            cumpleText.textContent = formattedDate;
+        } else {
+            cumpleText.textContent = "--"; // Si el campo está vacío, mostrar "--"
+        }
+    });
+});
+
+
 
 
 function agregarFilaTabla(reserva) {
@@ -156,11 +149,13 @@ function agregarFilaTablaLavados(lavado) {
     // Verificar datos opcionales o vacíos
     const estado = lavado.estado ? lavado.estado : 'Pendiente'; // Estado predeterminado
     const observacion = lavado.observacion ? lavado.observacion : 'Sin observaciones';
+    const patenteMayuscula = lavado.patente ? lavado.patente.toUpperCase() : '';
+
 
     row.innerHTML = `
     <td data-modelo="${lavado.modelo}" data-lavado="${lavado.tipoDeLavado}">${lavado.nombre}</td>
     <td>${lavado.modelo}</td>
-    <td>${lavado.patente}</td>
+    <td>${patenteMayuscula}</td>
     <td>${lavado.tipoDeLavado}</td>
     <td>${observacion}</td>
 `;

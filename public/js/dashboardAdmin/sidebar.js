@@ -22,7 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Refrescar la tabla de lavados si se selecciona la sección de ventas
             if (sectionId === 'ventas') { // Verifica si la sección activada es ventas
-                console.log("Refrescando tabla de lavados en Ventas...");
                 cargarLavadosConFiltros(); // Llama a la función para refrescar la tabla
             }
         });

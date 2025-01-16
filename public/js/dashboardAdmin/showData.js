@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     userAdminId = decodeURIComponent(userAdminId);
-    console.log('adminId desde la cookie:', userAdminId);
+    // console.log('adminId desde la cookie:', userAdminId);
 
     try {
         const userInfo = await fetchUserInfo(userAdminId);
@@ -177,7 +177,7 @@ function calcularServicioMasPedido(lavados) {
 
 async function actualizarCajaChica() {
 
-    console.log("EJECUNTADO LA FUNCION PARA LAS CARDS!!")
+    // console.log("EJECUNTADO LA FUNCION PARA LAS CARDS!!")
     try {
       // Realizar el fetch al endpoint de balances
       const response = await fetch("http://localhost:3000/api/arqueosBalances?cajaTipo=CajaChica");

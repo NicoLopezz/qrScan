@@ -1,0 +1,101 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+  }
+  
+  .arqueo-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .movimientos-y-resumen {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .columna-movimientos {
+    flex: 7; /* 70% del ancho */
+    background: #f1f1f1;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    overflow-y: auto;
+    max-height: 600px; /* Para agregar scroll si hay demasiados movimientos */
+  }
+  
+  .columna-resumen {
+    flex: 3; /* 30% del ancho */
+  }
+  
+  h1, h2 {
+    color: #6b00ad;
+  }
+  
+  h2 {
+    margin-top: 0;
+  }
+  
+  .tabla-movimientos, .tabla-arqueo {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+  }
+  
+  .tabla-movimientos th, .tabla-arqueo th {
+    background-color: #6b00ad;
+    color: #fff;
+    padding: 10px;
+    text-align: left;
+  }
+  
+  .tabla-movimientos td, .tabla-arqueo td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+  }
+  
+  .tabla-movimientos tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+  }
+  
+  .tabla-movimientos tbody tr:nth-child(even) {
+    background-color: #fff;
+  }
+  
+  .tabla-movimientos td.egreso {
+    color: red;
+    font-weight: bold;
+  }
+  
+  .tabla-movimientos td.ingreso {
+    color: green;
+    font-weight: bold;
+  }
+  
+  .tabla-movimientos tfoot td {
+    font-weight: bold;
+    background-color: #f1f1f1;
+  }
+  
+  .detalle-usuario {
+    background: #f1f1f1;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+  }
+  
+  .detalle-usuario p {
+    margin: 5px 0;
+  }
+  
+  .detalle-usuario em {
+    color: #555;
+  }
+  

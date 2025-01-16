@@ -14,7 +14,7 @@ const adminSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   localName: { type: String, required: true },
-  localNumber: { type: Number, default: 14155238886 },
+  localNumber: { type: Number, default: 5491135254661 },
   fechaDeAlta: { type: Date, default: Date.now },
   tipoDeLicencia: { type: String, default: '' },
   fechaRenovacion: { type: Date, default: null },

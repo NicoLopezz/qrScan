@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 const clienteSchema = new mongoose.Schema({
+  nombre: { type: String, required: false },
   solicitudBaja: { type: Boolean, default: false },
   from: { type: String, required: true },
   historialPedidos: [{

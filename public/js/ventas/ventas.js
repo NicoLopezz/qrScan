@@ -13,8 +13,6 @@ const formArqueo = document.getElementById("form-arqueo");
 document.addEventListener("DOMContentLoaded", () => {
     if (horaApertura) {
         horaApertura.addEventListener("change", (event) => {
-            console.log("Cambio detectado en hora-apertura-arqueo:");
-            console.log("Valor seleccionado:", event.target.value);
         });
     } else {
         console.error("El campo hora-apertura-arqueo no se encontró en el DOM.");
@@ -24,7 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
         formArqueo.addEventListener("submit", async (event) => {
             event.preventDefault();
             const horaAperturaValue = horaApertura.value;
-            console.log("Valor enviado de hora-apertura-arqueo:", horaAperturaValue);
         });
     } else {
         console.error("El formulario form-arqueo no se encontró en el DOM.");
@@ -45,10 +42,6 @@ formArqueo.addEventListener("submit", async (event) => {
 
     // Valida los campos
     if (!horaApertura || isNaN(saldoInicial) || !tipoArqueo) {
-        console.log("LOS DATOS QUE ESTAN LLEGANDO SON:");
-        console.log("Hora de apertura:", horaApertura);
-        console.log("Saldo inicial:", saldoInicial);
-        console.log("Tipo de arqueo:", tipoArqueo);
         showNotification("Por favor, complete todos los campos requeridos.", "error");
         return;
     }
@@ -67,14 +60,7 @@ formArqueo.addEventListener("submit", async (event) => {
                 tipoArqueo // Incluye el nuevo campo
             })
         });
-
-        console.log("LOS DATOS ENVIADOS AL BACKEND SON:");
-        console.log("Hora de apertura:", horaApertura);
-        console.log("Saldo inicial:", saldoInicial);
-        console.log("Tipo de arqueo:", tipoArqueo);
-
         const data = await response.json();
-
         if (response.ok && data.success) {
             fetchArqueos(cajaTipoActivo); // Mostrar arqueos
             showNotification("Arqueo iniciado con éxito.");
@@ -139,21 +125,11 @@ options.forEach((option) => {
     });
 });
 
-
-//SOLAPA PARA FILTROS VER U OCULTAR.
-
-
-
-
-
-
-
 // Evento para alternar entre opciones dinámicamente
 options.forEach((option) => {
     option.addEventListener("click", () => {
         options.forEach((o) => o.classList.remove("active")); // Quitar clase active de todas las opciones
         option.classList.add("active"); // Agregar clase active a la opción seleccionada
-        console.log(`La opción activa ahora es: ${option.id}`);
         updateActiveFilters(); // Actualizar dinámicamente el filtro visible
     });
 });
@@ -187,11 +163,7 @@ document.querySelectorAll('.option').forEach((option) => {
             showFormsAndButtons('btn-nuevo-arqueo'); // Mostrar botón y formulario de arqueos
             detailsSection.style.display = 'none';
             details.style.display = 'none';
-            console.log(`EJECUTANDO FETCH ARQUEOS DESDE VENTAS JS ---- !!`);
             fetchArqueosFilter(); // Ejecutar la función de filtros para 
-
-            // Ocultar el detalle de movimiento
-            // movimientoDetails.classList.remove('visible');
             // fetchArqueos(cajaTipoActivo); // Mostrar arqueos
         } else if (selectedOption === 'ventas') {
             showFormsAndButtons('btn-nueva-venta'); // Mostrar botón y formulario de ventas

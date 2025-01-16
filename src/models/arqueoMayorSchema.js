@@ -11,6 +11,9 @@ const arqueoMayorSchema = new mongoose.Schema({
   fechaCierre: { type: Date, default: null },
   estado: { type: String, enum: ['abierto', 'cerrado'], default: 'abierto' },
   movimientos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movimiento' }], // Referencia a movimientos
+  ventas: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Venta' }], // Referencia a ventas
+  observacion: { type: String, default: '' }, // Nueva observación
+  tipo: { type: String, enum: ['efectivo', 'mercado-pago'], default: 'efectivo' }
 });
 
 export default mongoose.model('ArqueoMayor', arqueoMayorSchema, 'ArqueosMayor');
