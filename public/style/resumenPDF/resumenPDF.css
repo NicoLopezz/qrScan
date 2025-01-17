@@ -1,44 +1,175 @@
 body {
     font-family: 'Arial', sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
     margin: 0;
     padding: 20px;
-}
-
-.arqueo-container {
-    width: 100%;
-    max-width: 800px; /* Ajusta el ancho para que quepa en el PDF */
+  }
+  
+  .arqueo-container {
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
     background: #fff;
+    padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    page-break-inside: avoid; /* Evita cortes en mitad del div */
-}
+  }
+  
+  .movimientos-y-resumen {
+    display: flex;
+    gap: 20px;
+  }
 
-table {
+  .info-principal strong {
+    font-weight: bolder; /* Solo afecta al título */
+  }
+  
+  .info-principal span {
+    font-weight: bolder; /* Resetea el estilo del contenido dinámico */
+  }
+
+  #observacion-usuario{
+    font-style: italic;
+    font-weight: lighter;
+    font-size: 12px;
+  }
+  
+  
+  .columna-movimientos {
+    flex: 7; /* 70% del ancho */
+    /* background: #f1f1f1; */
+    padding: 15px;
+    border-radius: 8px;
+    /* border: 1px solid #ddd; */
+    overflow-y: auto;
+    max-height: 600px; /* Para agregar scroll si hay demasiados movimientos */
+  }
+  
+  .columna-resumen {
+    flex: 3; /* 30% del ancho */
+  }
+  
+  h1, h2 {
+    color: #6b00ad;
+  }
+  
+  h2 {
+    margin-top: 0;
+  }
+  
+  .tabla-movimientos, .tabla-arqueo {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
-}
-
-th, td {
+    margin: 20px 0;
+  }
+  
+  .tabla-movimientos th, .tabla-arqueo th {
+    background-color: #6b00ad;
+    color: #fff;
     padding: 10px;
     text-align: left;
+  }
+  
+  .tabla-movimientos td, .tabla-arqueo td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+  }
+  
+  .tabla-movimientos tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+  }
+  
+  .tabla-movimientos tbody tr:nth-child(even) {
+    background-color: #fff;
+  }
+  
+  .tabla-movimientos td.egreso {
+    color: red;
+    font-weight: bold;
+  }
+  
+  .tabla-movimientos td.ingreso {
+    color: green;
+    font-weight: bold;
+  }
+  
+  .tabla-movimientos tfoot td {
+    font-weight: bold;
+    background-color: #f1f1f1;
+  }
+  
+  .detalle-usuario {
+    background: #f1f1f1;
+    padding: 15px;
+    border-radius: 8px;
     border: 1px solid #ddd;
-}
+  }
+  
+  .detalle-usuario p {
+    margin: 5px 0;
+  }
+  
+  .detalle-usuario em {
+    color: #555;
+  }
 
-th {
+
+  .tabla-arqueo {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  
+  .tabla-arqueo th, .tabla-arqueo td {
+    border: 1px solid #ccc;
+    padding: 5px;
+    text-align: center;
+    font-size: 12px;
+  }
+  
+  .tabla-arqueo th {
     background-color: #6b00ad;
     color: white;
-}
+  }
 
-@media print {
+  #descargarPDF{
+    padding: 12px 12px;
+    margin-top: 15px;
+    color: #fff;
+    background-color: #6b00ad;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    margin: 10px 30px;
+}
+  
+  
+
+  @media print {
     body {
-        background: white;
-        -webkit-print-color-adjust: exact; /* Para imprimir con colores exactos */
+        font-size: 10px;
+        margin: 0;
+        padding: 0;
+        width: 297mm; /* Ancho de una hoja A4 en apaisado */
+        height: 210mm; /* Alto de una hoja A4 en apaisado */
     }
 
     .arqueo-container {
-        box-shadow: none; /* Elimina sombras en impresión */
+        padding: 10mm;
+        margin: 0;
+        box-shadow: none;
+        border: none;
+    }
+
+    .tabla-movimientos {
+        font-size: 8px; /* Ajustar tamaño de fuente */
+    }
+
+    .detalle-usuario {
+        margin-bottom: 10mm;
     }
 }
+
+  

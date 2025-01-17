@@ -1,9 +1,13 @@
 // *** VARIABLES GLOBALES ***
 let cajaTipoActivo = 'CajaMayor'; // Caja activa por defecto
+
+
 let currentArqueoId = null; // Variable global para almacenar el ID del arqueo actual
 let currentArqueDiferencia = null; // Variable global para almacenar el ID del arqueo actual
+
 let currentArqueoEstado = null; // Variable global para almacenar el ID del arqueo actual
 let currentArqueoObservacion = null
+
 let currentFiltroMovimiento = "todos"; // Variable global para almacenar el ID del arqueo 
 let currentMovimiento = null; // Variable global para almacenar el ID del arqueo 
 let currentMovimientoCajaId = null; // Variable global para almacenar el ID del arqueo 
@@ -224,6 +228,12 @@ function displayArqueoDetails(arqueo) {
     currentArqueoEstado = arqueo.estado
     currentArqueoDiferencia = arqueo.diferencia
     currentArqueoObservacion = arqueo.observacion
+    currentArqueoCierre = arqueo.fechaCierre
+    currentArqueoApertura = arqueo.fechaApertura
+    currentArqueoApertura = arqueo.fechaApertura
+    currentArqueoSaldoIncial = arqueo.saldoInicial
+    currentArqueoSaldoSistema = arqueo.saldoFinalSistema
+    currentArqueoReal = arqueo.saldoFinalReal
     renderDiferenciaCard(totalSistema, arqueo._id);
 }
 
@@ -402,7 +412,19 @@ function renderDiferenciaCard(totalSistema) {
     const downloadPdfButton = document.getElementById("downloadPdfButton");
     if (downloadPdfButton) {
         downloadPdfButton.addEventListener("click", async () => {
-            cargarMovimientos(cajaTipoActivo, currentArqueoId); // Carga los movimientos
+            // console.log(currentArqueoApertura)
+            // console.log(currentArqueoCierre)
+            cargarMovimientos(
+                cajaTipoActivo,
+                currentArqueoId,
+                currentArqueoSaldoIncial,
+                currentArqueoSaldoSistema,
+                currentArqueoDiferencia,
+                currentArqueoObservacion,
+                currentArqueoCierre,
+                currentArqueoApertura,
+                currentArqueoReal,
+            ); // Carga los movimientos
         });
     }
 
