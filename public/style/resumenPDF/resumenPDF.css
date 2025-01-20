@@ -19,13 +19,28 @@ body {
     display: flex;
     gap: 20px;
   }
+
+  .info-principal strong {
+    font-weight: bolder; /* Solo afecta al título */
+  }
+  
+  .info-principal span {
+    font-weight: bolder; /* Resetea el estilo del contenido dinámico */
+  }
+
+  #observacion-usuario{
+    font-style: italic;
+    font-weight: lighter;
+    font-size: 12px;
+  }
+  
   
   .columna-movimientos {
     flex: 7; /* 70% del ancho */
-    background: #f1f1f1;
+    /* background: #f1f1f1; */
     padding: 15px;
     border-radius: 8px;
-    border: 1px solid #ddd;
+    /* border: 1px solid #ddd; */
     overflow-y: auto;
     max-height: 600px; /* Para agregar scroll si hay demasiados movimientos */
   }
@@ -98,4 +113,63 @@ body {
   .detalle-usuario em {
     color: #555;
   }
+
+
+  .tabla-arqueo {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  
+  .tabla-arqueo th, .tabla-arqueo td {
+    border: 1px solid #ccc;
+    padding: 5px;
+    text-align: center;
+    font-size: 12px;
+  }
+  
+  .tabla-arqueo th {
+    background-color: #6b00ad;
+    color: white;
+  }
+
+  #descargarPDF{
+    padding: 12px 12px;
+    margin-top: 15px;
+    color: #fff;
+    background-color: #6b00ad;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    margin: 10px 30px;
+}
+  
+  
+
+  @media print {
+    body {
+        font-size: 10px;
+        margin: 0;
+        padding: 0;
+        width: 297mm; /* Ancho de una hoja A4 en apaisado */
+        height: 210mm; /* Alto de una hoja A4 en apaisado */
+    }
+
+    .arqueo-container {
+        padding: 10mm;
+        margin: 0;
+        box-shadow: none;
+        border: none;
+    }
+
+    .tabla-movimientos {
+        font-size: 8px; /* Ajustar tamaño de fuente */
+    }
+
+    .detalle-usuario {
+        margin-bottom: 10mm;
+    }
+}
+
   

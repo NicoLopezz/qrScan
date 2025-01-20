@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resumen de Arqueo</title>
+  <link rel="stylesheet" href="../style/resumenPDF/resumenPDF.css">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      width: 297mm;
+      /* Ancho de A4 apaisado */
+      height: 210mm;
+      /* Alto de A4 apaisado */
+      background: #fff;
+      box-sizing: border-box;
+    }
+
+    .arqueo-container {
+      width: 95%;
+      margin: auto;
+      padding: 10mm;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    .movimientos-y-resumen {
+      display: flex;
+      flex-direction: row;
+      gap: 10mm;
+    }
+
+    .columna-movimientos {
+      flex: 7;
+      /* 70% del espacio */
+      max-height: 180mm;
+      /* Altura máxima para contenido */
+      overflow-y: auto;
+    }
+
+    .columna-resumen {
+      flex: 3;
+      /* 30% del espacio */
+    }
+
+    h1,
+    h2 {
+      color: #6b00ad;
+      text-align: center;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th,
+    td {
+      border: 1px solid #ccc;
+      padding: 5px;
+      text-align: center;
+      font-size: 10px;
+    }
+
+    th {
+      background-color: #6b00ad;
+      color: white;
+    }
+
+    tbody tr:nth-child(odd) {
+      background-color: #f9f9f9;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: #fff;
+    }
+
+    .detalle-usuario,
+    .saldo-final {
+      background: #f1f1f1;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      margin-top: 15px;
+    }
+
+    .detalle-usuario p,
+    .saldo-final p {
+      margin: 5px 0;
+    }
+
+    .info-principal p {
+      font-size: 15px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="arqueo-container">
+    <div class="movimientos-y-resumen">
+      <!-- Columna de Movimientos -->
+      <div class="columna-movimientos">
+        <h2>Movimientos</h2>
+        <table class="tabla-movimientos">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Descripción</th>
+              <th>Ingreso</th>
+              <th>Egreso</th>
+              <th>Subtotal Parcial</th>
+              <!-- <th>Tipo</th> -->
+              <!-- <th>Medio de Pago</th> -->
+            </tr>
+          </thead>
+          <tbody id="tabla-movimientos-body">
+            <!-- Las filas se generarán dinámicamente con JS -->
+          </tbody>
+          <tfoot id="tabla-movimientos-footer">
+            <!-- El total se generará dinámicamente con JS -->
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- Columna del Resumen -->
+      <div class="columna-resumen">
+        <h1>Cierre de Caja</h1>
+        <div class="info-principal">
+          <p id="hora-apertura"><strong>Apertura:</strong></p>
+          <p id="hora-cierre"><strong><span>Cierre:</span></strong></p>
+          <p id="saldo-inicial"><strong>Inicial:</strong></p>
+        </div>
+
+        <h2>Según Sistema</h2>
+        <table class="tabla-arqueo">
+          <thead>
+            <tr>
+              <th>Detalle</th>
+              <th>Monto</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Ingresos</td>
+              <td id="total-ingresos">$0.00</td>
+            </tr>
+            <tr>
+              <td>Egresos</td>
+              <td id="total-egresos">$0.00</td>
+            </tr>
+            <tr>
+              <td><strong>Total Sistema:</strong></td>
+              <td id="total-sistema"><strong>$0.00</strong></td>
+            </tr>
+          </tbody>
+        </table>
+
+
+        <div class="detalle-usuario">
+          <h2>Según Usuario</h2>
+          <p id="saldo-usuario">Saldo Usuario:</p>
+        </div>
+
+        <!-- Nueva sección: Saldo Final -->
+        <div class="saldo-final">
+          <p id="saldo-final"><strong>Diferencia:</strong></p>
+          <p id="observacion-usuario"><em>Observación:</em></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

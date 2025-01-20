@@ -1858,6 +1858,7 @@ async function getMovimientos(req, res) {
   const adminId = req.cookies.adminId; // Obtener adminId desde las cookies
   const { cajaTipo, arqueoId } = req.query; // Obtener cajaTipo y arqueoId desde la query
 
+  console.log("DATOS DEL backend por donde va el fetch: "+cajaTipo, +" "+arqueoId+" "+adminId)
   // Validar que adminId, cajaTipo y arqueoId existan
   if (!adminId || !cajaTipo || !arqueoId) {
     return res.status(400).json({ success: false, message: "Faltan parámetros requeridos (adminId, cajaTipo, arqueoId)." });

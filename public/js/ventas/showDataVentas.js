@@ -1,9 +1,13 @@
 // *** VARIABLES GLOBALES ***
 let cajaTipoActivo = 'CajaMayor'; // Caja activa por defecto
+
+
 let currentArqueoId = null; // Variable global para almacenar el ID del arqueo actual
 let currentArqueDiferencia = null; // Variable global para almacenar el ID del arqueo actual
+
 let currentArqueoEstado = null; // Variable global para almacenar el ID del arqueo actual
 let currentArqueoObservacion = null
+
 let currentFiltroMovimiento = "todos"; // Variable global para almacenar el ID del arqueo 
 let currentMovimiento = null; // Variable global para almacenar el ID del arqueo 
 let currentMovimientoCajaId = null; // Variable global para almacenar el ID del arqueo 
@@ -224,6 +228,12 @@ function displayArqueoDetails(arqueo) {
     currentArqueoEstado = arqueo.estado
     currentArqueoDiferencia = arqueo.diferencia
     currentArqueoObservacion = arqueo.observacion
+    currentArqueoCierre = arqueo.fechaCierre
+    currentArqueoApertura = arqueo.fechaApertura
+    currentArqueoApertura = arqueo.fechaApertura
+    currentArqueoSaldoIncial = arqueo.saldoInicial
+    currentArqueoSaldoSistema = arqueo.saldoFinalSistema
+    currentArqueoReal = arqueo.saldoFinalReal
     renderDiferenciaCard(totalSistema, arqueo._id);
 }
 
@@ -401,11 +411,23 @@ function renderDiferenciaCard(totalSistema) {
     // Agregar evento al botón de Descargar PDF
     const downloadPdfButton = document.getElementById("downloadPdfButton");
     if (downloadPdfButton) {
-        downloadPdfButton.addEventListener("click", () => {
-            console.log("Descargando PDF...");
-            generarPDF(); // Aquí invocas tu lógica de generación de PDF
+        downloadPdfButton.addEventListener("click", async () => {
+            // console.log(currentArqueoApertura)
+            // console.log(currentArqueoCierre)
+            cargarMovimientos(
+                cajaTipoActivo,
+                currentArqueoId,
+                currentArqueoSaldoIncial,
+                currentArqueoSaldoSistema,
+                currentArqueoDiferencia,
+                currentArqueoObservacion,
+                currentArqueoCierre,
+                currentArqueoApertura,
+                currentArqueoReal,
+            ); // Carga los movimientos
         });
     }
+
 
     // Agregar evento al botón de Cerrar Arqueo si no está cerrado
     if (currentArqueoEstado !== "cerrado") {
@@ -421,12 +443,6 @@ function renderDiferenciaCard(totalSistema) {
         });
     }
 }
-
-
-
-
-
-
 
 
 // *** Función para manejar el cierre del arqueo ***
