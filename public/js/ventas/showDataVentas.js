@@ -23,7 +23,6 @@ document.querySelectorAll('.tab').forEach((tab) => {
     tab.addEventListener('click', (event) => {
         const selectedCaja = event.target.id === 'caja-mayor' ? 'CajaMayor' : 'CajaChica';
         cajaTipoActivo = selectedCaja; // Actualizar caja activa
-
         hideAllFormsAndButtons();
         fetchArqueos(selectedCaja);
     });
@@ -517,9 +516,12 @@ function renderMovimientosTable(movimientos) {
         movimientos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha)); // Ordenar por fecha descendente
 
         movimientos.forEach(movimiento => {
+            const fecha = new Date(movimiento.fecha);
+            const fechaFormateada = `${fecha.getDate().toString().padStart(2, '0')}/${(fecha.getMonth() + 1).toString().padStart(2, '0')}/${fecha.getFullYear().toString().slice(-2)}, ${fecha.getHours().toString().padStart(2, '0')}:${fecha.getMinutes().toString().padStart(2, '0')}`;
+
             const row = document.createElement("tr");
             row.innerHTML = `
-                <td>${new Date(movimiento.fecha).toLocaleString()}</td>
+                <td>${fechaFormateada}</td>
                 <td>$${movimiento.monto || "---"}</td>
                 <td>${movimiento.tipo || "---"}</td>
                 <td>
@@ -561,6 +563,7 @@ function renderMovimientosTable(movimientos) {
         tableBody.appendChild(noDataRow);
     }
 }
+
 
 
 function actualizarDetallesMovimiento(movimiento) {
@@ -769,6 +772,9 @@ function resetButton(button, actionType) {
 //MovimientoDisplay
 // *** Llamar a la función al cargar la página ***
 document.addEventListener("DOMContentLoaded", fetchAndRenderLavados);
+
+
+
 // *** Función para renderizar lavados en la tabla ***
 function renderLavadosTable(lavados) {
     const tableBody = document.querySelector("#table-ventas tbody");
@@ -780,33 +786,56 @@ function renderLavadosTable(lavados) {
         // Ordenar los lavados por fecha/hora descendente
         lavados.sort((a, b) => new Date(b.fechaHora) - new Date(a.fechaHora));
 
-        lavados.forEach((lavado, index) => {
+        lavados.forEach((lavado) => {
             // Crear una nueva fila
             const row = document.createElement("tr");
 
             // Convertir patente a mayúsculas (si existe)
             const patenteMayuscula = lavado.patente ? lavado.patente.toUpperCase() : "---";
 
-            // Asignar contenido HTML a la fila
-            row.innerHTML = `
-                <td>${lavado.nombre || "---"}</td>
-                <td>${patenteMayuscula}</td>
-                <td>${lavado.empresa || "---"}</td>
-                <td>${new Date(lavado.fechaDeAlta).toLocaleString() || "---"}</td>
-                <td>
-                    ${lavado.medioPago === "efectivo"
+            // Manejar la fecha
+            let fechaFormateada = "---";
+            if (lavado.fechaDeAlta) {
+                const fechaDeAlta = new Date(lavado.fechaDeAlta);
+                const dia = String(fechaDeAlta.getDate()).padStart(2, '0');
+                const mes = String(fechaDeAlta.getMonth() + 1).padStart(2, '0'); // Los meses comienzan en 0
+                const anio = String(fechaDeAlta.getFullYear()).slice(-2); // Últimos dos dígitos del año
+                const horas = String(fechaDeAlta.getHours()).padStart(2, '0');
+                const minutos = String(fechaDeAlta.getMinutes()).padStart(2, '0');
+                fechaFormateada = `${dia}/${mes}/${anio} ${horas}:${minutos}`;
+            }
+
+            // Crear manualmente las celdas
+            const nombreCelda = document.createElement("td");
+            nombreCelda.textContent = lavado.nombre || "---";
+
+            const patenteCelda = document.createElement("td");
+            patenteCelda.textContent = patenteMayuscula;
+
+            const empresaCelda = document.createElement("td");
+            empresaCelda.textContent = lavado.empresa || "---";
+
+            const fechaCelda = document.createElement("td");
+            fechaCelda.textContent = fechaFormateada; // Aseguramos que no haya manipulación
+
+            const medioPagoCelda = document.createElement("td");
+            medioPagoCelda.innerHTML =
+                lavado.medioPago === "efectivo"
                     ? '<img src="../img/cashLogo2.svg" alt="Efectivo" style="width: 30px; height: auto;" class="icon">'
                     : lavado.medioPago === "mercado-pago"
                         ? '<img src="../img/logoMp.svg" alt="Mercado Pago" style="width: 30px; height: auto;" class="icon">'
-                        : "---"
-                }
-                </td>
-                <td>${lavado.estado || "---"}</td>
-            `;
+                        : "---";
 
-            // Agregar atributo data-id para identificar la fila
-            const lavadoId = lavado._id || "sin-id";
-            row.setAttribute("data-id", lavadoId);
+            const estadoCelda = document.createElement("td");
+            estadoCelda.textContent = lavado.estado || "---";
+
+            // Agregar las celdas a la fila
+            row.appendChild(nombreCelda);
+            row.appendChild(patenteCelda);
+            row.appendChild(empresaCelda);
+            row.appendChild(fechaCelda);
+            row.appendChild(medioPagoCelda);
+            row.appendChild(estadoCelda);
 
             // Agregar evento de clic a la fila
             row.addEventListener("click", () => {
@@ -838,6 +867,13 @@ function renderLavadosTable(lavados) {
         tableBody.appendChild(noDataRow);
     }
 }
+
+
+
+
+
+
+
 
 function editarDetalle(id) {
     const elemento = document.getElementById(id);
@@ -946,6 +982,7 @@ async function crearMovimientoDesdeLavado({ monto, medioPago, descripcion, estad
 
         if (response.ok && data.success) {
             showNotification('Movimiento creado con éxito.', 'success');
+            // cargarLavadosConFiltros();
         } else {
             showNotification(`Error al crear el movimiento: ${data.error || 'Error desconocido'}`, 'error');
         }
@@ -994,7 +1031,7 @@ function actualizarDetallesLavado(lavado) {
     const descripcion = document.getElementById('descripcion-lavado');
     const monto = document.getElementById('monto-lavado');
 
-    // Convertir la fecha al formato deseado
+    // Convertir la fecha al formato DD/MM/YY HH:mm
     let fechaFormateada = "";
     if (lavado.fechaDeAlta) {
         const fechaObj = new Date(lavado.fechaDeAlta);
@@ -1008,7 +1045,7 @@ function actualizarDetallesLavado(lavado) {
 
     // Actualizar los valores del formulario con los datos del lavado
     usuario.value = lavado.nombre || "---";
-    patente.value = lavado.patente || "---";
+    patente.value = lavado.patente ? lavado.patente.toUpperCase() : "---"; // Convertir patente a mayúsculas
     empresa.value = lavado.empresa || "---";
     fecha.value = fechaFormateada || "---";
 
@@ -1030,22 +1067,8 @@ function actualizarDetallesLavado(lavado) {
     // Actualizar monto
     monto.value = lavado.monto || "";
 }
-// Función para habilitar la edición de un campo específico
-// function editarDetalle(campoId) {
-//     const campo = document.getElementById(campoId);
-//     if (campo) {
-//         const valorActual = campo.value.trim();
-//         const input = document.createElement('input');
-//         input.type = 'text';
-//         input.value = valorActual;
-//         input.onblur = () => {
-//             campo.value = input.value;
-//             input.remove();
-//         };
-//         campo.parentNode.appendChild(input);
-//         input.focus();
-//     }
-// }
+
+
 
 async function fetchAndRenderLavados() {
     try {
