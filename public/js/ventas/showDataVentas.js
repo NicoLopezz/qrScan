@@ -98,6 +98,18 @@ function renderArqueosTable(arqueos) {
     // Ordenar arqueos por fecha de apertura (de más reciente a más antigua)
     arqueos.sort((a, b) => new Date(b.fechaApertura) - new Date(a.fechaApertura));
 
+    // Función para formatear fecha en DD/MM/YY HH:mm
+    const formatDate = (date) => {
+        if (!date) return '---';
+        const fecha = new Date(date);
+        const dia = String(fecha.getDate()).padStart(2, '0');
+        const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+        const anio = String(fecha.getFullYear()).slice(-2);
+        const horas = String(fecha.getHours()).padStart(2, '0');
+        const minutos = String(fecha.getMinutes()).padStart(2, '0');
+        return `${dia}/${mes}/${anio} ${horas}:${minutos}`;
+    };
+
     arqueos.forEach((arqueo) => {
         const row = document.createElement('tr');
 
@@ -114,8 +126,8 @@ function renderArqueosTable(arqueos) {
         const icono = arqueo.tipo === 'efectivo' ? '../img/cashLogo2.svg' : '../img/logoMp.svg';
 
         row.innerHTML = `
-            <td>${new Date(arqueo.fechaApertura).toLocaleString()}</td>
-            <td>${arqueo.fechaCierre ? new Date(arqueo.fechaCierre).toLocaleString() : '---'}</td>
+            <td>${formatDate(arqueo.fechaApertura)}</td>
+            <td>${arqueo.fechaCierre ? formatDate(arqueo.fechaCierre) : '---'}</td>
             <td>
                 <img src="${icono}" alt="Detalle" style="width: 30px; height: auto;">
             </td>
@@ -153,6 +165,7 @@ function renderArqueosTable(arqueos) {
     document.getElementById('table-arqueo').classList.remove('hidden');
     document.getElementById('table-movimientos').classList.add('hidden');
 }
+
 
 
 // *** FUNCIONES: Mostrar Detalles de Arqueo ***
