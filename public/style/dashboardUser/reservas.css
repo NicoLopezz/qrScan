@@ -176,6 +176,7 @@ input[type="text"], input[type="number"] {
     color: #555;
     background-color: #f9f9f9;
     transition: background-color 0.3s, box-shadow 0.3s;
+    text-align: center;
     /* display: none; */
 }
 

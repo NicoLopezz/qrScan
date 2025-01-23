@@ -49,21 +49,29 @@ function updateActiveFilters() {
     }
 }
 
-
-
 // Manejar el clic en el botón de la solapa
 toggleFiltersButton.addEventListener("click", () => {
     const currentText = toggleFiltersButton.textContent.trim();
+    const tableBody = document.querySelector("#table-movimientos tbody"); // Seleccionar correctamente el tbody
+    const tableArqueo = document.querySelector("#table-arqueo tbody"); // Seleccionar correctamente el tbody
+    const tableVentas = document.querySelector("#table-ventas tbody"); // Seleccionar correctamente el tbody
 
     if (currentText === "Mostrar Filtros") {
         toggleFiltersButton.textContent = "Ocultar Filtros";
+        tableBody.classList.add("filters-visible"); // Agregar clase
+        tableArqueo.classList.add("filters-visible"); // Agregar clase
+        tableVentas.classList.add("filters-visible"); // Agregar clase
         updateActiveFilters(); // Mostrar el filtro activo según la opción activa
     } else {
         toggleFiltersButton.textContent = "Mostrar Filtros";
+        tableBody.classList.remove("filters-visible"); // Quitar clase
+        tableArqueo.classList.remove("filters-visible"); // Agregar clase
+        tableVentas.classList.remove("filters-visible"); // Agregar clase
         hideAllFilters(); // Ocultar todos los filtros
-        
     }
 });
+
+
 
 
 // *** Evento para manejar el cambio en el filtro Tipo de Ingreso ***
@@ -91,8 +99,6 @@ document.getElementById("filtro-fecha").addEventListener("change", function (eve
         currentFiltroFecha = { tipo: "determinar", desde: null, hasta: null };
         document.getElementById("fecha-personalizada").classList.remove("hidden");
     }
-
-    
     fetchMovimientos(); // Ejecutar fetchMovimientos después de cambiar el filtro
 });
 
@@ -417,19 +423,20 @@ let filtroPatenteLavados = "";
 let filtroEmpresaLavados = "";
 let filtroEstadoLavados = "todos";
 let filtroFechaLavados = { tipo: "hoy", desde: null, hasta: null }; // Por defecto: "hoy"
-
 let tbodyVentas = document.querySelector("#table-ventas tbody");
+
+
 // *** Evento para manejar el filtro de Patente (en vivo) ***
 document.getElementById("patente-lavados").addEventListener("input", function (event) {
-    
-    
+    filtroPatenteLavados = event.target.value.toLowerCase().trim();
+    console.log("Filtro Patente cambiado a:", filtroPatenteLavados);
     cargarLavadosConFiltros(); // Ejecutar al cambiar el filtro
 });
 
 // *** Evento para manejar el filtro de Empresa (en vivo) ***
 document.getElementById("empresa-lavados").addEventListener("input", function (event) {
-    
-
+    filtroEmpresaLavados = event.target.value.toLowerCase().trim();
+    console.log("Filtro Empresa cambiado a:", filtroEmpresaLavados);
     cargarLavadosConFiltros(); // Ejecutar al cambiar el filtro
 });
 
@@ -580,14 +587,27 @@ function agregarFilaTabla(lavado, tbody) {
         return;
     }
     const fila = document.createElement("tr");
+
     // Determina las columnas de la tabla según el tbody
     if (tbody === tbodyVentas) {
+        // Formatear la fecha en DD/MM/YY HH:mm
+        let fechaFormateada = "---";
+        if (lavado.fechaDeAlta) {
+            const fechaObj = new Date(lavado.fechaDeAlta);
+            const dia = String(fechaObj.getDate()).padStart(2, '0');
+            const mes = String(fechaObj.getMonth() + 1).padStart(2, '0'); // Los meses comienzan en 0
+            const anio = String(fechaObj.getFullYear()).slice(-2); // Últimos dos dígitos del año
+            const horas = String(fechaObj.getHours()).padStart(2, '0');
+            const minutos = String(fechaObj.getMinutes()).padStart(2, '0');
+            fechaFormateada = `${dia}/${mes}/${anio} ${horas}:${minutos}`;
+        }
+
         // Para la tabla de ventas
         fila.innerHTML = `
+        <td>${fechaFormateada}</td>
         <td>${lavado.nombre || "---"}</td>
         <td>${lavado.patente || "---"}</td>
         <td>${lavado.empresa || "---"}</td>
-        <td>${new Date(lavado.fechaDeAlta).toLocaleString() || "---"}</td>
         <td>
             ${lavado.medioPago === "efectivo"
                 ? '<img src="../img/cashLogo2.svg" alt="Efectivo" style="width: 30px; height: auto;" class="icon">'
@@ -602,10 +622,9 @@ function agregarFilaTabla(lavado, tbody) {
         // Agregar atributo data-id para identificar la fila
         const lavadoId = lavado._id || "sin-id";
         fila.setAttribute("data-id", lavadoId);
+
         // Agregar evento de clic a la fila
         fila.addEventListener("click", () => {
-            
-
             // Quitar la clase "selected" de todas las filas
             document.querySelectorAll("#table-ventas tbody tr").forEach((r) => {
                 r.classList.remove("selected");
@@ -622,12 +641,11 @@ function agregarFilaTabla(lavado, tbody) {
             // Actualizar los detalles editables
             actualizarDetallesLavado(lavado);
         });
-
-
     }
 
     tbody.appendChild(fila);
 }
+
 
 actualizarTabla(ventas, tbodyVentas);
 

@@ -1,7 +1,7 @@
 /* //CON ESTO FUNCIONA TODO LA VERSION MOVIL! */
 
 
-@media screen and (min-width: 1366px) and (max-width: 1440px) {
+@media screen and (min-width: 1166px) and (max-width: 1440px) {
 
   * {
     margin: 0;
@@ -20,6 +20,11 @@
     height: 100vh;
     overflow: hidden;
     /* Evita el desbordamiento de la pantalla */
+  }
+
+  .main-content {
+    width: 1100px;
+
   }
 
 
@@ -306,7 +311,7 @@
     padding: 0px;
     text-align: left;
     border-bottom: 1px solid #ddd;
-    font-size: 15px !important;
+    font-size: 12px !important;
     padding-left: 1rem;
   }
 
@@ -319,7 +324,7 @@
     position: sticky;
     top: 0;
     z-index: 1;
-    font-size: 15px;
+    font-size: 12px;
   }
 
   #tablaLavados2 table {
@@ -749,11 +754,214 @@
 
   p {
     font-size: 13px !important;
+    text-align: center;
   }
 
 
+  /* SECTION DE VENTAS */
+  .right-column {
+    flex: 45%;
+    padding: 10px;
+    background-color: rgb(253, 12, 12);
+    border-left: 1px solid #ddd;
+    overflow-y: auto;
+    height: calc(85vh - 100px);
+
+  }
+
+  #container-ventas {
+    /* background-color: orange; */
+    width: 1100px;
+  }
+
+  h3 {
+    font-size: 20px !important;
+  }
+
+  h4 {
+    font-size: 20px !important;
+  }
+
+  #form-movimiento {
+    /* background-color: green; */
+    font-size: 11px;
+  }
+
+  #form-lavado {
+    font-size: 11px;
+  }
+
+  form h4 {
+    font-size: 20px;
+  }
+
+  .checkbox-group label {
+    font-size: 12px !important;
+  }
 
 
+  .form-actions {
+    font-size: 20px;
+  }
+
+  .btn {
+    font-size: 12px !important;
+  }
+
+  .buttons-row {
+    font-size: 12px !important;
+  }
+
+  .form-row {
+    margin-bottom: 5px !important;
+  }
+
+  #movimiento-details {
+    font-size: 11px;
+    width: 100%;
+  }
+
+  .form-row label {
+    min-width: 100px !important
+  }
+
+  .tabs {
+    font-size: 12px !important;
+  }
+
+  .options {
+    font-size: 12px !important;
+    height: 35px !important
+  }
+
+  .toggle-button {
+    font-size: 12px !important;
+    height: 35px !important
+  }
+
+  .filter-button {
+    font-size: 12px !important;
+  }
+
+  .filters {
+    font-size: 12px !important;
+  }
+
+  .filter-select {
+    font-size: 12px !important;
+  }
+
+  /* Estilo básico para la tabla */
+  .data-table {
+    width: 100%;
+    /* Ancho completo */
+    border-collapse: collapse;
+    /* Sin espacio entre celdas */
+  }
+
+  .data-table thead {
+    position: sticky;
+    /* Cabecera fija */
+    top: 0;
+    /* Se fija en la parte superior */
+    background-color: #6b00ad;
+    /* Color morado de la cabecera */
+    color: white;
+    /* Texto blanco */
+    z-index: 2;
+    /* Cabecera sobre las filas */
+  }
+
+  .data-table tbody {
+    display: block;
+    /* Permite el scroll */
+    max-height: 18rem;
+    /* Define la altura del scroll */
+    overflow-y: auto;
+    /* Habilita scroll vertical */
+  }
+
+  .data-table tr {
+    display: table;
+    /* Mantener estructura de tabla */
+    width: 100%;
+    /* Consistencia en el ancho */
+    table-layout: fixed;
+    /* Columnas con ancho fijo */
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 10px;
+    /* Espaciado interno */
+    text-align: center;
+    /* Centrado */
+    border: 1px solid #ddd;
+    /* Bordes */
+  }
+
+  .icon {
+    width: 30px;
+    /* Tamaño fijo para íconos */
+    height: auto;
+  }
+
+  .left-column {
+    height: 0px;
+  }
+
+
+  .filtroActivos {
+    background-color: red;
+  }
+
+  .data-table tbody {
+    transition: height 0.3s ease;
+    /* Animación para que se vea suave */
+  }
+
+  .data-table tbody.filters-visible {
+    height: 5rem;
+    /* Altura cuando los filtros están visibles */
+  }
+
+
+  .details-section {
+    padding: 0px !important;
+    margin-bottom: 0px !important;
+    margin-left: 0px !important;
+  }
+
+  .diferencia-card {
+    display: grid !important;
+    gap: 20px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    align-content: center !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .diferencia-card-left, .diferencia-card-right{
+    display: grid !important;
+    align-content: center !important;
+    justify-content: center !important;
+  }
+
+  .diferencia-card-left{
+    grid-row: 2; /* Ubica este elemento en la primera fila */
+  }
+
+  .diferencia-card-right{
+    grid-row: 1; /* Ubica este elemento en la primera fila */
+  }
+
+  #containerUser{
+    scale: 0.9;
+  }
 
 }
 
@@ -1495,16 +1703,14 @@
     /* margin-bottom: 14%; */
   }
 
-  .whatsapp-chat-history{
+  .whatsapp-chat-history {
     display: grid;
     grid-template-rows: 90% 1fr;
 
   }
 
 
-  #table-movimientos{
-    /* background-color: red; */
-  }
+
 
   /* Footer */
   .whatsapp-chat-footer {
