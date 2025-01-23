@@ -851,60 +851,67 @@
     font-size: 12px !important;
   }
 
-  /* Estilo básico para la tabla */
-  .data-table {
-    width: 100%;
-    /* Ancho completo */
-    border-collapse: collapse;
-    /* Sin espacio entre celdas */
-  }
+ /* Estilo básico para la tabla */
+.data-table {
+  width: 100%; /* Ancho completo */
+  max-width: 100%; /* Evitar desbordes horizontales */
+  border-collapse: collapse; /* Sin espacio entre celdas */
+  overflow-x: hidden; /* Evitar scroll lateral */
+}
 
-  .data-table thead {
-    position: sticky;
-    /* Cabecera fija */
-    top: 0;
-    /* Se fija en la parte superior */
-    background-color: #6b00ad;
-    /* Color morado de la cabecera */
-    color: white;
-    /* Texto blanco */
-    z-index: 2;
-    /* Cabecera sobre las filas */
-  }
+/* Cabecera fija */
+.data-table thead {
+  position: sticky; /* Cabecera fija al hacer scroll */
+  top: 0; /* Fijar en la parte superior */
+  background-color: #6b00ad; /* Color morado de la cabecera */
+  color: white; /* Texto blanco */
+  z-index: 2; /* Colocar encima de las filas */
+}
 
-  .data-table tbody {
-    display: block;
-    /* Permite el scroll */
-    max-height: 18rem;
-    /* Define la altura del scroll */
-    overflow-y: auto;
-    /* Habilita scroll vertical */
-  }
+/* Cuerpo de la tabla con scroll vertical */
+.data-table tbody {
+  display: block; /* Permitir scroll en tbody */
+  max-height: 18rem; /* Altura máxima del scroll */
+  overflow-y: auto; /* Habilitar scroll vertical */
+  overflow-x: hidden; /* Evitar scroll horizontal */
+}
 
-  .data-table tr {
-    display: table;
-    /* Mantener estructura de tabla */
-    width: 100%;
-    /* Consistencia en el ancho */
-    table-layout: fixed;
-    /* Columnas con ancho fijo */
-  }
+/* Ajustes para las filas */
+.data-table tr {
+  display: table; /* Mantener estructura de tabla */
+  width: 100%; /* Consistencia en el ancho */
+  table-layout: fixed; /* Columnas con ancho fijo */
+}
 
-  .data-table th,
-  .data-table td {
-    padding: 10px;
-    /* Espaciado interno */
-    text-align: center;
-    /* Centrado */
-    border: 1px solid #ddd;
-    /* Bordes */
-  }
+/* Ajustes para las celdas */
+.data-table th,
+.data-table td {
+  padding: 10px; /* Espaciado interno */
+  text-align: center; /* Centrado del texto */
+  border: 1px solid #ddd; /* Bordes de las celdas */
+  word-wrap: break-word; /* Forzar salto de línea si es necesario */
+  overflow: hidden; /* Evitar desbordamiento horizontal */
+  white-space: nowrap; /* Prevenir saltos de línea */
+  /* text-overflow: ellipsis; Mostrar puntos suspensivos si el texto es muy largo */
+  max-width: 200px; /* Límite de ancho para celdas */
+}
 
-  .icon {
-    width: 30px;
-    /* Tamaño fijo para íconos */
-    height: auto;
-  }
+/* Iconos dentro de las celdas */
+.icon {
+  width: 30px; /* Tamaño fijo para íconos */
+  height: auto;
+}
+
+#table-arqueo {
+  overflow-y: scroll; /* Fuerza la barra de desplazamiento vertical */
+}
+
+/* Opcional: evitar scroll horizontal */
+#table-arqueo {
+  overflow-x: hidden;
+}
+
+
 
   .left-column {
     height: 0px;
