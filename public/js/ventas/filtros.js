@@ -9,7 +9,7 @@ let currentFiltroMedioPago = "todos"; // Para "Medio de Pago"
 
 
 
-// Seleccionar el botón de la solapa, contenedores de filtros y opciones
+// Seleccionar el botón de la solapa, contenedores   de filtros y opciones
 const toggleFiltersButton = document.getElementById("toggle-filters");
 const filtersMovs = document.getElementById("filtersMovs");
 const filtersArqueos = document.getElementById("filtersArqueos");
