@@ -458,6 +458,8 @@ i.edit-icon {
     border: 1px solid #ddd;
     border-radius: 5px;
     overflow-y: auto;
+    max-height: 500px;
+    height: auto;
 }
 
 table {

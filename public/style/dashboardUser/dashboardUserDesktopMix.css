@@ -1,6 +1,17 @@
 /* //CON ESTO FUNCIONA TODO LA VERSION MOVIL! */
 
 
+#table-arqueo {
+  overflow-y: scroll !important; /* Fuerza la barra de desplazamiento vertical */
+}
+
+/* Opcional: evitar scroll horizontal */
+#table-arqueo {
+  overflow-x: hidden !important;
+}
+
+
+
 @media screen and (min-width: 1166px) and (max-width: 1440px) {
 
   * {
@@ -25,6 +36,18 @@
   .main-content {
     width: 1100px;
 
+  }
+
+  #section-lavaderos{
+    height: 500px !important;
+    width: 100%;
+    /* background-color: red; */
+    overflow: hidden !important; /* Ocultar cualquier contenido desbordante */
+    margin-top: -6rem;
+  }
+
+  .tarjeta{
+    gap: 5px;
   }
 
 
@@ -257,6 +280,9 @@
     height: 85%;
     width: 100%;
     margin-right: -3rem;
+    overflow: visible !important; /* Permite que el contenido sea visible sin scroll */
+    
+    
   }
 
 
@@ -911,12 +937,9 @@
   overflow-x: hidden;
 }
 
-
-
   .left-column {
     height: 0px;
   }
-
 
   .filtroActivos {
     background-color: red;
@@ -983,7 +1006,7 @@
 
   body {
     font-family: 'Montserrat', sans-serif;
-    background-color: #f4f4f4;
+    background-color: #df0f0f;
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -992,6 +1015,97 @@
     height: 100vh;
     overflow: hidden;
     /* Evita el desbordamiento de la pantalla */
+  }
+
+
+  /* Estilo básico para la tabla */
+.data-table {
+  width: 100%; /* Ancho completo */
+  max-width: 100%; /* Evitar desbordes horizontales */
+  border-collapse: collapse; /* Sin espacio entre celdas */
+  overflow-x: hidden; /* Evitar scroll lateral */
+}
+
+/* Cabecera fija */
+.data-table thead {
+  position: sticky; /* Cabecera fija al hacer scroll */
+  top: 0; /* Fijar en la parte superior */
+  background-color: #6b00ad; /* Color morado de la cabecera */
+  color: white; /* Texto blanco */
+  z-index: 2; /* Colocar encima de las filas */
+}
+
+/* Cuerpo de la tabla con scroll vertical */
+.data-table tbody {
+  display: block; /* Permitir scroll en tbody */
+  max-height: 30rem; /* Altura máxima del scroll */
+  overflow-y: auto; /* Habilitar scroll vertical */
+  overflow-x: hidden; /* Evitar scroll horizontal */
+}
+
+/* Ajustes para las filas */
+.data-table tr {
+  display: table; /* Mantener estructura de tabla */
+  width: 100%; /* Consistencia en el ancho */
+  table-layout: fixed; /* Columnas con ancho fijo */
+}
+
+/* Ajustes para las celdas */
+.data-table th,
+.data-table td {
+  padding: 10px; /* Espaciado interno */
+  text-align: center; /* Centrado del texto */
+  border: 1px solid #ddd; /* Bordes de las celdas */
+  word-wrap: break-word; /* Forzar salto de línea si es necesario */
+  overflow: hidden; /* Evitar desbordamiento horizontal */
+  white-space: nowrap; /* Prevenir saltos de línea */
+  /* text-overflow: ellipsis; Mostrar puntos suspensivos si el texto es muy largo */
+  max-width: 200px; /* Límite de ancho para celdas */
+}
+
+/* Iconos dentro de las celdas */
+.icon {
+  width: 30px; /* Tamaño fijo para íconos */
+  height: auto;
+}
+
+#table-arqueo {
+  overflow-y: scroll; /* Fuerza la barra de desplazamiento vertical */
+}
+
+/* Opcional: evitar scroll horizontal */
+#table-arqueo {
+  overflow-x: hidden;
+}
+
+.content-container {
+  overflow: visible !important; /* Permite que el contenido sea visible sin scroll */
+}
+
+  .left-column {
+    height: 0px;
+  }
+
+  .filtroActivos {
+    background-color: red;
+  }
+
+  
+
+  .table-section-filters {
+    height: 15rem !important;
+  }
+
+
+
+  .data-table tbody {
+    transition: height 0.3s ease;
+    /* Animación para que se vea suave */
+  }
+
+  .data-table tbody.filters-visible {
+    height: 15rem;
+    /* Altura cuando los filtros están visibles */
   }
 
 
@@ -1751,3 +1865,4 @@
 
 
 }
+
