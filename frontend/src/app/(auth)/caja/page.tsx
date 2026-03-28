@@ -45,6 +45,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import { FloatingButton } from "@/components/common/FloatingButton";
 import type { Caja, VentaPOS, MedioPago } from "@/types";
 
 const MEDIO_ICONS: Record<string, React.ReactNode> = {
@@ -87,222 +88,396 @@ export default function VentasPage() {
 
   const hasTurno = !!turnoActivo?.turno;
 
+  const ventasFiltradas = filtroMedio
+    ? ventas?.filter((v) => v.pagos?.some((p) => p.medioPago === filtroMedio)) ?? []
+    : ventas ?? [];
+
   return (
     <div className="space-y-4">
-      {/* Top bar: caja selector + actions */}
-      <div className="flex items-center justify-between gap-3 flex-wrap">
-        <div className="flex items-center gap-2">
-          {cajasLoading ? (
-            <Skeleton className="h-9 w-40 rounded-xl" />
-          ) : (
-            <div className="flex gap-1">
-              {cajas?.map((c) => (
-                <button
-                  key={c._id}
-                  onClick={() => setSelectedCajaId(c._id)}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
-                    effectiveCajaId === c._id
-                      ? "bg-brand-purple-muted text-brand-purple"
-                      : "text-muted-foreground hover:bg-muted"
-                  }`}
-                >
-                  {c.nombre}
-                </button>
-              ))}
-            </div>
-          )}
-          {hasTurno && turnoActivo && (
-            <div className="flex items-center gap-2">
-              <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 border-0 text-xs">
-                Turno abierto — {new Date(turnoActivo.turno.apertura).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}hs
-              </Badge>
-              <Button size="sm" variant="outline" className="rounded-xl text-xs text-amber-600 border-amber-200 hover:bg-amber-50 cursor-pointer" onClick={() => setShowCierre(true)}>
-                <Lock className="h-3.5 w-3.5 mr-1" /> Cerrar Turno
-              </Button>
-            </div>
-          )}
-        </div>
-        <div className="flex items-center gap-2">
-          {!hasTurno ? (
-            <Button size="sm" className="rounded-xl bg-gradient-to-r from-brand-purple to-brand-fuchsia text-white text-xs cursor-pointer" onClick={() => setShowApertura(true)}>
-              <Lock className="h-3.5 w-3.5 mr-1" /> Abrir Turno
-            </Button>
-          ) : (
-            <>
-              <Button size="sm" className="rounded-xl bg-gradient-to-r from-brand-purple to-brand-fuchsia text-white text-xs cursor-pointer" onClick={() => setShowNuevaVenta(true)}>
-                <Plus className="h-3.5 w-3.5 mr-1" /> Ingreso
-              </Button>
-              <Button size="sm" className="rounded-xl bg-red-500 hover:bg-red-600 text-white text-xs cursor-pointer" onClick={() => setShowNuevoEgreso(true)}>
-                <Minus className="h-3.5 w-3.5 mr-1" /> Egreso
-              </Button>
-            </>
-          )}
-        </div>
-      </div>
+      {/* ===== MOBILE ===== */}
+      <div className="md:hidden space-y-3">
+        {/* Caja selector pills */}
+        {cajasLoading ? (
+          <Skeleton className="h-9 w-40 rounded-xl" />
+        ) : (
+          <div className="flex gap-1">
+            {cajas?.map((c) => (
+              <button
+                key={c._id}
+                onClick={() => setSelectedCajaId(c._id)}
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors duration-200 cursor-pointer ${
+                  effectiveCajaId === c._id
+                    ? "bg-brand-purple-muted text-brand-purple"
+                    : "text-muted-foreground hover:bg-muted"
+                }`}
+              >
+                {c.nombre}
+              </button>
+            ))}
+          </div>
+        )}
 
-      {/* Bolsillos summary */}
-      {turnoLoading ? (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-20 rounded-2xl" />)}
-        </div>
-      ) : hasTurno && turnoActivo ? (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-          {turnoActivo.bolsillos.map((b) => (
+        {/* Turno badge */}
+        {hasTurno && turnoActivo && (
+          <div className="flex items-center justify-between">
+            <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 border-0 text-xs">
+              Turno abierto — {new Date(turnoActivo.turno.apertura).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}hs
+            </Badge>
             <button
-              key={b.medioPago}
-              onClick={() => setFiltroMedio(filtroMedio === b.medioPago ? null : b.medioPago)}
-              className={`card-elevated rounded-2xl bg-white dark:bg-card p-3.5 text-left cursor-pointer transition-all duration-200 ${
-                filtroMedio === b.medioPago ? "ring-2 ring-brand-purple" : ""
+              onClick={() => setShowCierre(true)}
+              className="text-xs font-medium text-amber-600 cursor-pointer"
+            >
+              Cerrar
+            </button>
+          </div>
+        )}
+
+        {/* Bolsillos 2x2 grid */}
+        {turnoLoading ? (
+          <div className="grid grid-cols-2 gap-2">
+            {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-20 rounded-2xl" />)}
+          </div>
+        ) : hasTurno && turnoActivo ? (
+          <div className="grid grid-cols-2 gap-2">
+            {turnoActivo.bolsillos.map((b) => (
+              <button
+                key={b.medioPago}
+                onClick={() => setFiltroMedio(filtroMedio === b.medioPago ? null : b.medioPago)}
+                className={`card-elevated rounded-2xl bg-white dark:bg-card p-3 text-left cursor-pointer transition-all duration-200 ${
+                  filtroMedio === b.medioPago ? "ring-2 ring-brand-purple" : ""
+                }`}
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <div className={`flex h-6 w-6 items-center justify-center rounded-lg ${MEDIO_COLORS[b.medioPago]}`}>
+                    {MEDIO_ICONS[b.medioPago]}
+                  </div>
+                  <span className="text-xs font-medium text-muted-foreground">{MEDIO_LABELS[b.medioPago]}</span>
+                </div>
+                <p className="text-lg font-semibold tabular-nums">${b.total.toLocaleString("es-AR")}</p>
+              </button>
+            ))}
+            <button
+              onClick={() => setFiltroMedio(null)}
+              className={`card-elevated rounded-2xl bg-white dark:bg-card p-3 text-left cursor-pointer transition-all duration-200 ${
+                filtroMedio === null ? "ring-2 ring-brand-purple" : ""
               }`}
             >
               <div className="flex items-center gap-2 mb-1">
-                <div className={`flex h-7 w-7 items-center justify-center rounded-lg ${MEDIO_COLORS[b.medioPago]}`}>
-                  {MEDIO_ICONS[b.medioPago]}
+                <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-brand-purple-muted text-brand-purple">
+                  <DollarSign className="h-4 w-4" />
                 </div>
-                <span className="text-xs font-medium text-muted-foreground">{MEDIO_LABELS[b.medioPago]}</span>
+                <span className="text-xs font-medium text-muted-foreground">Todo</span>
               </div>
-              <p className="text-lg font-semibold tabular-nums">${b.total.toLocaleString("es-AR")}</p>
-              <p className="text-[10px] text-muted-foreground tabular-nums">
-                Fondo: ${b.fondo.toLocaleString("es-AR")} + Ventas: ${b.ingresos.toLocaleString("es-AR")}
-              </p>
+              <p className="text-lg font-semibold tabular-nums">${turnoActivo.totalGeneral.toLocaleString("es-AR")}</p>
             </button>
-          ))}
-          <button
-            onClick={() => setFiltroMedio(null)}
-            className={`card-elevated rounded-2xl bg-white dark:bg-card p-3.5 text-left cursor-pointer transition-all duration-200 ${
-              filtroMedio === null ? "ring-2 ring-brand-purple" : ""
-            }`}
-          >
-            <div className="flex items-center gap-2 mb-1">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-purple-muted text-brand-purple">
-                <DollarSign className="h-4 w-4" />
-              </div>
-              <span className="text-xs font-medium text-muted-foreground">Todo</span>
-            </div>
-            <p className="text-lg font-semibold tabular-nums">${turnoActivo.totalGeneral.toLocaleString("es-AR")}</p>
-            <p className="text-[10px] text-muted-foreground">{ventas?.length ?? 0} movimientos</p>
-          </button>
-        </div>
-      ) : !turnoLoading && !hasTurno ? (
-        <div className="card-elevated rounded-2xl bg-white dark:bg-card p-8 text-center">
-          <Lock className="h-8 w-8 mx-auto text-muted-foreground/20 mb-3" />
-          <p className="text-sm text-muted-foreground mb-1">No hay turno abierto en esta caja</p>
-          <p className="text-xs text-muted-foreground mb-4">Abri un turno para empezar a registrar ventas</p>
-          <Button size="sm" className="rounded-xl bg-gradient-to-r from-brand-purple to-brand-fuchsia text-white cursor-pointer" onClick={() => setShowApertura(true)}>
-            Abrir Turno
-          </Button>
-        </div>
-      ) : null}
+          </div>
+        ) : !turnoLoading && !hasTurno ? (
+          <div className="card-elevated rounded-2xl bg-white dark:bg-card p-8 text-center">
+            <Lock className="h-8 w-8 mx-auto text-muted-foreground/20 mb-3" />
+            <p className="text-sm text-muted-foreground mb-1">No hay turno abierto</p>
+            <p className="text-xs text-muted-foreground mb-4">Abri un turno para registrar ventas</p>
+            <Button size="sm" className="rounded-xl bg-gradient-to-r from-brand-purple to-brand-fuchsia text-white cursor-pointer" onClick={() => setShowApertura(true)}>
+              Abrir Turno
+            </Button>
+          </div>
+        ) : null}
 
-      {/* Main content: table + detail panel */}
-      {hasTurno && (
-        <div className="flex gap-4">
-          {/* Tabla de ventas */}
-          <div className={`card-static rounded-2xl bg-white dark:bg-card overflow-hidden flex-1 ${selectedVenta ? "hidden md:block" : ""}`}>
-            {(() => {
-              const ventasFiltradas = filtroMedio
-                ? ventas?.filter((v) => v.pagos?.some((p) => p.medioPago === filtroMedio)) ?? []
-                : ventas ?? [];
-              return (<div key={filtroMedio ?? "all"} className="animate-fade-in">
-            <div className="px-4 pt-4 pb-2 flex items-center justify-between">
-              <h3 className="text-sm font-semibold">
-                {filtroMedio ? `Movimientos — ${MEDIO_LABELS[filtroMedio]}` : "Movimientos del turno"}
-              </h3>
-              <span className="text-xs text-muted-foreground tabular-nums">{ventasFiltradas.length} registros</span>
-            </div>
+        {/* Mobile transaction list */}
+        {hasTurno && (
+          <div className="space-y-2">
+            {/* Filter label */}
+            {filtroMedio && (
+              <div className="flex items-center justify-between animate-fade-in">
+                <p className="text-sm font-medium text-muted-foreground">
+                  {MEDIO_LABELS[filtroMedio]}
+                </p>
+                <button
+                  onClick={() => setFiltroMedio(null)}
+                  className="text-xs text-brand-purple font-medium cursor-pointer"
+                >
+                  Ver todos
+                </button>
+              </div>
+            )}
+
+            {/* Transaction cards */}
             {ventasFiltradas.length > 0 ? (
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b text-left">
-                      <th className="px-4 pb-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Hora</th>
-                      <th className="px-4 pb-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Descripcion</th>
-                      <th className="px-4 pb-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Pagos</th>
-                      <th className="px-4 pb-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground text-right">Monto</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[...ventasFiltradas].reverse().map((v) => (
-                      <tr
-                        key={v._id}
-                        onClick={() => setSelectedVenta(v)}
-                        className={`border-b border-border/30 last:border-0 cursor-pointer transition-all duration-200 ${
-                          selectedVenta?._id === v._id
-                            ? "bg-brand-purple-muted"
-                            : "hover:bg-muted/30"
-                        }`}
-                      >
-                        <td className="px-4 py-2.5 text-xs text-muted-foreground tabular-nums whitespace-nowrap">
-                          {new Date(v.fecha).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}
-                        </td>
-                        <td className="px-4 py-2.5">
-                          <div className="flex items-center gap-1.5">
-                            <span className={`text-sm truncate max-w-[200px] ${v.tipo === "egreso" ? "text-red-500" : ""}`}>{v.descripcion || "Sin descripcion"}</span>
-                            {v.origen === "lavado" && (
-                              <Badge variant="secondary" className="border-0 text-[9px] bg-blue-50 text-blue-600">auto</Badge>
-                            )}
-                            {v.tipo === "egreso" && (
-                              <Badge variant="secondary" className="border-0 text-[9px] bg-red-50 text-red-500">egreso</Badge>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-4 py-2.5">
-                          <div className="flex gap-1">
+              <div className="space-y-2">
+                {[...ventasFiltradas].reverse().map((v) => (
+                  <div
+                    key={v._id}
+                    onClick={() => setSelectedVenta(v)}
+                    className="card-elevated rounded-2xl bg-white dark:bg-card p-3.5 cursor-pointer transition-all duration-200 active:scale-[0.98]"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg ${
+                          v.tipo === "egreso" ? "bg-red-50 text-red-500" : "bg-emerald-50 text-emerald-600"
+                        }`}>
+                          {v.tipo === "egreso"
+                            ? <ArrowUpCircle className="h-4 w-4" />
+                            : <ArrowDownCircle className="h-4 w-4" />
+                          }
+                        </div>
+                        <div className="min-w-0">
+                          <p className={`text-sm font-medium truncate ${v.tipo === "egreso" ? "text-red-500" : ""}`}>
+                            {v.descripcion || "Sin descripcion"}
+                          </p>
+                          <div className="flex items-center gap-1.5 mt-0.5">
+                            <span className="text-[10px] text-muted-foreground tabular-nums">
+                              {new Date(v.fecha).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}
+                            </span>
                             {v.pagos?.map((p, i) => (
-                              <Badge key={i} variant="secondary" className={`border-0 text-[10px] gap-0.5 ${MEDIO_COLORS[p.medioPago]}`}>
-                                {MEDIO_LABELS[p.medioPago]?.charAt(0)}{"$"}{p.monto.toLocaleString("es-AR")}
+                              <Badge key={i} variant="secondary" className={`border-0 text-[9px] px-1 py-0 ${MEDIO_COLORS[p.medioPago]}`}>
+                                {MEDIO_LABELS[p.medioPago]?.charAt(0)}
                               </Badge>
                             ))}
+                            {v.origen === "lavado" && (
+                              <Badge variant="secondary" className="border-0 text-[9px] px-1 py-0 bg-blue-50 text-blue-600">auto</Badge>
+                            )}
                           </div>
-                        </td>
-                        <td className={`px-4 py-2.5 text-right font-medium tabular-nums ${v.tipo === "egreso" ? "text-red-500" : ""}`}>
-                          {v.tipo === "egreso" ? "-" : ""}{"$"}{v.monto.toLocaleString("es-AR")}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                        </div>
+                      </div>
+                      <p className={`text-sm font-semibold tabular-nums flex-shrink-0 ml-2 ${v.tipo === "egreso" ? "text-red-500" : ""}`}>
+                        {v.tipo === "egreso" ? "-" : ""}{"$"}{v.monto.toLocaleString("es-AR")}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : (
-              <div className="px-4 py-12 text-center">
+              <div className="text-center py-12">
+                <DollarSign className="h-10 w-10 mx-auto text-muted-foreground/20 mb-3" />
                 <p className="text-sm text-muted-foreground">
                   {filtroMedio ? `Sin movimientos en ${MEDIO_LABELS[filtroMedio]}` : "Sin movimientos en este turno"}
                 </p>
               </div>
             )}
-              </div>);
-            })()}
           </div>
+        )}
 
-          {/* Panel de detalle */}
-          {selectedVenta && (
-            <VentaDetailPanel
-              key={selectedVenta._id}
-              venta={selectedVenta}
-              onClose={() => setSelectedVenta(null)}
-            />
-          )}
-        </div>
+      </div>
+
+      {/* Mobile FAB — portal to body so fixed works regardless of parent transforms */}
+      {hasTurno && (
+        <FloatingButton
+          onClick={() => setShowNuevaVenta(true)}
+          hidden={showNuevaVenta || showApertura || showCierre || showConfig}
+          className="bg-gradient-to-br from-brand-purple to-brand-fuchsia text-white shadow-brand-purple/25"
+        >
+          <Plus className="h-6 w-6" />
+        </FloatingButton>
+      )}
+      {!hasTurno && !turnoLoading && (
+        <FloatingButton
+          onClick={() => setShowApertura(true)}
+          hidden={showApertura}
+          className="bg-gradient-to-br from-brand-purple to-brand-fuchsia text-white shadow-brand-purple/25"
+        >
+          <Lock className="h-6 w-6" />
+        </FloatingButton>
       )}
 
-      {/* Modal: Nueva Venta (Ingreso) */}
+      {/* ===== DESKTOP ===== */}
+      <div className="hidden md:block space-y-4">
+        {/* Top bar: caja selector + actions */}
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <div className="flex items-center gap-2">
+            {cajasLoading ? (
+              <Skeleton className="h-9 w-40 rounded-xl" />
+            ) : (
+              <div className="flex gap-1">
+                {cajas?.map((c) => (
+                  <button
+                    key={c._id}
+                    onClick={() => setSelectedCajaId(c._id)}
+                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+                      effectiveCajaId === c._id
+                        ? "bg-brand-purple-muted text-brand-purple"
+                        : "text-muted-foreground hover:bg-muted"
+                    }`}
+                  >
+                    {c.nombre}
+                  </button>
+                ))}
+              </div>
+            )}
+            {hasTurno && turnoActivo && (
+              <div className="flex items-center gap-2">
+                <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 border-0 text-xs">
+                  Turno abierto — {new Date(turnoActivo.turno.apertura).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}hs
+                </Badge>
+                <Button size="sm" variant="outline" className="rounded-xl text-xs text-amber-600 border-amber-200 hover:bg-amber-50 cursor-pointer" onClick={() => setShowCierre(true)}>
+                  <Lock className="h-3.5 w-3.5 mr-1" /> Cerrar Turno
+                </Button>
+              </div>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            {!hasTurno ? (
+              <Button size="sm" className="rounded-xl bg-gradient-to-r from-brand-purple to-brand-fuchsia text-white text-xs cursor-pointer" onClick={() => setShowApertura(true)}>
+                <Lock className="h-3.5 w-3.5 mr-1" /> Abrir Turno
+              </Button>
+            ) : (
+              <Button size="sm" className="rounded-xl bg-gradient-to-r from-brand-purple to-brand-fuchsia text-white text-xs cursor-pointer" onClick={() => setShowNuevaVenta(true)}>
+                <Plus className="h-3.5 w-3.5 mr-1" /> Nuevo Movimiento
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {/* Bolsillos summary */}
+        {turnoLoading ? (
+          <div className="grid grid-cols-4 gap-3">
+            {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-20 rounded-2xl" />)}
+          </div>
+        ) : hasTurno && turnoActivo ? (
+          <div className="grid grid-cols-4 gap-2">
+            {turnoActivo.bolsillos.map((b) => (
+              <button
+                key={b.medioPago}
+                onClick={() => setFiltroMedio(filtroMedio === b.medioPago ? null : b.medioPago)}
+                className={`card-elevated rounded-2xl bg-white dark:bg-card p-3.5 text-left cursor-pointer transition-all duration-200 ${
+                  filtroMedio === b.medioPago ? "ring-2 ring-brand-purple" : ""
+                }`}
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <div className={`flex h-7 w-7 items-center justify-center rounded-lg ${MEDIO_COLORS[b.medioPago]}`}>
+                    {MEDIO_ICONS[b.medioPago]}
+                  </div>
+                  <span className="text-xs font-medium text-muted-foreground">{MEDIO_LABELS[b.medioPago]}</span>
+                </div>
+                <p className="text-lg font-semibold tabular-nums">${b.total.toLocaleString("es-AR")}</p>
+                <p className="text-[10px] text-muted-foreground tabular-nums">
+                  Fondo: ${b.fondo.toLocaleString("es-AR")} + Ventas: ${b.ingresos.toLocaleString("es-AR")}
+                </p>
+              </button>
+            ))}
+            <button
+              onClick={() => setFiltroMedio(null)}
+              className={`card-elevated rounded-2xl bg-white dark:bg-card p-3.5 text-left cursor-pointer transition-all duration-200 ${
+                filtroMedio === null ? "ring-2 ring-brand-purple" : ""
+              }`}
+            >
+              <div className="flex items-center gap-2 mb-1">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-purple-muted text-brand-purple">
+                  <DollarSign className="h-4 w-4" />
+                </div>
+                <span className="text-xs font-medium text-muted-foreground">Todo</span>
+              </div>
+              <p className="text-lg font-semibold tabular-nums">${turnoActivo.totalGeneral.toLocaleString("es-AR")}</p>
+              <p className="text-[10px] text-muted-foreground">{ventas?.length ?? 0} movimientos</p>
+            </button>
+          </div>
+        ) : !turnoLoading && !hasTurno ? (
+          <div className="card-elevated rounded-2xl bg-white dark:bg-card p-8 text-center">
+            <Lock className="h-8 w-8 mx-auto text-muted-foreground/20 mb-3" />
+            <p className="text-sm text-muted-foreground mb-1">No hay turno abierto en esta caja</p>
+            <p className="text-xs text-muted-foreground mb-4">Abri un turno para empezar a registrar ventas</p>
+            <Button size="sm" className="rounded-xl bg-gradient-to-r from-brand-purple to-brand-fuchsia text-white cursor-pointer" onClick={() => setShowApertura(true)}>
+              Abrir Turno
+            </Button>
+          </div>
+        ) : null}
+
+        {/* Main content: table + detail panel */}
+        {hasTurno && (
+          <div className="flex gap-4">
+            {/* Tabla de ventas */}
+            <div className={`card-static rounded-2xl bg-white dark:bg-card overflow-hidden flex-1 ${selectedVenta ? "hidden md:block" : ""}`}>
+              {(() => {
+                return (<div key={filtroMedio ?? "all"} className="animate-fade-in">
+              <div className="px-4 pt-4 pb-2 flex items-center justify-between">
+                <h3 className="text-sm font-semibold">
+                  {filtroMedio ? `Movimientos — ${MEDIO_LABELS[filtroMedio]}` : "Movimientos del turno"}
+                </h3>
+                <span className="text-xs text-muted-foreground tabular-nums">{ventasFiltradas.length} registros</span>
+              </div>
+              {ventasFiltradas.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b text-left">
+                        <th className="px-4 pb-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Hora</th>
+                        <th className="px-4 pb-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Descripcion</th>
+                        <th className="px-4 pb-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Pagos</th>
+                        <th className="px-4 pb-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground text-right">Monto</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[...ventasFiltradas].reverse().map((v) => (
+                        <tr
+                          key={v._id}
+                          onClick={() => setSelectedVenta(v)}
+                          className={`border-b border-border/30 last:border-0 cursor-pointer transition-all duration-200 ${
+                            selectedVenta?._id === v._id
+                              ? "bg-brand-purple-muted"
+                              : "hover:bg-muted/30"
+                          }`}
+                        >
+                          <td className="px-4 py-2.5 text-xs text-muted-foreground tabular-nums whitespace-nowrap">
+                            {new Date(v.fecha).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}
+                          </td>
+                          <td className="px-4 py-2.5">
+                            <div className="flex items-center gap-1.5">
+                              <span className={`text-sm truncate max-w-[200px] ${v.tipo === "egreso" ? "text-red-500" : ""}`}>{v.descripcion || "Sin descripcion"}</span>
+                              {v.origen === "lavado" && (
+                                <Badge variant="secondary" className="border-0 text-[9px] bg-blue-50 text-blue-600">auto</Badge>
+                              )}
+                              {v.tipo === "egreso" && (
+                                <Badge variant="secondary" className="border-0 text-[9px] bg-red-50 text-red-500">egreso</Badge>
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-4 py-2.5">
+                            <div className="flex gap-1">
+                              {v.pagos?.map((p, i) => (
+                                <Badge key={i} variant="secondary" className={`border-0 text-[10px] gap-0.5 ${MEDIO_COLORS[p.medioPago]}`}>
+                                  {MEDIO_LABELS[p.medioPago]?.charAt(0)}{"$"}{p.monto.toLocaleString("es-AR")}
+                                </Badge>
+                              ))}
+                            </div>
+                          </td>
+                          <td className={`px-4 py-2.5 text-right font-medium tabular-nums ${v.tipo === "egreso" ? "text-red-500" : ""}`}>
+                            {v.tipo === "egreso" ? "-" : ""}{"$"}{v.monto.toLocaleString("es-AR")}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="px-4 py-12 text-center">
+                  <p className="text-sm text-muted-foreground">
+                    {filtroMedio ? `Sin movimientos en ${MEDIO_LABELS[filtroMedio]}` : "Sin movimientos en este turno"}
+                  </p>
+                </div>
+              )}
+                </div>);
+              })()}
+            </div>
+
+            {/* Panel de detalle */}
+            {selectedVenta && (
+              <VentaDetailPanel
+                key={selectedVenta._id}
+                venta={selectedVenta}
+                onClose={() => setSelectedVenta(null)}
+              />
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Modal: Nuevo Movimiento */}
       <NuevaVentaDialog
         open={showNuevaVenta}
         onOpenChange={setShowNuevaVenta}
         turnoId={turnoActivo?.turno?._id ?? ""}
         medios={selectedCaja?.mediosPagoHabilitados ?? []}
-        tipo="ingreso"
       />
 
       {/* Modal: Nuevo Egreso */}
-      <NuevaVentaDialog
-        open={showNuevoEgreso}
-        onOpenChange={setShowNuevoEgreso}
-        turnoId={turnoActivo?.turno?._id ?? ""}
-        medios={selectedCaja?.mediosPagoHabilitados ?? []}
-        tipo="egreso"
-      />
-
       {/* Modal: Apertura de Turno */}
       <AperturaTurnoDialog
         open={showApertura}
@@ -397,7 +572,7 @@ function VentaDetailPanel({ venta, onClose }: { venta: VentaPOS; onClose: () => 
                 <p className="text-sm">{venta.descripcion || "--"}</p>
               </div>
               <div className={`transition-all duration-200 ${editing ? "opacity-100" : "opacity-0 h-0 overflow-hidden"}`}>
-                <Input className="h-8 rounded-lg text-sm" value={editDesc} onChange={(e) => setEditDesc(e.target.value)} />
+                <Input className="h-10 rounded-xl text-sm" value={editDesc} onChange={(e) => setEditDesc(e.target.value)} />
               </div>
             </div>
           </div>
@@ -408,7 +583,7 @@ function VentaDetailPanel({ venta, onClose }: { venta: VentaPOS; onClose: () => 
                 <p className="text-lg font-semibold tabular-nums">${venta.monto.toLocaleString("es-AR")}</p>
               </div>
               <div className={`transition-all duration-200 ${editing ? "opacity-100" : "opacity-0 h-0 overflow-hidden"}`}>
-                <Input type="number" className="h-8 rounded-lg text-sm tabular-nums" value={editMonto} onChange={(e) => setEditMonto(parseFloat(e.target.value) || 0)} />
+                <Input type="number" className="h-10 rounded-xl text-sm tabular-nums" value={editMonto} onChange={(e) => setEditMonto(parseFloat(e.target.value) || 0)} />
               </div>
             </div>
           </div>
@@ -510,24 +685,31 @@ function VentaDetailPanel({ venta, onClose }: { venta: VentaPOS; onClose: () => 
 }
 
 // --- Nueva Venta Dialog ---
-function NuevaVentaDialog({ open, onOpenChange, turnoId, medios, tipo = "ingreso" }: { open: boolean; onOpenChange: (o: boolean) => void; turnoId: string; medios: MedioPago[]; tipo?: "ingreso" | "egreso" }) {
+function NuevaVentaDialog({ open, onOpenChange, turnoId, medios, tipo: tipoProp }: { open: boolean; onOpenChange: (o: boolean) => void; turnoId: string; medios: MedioPago[]; tipo?: "ingreso" | "egreso" }) {
   const crear = useCrearVenta();
-  const [monto, setMonto] = useState(0);
+  const [monto, setMonto] = useState<number | string>("");
   const [desc, setDesc] = useState("");
   const [medioPago, setMedioPago] = useState<string>(medios[0] ?? "efectivo");
 
-  const isEgreso = tipo === "egreso";
+  const montoStr = String(monto);
+  const montoNum = parseFloat(montoStr);
+  const isNeg = montoStr.startsWith("-");
+  const autoTipo = tipoProp ?? (isNeg ? "egreso" : "ingreso");
+  const isEgreso = autoTipo === "egreso";
+
+  const [nota, setNota] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (monto <= 0) return;
+    if (!montoNum || montoNum === 0) return;
+    const absM = Math.abs(montoNum);
     crear.mutate(
-      { turnoId, monto, tipo, descripcion: desc, pagos: [{ medioPago, monto }] },
+      { turnoId, monto: absM, tipo: autoTipo, descripcion: desc, nota: nota || undefined, pagos: [{ medioPago, monto: absM }] },
       {
         onSuccess: () => {
-          toast.success(isEgreso ? "Egreso registrado" : "Venta registrada");
+          toast.success(isEgreso ? "Egreso registrado" : "Ingreso registrado");
           onOpenChange(false);
-          setMonto(0); setDesc("");
+          setMonto(""); setDesc(""); setNota("");
         },
         onError: (e) => toast.error(e.message),
       }
@@ -538,21 +720,49 @@ function NuevaVentaDialog({ open, onOpenChange, turnoId, medios, tipo = "ingreso
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-sm p-5 gap-0 rounded-2xl border-0 shadow-2xl">
         <DialogHeader className="mb-4">
-          <DialogTitle className="text-lg tracking-tight">{isEgreso ? "Nuevo Egreso" : "Nuevo Ingreso"}</DialogTitle>
+          <DialogTitle className="text-sm font-semibold tracking-tight">
+            Nuevo Movimiento
+            {montoStr.length > 0 && montoStr !== "0" && (
+              <span className={`ml-2 text-xs font-normal ${isEgreso ? "text-red-500" : "text-emerald-600"}`}>
+                {isEgreso ? "egreso" : "ingreso"}
+              </span>
+            )}
+          </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-3">
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Monto</Label>
-            <Input type="number" className="h-11 rounded-xl text-lg tabular-nums font-semibold" value={monto || ""} onChange={(e) => setMonto(parseFloat(e.target.value) || 0)} required autoFocus />
+            <input
+              type="text"
+              inputMode="numeric"
+              className="h-10 w-full rounded-xl border border-input bg-transparent px-2.5 text-sm tabular-nums font-medium outline-none focus:border-ring focus:ring-2 focus:ring-ring/50 placeholder:text-muted-foreground"
+              value={monto}
+              onChange={(e) => {
+                const v = e.target.value.replace(/[^0-9.\-]/g, "");
+                setMonto(v);
+              }}
+              required
+              autoFocus
+              placeholder="1500 o -1500 para egreso"
+            />
           </div>
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Descripcion</Label>
-            <Input className="h-9 rounded-xl text-sm" value={desc} onChange={(e) => setDesc(e.target.value)} placeholder={isEgreso ? "Sueldo, insumos, compra..." : "Lavado, producto..."} />
+            <Input className="h-10 rounded-xl text-sm" value={desc} onChange={(e) => setDesc(e.target.value)} placeholder={isEgreso ? "Sueldo, insumos, compra..." : "Lavado, venta, producto..."} />
           </div>
-          <div className="space-y-1">
+          <div className="space-y-1.5">
+            <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Nota</Label>
+            <textarea
+              className="w-full h-14 rounded-xl border border-input bg-transparent px-2.5 py-2 text-sm outline-none focus:border-ring focus:ring-2 focus:ring-ring/50 resize-none placeholder:text-muted-foreground"
+              value={nota}
+              onChange={(e) => setNota(e.target.value)}
+              placeholder="Observacion opcional..."
+            />
+          </div>
+          <div className="space-y-1.5">
             <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Medio de Pago</Label>
             <Select value={medioPago} onValueChange={(v) => v && setMedioPago(v)}>
-              <SelectTrigger className="h-9 rounded-xl text-sm"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="h-10 rounded-xl text-sm"><SelectValue /></SelectTrigger>
               <SelectContent>
                 {medios.map((m) => (
                   <SelectItem key={m} value={m}>{MEDIO_LABELS[m]}</SelectItem>
@@ -602,7 +812,7 @@ function AperturaTurnoDialog({ open, onOpenChange, cajaId, medios }: { open: boo
               <Label className="text-sm flex-1">{MEDIO_LABELS[m]}</Label>
               <Input
                 type="number"
-                className="h-9 rounded-xl text-sm tabular-nums w-28"
+                className="h-10 rounded-xl text-sm tabular-nums w-28"
                 value={fondos[m] ?? ""}
                 onChange={(e) => setFondos({ ...fondos, [m]: parseFloat(e.target.value) || 0 })}
               />
@@ -674,7 +884,7 @@ function CierreTurnoDialog({ open, onOpenChange, turnoActivo }: { open: boolean;
           </div>
           <div className="space-y-1">
             <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Observacion</Label>
-            <Input className="h-9 rounded-xl text-sm" value={obs} onChange={(e) => setObs(e.target.value)} placeholder="Opcional..." />
+            <Input className="h-10 rounded-xl text-sm" value={obs} onChange={(e) => setObs(e.target.value)} placeholder="Opcional..." />
           </div>
           <Button type="submit" className="w-full h-10 rounded-xl bg-amber-500 hover:bg-amber-600 text-white cursor-pointer" disabled={cerrar.isPending}>
             <Lock className="h-4 w-4 mr-1" /> {cerrar.isPending ? "Cerrando..." : "Confirmar Cierre"}

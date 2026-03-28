@@ -86,7 +86,7 @@ export default function TurnoApertura({ caja, onTurnoAbierto }: TurnoAperturaPro
                     type="number"
                     min={0}
                     step="0.01"
-                    className="h-9 rounded-xl text-sm tabular-nums pl-7"
+                    className="h-10 rounded-xl text-sm tabular-nums pl-7"
                     value={fondos[m] || ""}
                     onChange={(e) =>
                       setFondos({ ...fondos, [m]: parseFloat(e.target.value) || 0 })

@@ -202,7 +202,7 @@ export default function CajaGestion({ onSelectCaja }: CajaGestionProps) {
                 Nombre
               </Label>
               <Input
-                className="h-9 rounded-xl text-sm"
+                className="h-10 rounded-xl text-sm"
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value)}
                 placeholder="Ej: Caja Principal"

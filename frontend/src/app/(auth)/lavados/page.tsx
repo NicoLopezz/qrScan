@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { Plus, Droplets, Clock, CheckCircle, LayoutGrid, List, Search, X } from "lucide-react";
 import { DragDropContext, Droppable, Draggable, type DropResult } from "@hello-pangea/dnd";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { FloatingButton } from "@/components/common/FloatingButton";
 import { useAuth } from "@/providers/AuthProvider";
 import { useLavados } from "@/hooks/useLavados";
 import { fetchApi } from "@/lib/api";
@@ -14,6 +15,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { LavadoCard } from "@/components/lavados/LavadoCard";
 import { LavadoForm } from "@/components/lavados/LavadoForm";
 import { LavadoDetailModal } from "@/components/lavados/LavadoDetailModal";
+import { MobileTabBar, type MobileTab } from "@/components/lavados/MobileTabBar";
+import { MobileWizard } from "@/components/lavados/MobileWizard";
+import { MobileListosView } from "@/components/lavados/MobileListosView";
 import type { Lavado } from "@/types";
 
 const COLUMNS = [
@@ -29,7 +33,9 @@ export default function LavadosPage() {
   const [showForm, setShowForm] = useState(false);
   const [selectedLavado, setSelectedLavado] = useState<Lavado | null>(null);
   const [mobileFilter, setMobileFilter] = useState<string | null>(null);
+  const [mobileTab, setMobileTab] = useState<MobileTab>("lista");
   const [viewMode, setViewMode] = useState<"kanban" | "table">("kanban");
+  const wizardNextRef = useRef<(() => void) | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
   const normalize = (s: string) => s.toLowerCase().replace(/\s+/g, "");
@@ -81,99 +87,142 @@ export default function LavadosPage() {
   }
 
   return (
-    <div className="space-y-4">
+    <>
       {/* ===== MOBILE ===== */}
-      <div className="md:hidden space-y-3">
-        {/* Mini metrics */}
-        <div className="grid grid-cols-3 gap-2">
-          <button
-            onClick={() => setMobileFilter(mobileFilter === "Pendiente" ? null : "Pendiente")}
-            className={`card-elevated rounded-2xl p-3 text-center transition-all duration-200 cursor-pointer ${
-              mobileFilter === "Pendiente"
-                ? "bg-amber-50 ring-2 ring-amber-300"
-                : "bg-white dark:bg-card"
-            }`}
-          >
-            <Clock className="h-4 w-4 mx-auto text-amber-500 mb-1" />
-            <p className="text-xl font-semibold tabular-nums">{pendientes.length}</p>
-            <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">En Cola</p>
-          </button>
-          <button
-            onClick={() => setMobileFilter(mobileFilter === "En Proceso" ? null : "En Proceso")}
-            className={`card-elevated rounded-2xl p-3 text-center transition-all duration-200 cursor-pointer ${
-              mobileFilter === "En Proceso"
-                ? "bg-blue-50 ring-2 ring-blue-300"
-                : "bg-white dark:bg-card"
-            }`}
-          >
-            <Droplets className="h-4 w-4 mx-auto text-blue-500 mb-1" />
-            <p className="text-xl font-semibold tabular-nums">{enProceso.length}</p>
-            <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Lavando</p>
-          </button>
-          <button
-            onClick={() => setMobileFilter(mobileFilter === "Completado" ? null : "Completado")}
-            className={`card-elevated rounded-2xl p-3 text-center transition-all duration-200 cursor-pointer ${
-              mobileFilter === "Completado"
-                ? "bg-emerald-50 ring-2 ring-emerald-300"
-                : "bg-white dark:bg-card"
-            }`}
-          >
-            <CheckCircle className="h-4 w-4 mx-auto text-emerald-500 mb-1" />
-            <p className="text-xl font-semibold tabular-nums">{listos.length}</p>
-            <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Listos</p>
-          </button>
-        </div>
+      <div className="md:hidden pb-20">
+        {mobileTab === "lista" && (
+          <div key="lista" className="space-y-3 animate-fade-in">
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Buscar por nombre, patente..."
+                className="w-full h-9 pl-9 pr-8 rounded-xl bg-white dark:bg-card border border-border/40 text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-brand-purple/30"
+              />
+              {searchQuery && (
+                <button onClick={() => setSearchQuery("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 cursor-pointer">
+                  <X className="h-4 w-4 text-muted-foreground" />
+                </button>
+              )}
+            </div>
+            {/* Mini metrics */}
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                onClick={() => setMobileFilter(mobileFilter === "Pendiente" ? null : "Pendiente")}
+                className={`card-elevated rounded-2xl p-3 text-center transition-all duration-200 cursor-pointer ${
+                  mobileFilter === "Pendiente"
+                    ? "bg-amber-50 dark:bg-amber-950/30 ring-2 ring-amber-300"
+                    : "bg-white dark:bg-card"
+                }`}
+              >
+                <Clock className="h-4 w-4 mx-auto text-amber-500 mb-1" />
+                <p className="text-xl font-semibold tabular-nums">{pendientes.length}</p>
+                <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">En Cola</p>
+              </button>
+              <button
+                onClick={() => setMobileFilter(mobileFilter === "En Proceso" ? null : "En Proceso")}
+                className={`card-elevated rounded-2xl p-3 text-center transition-all duration-200 cursor-pointer ${
+                  mobileFilter === "En Proceso"
+                    ? "bg-blue-50 dark:bg-blue-950/30 ring-2 ring-blue-300"
+                    : "bg-white dark:bg-card"
+                }`}
+              >
+                <Droplets className="h-4 w-4 mx-auto text-blue-500 mb-1" />
+                <p className="text-xl font-semibold tabular-nums">{enProceso.length}</p>
+                <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Lavando</p>
+              </button>
+              <button
+                onClick={() => setMobileFilter(mobileFilter === "Completado" ? null : "Completado")}
+                className={`card-elevated rounded-2xl p-3 text-center transition-all duration-200 cursor-pointer ${
+                  mobileFilter === "Completado"
+                    ? "bg-emerald-50 dark:bg-emerald-950/30 ring-2 ring-emerald-300"
+                    : "bg-white dark:bg-card"
+                }`}
+              >
+                <CheckCircle className="h-4 w-4 mx-auto text-emerald-500 mb-1" />
+                <p className="text-xl font-semibold tabular-nums">{listos.length}</p>
+                <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Listos</p>
+              </button>
+            </div>
 
-        {/* Filter label */}
-        {mobileFilter && (
-          <div className="flex items-center justify-between animate-fade-in">
-            <p className="text-sm font-medium text-muted-foreground">
-              Mostrando: {mobileFilter}
-            </p>
-            <button
-              onClick={() => setMobileFilter(null)}
-              className="text-xs text-brand-purple font-medium"
-            >
-              Ver todos
-            </button>
+            {/* Filter label */}
+            {mobileFilter && (
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-medium text-muted-foreground">
+                  Mostrando: {mobileFilter}
+                </p>
+                <button
+                  onClick={() => setMobileFilter(null)}
+                  className="text-xs text-brand-purple font-medium cursor-pointer"
+                >
+                  Ver todos
+                </button>
+              </div>
+            )}
+
+            {/* Lavado list - compact rows */}
+            <div className="space-y-1.5">
+              {mobileList.length > 0 ? (
+                mobileList.map((lavado) => (
+                  <button
+                    key={lavado._id}
+                    onClick={() => setSelectedLavado(lavado)}
+                    className="w-full flex items-center gap-3 rounded-xl bg-white dark:bg-card p-3 text-left cursor-pointer active:scale-[0.98] transition-transform shadow-sm"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">{lavado.nombre}</p>
+                      <p className="text-[11px] text-muted-foreground truncate">
+                        {lavado.modelo} — <span className="font-mono tracking-wide">{lavado.patente}</span>
+                      </p>
+                    </div>
+                    <Badge variant="secondary" className={`text-[10px] border-0 font-medium flex-shrink-0 ${
+                      lavado.estado === "Pendiente" ? "bg-amber-50 text-amber-700 dark:bg-amber-950/30" :
+                      lavado.estado === "En Proceso" ? "bg-blue-50 text-blue-700 dark:bg-blue-950/30" :
+                      lavado.estado === "Completado" ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30" :
+                      "bg-muted text-muted-foreground"
+                    }`}>
+                      {lavado.estado === "Pendiente" ? "Cola" :
+                       lavado.estado === "En Proceso" ? "Lavando" :
+                       lavado.estado === "Completado" ? "Listo" : "Retirado"}
+                    </Badge>
+                  </button>
+                ))
+              ) : (
+                <div className="text-center py-16">
+                  <Droplets className="h-10 w-10 mx-auto text-muted-foreground/30 mb-3" />
+                  <p className="text-sm text-muted-foreground">
+                    {mobileFilter ? "Sin lavados en esta categoria" : "No hay lavados activos"}
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         )}
 
-        {/* Lavado list */}
-        <div className="space-y-2">
-          {mobileList.length > 0 ? (
-            mobileList.map((lavado) => (
-              <LavadoCard
-                key={lavado._id}
-                lavado={lavado}
-                onClick={() => setSelectedLavado(lavado)}
-              />
-            ))
-          ) : (
-            <div className="text-center py-16">
-              <Droplets className="h-10 w-10 mx-auto text-muted-foreground/30 mb-3" />
-              <p className="text-sm text-muted-foreground">
-                {mobileFilter ? "Sin lavados en esta categoria" : "No hay lavados activos"}
-              </p>
-              <Button
-                onClick={() => setShowForm(true)}
-                variant="outline"
-                className="mt-4"
-                size="sm"
-              >
-                <Plus className="h-4 w-4 mr-1" /> Agregar Lavado
-              </Button>
-            </div>
-          )}
-        </div>
+        {mobileTab === "nuevo" && (
+          <div key="nuevo" className="animate-fade-in">
+            <MobileWizard onComplete={() => setMobileTab("lista")} onNextRef={(fn) => { wizardNextRef.current = fn; }} />
+          </div>
+        )}
 
-        {/* FAB - Floating Action Button */}
-        <button
-          onClick={() => setShowForm(true)}
-          className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-purple to-brand-fuchsia text-white shadow-xl shadow-brand-purple/25 active:scale-95 transition-all duration-200 cursor-pointer"
-        >
-          <Plus className="h-6 w-6" />
-        </button>
+        {mobileTab === "listos" && (
+          <div key="listos" className="animate-fade-in">
+            <MobileListosView
+              lavados={lavados ?? []}
+              onSelect={(l) => setSelectedLavado(l)}
+            />
+          </div>
+        )}
+
+        <MobileTabBar
+          activeTab={mobileTab}
+          onTabChange={setMobileTab}
+          listosCount={listos.length}
+          onCenterAction={() => wizardNextRef.current?.()}
+        />
       </div>
 
       {/* ===== DESKTOP ===== */}
@@ -310,7 +359,7 @@ export default function LavadosPage() {
         lavado={selectedLavado}
         onClose={() => setSelectedLavado(null)}
       />
-    </div>
+    </>
   );
 }
 

@@ -300,16 +300,16 @@ function CrearMiembroDialog({
         <form onSubmit={handleSubmit} className="space-y-3">
           <div className="space-y-1">
             <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Email</Label>
-            <Input className="h-9 rounded-xl text-sm" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            <Input className="h-10 rounded-xl text-sm" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
           </div>
           <div className="space-y-1">
             <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Contrasena</Label>
-            <Input className="h-9 rounded-xl text-sm" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={4} />
+            <Input className="h-10 rounded-xl text-sm" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={4} />
           </div>
           <div className="space-y-1">
             <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Rol</Label>
             <Select value={role} onValueChange={(v) => v && setRole(v)}>
-              <SelectTrigger className="h-9 rounded-xl text-sm"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="h-10 rounded-xl text-sm"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="editor">Empleado — Ventas y Lavados</SelectItem>
                 <SelectItem value="viewer">Viewer — Solo lectura</SelectItem>
@@ -367,16 +367,16 @@ function EditarMiembroDialog({
         <form onSubmit={handleSubmit} className="space-y-3">
           <div className="space-y-1">
             <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Email</Label>
-            <Input className="h-9 rounded-xl text-sm" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            <Input className="h-10 rounded-xl text-sm" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
           </div>
           <div className="space-y-1">
             <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Nueva contrasena</Label>
-            <Input className="h-9 rounded-xl text-sm" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Dejar vacio para no cambiar" />
+            <Input className="h-10 rounded-xl text-sm" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Dejar vacio para no cambiar" />
           </div>
           <div className="space-y-1">
             <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Rol</Label>
             <Select value={role} onValueChange={(v) => v && setRole(v)}>
-              <SelectTrigger className="h-9 rounded-xl text-sm"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="h-10 rounded-xl text-sm"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="editor">Empleado — Ventas y Lavados</SelectItem>
                 <SelectItem value="viewer">Viewer — Solo lectura</SelectItem>

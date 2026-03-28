@@ -48,23 +48,29 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="left" className="w-64 bg-brand-sidebar border-0 p-0">
-        <SheetHeader className="flex h-16 items-center justify-center border-b border-white/10 px-4">
+      <SheetContent
+        side="left"
+        showCloseButton={false}
+        className="!w-64 !gap-0 bg-white dark:bg-[#15131F] !border-0 !p-0 flex flex-col"
+      >
+        {/* Header */}
+        <SheetHeader className="flex h-14 items-center justify-center border-b border-border/40 px-4 !gap-0">
           <SheetTitle className="text-lg font-bold">
             <span className="text-brand-orange">PickUp</span>{" "}
-            <span className="text-white">Time</span>
+            <span className="text-foreground">Time</span>
           </SheetTitle>
         </SheetHeader>
 
         {/* User info */}
         {user && (
-          <div className="px-4 py-4 border-b border-white/10">
-            <p className="text-sm font-medium text-white">{user.localName || user.email}</p>
-            <p className="text-xs text-white/50 capitalize">{user.permiso}</p>
+          <div className="px-4 py-3 border-b border-border/40">
+            <p className="text-sm font-medium text-foreground">{user.localName || user.email}</p>
+            <p className="text-xs text-muted-foreground capitalize">{user.permiso}</p>
           </div>
         )}
 
-        <nav className="space-y-1 px-2 py-4">
+        {/* Nav items */}
+        <nav className="flex-1 overflow-y-auto space-y-0.5 px-2 py-3">
           {mobileNavItems.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -73,28 +79,29 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
                 href={item.href}
                 onClick={() => onOpenChange(false)}
                 className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-3 text-base font-medium transition-colors",
+                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                   isActive
-                    ? "bg-brand-purple text-white"
-                    : "text-white/70 hover:bg-white dark:bg-card/10 hover:text-white"
+                    ? "bg-brand-purple-muted text-brand-purple"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 )}
               >
-                <item.icon className="h-5 w-5" />
+                <item.icon className="h-[18px] w-[18px] flex-shrink-0" />
                 <span>{item.label}</span>
               </Link>
             );
           })}
         </nav>
 
-        <div className="absolute bottom-0 left-0 right-0 border-t border-white/10 px-2 py-3">
+        {/* Logout - pinned to bottom */}
+        <div className="mt-auto border-t border-border/40 px-2 py-3">
           <button
             onClick={() => {
               onOpenChange(false);
               logout();
             }}
-            className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-base font-medium text-white/50 hover:bg-white dark:bg-card/10 hover:text-white transition-colors"
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
           >
-            <LogOut className="h-5 w-5" />
+            <LogOut className="h-[18px] w-[18px] flex-shrink-0" />
             <span>Salir</span>
           </button>
         </div>

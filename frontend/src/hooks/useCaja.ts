@@ -146,6 +146,7 @@ export function useCrearVenta() {
       monto: number;
       descripcion: string;
       tipo?: "ingreso" | "egreso";
+      nota?: string;
       pagos: { medioPago: string; monto: number }[];
     }) =>
       fetchApi("/api/ventas", {

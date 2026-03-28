@@ -106,28 +106,28 @@ export function LavadoForm({ open, onOpenChange }: LavadoFormProps) {
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Nombre</Label>
-                  <Input value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} className="h-9 rounded-xl text-sm" required />
+                  <Input value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} className="h-10 rounded-xl text-sm" required />
                 </div>
                 <div className="space-y-1">
                   <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Patente</Label>
-                  <Input value={form.patente} onChange={(e) => setForm({ ...form, patente: e.target.value })} className="h-9 rounded-xl text-sm" required />
+                  <Input value={form.patente} onChange={(e) => setForm({ ...form, patente: e.target.value })} className="h-10 rounded-xl text-sm" required />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Modelo</Label>
-                  <Input value={form.modelo} onChange={(e) => setForm({ ...form, modelo: e.target.value })} className="h-9 rounded-xl text-sm" required />
+                  <Input value={form.modelo} onChange={(e) => setForm({ ...form, modelo: e.target.value })} className="h-10 rounded-xl text-sm" required />
                 </div>
                 <div className="space-y-1">
                   <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Tipo de Lavado</Label>
-                  <Input value={form.tipoDeLavado} onChange={(e) => setForm({ ...form, tipoDeLavado: e.target.value })} placeholder="Completo, Simple..." className="h-9 rounded-xl text-sm" required />
+                  <Input value={form.tipoDeLavado} onChange={(e) => setForm({ ...form, tipoDeLavado: e.target.value })} placeholder="Completo, Simple..." className="h-10 rounded-xl text-sm" required />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Medio de Pago</Label>
                   <Select value={form.medioPago} onValueChange={(v) => v && setForm({ ...form, medioPago: v })}>
-                    <SelectTrigger className="h-9 rounded-xl text-sm"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="h-10 rounded-xl text-sm"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="---">Sin definir</SelectItem>
                       <SelectItem value="efectivo">Efectivo</SelectItem>
@@ -139,7 +139,7 @@ export function LavadoForm({ open, onOpenChange }: LavadoFormProps) {
                 </div>
                 <div className="space-y-1">
                   <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Monto</Label>
-                  <Input type="number" value={form.monto} onChange={(e) => setForm({ ...form, monto: parseFloat(e.target.value) || 0 })} className="h-9 rounded-xl text-sm tabular-nums" />
+                  <Input type="number" value={form.monto} onChange={(e) => setForm({ ...form, monto: parseFloat(e.target.value) || 0 })} className="h-10 rounded-xl text-sm tabular-nums" />
                 </div>
               </div>
               <div className="space-y-1">

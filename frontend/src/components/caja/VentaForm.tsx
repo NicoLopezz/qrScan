@@ -166,7 +166,7 @@ export default function VentaForm({
               Descripcion
             </Label>
             <Input
-              className="h-9 rounded-xl text-sm"
+              className="h-10 rounded-xl text-sm"
               value={descripcion}
               onChange={(e) => setDescripcion(e.target.value)}
               placeholder="Lavado completo, producto..."
@@ -199,7 +199,7 @@ export default function VentaForm({
                 value={medioPago}
                 onValueChange={(v) => v && setMedioPago(v as MedioPago)}
               >
-                <SelectTrigger className="h-9 rounded-xl text-sm w-full">
+                <SelectTrigger className="h-10 rounded-xl text-sm w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -223,7 +223,7 @@ export default function VentaForm({
                         v && updatePago(idx, "medioPago", v)
                       }
                     >
-                      <SelectTrigger className="h-9 rounded-xl text-sm flex-1">
+                      <SelectTrigger className="h-10 rounded-xl text-sm flex-1">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -245,7 +245,7 @@ export default function VentaForm({
                         type="number"
                         min={0}
                         step="0.01"
-                        className="h-9 rounded-xl text-sm tabular-nums pl-6"
+                        className="h-10 rounded-xl text-sm tabular-nums pl-6"
                         value={pago.monto || ""}
                         onChange={(e) =>
                           updatePago(idx, "monto", parseFloat(e.target.value) || 0)

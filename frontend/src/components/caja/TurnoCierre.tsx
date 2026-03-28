@@ -111,7 +111,7 @@ export default function TurnoCierre({
                     <Input
                       type="number"
                       step="0.01"
-                      className="h-8 rounded-lg text-sm tabular-nums text-right pr-2 pl-1"
+                      className="h-10 rounded-xl text-sm tabular-nums text-right pr-2 pl-1"
                       value={montos[bolsillo.medioPago] ?? ""}
                       onChange={(e) =>
                         setMontos({

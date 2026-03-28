@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans, DM_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeInit } from "@/components/layout/ThemeInit";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -20,15 +21,6 @@ export const metadata: Metadata = {
   description: "Plataforma de gestion para lavaderos",
 };
 
-// Script that runs before paint to set theme without flash
-const themeScript = `
-(function() {
-  var t = localStorage.getItem('theme');
-  if (t === 'light') document.documentElement.classList.remove('dark');
-  else document.documentElement.classList.add('dark');
-})();
-`;
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -41,9 +33,10 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <meta name="color-scheme" content="dark light" />
       </head>
       <body className="min-h-full flex flex-col">
+        <ThemeInit />
         {children}
         <Toaster position="top-right" richColors />
       </body>

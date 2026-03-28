@@ -89,12 +89,11 @@ export function LavadoDetailModal({ lavado, onClose }: LavadoDetailModalProps) {
   return (
     <Dialog open={!!lavado} onOpenChange={(open) => { if (!open) { setShowPerfil(false); onClose(); } }}>
       <DialogContent
-        className="p-0 gap-0 overflow-hidden rounded-2xl border-0 shadow-2xl sm:max-w-none"
-        style={{ width: "fit-content", maxWidth: "calc(100% - 2rem)" }}
+        className="p-0 gap-0 overflow-hidden border-0 shadow-2xl rounded-2xl sm:max-w-none w-[calc(100%-1.5rem)] max-h-[85vh] sm:max-h-[90vh] sm:h-auto max-w-full sm:max-w-[calc(100%-2rem)]"
       >
-        <div className="flex" style={{ minHeight: "32rem" }}>
+        <div className="flex h-full sm:max-h-[90vh]">
           {/* LEFT: Lavado detail */}
-          <div className="w-[28rem] flex-shrink-0 flex flex-col" style={{ borderRight: showPerfil ? "1px solid var(--border)" : "none" }}>
+          <div className="w-full sm:w-[28rem] flex-shrink-0 flex flex-col overflow-y-auto" style={{ borderRight: showPerfil ? "1px solid var(--border)" : "none" }}>
             {/* Info section */}
             <div className="px-5 pt-5 pb-3 space-y-3">
               <DialogHeader className="space-y-0">
@@ -172,7 +171,7 @@ export function LavadoDetailModal({ lavado, onClose }: LavadoDetailModalProps) {
                 <div className="flex items-center justify-between">
                   <label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Estado</label>
                   <Select value={estado} onValueChange={(v) => v && setEstado(v)}>
-                    <SelectTrigger className="h-9 rounded-xl text-sm w-48"><SelectValue placeholder={estado} /></SelectTrigger>
+                    <SelectTrigger className="h-10 rounded-xl text-sm w-48"><SelectValue placeholder={estado} /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="Pendiente">Pendiente</SelectItem>
                       <SelectItem value="En Proceso">En Proceso</SelectItem>
@@ -184,7 +183,7 @@ export function LavadoDetailModal({ lavado, onClose }: LavadoDetailModalProps) {
                 <div className="flex items-center justify-between">
                   <label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Medio de Pago</label>
                   <Select value={medioPago} onValueChange={(v) => v && setMedioPago(v)}>
-                    <SelectTrigger className="h-9 rounded-xl text-sm w-48"><SelectValue placeholder={medioPago} /></SelectTrigger>
+                    <SelectTrigger className="h-10 rounded-xl text-sm w-48"><SelectValue placeholder={medioPago} /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="---">---</SelectItem>
                       <SelectItem value="efectivo">Efectivo</SelectItem>
@@ -199,7 +198,7 @@ export function LavadoDetailModal({ lavado, onClose }: LavadoDetailModalProps) {
                   <Input
                     type="text"
                     inputMode="decimal"
-                    className="h-9 rounded-xl text-sm tabular-nums w-48 [appearance:textfield]"
+                    className="h-10 rounded-xl text-sm tabular-nums w-48 [appearance:textfield]"
                     value={monto || ""}
                     placeholder="0"
                     onChange={(e) => {
@@ -223,18 +222,17 @@ export function LavadoDetailModal({ lavado, onClose }: LavadoDetailModalProps) {
             </div>
           </div>
 
-          {/* RIGHT: Client profile (only when showPerfil) */}
-          {/* RIGHT: Client profile */}
+          {/* RIGHT: Client profile — overlay on mobile, side panel on desktop */}
           <div
-            className="overflow-hidden max-h-[80vh] overflow-y-auto"
+            className={`overflow-hidden max-h-[90vh] overflow-y-auto ${showPerfil ? "sm:block" : ""} ${showPerfil ? "absolute inset-0 z-10 bg-popover sm:relative sm:inset-auto sm:z-auto sm:bg-transparent" : ""}`}
             style={{
-              width: showPerfil ? "24rem" : "0",
+              width: showPerfil ? undefined : "0",
               opacity: showPerfil ? 1 : 0,
               transition: "width 350ms cubic-bezier(0.4, 0, 0.2, 1), opacity 250ms ease 100ms",
             }}
           >
             {showPerfil && (
-            <div className="w-[24rem]">
+            <div className="w-full sm:w-[24rem]">
               {perfilLoading ? (
                 <div className="p-4 space-y-3">
                   <div className="flex items-center gap-3">
@@ -247,8 +245,15 @@ export function LavadoDetailModal({ lavado, onClose }: LavadoDetailModalProps) {
                 </div>
               ) : perfil ? (
                 <div className="divide-y divide-border/30">
+                  {/* Back button on mobile */}
+                  <button
+                    onClick={() => setShowPerfil(false)}
+                    className="sm:hidden flex items-center gap-1.5 px-4 pt-4 pb-2 text-xs text-brand-purple font-medium cursor-pointer"
+                  >
+                    <ChevronRight className="h-3 w-3 rotate-180" /> Volver al detalle
+                  </button>
                   {/* Header */}
-                  <div className="px-4 pt-5 pb-4">
+                  <div className="px-4 pt-3 sm:pt-5 pb-4">
                     <div className="flex items-center gap-3 mb-3">
                       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-purple-muted dark:bg-brand-purple/15 flex-shrink-0">
                         <User className="h-4 w-4 text-brand-purple" />

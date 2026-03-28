@@ -264,7 +264,7 @@ async function cerrarTurno(req, res) {
 async function crearVenta(req, res) {
   try {
     const adminId = req.user.adminId;
-    const { turnoId, monto, descripcion, pagos, tipo = 'ingreso' } = req.body;
+    const { turnoId, monto, descripcion, pagos, tipo = 'ingreso', nota = '' } = req.body;
 
     const montoAbs = Math.abs(monto);
 
@@ -290,6 +290,7 @@ async function crearVenta(req, res) {
       adminId,
       monto: montoAbs,
       tipo,
+      nota: nota || '',
       descripcion: descripcion || '',
     });
 
