@@ -1,34 +1,25 @@
-// Función para obtener el valor de una cookie por su nombre
-function getCookie(name) {
+function getCookieReservas(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) {
-        return parts.pop().split(';').shift();
-    }
-    return null;  // Si no encuentra la cookie, devuelve null
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
 }
-$(document).ready(function () {
-    // Obtener el adminId desde la cookie
-    const adminId = getCookie('adminId');  // Obtener el valor de la cookie
 
-    // Verifica si el adminId es válido
+document.addEventListener('DOMContentLoaded', function () {
+    const adminId = getCookieReservas('adminId');
     if (!adminId) {
-        console.error("No se encontró el adminId en las cookies");
-        return;  // Evita continuar si no se encuentra la cookie
+        console.warn("qrGeneratorReservas: No se encontró adminId en cookies");
+        return;
     }
-    //QR PARA LOS
-    // Generar la URL del QR con el adminId
-    // /api/qrScan
-    const qrCodeUrl = `https://www.pickuptime.io/api/qrScanUpdateReservas/${adminId}`;
-    // const qrCodeUrl = `http://localhost:3000/api/qrScanUpdateReservas/${adminId}`;
 
-    // Generar el QR con el adminId en la URL
-    const qr = new QRious({
-        element: document.getElementById('qrcode'),
-        value: qrCodeUrl,  // Usar la URL con el adminId
+    const canvas = document.getElementById('qrcode');
+    if (!canvas) return;
+
+    const qrCodeUrl = `http://localhost:4000/api/qrScanUpdateReservas/${adminId}`;
+
+    new QRious({
+        element: canvas,
+        value: qrCodeUrl,
         size: 200
     });
 });
-
-
-

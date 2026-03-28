@@ -1,220 +1,259 @@
-// Elementos DOM
-const tabs = document.querySelectorAll('.tab');
-const options = document.querySelectorAll('.option');
-const tables = document.querySelectorAll('.data-table');
+// Elementos DOM — scoped to section-ventas
+const ventasSection = document.getElementById('section-ventas');
+const tabs = ventasSection ? ventasSection.querySelectorAll('.tab') : [];
+const options = ventasSection ? ventasSection.querySelectorAll('.option') : [];
+const tables = ventasSection ? ventasSection.querySelectorAll('.data-table') : [];
 const horaApertura = document.getElementById("hora-apertura-arqueo");
-const actionButton = document.getElementById('action-button');
-// Seleccionar elementos
 const btnNuevoArqueo = document.getElementById('btn-nuevo-arqueo');
 const btnNuevoMovimiento = document.getElementById('btn-nuevo-movimiento');
-// Obtén la referencia al formulario de arqueo
 const formArqueo = document.getElementById("form-arqueo");
 
+// horaApertura change handler (if needed for future logic)
 document.addEventListener("DOMContentLoaded", () => {
-    if (horaApertura) {
-        horaApertura.addEventListener("change", (event) => {
-        });
-    } else {
-        console.error("El campo hora-apertura-arqueo no se encontró en el DOM.");
-    }
-
-    if (formArqueo) {
-        formArqueo.addEventListener("submit", async (event) => {
-            event.preventDefault();
-            const horaAperturaValue = horaApertura.value;
-        });
-    } else {
-        console.error("El formulario form-arqueo no se encontró en el DOM.");
-    }
+    // placeholder for hora-apertura-arqueo change events if needed
 });
 
 // CREAR ARQUEO NUEVO
-formArqueo.addEventListener("submit", async (event) => {
-    event.preventDefault(); // Previene el envío tradicional del formulario
+formArqueo?.addEventListener("submit", async (event) => {
+    event.preventDefault();
 
-    // Obtén los valores de los campos del formulario
-    const horaApertura = document.getElementById("hora-apertura-arqueo").value;
-    const saldoInicial = parseFloat(document.getElementById("monto-inicial").value); // Renombrado como saldoInicial
-    const cajaTipo = document.querySelector(".tab.active").id === "caja-mayor" ? "CajaMayor" : "CajaChica";
+    const horaAperturaVal = document.getElementById("hora-apertura-arqueo")?.value;
+    const saldoInicial = parseFloat(document.getElementById("monto-inicial")?.value);
+    const cajaTipo = document.querySelector(".tab.active")?.id === "caja-mayor" ? "CajaMayor" : "CajaChica";
+    const tipoArqueo = document.getElementById("tipo-arqueo-nuevo")?.value;
 
-    // Nuevo campo: tipoArqueo
-    const tipoArqueo = document.getElementById("tipo-arqueo-nuevo").value;
-
-    // Valida los campos
-    if (!horaApertura || isNaN(saldoInicial) || !tipoArqueo) {
-        showNotification("Por favor, complete todos los campos requeridos.", "error");
+    if (!horaAperturaVal || isNaN(saldoInicial) || !tipoArqueo) {
+        if (typeof showNotification === 'function') showNotification("Por favor, complete todos los campos requeridos.", "error");
         return;
     }
 
-
-
     try {
-        // Realiza el POST al backend
         const response = await fetch("/api/arqueos", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                horaApertura,
-                saldoInicial, // Aquí lo renombramos correctamente
+                horaApertura: horaAperturaVal,
+                saldoInicial,
                 cajaTipo,
-                tipoArqueo // Incluye el nuevo campo
+                tipoArqueo
             })
         });
         const data = await response.json();
         if (response.ok && data.success) {
-            fetchArqueos(cajaTipoActivo); // Mostrar arqueos
-            showNotification("Arqueo iniciado con éxito.");
-            // Limpia los campos del formulario después de enviar
+            if (typeof fetchArqueosFilter === 'function') {
+                fetchArqueosFilter();
+            } else if (typeof fetchArqueos === 'function') {
+                fetchArqueos(cajaTipoActivo);
+            }
+            if (typeof showNotification === 'function') showNotification("Arqueo iniciado con exito.");
             formArqueo.reset();
         } else {
-            showNotification(`Error al iniciar el arqueo: ${data.error || "Error desconocido"}`, "error");
+            if (typeof showNotification === 'function') showNotification(`Error al iniciar el arqueo: ${data.message || data.error || "Error desconocido"}`, "error");
         }
     } catch (error) {
         console.error("Error al enviar el formulario de arqueo:", error);
-        showNotification("Error al conectarse con el servidor.", "error");
+        if (typeof showNotification === 'function') showNotification("Error al conectarse con el servidor.", "error");
     }
 });
 
 
-
-// Función para manejar Tabs (Caja Mayor / Menor)
+// Funcion para manejar Tabs (Caja Mayor / Menor)
 tabs.forEach((tab) => {
     tab.addEventListener('click', () => {
         tabs.forEach((t) => t.classList.remove('active'));
         tab.classList.add('active');
 
+        const ventasOption = document.getElementById('ventas');
         if (tab.id === 'caja-mayor') {
-            document.getElementById('ventas').classList.add('disabled');
-            document.getElementById('ventas').classList.remove('active');
-            //   updateActionButton('arqueo'); // Por defecto al cambiar a Caja Mayor
+            ventasOption?.classList.add('disabled');
+            // If ventas was active, switch to movimientos
+            if (ventasOption?.classList.contains('active')) {
+                ventasOption?.classList.remove('active');
+                document.getElementById('movimientos')?.classList.add('active');
+            }
         } else {
-            document.getElementById('ventas').classList.remove('disabled');
+            ventasOption?.classList.remove('disabled');
         }
 
-        // Restablecer opción por defecto
-        options.forEach((o) => o.classList.remove('active'));
-        document.getElementById('movimientos').classList.add('active');
-        tables.forEach((table) => table.classList.add('hidden'));
-        document.getElementById('table-movimientos').classList.remove('hidden');
-        // updateActionButton('movimientos');
+        // Determine which option is currently active and reload its data
+        const activeOption = document.querySelector('.option.active');
+        const activeOptionId = activeOption?.id || 'movimientos';
+
+        // If no option is active, default to movimientos
+        if (!activeOption) {
+            document.getElementById('movimientos')?.classList.add('active');
+        }
+
+        // Trigger the active option's data load
+        switchToOption(activeOptionId);
     });
 });
 
 
-// Función para actualizar botones según la opción seleccionada
+// Funcion para actualizar botones segun la opcion seleccionada
 function actualizarBotones(opcionSeleccionada) {
-    // Ocultar todos los botones
-    btnNuevoArqueo.classList.add('hidden');
-    btnNuevoMovimiento.classList.add('hidden');
-    // btnNuevaVenta.classList.add('hidden');
+    if (btnNuevoArqueo) { btnNuevoArqueo.classList.add('hidden'); btnNuevoArqueo.style.display = 'none'; }
+    if (btnNuevoMovimiento) { btnNuevoMovimiento.classList.add('hidden'); btnNuevoMovimiento.style.display = 'none'; }
 
-    // Mostrar el botón correspondiente
-    if (opcionSeleccionada === 'arqueo') {
+    if (opcionSeleccionada === 'arqueo' && btnNuevoArqueo) {
         btnNuevoArqueo.classList.remove('hidden');
-    } else if (opcionSeleccionada === 'movimientos') {
+        btnNuevoArqueo.style.display = 'inline-block';
+    } else if (opcionSeleccionada === 'movimientos' && btnNuevoMovimiento) {
         btnNuevoMovimiento.classList.remove('hidden');
+        btnNuevoMovimiento.style.display = 'inline-block';
     }
 }
 
-// Manejar clics en las opciones (Ventas, Movimientos, Arqueo)
+// *** SINGLE consolidated handler for option clicks ***
 options.forEach((option) => {
     option.addEventListener('click', () => {
         if (option.classList.contains('disabled')) return;
-        // Actualizar botones dinámicos
-        actualizarBotones(option.id);
+        switchToOption(option.id);
     });
 });
 
-// Evento para alternar entre opciones dinámicamente
-options.forEach((option) => {
-    option.addEventListener("click", () => {
-        options.forEach((o) => o.classList.remove("active")); // Quitar clase active de todas las opciones
-        option.classList.add("active"); // Agregar clase active a la opción seleccionada
-        updateActiveFilters(); // Actualizar dinámicamente el filtro visible
-    });
-});
+// Central function to switch to a given option
+function switchToOption(selectedOption) {
+    // Update active state on options
+    options.forEach((o) => o.classList.remove('active'));
+    const targetOption = document.getElementById(selectedOption);
+    targetOption?.classList.add('active');
 
+    // Update buttons
+    actualizarBotones(selectedOption);
 
-// Asegurarse de que los filtros estén ocultos al cargar la página
-document.addEventListener("DOMContentLoaded", () => {
-    hideAllFilters(); // Ocultar todos los filtros al cargar
-    toggleFiltersButton.textContent = "Mostrar Filtros"; // Texto inicial del botón");
-});
+    // Update filters
+    if (typeof updateActiveFilters === 'function') {
+        updateActiveFilters();
+    }
 
-// *** EVENTOS: Opciones de Movimientos, Ventas, Arqueos ***
-document.querySelectorAll('.option').forEach((option) => {
-    option.addEventListener('click', (event) => {
-        const selectedOption = event.target.id; // 'movimientos', 'ventas', 'arqueo'
+    // Get references
+    const movimientoDetails = document.getElementById('movimiento-details');
+    const detailsSection = document.querySelector('.details-section');
+    const details = document.getElementById('details');
 
-        // Obtener referencias a los elementos necesarios
-        const movimientoDetails = document.getElementById('movimiento-details');
-        const detailsSection = document.querySelector('.details-section');
-        const details = document.getElementById('details');
+    // Hide all tables first
+    tables.forEach((table) => table.classList.add('hidden'));
 
-        if (selectedOption === 'movimientos') {
-            showFormsAndButtons('btn-nuevo-movimiento'); // Mostrar botón y formulario de movimientos
-            detailsSection.style.display = 'none';
-            details.style.display = 'none';
+    // Hide details by default
+    if (detailsSection) detailsSection.style.display = 'none';
+    if (details) details.style.display = 'none';
 
-            // Mostrar el detalle de movimiento
+    if (selectedOption === 'movimientos') {
+        showFormsAndButtons('btn-nuevo-movimiento');
+        document.getElementById('table-movimientos')?.classList.remove('hidden');
+        document.getElementById('form-lavado')?.classList.add('hidden');
+        // Show the movimiento form (always visible on movimientos tab)
+        const formMovSection = document.getElementById('form-movimiento-section');
+        if (formMovSection) formMovSection.style.display = '';
+        const formMov = document.getElementById('form-movimiento');
+        if (formMov) { formMov.style.display = ''; formMov.classList.remove('hidden'); }
+
+        // Show movimiento details panel
+        if (movimientoDetails) {
+            movimientoDetails.classList.remove('hidden');
             movimientoDetails.classList.add('visible');
-            fetchMovimientos(cajaTipoActivo); // Mostrar movimientos
-        } else if (selectedOption === 'arqueo') {
-            showFormsAndButtons('btn-nuevo-arqueo'); // Mostrar botón y formulario de arqueos
-            detailsSection.style.display = 'none';
-            details.style.display = 'none';
-            fetchArqueosFilter(); // Ejecutar la función de filtros para 
-            // fetchArqueos(cajaTipoActivo); // Mostrar arqueos
-        } else if (selectedOption === 'ventas') {
-            showFormsAndButtons('btn-nueva-venta'); // Mostrar botón y formulario de ventas
-            detailsSection.style.display = 'none';
-            details.style.display = 'none';
-
-            // Ocultar el detalle de movimiento
-            movimientoDetails.classList.remove('visible');
-            // Lógica para ventas, si la necesitas
         }
-    });
-});
+
+        // Fetch movimientos data
+        if (typeof fetchMovimientos === 'function') {
+            fetchMovimientos();
+        }
+
+    // Hide inline arqueo button by default
+    const btnCrearArqueoInline = document.getElementById('btn-crear-arqueo-inline');
+    if (btnCrearArqueoInline) btnCrearArqueoInline.style.display = 'none';
+
+    if (selectedOption === 'arqueo') {
+        showFormsAndButtons('btn-nuevo-arqueo');
+        document.getElementById('table-arqueo')?.classList.remove('hidden');
+        if (btnCrearArqueoInline) btnCrearArqueoInline.style.display = 'inline-block';
+        document.getElementById('form-lavado')?.classList.add('hidden');
+        // Hide movimiento form when on arqueo tab
+        const formMovSection = document.getElementById('form-movimiento-section');
+        if (formMovSection) formMovSection.style.display = 'none';
+
+        // Hide movimiento details
+        if (movimientoDetails) {
+            movimientoDetails.classList.remove('visible');
+            movimientoDetails.classList.add('hidden');
+        }
+
+        // Fetch arqueos data
+        if (typeof fetchArqueosFilter === 'function') {
+            fetchArqueosFilter();
+        }
+
+    } else if (selectedOption === 'ventas') {
+        showFormsAndButtons('btn-nueva-venta');
+        document.getElementById('table-ventas')?.classList.remove('hidden');
+        document.getElementById('form-lavado')?.classList.remove('hidden');
+        // Hide movimiento form when on ventas/lavados tab
+        const formMovSection2 = document.getElementById('form-movimiento-section');
+        if (formMovSection2) formMovSection2.style.display = 'none';
+
+        // Hide movimiento details
+        if (movimientoDetails) {
+            movimientoDetails.classList.remove('visible');
+            movimientoDetails.classList.add('hidden');
+        }
+    }
+}
 
 
 // *** FUNCIONES: Mostrar Elementos Ocultos ***
 function showFormsAndButtons(clickedButtonId) {
-    // Asociar botones y formularios
     const botonesYForms = [
         { btnId: 'btn-nuevo-arqueo', formId: 'form-arqueo' },
         { btnId: 'btn-nuevo-movimiento', formId: 'form-movimiento' },
-        // { btnId: 'btn-nueva-venta', formId: 'form-venta' },
     ];
 
-    // Iterar sobre la lista de botones y formularios
     botonesYForms.forEach(({ btnId, formId }) => {
         const button = document.getElementById(btnId);
         const form = document.getElementById(formId);
 
         if (btnId === clickedButtonId) {
-            // Mostrar el botón y formulario asociados al botón clicado
-            button.style.display = 'block';
-            button.classList.remove('hidden');
-            form.style.display = 'flex';
-            form.classList.remove('hidden');
+            if (button) {
+                button.style.display = 'block';
+                button.classList.remove('hidden');
+            }
+            // Don't auto-show forms; the button click should show them
         } else {
-            // Ocultar los demás botones y formularios
-            button.style.display = 'none';
-            button.classList.add('hidden');
-            form.style.display = 'none';
-            form.classList.add('hidden');
+            if (button) {
+                button.style.display = 'none';
+                button.classList.add('hidden');
+            }
+            if (form) {
+                form.style.display = 'none';
+                form.classList.add('hidden');
+            }
         }
     });
+
+    // Also hide the formularios-container when switching away from arqueo
+    if (clickedButtonId !== 'btn-nuevo-arqueo') {
+        const formulariosContainer = document.getElementById('formularios-container');
+        if (formulariosContainer) formulariosContainer.classList.add('hidden');
+    }
 }
 
+// Asegurarse de que los filtros esten ocultos al cargar la pagina
 document.addEventListener("DOMContentLoaded", () => {
-    const btnNuevoArqueo = document.getElementById("btn-nuevo-arqueo");
-    const formArqueo = document.getElementById("form-arqueo");
-    const horaAperturaInput = document.getElementById("hora-apertura");
+    if (typeof hideAllFilters === 'function') {
+        hideAllFilters();
+    }
+    const toggleBtn = document.getElementById("toggle-filters");
+    if (toggleBtn) {
+        toggleBtn.textContent = "Mostrar Filtros";
+    }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    const btnNuevoArqueoLocal = document.getElementById("btn-nuevo-arqueo");
+    const formArqueoLocal = document.getElementById("form-arqueo");
+    const horaAperturaInput = document.getElementById("hora-apertura-arqueo");
     const formulariosContainer = document.getElementById("formularios-container");
 
-    // Función para obtener la fecha y hora actual en formato 'YYYY-MM-DDTHH:MM'
     function obtenerFechaHoraActual() {
         const ahora = new Date();
         const year = ahora.getFullYear();
@@ -225,80 +264,28 @@ document.addEventListener("DOMContentLoaded", () => {
         return `${year}-${month}-${day}T${hours}:${minutes}`;
     }
 
-    // Mostrar formulario con hora por defecto
-    btnNuevoArqueo.addEventListener("click", () => {
-        formulariosContainer.classList.remove("hidden");
-        formArqueo.classList.remove("hidden");
-        horaAperturaInput.value = obtenerFechaHoraActual(); // Establece la hora actual
-    });
-
-    // Evento para cerrar el formulario
-    document.getElementById("cancel-arqueo").addEventListener("click", () => {
-        formulariosContainer.classList.add("hidden");
-        formArqueo.classList.add("hidden");
-    });
-});
-
-// Función para manejar Opciones (Ventas, Movimientos, Arqueo)
-options.forEach((option) => {
-    option.addEventListener('click', () => {
-        if (option.classList.contains('disabled')) return;
-
-        // Activar la opción seleccionada
-        options.forEach((o) => o.classList.remove('active'));
-        option.classList.add('active');
-
-        // Mostrar/Ocultar tablas según la opción seleccionada
-        tables.forEach((table) => table.classList.add('hidden'));
-
-        // Obtener el elemento movimiento-details
-        const movimientoDetails = document.getElementById('movimiento-details');
-        // const agregarLavado = document.getElementById('form-lavado');
-        
-
-        // Mostrar/Ocultar según la opción seleccionada
-        if (option.id === 'ventas') {
-            document.getElementById('table-ventas').classList.remove('hidden');
-            document.getElementById('form-lavado').classList.remove('hidden');
-            if (movimientoDetails) movimientoDetails.classList.add('hidden');
-        } else if (option.id === 'movimientos') {
-            document.getElementById('table-movimientos').classList.remove('hidden');
-            document.getElementById('form-lavado').classList.add('hidden');
-            document.getElementById('table-arqueo').classList.add('hidden');
-            if (movimientoDetails) movimientoDetails.classList.remove('hidden');
-        } else if (option.id === 'arqueo') {
-            document.getElementById('table-arqueo').classList.remove('visible');
-            document.getElementById('form-lavado').classList.add('hidden');
-            if (movimientoDetails) movimientoDetails.classList.remove('visible');
-            if (movimientoDetails) movimientoDetails.classList.add('hidden');
-        } else {
-            // Por si se selecciona otra opción no contemplada
-            if (movimientoDetails) movimientoDetails.classList.add('hidden');
+    function abrirFormArqueo() {
+        formulariosContainer?.classList.remove("hidden");
+        if (formulariosContainer) formulariosContainer.style.display = '';
+        formArqueoLocal?.classList.remove("hidden");
+        if (formArqueoLocal) formArqueoLocal.style.display = 'flex';
+        if (horaAperturaInput) {
+            horaAperturaInput.value = obtenerFechaHoraActual();
         }
+    }
+
+    btnNuevoArqueoLocal?.addEventListener("click", abrirFormArqueo);
+
+    // Botón inline dentro de la left-column
+    document.getElementById("btn-crear-arqueo-inline")?.addEventListener("click", abrirFormArqueo);
+
+    // Placeholder to keep original flow
+    void(0);
+    });
+
+    document.getElementById("cancel-arqueo")?.addEventListener("click", () => {
+        formulariosContainer?.classList.add("hidden");
+        formArqueoLocal?.classList.add("hidden");
+        if (formArqueoLocal) formArqueoLocal.style.display = 'none';
     });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

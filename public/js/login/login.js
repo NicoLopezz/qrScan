@@ -18,17 +18,13 @@ document.addEventListener("DOMContentLoaded", function() {
             const data = await response.json();
 
             if (response.ok) {
-                // Obtener el username de la cookie y decodificarlo
-                let username = getCookie("username");
-                username = decodeURIComponent(username);  // Decodifica caracteres especiales como '%40' a '@'
-                console.log("Permiso recibido: ", data.permiso); // Verifica el valor del permiso
-
+                console.log("Permiso recibido: ", data.permiso);
 
                 // Redirigir según el permiso del usuario
                 if (data.permiso === "Admin") {
-                    window.location.href = `/api/dashboardLocalAdmin/${username}`;
+                    window.location.href = `/api/dashboardLocalAdmin/${data.adminId}`;
                 } else if (data.permiso === "user") {
-                    window.location.href = `/api/dashboar/${username}`;
+                    window.location.href = `/api/dashboar/${data.adminId}`;
                 }
             } else {
                 // Mostrar el error en pantalla

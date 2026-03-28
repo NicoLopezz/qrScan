@@ -1,9 +1,8 @@
-import app from './app.js'
+import dotenv from 'dotenv';
+dotenv.config();
+
+import './app.js'
 import './database.js'
-
-
-app.listen(app.get('port'))
-console.log('sever on port', app.get('port'))
 
 
 

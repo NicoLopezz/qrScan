@@ -4,21 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Dashboard</title>
-
-
+    <title>Dashboard Operador</title>
 
     <script>
-        // Variable global para manejar la versión
-        const VERSION = "1.1.1"; // Cambia esta versión para forzar la recarga
+        const VERSION = "1.1.1";
     </script>
 
-    <!-- Base href para rutas relativas -->
     <base href="/">
 
-
-    <!-- Font Awesome y Google Fonts -->
-    <link rel="stylesheet" href="/style/login/login.css">
+    <link rel="stylesheet" href="/style/design-system.css">
     <link rel="stylesheet" href="/style/dashboardAdmin/topBar.css">
     <link rel="stylesheet" href="/style/dashboardAdmin/general.css">
     <link rel="stylesheet" href="/style/dashboardAdmin/sidebar.css">
@@ -29,32 +23,9 @@
     <link rel="stylesheet" href="/style/dashboardAdmin/profile.css">
     <link rel="stylesheet" href="/style/dashboardUser/reservas.css">
     <link rel="stylesheet" href="/style/dashboardUser/dashboardUser.css">
-    <link rel="stylesheet" href="/style/dashboardUser/dashboardUserMovil.css">
-    <link rel="stylesheet" href="/style/dashboardUser/dashboardUserDesktopMix.css">
     <link rel="stylesheet" href="/style/qrScan/qrScan.css">
     <link rel="stylesheet" href="/style/ventas/ventas.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
-
-
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="/style/landing/bootstrap.min.css?v=" + VERSION>
-    <link rel="stylesheet" href="/style/landing/style.css?v=" + VERSION>
-    <!-- Font Awesome -->
-    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-        integrity="sha512-pC4yrO6PnWx3tOUJ9fp+rE3f/Q9ZVUKcdYIhNgvpx8u+deKm4gVRntFj7W53Q1ryefzzT2sJgG/5p1SO3BHOzQ=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"> -->
-    <link rel="stylesheet" href="/style/landing/themify-icons.css?v=" + VERSION>
-    <link rel="stylesheet" href="/style/landing/mobile-styles.css?v=" + VERSION>
-    <!-- Owl Carousel -->
-    <link rel="stylesheet" href="/style/landing/owl.carousel.min.css?v=" + VERSION>
-    <!-- Custom JS -->
-    <script src="/js/landing/script.js?v=" + VERSION></script>
 </head>
 
 <body>
@@ -62,99 +33,43 @@
     <!-- NOTIFICATION -->
     <div id="notification-container"></div>
 
+    <!-- Overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- Nav Menu -->
-    <div class="nav-menu fixed-top">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <nav class="navbar navbar-dark navbar-expand-lg">
-                        <a class="navbar-brand" href="index.html">
-                            <img src="/img/logoConLetras.png" class="img-fluid1" alt="logo">
-                        </a>
-                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"
-                            aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
-
-                        <div class="collapse navbar-collapse" id="navbar">
-                            <ul class="navbar-nav ml-auto">
-                                <li class="menu-item" data-section="dashboard">
-                                    <a href="#dashboard" class="nav-link" data-bs-toggle="collapse"
-                                        data-bs-target="#navbar">
-                                        <i class="fas fa-home"></i> Dashboard
-                                    </a>
-                                </li>
-                                <li class="menu-item mensajes" data-section="lavaderos">
-                                    <a href="#lavaderos" class="nav-link" data-bs-toggle="collapse"
-                                        data-bs-target="#navbar">
-                                        <i class="fas fa-car"></i> Lavaderos
-                                    </a>
-                                </li>
-                                <li class="menu-item mensajes" data-section="mensajes">
-                                    <a href="#mensajes" class="nav-link" data-bs-toggle="collapse"
-                                        data-bs-target="#navbar">
-                                        <i class="fas fa-comments"></i> Mensajes
-                                    </a>
-                                </li>
-
-                                <li class="menu-item" data-section="faq">
-                                    <a href="#faq" class="nav-link" data-bs-toggle="collapse" data-bs-target="#navbar">
-                                        <i class="fas fa-question-circle"></i> FAQ
-                                    </a>
-                                </li>
-                                <li class="menu-item" data-section="logout">
-                                    <a href="../api/login" class="nav-link no-decoration" data-bs-toggle="collapse"
-                                        data-bs-target="#navbar">
-                                        <i class="fas fa-sign-out-alt"></i> LogOut
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <!-- Sidebar toggle tab -->
+    <button id="sidebarToggle" class="sidebar-toggle" title="Colapsar menú">
+        <i class="fas fa-chevron-left"></i>
+    </button>
 
     <!-- Menú lateral -->
     <div id="sidebar" class="sidebar">
         <div class="logo">
-            <img src="/img/LogoVioletaFondoBlanco.png" alt="Horizon Logo">
+            <img src="/img/LogoVioletaFondoBlanco.png" alt="Pick Up Time" class="logo-full">
+            <img src="/img/LogoVioletaFondoBlanco.png" alt="Pick Up Time" class="logo-icon">
         </div>
         <nav>
             <ul>
-                <!-- <li class="menu-item" data-section="pedidos">
-                    <i class="fas fa-shopping-cart"></i> Pedidos
-                </li> -->
-                <!-- <li class="menu-item mensajes" data-section="mensajes">
-                    <i class="fas fa-clipboard-check"></i> Reservas
-                </li> -->
-                <li class="menu-item" data-section="dashboard">
-                    <i class="fas fa-home"></i> Dashboard
+                <li class="menu-item active" data-section="dashboard">
+                    <i class="fas fa-home"></i><span class="nav-label">Dashboard</span>
                 </li>
                 <li class="menu-item" data-section="lavaderos">
-                    <i class="fas fa-car"></i> Lavadero
+                    <i class="fas fa-car"></i><span class="nav-label">Lavadero</span>
                 </li>
-                <li class="menu-item" data-section="mensajes">
-                    <i class="fas fa-comments"></i> Mensajes
+                <li class="menu-item mensajes" data-section="mensajes">
+                    <i class="fab fa-whatsapp"></i><span class="nav-label">Mensajes</span>
                 </li>
                 <li class="menu-item" data-section="ventas">
-                    <i class="fas fa-money-bill-wave"></i> Salon
-                </li>
-                <li class="menu-item" data-section="users">
-                    <i class="fas fa-user-plus"></i> Users
+                    <i class="fas fa-money-bill-wave"></i><span class="nav-label">Ventas</span>
                 </li>
                 <li class="menu-item" data-section="faq">
-                    <i class="fas fa-question-circle"></i> FAQ
+                    <i class="fas fa-question-circle"></i><span class="nav-label">FAQ</span>
                 </li>
                 <li class="menu-item" data-section="profile">
-                    <i class="fas fa-user"></i> Profile
+                    <i class="fas fa-user"></i><span class="nav-label">Perfil</span>
                 </li>
                 <li class="menu-item" data-section="logout">
-                    <a href="../api/login" class="no-decoration">
-                        <i class="fas fa-sign-out-alt"></i>LogOut
+                    <a href="/api/login" class="no-decoration">
+                        <i class="fas fa-sign-out-alt"></i><span class="nav-label">LogOut</span>
                     </a>
                 </li>
             </ul>
@@ -163,475 +78,335 @@
 
     <!-- Barra superior -->
     <div class="topBar">
-        <h1><span id="localName2"></span></h1>
-        <div class="date-time-container">
-            <p id="time"></p>
-            <p id="date"></p>
+        <button class="hamburger" id="hamburger" aria-label="Abrir menú">
+            <i class="fas fa-bars"></i>
+        </button>
+        <h1><span id="localName"></span></h1>
+        <div class="topbar-right">
+            <div class="date-time-container">
+                <p id="time"></p>
+                <p id="date"></p>
+            </div>
+            <div class="topbar-avatar" id="topbarAvatar">O</div>
         </div>
     </div>
 
     <!-- Contenedor QR flotante -->
-    <div id="qrOverlay" class="qr-overlay">
+    <div id="qrOverlay" class="qr-overlay" style="display:none;">
         <div class="qr-container">
-            <canvas id="qrcode2"></canvas> <!-- Aquí está el QR ya generado -->
-            <button id="closeQR" class="close-btn">✖</button>
+            <canvas id="qrcode2"></canvas>
+            <button id="closeQR" class="close-btn">&#10006;</button>
         </div>
     </div>
 
-    <!-- Contenedor principal del contenido -->
-    <div class="content-container">
-        <div class="main-content">
-
-            <!-- Sección Dashboard 22-->
-            <div id="section-dashboard" class="section">
-                <div class="cards">
-                    <div class="card">
-                        <div class="icon-container">
-                            <i class="fas fa-car"></i>
-                        </div>
-                        <div class="card-content">
-                            <h3 class="titleCard">Total <br> Clientes</h3>
-                            <p id="totalPedidos" class="card-number"></p>
-                        </div>
+    <!-- Modal detalle del lavado -->
+    <div id="modalDetalleLavado" class="modal-overlay">
+        <div class="modal-card" style="max-width:480px;width:90vw;">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalLavadoNombre">Detalle del lavado</h2>
+                <button class="modal-close" onclick="cerrarModalDetalle()" aria-label="Cerrar">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div style="padding:20px 24px 24px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">
+                    <div>
+                        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:4px;">Patente</div>
+                        <div style="font-size:15px;font-weight:500;" id="modalLavadoPatente">--</div>
                     </div>
-                    <div class="card">
-                        <div class="icon-container">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="card-content">
-                            <h3>Clientes del dia</h3>
-                            <p id="clientCount" class="card-number"></p>
-                        </div>
+                    <div>
+                        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:4px;">Modelo</div>
+                        <div style="font-size:15px;font-weight:500;" id="modalLavadoModelo">--</div>
                     </div>
-                    <div class="card">
-                        <div class="icon-container">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="card-content">
-                            <h3>Tiempo <br> Lavado</h3>
-                            <p class="card-number" id="tiempoPromedio"></p>
-                        </div>
+                    <div>
+                        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:4px;">Tipo de lavado</div>
+                        <div style="font-size:15px;font-weight:500;" id="modalLavadoTipo">--</div>
                     </div>
-                    <div class="card">
-                        <div class="icon-container">
-                            <i class="fas fa-dollar-sign"></i>
-                        </div>
-                        <div class="card-content">
-                            <h3>Caja <br>Efectivo</h3>
-                            <p class="card-number" id="cajaChicaActualEfectivo"></p>
-                        </div>
+                    <div>
+                        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:4px;">Observacion</div>
+                        <div style="font-size:15px;font-weight:500;" id="modalLavadoObs">--</div>
                     </div>
-                    <div class="card">
-                        <div class="icon-container">
-                            <i class="fas fa-landmark"></i>
-                        </div>
-                        <div class="card-content">
-                            <h3>Caja <br>Mercado-Pago</h3>
-                            <p class="card-number" id="cajaChicaActualMp"></p>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="icon-container">
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <div class="card-content">
-                            <h3>Calificacion <br> Promedio </h3>
-                            <p class="card-number" id="calificacionPromedio"></p>
-                        </div>
-                    </div>
-                    <!-- <div class="card" id="tarjetaOcultar">
-                        <div class="icon-container">
-                            <i class="fas fa-bolt"></i>
-                        </div>
-                        <div class="card-content">
-                            <h3>Servicio <br> Preferido</h3>
-                            <p class="card-number" id="ServicioMasPedido"></p>
-                        </div>
-                    </div> -->
-                    <!-- <div class="card" id="tarjetaOcultar">
-                        <div class="icon-container">
-                            <i class="fas fa-ticket-alt"></i>
-                        </div>
-                        <div class="card-content">
-                            <h3>Promocion <br> activa</h3>
-                            <p class="card-number" id="promoActiva">Jueves 10% off</p>
-                        </div>
-                    </div> -->
                 </div>
+                <div style="display:flex;gap:10px;">
+                    <button id="btnGenerarQRlavado" onclick="generarQRlavado()" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 18px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;color:#fff;background:var(--primary,#633991);">
+                        <i class="fas fa-qrcode"></i> Generar QR
+                    </button>
+                    <button id="btnAvisoLavado3" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 18px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;color:#fff;background:#25D366;">
+                        <i class="fab fa-whatsapp"></i> Avisar retiro
+                    </button>
+                    <button id="btnAvisoLavado" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 18px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;color:#fff;background:var(--accent,#ff914d);">
+                        <i class="fas fa-star"></i> Encuesta
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                <div class="charts-and-counter">
-                    <div class="charts">
+    <!-- Contenedor principal -->
+    <div class="main-content">
+
+        <!-- Sección Dashboard -->
+        <div id="section-dashboard" class="section active">
+            <div class="cards">
+                <div class="card">
+                    <div class="icon-container">
+                        <i class="fas fa-car"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="titleCard">Total Clientes</h3>
+                        <p id="totalPedidos" class="card-number">0</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="icon-container">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="titleCard">Clientes del Día</h3>
+                        <p id="clientCount" class="card-number">0</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="icon-container">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="titleCard">Tiempo Promedio</h3>
+                        <p class="card-number" id="tiempoPromedio">–</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="icon-container">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="titleCard">Caja Efectivo</h3>
+                        <p class="card-number" id="cajaChicaActualEfectivo">–</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="icon-container">
+                        <i class="fas fa-landmark"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="titleCard">Caja MP</h3>
+                        <p class="card-number" id="cajaChicaActualMp">–</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="icon-container">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="titleCard">Calificación Prom.</h3>
+                        <p class="card-number" id="calificacionPromedio">–</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-and-counter">
+                <div class="charts">
+                    <div class="chart-card">
                         <canvas id="chart1"></canvas>
+                    </div>
+                    <div class="chart-card">
                         <canvas id="chart2"></canvas>
                     </div>
                 </div>
-
-
             </div>
+        </div>
 
-            <!-- Sección Lavaderos -->
-            <div id="section-lavaderos" class="section">
-                <div class="container" id="containerUser">
-
-                    <!-- Tabla de Datos -->
-                    <div class="tabla" id="tablaLavados2">
-                        <h3>Clientes</h3>
-                        <div class="table-container">
-                            <!-- Contenedor para la tabla con scroll -->
-                            <table>
-                                <thead class="cabeceraTabla">
-                                    <tr>
-                                        <th>Nombre</th>
-                                        <th>Modelo</th>
-                                        <th>Patente</th>
-                                        <th>Lavado</th>
-                                        <th>Observación</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tablaLavados">
-                                    <!-- Filas de datos se agregarán dinámicamente -->
-                                </tbody>
-                            </table>
-                        </div>
-
-
-                    </div>
-
-                    <!-- Tarjeta del Cliente Seleccionado -->
-                    <div class="tarjeta" id="tarjetaCliente">
-                        <h3 id="nombreCliente">Detalles de los clientes</h3>
-                        <div class="textTarjeta">
-                            <p id="nombreClienteSelected">Nombre: --</p>
-                            <p id="modeloCliente">Modelo: --</p>
-                            <p id="patenteCliente">Patente: --</p>
-                            <p id="observacionCliente">Observación: --</p>
-                            <p id="lavadoCliente">Lavado: --</p>
-                            <!-- <div class="cumpleData">
-                                <p id="cumple">
-                                    Cumpleaños: <span id="cumple-text">--</span>
-                                    <input type="date" id="fecha-desde-lavados" class="datetime-input">
-                                </p>
-                            </div> -->
-                        </div>
-
-
-                        <!-- Botón Generar QR -->
-                        <button id="btnGenerarQRlavado" onclick="generarQRlavado()">
-                            <i class="fas fa-qrcode"></i> Generar QR
-                        </button>
-
-                        <!-- Botón Enviar Aviso -->
-                        <button id="btnAvisoLavado3">
-                            <i class="fab fa-whatsapp"></i> Enviar Aviso
-                        </button>
-
-                        <!-- Botón Enviar Aviso -->
-                        <!-- <button id="btnAvisoLavado">
-
-                        <!-- Botón Enviar Aviso 
-                        <button id="btnAvisoLavado">
-
-                            <i class="fab fa-whatsapp"></i> Enviar Encuesta
-                        </button> -->
-                    </div>
-
-
-                    <!-- Tarjeta Alta Nuevo Lavado -->
-                    <div class="tarjetaYqr" id="tarjetaYqr">
-                        <div class="tarjeta" id="tarjetaReserva">
-                            <h3>Agregar Cliente</h3>
-                            <input type="text" id="inputNombre2" placeholder="Nombre" required />
-                            <input type="text" id="inputNombre3" placeholder="Empresa" />
-                            <input type="text" id="inputModelo" placeholder="Modelo" required />
-                            <input type="text" id="inputPatente" placeholder="Patente" required />
-                            <select id="selectServicio" required>
-                                <option value="" disabled selected>Seleccione el tipo de lavado</option>
-                                <option value="lavado-basico">Lavado Básico</option>
-                                <option value="lavado-completo">Lavado Completo</option>
-                                <option value="lavado-en-profundidad">Lavado en Profundidad</option>
-                                <option value="lavado-con-encerado">Lavado con Encerado</option>
-                            </select>
-                            <input type="text" id="inputObservation" placeholder="Observaciones" />
-                            <button id="btnAgregar" onclick="agregarLavado()">Agregar Lavado</button>
-                        </div>
-                    </div>
-
-
-
-                    <!-- Menú de Navegación MOVIL!-->
-                    <div class="menu-container">
-                        <div class="background-highlight"></div>
-                        <button class="menu-option" onclick="handleOption('reservas')">Nuevo</button>
-                        <div class="btnsMovil">
-                            <!-- Botón Generar QR -->
-                            <button class="btnAction" id="btnGenesrarQRlavado" onclick="generarQRlavado()">
-                                <i class="fas fa-qrcode"></i>
-                            </button>
-                            <!-- Botón Enviar Aviso -->
-                            <button class="btnAction" id="btnAvisoLavado2">
-                                <i class="fab fa-whatsapp"></i>
-                            </button>
-                        </div>
-                        <button class="menu-option" onclick="handleOption('tabla')">Tabla</button>
-                    </div>
-
+        <!-- Sección Lavaderos -->
+        <div id="section-lavaderos" class="section">
+            <div class="table-section">
+                <h2>Lavados del día</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Modelo</th>
+                                <th>Patente</th>
+                                <th>Lavado</th>
+                                <th>Observación</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaLavados"></tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- Sección Mensajes -->
-            <div id="section-mensajes" class="section">
-                <div class="section-mensajes" id="section-mensajesMovil">
-                    <div class="whatsapp-simulator-box">
-                        <!-- Barra lateral izquierda -->
-                        <div class="whatsapp-sidebar">
-                            <div class="whatsapp-sidebar-header">
-                                <img src="/img/logo3d.PNG" alt="Perfil" class="whatsapp-profile-pic-sidebar">
-                                <input type="text" id="searchInput" placeholder="Buscar..." class="whatsapp-search-bar">
-                                <span id="clearSearch" class="clear-search">&times;</span>
-                                <!-- Cruz para limpiar búsqueda -->
-                                <!-- Botones de selección -->
-                                <div class="select-buttons">
-                                    <select id="filterSelect" class="filter-select">
-                                        <option value="" disabled selected>Filtros...</option>
-                                        <option value="low-comments">Puntuacion baja</option>
-                                        <option value="no-service-15">+15 días sin servicio</option>
-                                        <option value="frequent">Frecuentes</option>
-                                        <option value="promo-1">Promo #1</option>
-                                        <option value="ninguno">Ninguno</option>
-                                    </select>
+            <!-- Campos ocultos para compatibilidad -->
+            <div style="display:none;">
+                <span id="nombreClienteSelected"></span>
+                <span id="patenteCliente"></span>
+                <span id="modeloCliente"></span>
+                <span id="lavadoCliente"></span>
+                <span id="observacionCliente"></span>
+            </div>
 
-                                    <button id="selectAllButton" class="select-button">Todos</button>
-                                    <button id="deselectAllButton" class="select-button">Ninguno</button>
-                                </div>
+            <!-- Modal nuevo lavado -->
+            <div id="modalNuevoLavado" class="modal-overlay">
+                <div class="modal-card">
+                    <div class="modal-header">
+                        <h2 class="modal-title">Nuevo Lavado</h2>
+                        <button class="modal-close" onclick="cerrarModalNuevoLavado()" aria-label="Cerrar">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <form class="form-create-user" onsubmit="return false;">
+                        <label>Nombre</label>
+                        <input type="text" id="inputNombre2" placeholder="Nombre" required />
+                        <label>Empresa</label>
+                        <input type="text" id="inputNombre3" placeholder="Empresa" />
+                        <label>Modelo</label>
+                        <input type="text" id="inputModelo" placeholder="Modelo" required />
+                        <label>Patente</label>
+                        <input type="text" id="inputPatente" placeholder="Patente" required />
+                        <label>Tipo de lavado</label>
+                        <select id="selectServicio" required>
+                            <option value="" disabled selected>Seleccione el tipo</option>
+                            <option value="lavado-basico">Lavado Básico</option>
+                            <option value="lavado-completo">Lavado Completo</option>
+                            <option value="lavado-en-profundidad">Lavado en Profundidad</option>
+                            <option value="lavado-con-encerado">Lavado con Encerado</option>
+                        </select>
+                        <label>Observaciones</label>
+                        <input type="text" id="inputObservation" placeholder="Observaciones" />
+                        <button type="button" id="btnAgregar" onclick="agregarLavado()">Agregar Lavado</button>
+                    </form>
+                </div>
+            </div>
 
-                            </div>
-                            <ul id="clientList">
-                                <!-- Se llenará dinámicamente con clientes -->
-                                <!-- Puedes agregar más clientes si lo deseas -->
-                            </ul>
-                        </div>
+            <!-- Botón flotante + -->
+            <button id="btnNuevoLavadoFlotante" onclick="abrirModalNuevoLavado()" style="
+                position:fixed;bottom:88px;right:24px;
+                width:56px;height:56px;border-radius:50%;
+                background:var(--primary);color:#fff;
+                border:none;cursor:pointer;
+                box-shadow:0 6px 20px rgba(99,57,145,0.4);
+                display:flex;align-items:center;justify-content:center;
+                z-index:200;transition:transform 0.15s,box-shadow 0.15s;
+                line-height:1;padding:0;
+            " onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
+                <i class="fas fa-plus" style="font-size:18px;"></i>
+            </button>
 
-                        <!-- Panel principal (Área de chat) -->
-                        <div class="whatsapp-chat-panel" id="chatDesktop">
-                            <div class="whatsapp-chat-header">
-                                <!-- <img src="/img/userIcon.png" alt="Foto de perfil" id="profilePic"> -->
-                                <div class="whatsapp-header-info">
-                                    <span id="phoneNumber">Selecciona un cliente</span>
-                                    <span class="whatsapp-status">En línea</span>
-                                </div>
-                            </div>
-                            <div id="chatHistory" class="whatsapp-chat-history">
-                                <div class="whatsapp-container">
-                                    <!-- Mensaje para cliente que no ha venido hace tiempo -->
-                                    <div class="message-bubble message-type-1">
-                                        <p>🚗✨ ¡Hola, hace tiempo que no vemos tu auto brillar como se merece en
-                                            <strong>CARWASH PREMIUM</strong> 🧽.
-                                        </p>
-                                        <p>¡Te extrañamos! Por eso queremos darte un <strong>10% de descuento</strong>
-                                            en tu próximo lavado 🤑 para que tu auto vuelva a lucir impecable.</p>
-                                        <p>📅 Ven cuando quieras, estaremos encantados de ayudarte a dejar tu coche como
-                                            nuevo.</p>
-                                        <p>¡Te esperamos!</p>
-                                        <p>Saludos,</p>
-                                        <p><strong>El equipo de CARWASH PREMIUM</strong></p>
-                                    </div>
+            <!-- Menú Móvil -->
+            <div class="menu-container">
+                <div class="background-highlight"></div>
+                <button class="menu-option" onclick="handleOption('reservas')">Nuevo</button>
+                <div class="btnsMovil">
+                    <button class="btnAction" id="btnGenesrarQRlavado" onclick="generarQRlavado()">
+                        <i class="fas fa-qrcode"></i>
+                    </button>
+                    <button class="btnAction" id="btnAvisoLavado2">
+                        <i class="fab fa-whatsapp"></i>
+                    </button>
+                </div>
+                <button class="menu-option" onclick="handleOption('tabla')">Tabla</button>
+            </div>
+        </div>
 
-                                    <!-- Mensaje para cliente con calificación baja -->
-                                    <div class="message-bubble message-type-2">
-                                        <p>👋 ¡Hola,!</p>
-                                        <p>En <strong>CARWASH PREMIUM</strong> 🧽 nos importa mucho tu experiencia, y
-                                            hemos notado que tu última calificación fue algo baja.</p>
-                                        <p>y queremos saber más para mejorar nuestro servicio. ¿Nos cuentas qué pasó? 💬
-                                        </p>
-                                        <p>👉 Puedes enviarnos tus comentarios de forma rápida aquí: <a
-                                                href="https://www.google.com/forms" target="_blank">Google Form</a></p>
-                                        <p>O mándanos un mensaje directo en Instagram: <a
-                                                href="https://www.instagram.com/carwashpremium"
-                                                target="_blank">@carwashpremium</a> 📲</p>
-                                        <p>Valoramos tu opinión nos ayuda a crecer y mejorar!</p>
-                                        <p>Saludos,</p>
-                                        <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
-                                    </div>
+        <!-- Sección Mensajes -->
+        <div id="section-mensajes" class="section">
+            <div class="whatsapp-simulator-box">
 
-                                    <!-- Mensaje para cliente frecuente -->
-                                    <div class="message-bubble message-type-3">
-                                        <p>🎉 ¡Hola!</p>
-                                        <p>En <strong>CARWASH PREMIUM</strong> 🧽 queremos agradecerte por ser uno de
-                                            nuestros clientes más frecuentes. ¡Eres parte de nuestra familia! 💚</p>
-                                        <p>🚗 Como muestra de nuestro agradecimiento, te regalamos un <strong>lavado
-                                                premium gratis</strong> en tu próxima visita. ¡Porque tu auto merece lo
-                                            mejor! ✨</p>
-                                        <p>📅 Pásate por el local cuando quieras y menciona este mensaje para canjear tu
-                                            recompensa.</p>
-                                        <p>🙏 Gracias por elegirnos siempre. ¡Nos encanta verte por aquí!</p>
-                                        <p>Saludos,</p>
-                                        <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
-                                    </div>
+                <!-- Columna 1: Lista de clientes -->
+                <div class="whatsapp-sidebar">
+                    <div class="whatsapp-sidebar-header">
+                        <img src="/img/logo3d.PNG" alt="Perfil" class="whatsapp-profile-pic-sidebar">
+                        <input type="text" id="searchInput" placeholder="Buscar..." class="whatsapp-search-bar">
+                        <span id="clearSearch" class="clear-search">&times;</span>
+                    </div>
+                    <div class="select-buttons">
+                        <select id="filterSelect" class="filter-select">
+                            <option value="" disabled selected>Filtros...</option>
+                            <option value="low-comments">Puntuacion baja</option>
+                            <option value="no-service-15">+15 días sin servicio</option>
+                            <option value="frequent">Frecuentes</option>
+                            <option value="promo-1">Promo #1</option>
+                            <option value="ninguno">Ninguno</option>
+                        </select>
+                        <button id="selectAllButton" class="select-button">Todos</button>
+                        <button id="deselectAllButton" class="select-button">Ninguno</button>
+                    </div>
+                    <ul id="clientList"></ul>
+                </div>
 
-                                    <!-- Mensaje para promoción especial -->
-                                    <div class="message-bubble message-type-4">
-                                        <p>🎁 ¡Hola!</p>
-                                        <p>¡Tenemos una <strong>promoción especial</strong> para ti! ✨</p>
-                                        <p>🚗 Durante esta semana, disfruta de un <strong>2x1 en lavados
-                                                premium</strong>. Trae tu auto y el de un amigo para que ambos brillen
-                                            como nuevos 🧽✨.</p>
-                                        <p>📅 Promoción válida del <strong>7 al 14 de diciembre</strong>. ¡No te la
-                                            pierdas!</p>
-                                        <p>👉 Para más información, contáctanos por WhatsApp o visítanos en el local.
-                                        </p>
-                                        <p>🎉 ¡Te esperamos!</p>
-                                        <p>Saludos,</p>
-                                        <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
-                                    </div>
-                                </div>
-
-                                <div class="whatsapp-chat-footer">
-                                    <!-- <input type="text" id="messageInput2" placeholder="Escribe un mensaje..."
-                                        class="whatsapp-message-input"> -->
-                                    <button id="sendButton" class="whatsapp-send-button">
-                                        Enviar (<span id="selectedCount">0</span>)
-                                    </button>
-                                </div>
-                                <!-- Mensajes se llenarán dinámicamente -->
-                            </div>
-
-
+                <!-- Columna 2: Chat Desktop -->
+                <div class="whatsapp-chat-panel" id="chatDesktop">
+                    <div class="whatsapp-chat-header">
+                        <div class="whatsapp-header-info">
+                            <span id="phoneNumber">Selecciona un cliente</span>
+                            <span class="whatsapp-status">En línea</span>
                         </div>
                     </div>
-
-                    <!--   Box de datos -->
-                    <div class="right-mess-colum">
-                        <div class="client-info-box">
-                            <h3>Datos Clientes</h3>
-                            <table class="client-details">
-                                <tr>
-                                    <th>Nombre</th>
-                                    <td id="client-name"></td>
-                                </tr>
-                                <tr>
-                                    <th>Teléfono</th>
-                                    <td id="client-phone"></td>
-                                </tr>
-                                <tr>
-                                    <th>Evaluacion Prom.</th>
-                                    <td id="client-score"></td>
-                                </tr>
-                                <tr>
-                                    <th>Fidelidad</th>
-                                    <td id="client-loyalty">
-                                        <span class="stars"></span> <!-- Ejemplo de 3 de 5 estrellas -->
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>Ultimo <br> Lavado</th>
-                                    <td id="client-resent"></td>
-                                </tr>
-                                <tr>
-                                    <th>Cunpleños</th>
-                                    <td id="client-resent"></td>
-                                </tr>
-                                <tr>
-                                    <th>Tiempo <br> Lavado <br> Promedio</th>
-                                    <td id="client-resent-tiempooLavado"></td>
-                                </tr>
-                            </table>
-                        </div>
-
-
-
-
-
-                        <!-- VERSION DE MOVIL -->
-                        <!-- Panel principal (Área de chat) -->
-                        <div class="whatsapp-chat-panel" id="chatMovil">
-                            <div class="whatsapp-chat-header">
-                                <!-- <img src="/img/userIcon.png" alt="Foto de perfil" id="profilePic"> -->
-                                <div class="whatsapp-header-info">
-                                    <span id="phoneNumber">Selecciona un cliente</span>
-                                    <span class="whatsapp-status">En línea</span>
-                                </div>
+                    <div id="chatHistory" class="whatsapp-chat-history">
+                        <div class="whatsapp-container">
+                            <div class="message-bubble message-type-1 active">
+                                <p>🚗✨ ¡Hola, hace tiempo que no vemos tu auto brillar como se merece en <strong>CARWASH PREMIUM</strong> 🧽.</p>
+                                <p>¡Te extrañamos! Por eso queremos darte un <strong>10% de descuento</strong> en tu próximo lavado 🤑 para que tu auto vuelva a lucir impecable.</p>
+                                <p>📅 <strong>Ven cuando quieras</strong>, estaremos encantados de ayudarte a dejar tu coche como nuevo.</p>
+                                <p>¡Te esperamos!</p>
+                                <p>Saludos,<br><strong>El equipo de CARWASH PREMIUM</strong></p>
                             </div>
-                            <div id="chatHistory" class="whatsapp-chat-history">
-
-
-                                <div class="whatsapp-container">
-                                    <!-- Mensaje para cliente que no ha venido hace tiempo -->
-                                    <div class="message-bubble message-type-1 active">
-                                        <p>🚗✨ ¡Hola, hace tiempo que no vemos tu auto brillar como se merece en
-                                            <strong>CARWASH PREMIUM</strong> 🧽.
-                                        </p>
-                                        <p>¡Te extrañamos! Por eso queremos darte un <strong>10% de descuento</strong>
-                                            en tu próximo lavado 🤑 para que tu auto vuelva a lucir impecable.</p>
-                                        <p>📅 Ven cuando quieras, estaremos encantados de ayudarte a dejar tu coche como
-                                            nuevo.</p>
-                                        <p>¡Te esperamos!</p>
-                                        <p>Saludos,</p>
-                                        <p><strong>El equipo de CARWASH PREMIUM</strong></p>
-                                    </div>
-
-                                    <!-- Mensaje para cliente con calificación baja -->
-                                    <div class="message-bubble message-type-2">
-                                        <p>👋 ¡Hola,!</p>
-                                        <p>En <strong>CARWASH PREMIUM</strong> 🧽 nos importa mucho tu experiencia, y
-                                            hemos notado que tu última calificación fue algo baja.</p>
-                                        <p>y queremos saber más para mejorar nuestro servicio. ¿Nos cuentas qué pasó? 💬
-                                        </p>
-                                        <p>👉 Puedes enviarnos tus comentarios de forma rápida aquí: <a
-                                                href="https://www.google.com/forms" target="_blank">Google Form</a></p>
-                                        <p>O mándanos un mensaje directo en Instagram: <a
-                                                href="https://www.instagram.com/carwashpremium"
-                                                target="_blank">@carwashpremium</a> 📲</p>
-                                        <p>Valoramos tu opinión nos ayuda a crecer y mejorar!</p>
-                                        <p>Saludos,</p>
-                                        <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
-                                    </div>
-
-                                    <!-- Mensaje para cliente frecuente -->
-                                    <div class="message-bubble message-type-3">
-                                        <p>🎉 ¡Hola!</p>
-                                        <p>En <strong>CARWASH PREMIUM</strong> 🧽 queremos agradecerte por ser uno de
-                                            nuestros clientes más frecuentes. ¡Eres parte de nuestra familia! 💚</p>
-                                        <p>🚗 Como muestra de nuestro agradecimiento, te regalamos un <strong>lavado
-                                                premium gratis</strong> en tu próxima visita. ¡Porque tu auto merece lo
-                                            mejor! ✨</p>
-                                        <p>📅 Pásate por el local cuando quieras y menciona este mensaje para canjear tu
-                                            recompensa.</p>
-                                        <p>🙏 Gracias por elegirnos siempre. ¡Nos encanta verte por aquí!</p>
-                                        <p>Saludos,</p>
-                                        <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
-                                    </div>
-
-                                    <!-- Mensaje para promoción especial -->
-                                    <div class="message-bubble message-type-4">
-                                        <p>🎁 ¡Hola!</p>
-                                        <p>¡Tenemos una <strong>promoción especial</strong> para ti! ✨</p>
-                                        <p>🚗 Durante esta semana, disfruta de un <strong>2x1 en lavados
-                                                premium</strong>. Trae tu auto y el de un amigo para que ambos brillen
-                                            como nuevos 🧽✨.</p>
-                                        <p>📅 Promoción válida del <strong>7 al 14 de diciembre</strong>. ¡No te la
-                                            pierdas!</p>
-                                        <p>👉 Para más información, contáctanos por WhatsApp o visítanos en el local.
-                                        </p>
-                                        <p>🎉 ¡Te esperamos!</p>
-                                        <p>Saludos,</p>
-                                        <p><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
-                                    </div>
-                                </div>
-
-
-                                <!-- Mensajes se llenarán dinámicamente -->
+                            <div class="message-bubble message-type-2">
+                                <p>👋 ¡Hola!</p>
+                                <p>En <strong>CARWASH PREMIUM</strong> 🧽 nos importa mucho tu experiencia, y hemos notado que tu última calificación fue algo baja.</p>
+                                <p>¿Nos cuentas qué pasó? 💬 Puedes enviarnos tus comentarios: <a href="https://www.google.com/forms" target="_blank">Google Form</a></p>
+                                <p>Saludos,<br><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
                             </div>
-                            <div class="whatsapp-chat-footer">
-                                <input type="text" id="messageInput" placeholder="Escribe un mensaje..."
-                                    class="whatsapp-message-input">
-                                <button id="sendButton2" class="whatsapp-send-button">
-                                    Enviar (<span id="selectedCount">0</span>)
-                                </button>
+                            <div class="message-bubble message-type-3">
+                                <p>🎉 ¡Hola!</p>
+                                <p>En <strong>CARWASH PREMIUM</strong> 🧽 queremos agradecerte por ser uno de nuestros clientes más frecuentes. ¡Eres parte de nuestra familia! 💚</p>
+                                <p>🚗 Como muestra de nuestro agradecimiento, te regalamos un <strong>lavado premium gratis</strong> en tu próxima visita. ✨</p>
+                                <p>Saludos,<br><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
                             </div>
-
+                            <div class="message-bubble message-type-4">
+                                <p>🎁 ¡Hola!</p>
+                                <p>¡Tenemos una <strong>promoción especial</strong> para ti! ✨ Disfruta de un <strong>2x1 en lavados premium</strong> esta semana 🧽✨.</p>
+                                <p>Saludos,<br><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
+                            </div>
                         </div>
                     </div>
+                    <div class="whatsapp-chat-footer">
+                        <button id="sendButton" class="whatsapp-send-button">Enviar (0)</button>
+                    </div>
+                </div>
 
+                <!-- Columna 3: Datos del cliente -->
+                <div class="right-mess-colum">
+                    <div class="client-info-box">
+                        <h3>Datos Cliente</h3>
+                        <table class="client-details">
+                            <tr>
+                                <th>Nombre</th>
+                                <td id="client-name"></td>
+                            </tr>
+                            <tr>
+                                <th>Teléfono</th>
+                                <td id="client-phone"></td>
+                            </tr>
+                            <tr>
+                                <th>Evaluación</th>
+                                <td id="client-score"></td>
+                            </tr>
+                            <tr>
+                                <th>Fidelidad</th>
+                                <td id="client-loyalty"><span class="stars"></span></td>
+                            </tr>
+                            <tr>
+                                <th>Último Lavado</th>
+                                <td id="client-resent"></td>
+                            </tr>
+                            <tr>
+                                <th>Tiempo Lavado</th>
+                                <td id="client-resent-tiempooLavado"></td>
+                            </tr>
+                        </table>
+                    </div>
                     <div class="cardM">
                         <div class="icon-container">
                             <i class="fas fa-box"></i>
@@ -642,701 +417,453 @@
                         </div>
                     </div>
 
-                </div>
-
-
-            </div>
-
-            <!-- Sección para crear un usuario -->
-            <div id="section-users" class="section">
-                <div class="sectionForm">
-                    <div class="formCreateUser">
-                        <h2>Crear Usuario</h2>
-                        <form class="form-create-user">
-                            <label for="email">Email:</label>
-                            <input type="email" id="email" name="email" required>
-
-                            <label for="password">Contraseña:</label>
-                            <input type="password" id="password" name="password" required>
-
-                            <label for="role">Rol:</label>
-                            <select id="role" name="role" required>
-                                <option value="admin">Admin</option>
-                                <option value="editor">Editor</option>
-                                <option value="viewer">Viewer</option>
-                            </select>
-
-                            <button type="submit">Crear Usuario</button>
-                        </form>
-                    </div>
-
-                    <div class="activeUsers">
-                        <h2>Usuarios Activos</h3>
-                            <div class="table-section">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Email</th>
-                                            <th>Rol</th>
-                                            <th>Estado</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>juan.perez@example.com</td>
-                                            <td>Admin</td>
-                                            <td>Activo</td>
-                                        </tr>
-                                        <tr>
-                                            <td>maria.garcia@example.com</td>
-                                            <td>Editor</td>
-                                            <td>Activo</td>
-                                        </tr>
-                                        <tr>
-                                            <td>luis.mendez@example.com</td>
-                                            <td>Viewer</td>
-                                            <td>Activo</td>
-                                        </tr>
-                                        <tr>
-                                            <td>sofia.lopez@example.com</td>
-                                            <td>Admin</td>
-                                            <td>Activo</td>
-                                        </tr>
-                                        <tr>
-                                            <td>pedro.fernandez@example.com</td>
-                                            <td>Viewer</td>
-                                            <td>Activo</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                    <!-- Chat Móvil -->
+                    <div class="whatsapp-chat-panel" id="chatMovil" style="display:none;">
+                        <div class="whatsapp-chat-header">
+                            <div class="whatsapp-header-info">
+                                <span id="phoneNumberMovil">Selecciona un cliente</span>
+                                <span class="whatsapp-status">En línea</span>
                             </div>
+                        </div>
+                        <div class="whatsapp-chat-history">
+                            <div class="whatsapp-container">
+                                <div class="message-bubble message-type-1 active">
+                                    <p>🚗✨ ¡Hola, hace tiempo que no vemos tu auto brillar como se merece en <strong>CARWASH PREMIUM</strong> 🧽.</p>
+                                    <p>¡Te extrañamos! Por eso queremos darte un <strong>10% de descuento</strong> en tu próximo lavado 🤑.</p>
+                                    <p>📅 <strong>Ven cuando quieras</strong>, estaremos encantados de ayudarte.</p>
+                                    <p>Saludos,<br><strong>El equipo de CARWASH PREMIUM</strong></p>
+                                </div>
+                                <div class="message-bubble message-type-2">
+                                    <p>👋 ¡Hola!</p>
+                                    <p>En <strong>CARWASH PREMIUM</strong> nos importa tu experiencia. ¿Nos cuentas qué pasó? 💬</p>
+                                    <p>Saludos,<br><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
+                                </div>
+                                <div class="message-bubble message-type-3">
+                                    <p>🎉 ¡Hola!</p>
+                                    <p>¡Gracias por ser cliente frecuente! Te regalamos un <strong>lavado premium gratis</strong> ✨.</p>
+                                    <p>Saludos,<br><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
+                                </div>
+                                <div class="message-bubble message-type-4">
+                                    <p>🎁 ¡Hola!</p>
+                                    <p>¡<strong>2x1 en lavados premium</strong> esta semana! 🧽✨</p>
+                                    <p>Saludos,<br><strong>El equipo de CARWASH PREMIUM</strong> 🚗✨</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="whatsapp-chat-footer">
+                            <input type="text" id="messageInput" placeholder="Escribe un mensaje..." class="whatsapp-message-input">
+                            <button id="sendButton2" class="whatsapp-send-button">Enviar (0)</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Sección FAQ -->
+        <div id="section-faq" class="section">
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>¿Cómo puedo agregar un nuevo lavado?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Dirígete a la sección "Lavadero" y completa el formulario "Agregar Cliente" con los datos del vehículo y tipo de servicio.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>¿Cómo genero el QR de un lavado?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Selecciona un cliente en la tabla de lavadero y presiona el botón "Generar QR" en la tarjeta de detalles.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>¿Cómo envío mensajes masivos?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>En la sección "Mensajes", selecciona los clientes con los checkboxes, elige el mensaje template activo y presiona "Enviar".</p>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Seccion de pedidos -->
-            <div id="section-pedidos" class="section">
-                <div class="container" id="conatinerUser">
-                    <div class="tags-section">
-                        <h2>Tags libres</h2>
-                        <div class="grid-container" id="free-tags">
-                            <!-- 50 cuadros libres -->
-                            <script>
-                                for (let i = 1; i <= 50; i++) {
-                                    document.write(`<div class="grid-item" data-number="${i}" onclick="moveToOrder(this)">${i}</div>`);
-                                }
-                            </script>
+        <!-- Sección Profile -->
+        <div id="section-profile" class="section">
+            <div id="profile-section-container">
+                <div class="profile-column left-column">
+                    <div class="rect-image">
+                        <div class="rectangle">
+                            <h1 class="titleBox">General</h1>
                         </div>
                     </div>
-
-                    <div class="tags-section">
-                        <h2>Tags con pedido</h2>
-                        <div class="grid-container" id="ordered-tags">
-                            <!-- Los cuadros seleccionados aparecerán aquí -->
+                    <ul class="user-info">
+                        <li><strong>Nombre Usuario</strong> Juan Pérez</li>
+                        <li><strong>Teléfono / Local</strong> +54 9 11 1234 5678</li>
+                        <li><strong>Local</strong> AutoSpa Buenos Aires</li>
+                        <li><strong>Correo</strong> operador@autospa.com</li>
+                        <li><strong>Dirección</strong> Corrientes 123, Buenos Aires</li>
+                    </ul>
+                </div>
+                <div class="profile-column center-column">
+                    <div class="rect-image">
+                        <div class="rectangle">
+                            <h1 class="titleBox">Plan</h1>
                         </div>
                     </div>
-
-                    <div class="tags-section">
-                        <h2>Tags pendientes de retiro</h2>
-                        <div class="grid-container" id="pending-tags">
-                            <!-- Los cuadros seleccionados aparecerán aquí -->
+                    <ul class="plan-info">
+                        <li><strong>Plan Contratado</strong> Premium</li>
+                        <li><strong>Renovación</strong> 24/11/2024</li>
+                        <li><strong>Mensajes restantes</strong> 34/500</li>
+                    </ul>
+                </div>
+                <div class="profile-column center-column">
+                    <div class="rect-image">
+                        <div class="rectangle">
+                            <h1 class="titleBox">Facturación</h1>
                         </div>
                     </div>
+                    <ul class="billing-info">
+                        <li><strong>CBU</strong> 0123456789012345678901</li>
+                        <li><strong>Alias</strong> mi.alias.bancario</li>
+                        <li><strong>Medio de Pago</strong> Tarjeta de Crédito</li>
+                    </ul>
                 </div>
             </div>
+        </div>
 
-            <!-- Sección Reservas -->
-            <div id="section-reservas" class="section">
-                <div class="container" id="containerUser">
-                    <!-- Tabla de Datos -->
-                    <div class="tabla">
-                        <h3>Reservas</h3>
-                        <div class="table-container"> <!-- Contenedor para la tabla con scroll -->
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Nombre</th>
-                                        <!-- <th>Telefono</th> -->
-                                        <th>Comensales</th>
-                                        <th>Observación</th>
-                                        <th>Confirmo?</th>
-                                        <th>Tiempo</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tablaClientes">
-                                    <!-- Filas de datos se agregarán dinámicamente -->
-                                </tbody>
-                            </table>
+        <!-- Sección VENTAS-->
+        <div id="section-ventas" class="section">
+            <div class="container" id="container-ventas">
+                <!-- Columna Izquierda -->
+                <div class="left-column">
+                    <div class="cabecera-contenedera">
+                        <div class="tabs">
+                            <div id="caja-mayor" class="tab active">Caja Mayor</div>
+                            <div id="caja-menor" class="tab">Caja Menor</div>
                         </div>
-
-
+                        <div class="options">
+                            <div id="ventas" class="option disabled">Lavados</div>
+                            <div id="movimientos" class="option active">Movimientos</div>
+                            <div id="arqueo" class="option">Arqueos</div>
+                        </div>
+                        <button id="toggle-filters" class="toggle-button">Ocultar Filtros</button>
                     </div>
 
+                    <!-- Filtros Lavados -->
+                    <div class="filters" id="filtersLavados">
+                        <input type="text" id="patente-lavados" class="filter-input" placeholder="Buscar por patente...">
+                        <input type="text" id="empresa-lavados" class="filter-input" placeholder="Buscar por empresa...">
+                        <select id="estado-lavados" class="filter-select">
+                            <option value="" disabled selected>Estado:</option>
+                            <option value="todos">Todos</option>
+                            <option value="pendiente">Pendiente</option>
+                            <option value="abonado">Abonado</option>
+                            <option value="no-abonado">No Abonado</option>
+                        </select>
+                        <select id="filtro-fecha-lavados" class="filter-select">
+                            <option value="" disabled selected>Por Fecha:</option>
+                            <option value="hoy">Hoy</option>
+                            <option value="determinar">Determinar</option>
+                        </select>
+                        <div id="fecha-personalizada-lavados" class="hidden">
+                            <label for="fecha-desde-lavados">Desde:</label>
+                            <input type="date" id="fecha-desde-lavados" class="datetime-input">
+                            <label for="fecha-hasta-lavados">Hasta:</label>
+                            <input type="date" id="fecha-hasta-lavados" class="datetime-input">
+                        </div>
+                        <button id="reset-filters-lavados" class="filter-button">Limpiar Filtros</button>
+                    </div>
 
+                    <!-- Filtros Movimientos -->
+                    <div class="filters hidden" id="filtersMovs">
+                        <select id="tipo-ingreso" class="filter-select">
+                            <option value="" disabled selected>Tipo:</option>
+                            <option value="todos">Todos</option>
+                            <option value="ingreso">Ingreso</option>
+                            <option value="egreso">Egreso</option>
+                        </select>
+                        <select id="medio-de-pago" class="filter-select">
+                            <option value="" disabled selected>Medio de Pago:</option>
+                            <option value="todos">Todos</option>
+                            <option value="efectivo">efectivo</option>
+                            <option value="mercado-pago">mercado-pago</option>
+                        </select>
+                        <select id="estado" class="filter-select">
+                            <option value="" disabled selected>Estado:</option>
+                            <option value="todos">Todos</option>
+                            <option value="abonado">Abonado</option>
+                            <option value="no-abonado">No Abonado</option>
+                            <option value="pendiente">Pendiente</option>
+                        </select>
+                        <select id="filtro-fecha" class="filter-select" onchange="toggleDateInputs(this.value)">
+                            <option value="" disabled selected>Fecha:</option>
+                            <option value="hoy">Hoy</option>
+                            <option value="determinar">Determinar</option>
+                        </select>
+                        <div id="fecha-personalizada" class="hidden">
+                            <label for="fecha-desde">Desde:</label>
+                            <input type="date" id="fecha-desde" class="date-input">
+                            <label for="fecha-hasta">Hasta:</label>
+                            <input type="date" id="fecha-hasta" class="date-input">
+                        </div>
+                        <button id="reset-filters-movimientos" class="filter-button">Limpiar Filtros</button>
+                    </div>
 
-                    <!-- Tarjeta del Cliente Seleccionado -->
-                    <div class="tarjeta" id="tarjetaCliente">
-                        <h3 id="nombreCliente">Detalles</h3>
-                        <p id="comensales">Comensales: --</p>
-                        <p id="observacion">Observación: --</p>
-                        <!-- Botón Generar QR con ícono de QR -->
-                        <button id="btnGenerarQR" onclick="generarQR()">
-                            <i class="fas fa-qrcode"></i> Generar QR
+                    <!-- Filtros Arqueos -->
+                    <div class="filters hidden" id="filtersArqueos">
+                        <select id="tipo-arqueo" class="filter-select">
+                            <option value="" disabled selected>Tipo:</option>
+                            <option value="todos">Todos</option>
+                            <option value="efectivo">Efectivo</option>
+                            <option value="mercado-pago">Mercado Pago</option>
+                        </select>
+                        <select id="estado-arqueo" class="filter-select">
+                            <option value="" disabled selected>Estado:</option>
+                            <option value="todos">Todos</option>
+                            <option value="abierto">Abierto</option>
+                            <option value="cerrado">Cerrado</option>
+                        </select>
+                        <div class="filterFechas">
+                            <label for="hora-apertura">Fecha Apertura:</label>
+                            <input type="datetime-local" id="hora-apertura">
+                        </div>
+                        <div class="filterFechas">
+                            <label for="hora-cierre">Fecha Cierre:</label>
+                            <input type="datetime-local" id="hora-cierre">
+                        </div>
+                        <button id="reset-filters-arqueos" class="filter-button">Limpiar Filtros</button>
+                    </div>
+
+                    <!-- Tabla Dinámica -->
+                    <div class="table-section">
+                        <table id="table-ventas" class="data-table hidden">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Usuario</th>
+                                    <th>Patente</th>
+                                    <th>Empresa</th>
+                                    <th>Medio Pago</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-ventas"></tbody>
+                        </table>
+                        <table id="table-movimientos" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Tipo</th>
+                                    <th>Descripción</th>
+                                    <th>Medio Pago</th>
+                                    <th>Monto</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-movimientos"></tbody>
+                        </table>
+                        <table id="table-arqueo" class="data-table hidden">
+                            <thead>
+                                <tr>
+                                    <th>Fecha Apertura</th>
+                                    <th>Fecha Cierre</th>
+                                    <th>Tipo</th>
+                                    <th>Saldo Sistema</th>
+                                    <th>Saldo Real</th>
+                                    <th>Diferencia</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-arqueos"></tbody>
+                        </table>
+                        <!-- Botón inline para crear arqueo (visible cuando tab arqueos está activa) -->
+                        <button id="btn-crear-arqueo-inline" style="display:none;margin-top:16px;padding:10px 24px;background:var(--primary,#633991);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;">
+                            + Nuevo Arqueo
                         </button>
-                        <!-- <div id="qrNotification"
-                            style="display: none; color: green; font-weight: bold; margin-top: 10px; text-align: center;">
-                            QR generado con éxito. Ahora puede escanear el código.
-                        </div> -->
-                        <!-- Botón Enviar Aviso con ícono de WhatsApp -->
-                        <button id="btnIniciar" onclick="iniciarCuentaRegresiva()">
-                            <i class="fab fa-whatsapp"></i> Enviar Aviso
-                        </button>
-
-                        <div class="contador" id="contadorCirculo">
-                            <span id="tiempoRestante">5:00</span>
-                        </div>
-
-                        <div class="btnActions">
-                            <!-- Botón Reiniciar con ícono de reinicio -->
-                            <button id="btnReiniciar" onclick="reiniciarCuentaRegresiva()">
-                                <i class="fas fa-sync-alt"></i>
-                            </button>
-                            <!-- Botón Eliminar con ícono de eliminación -->
-                            <button id="btnEliminar" onclick="eliminarReserva()">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                            <!-- Botón Parar con ícono de detener -->
-                            <button id="btnParar" onclick="togglePausaReanudar()">
-                                <i class="fas fa-stop"></i>
-                            </button>
-                        </div>
-
-
-
-                    </div>
-                    <!-- Tarjeta Alta nueva reserva -->
-                    <div class="tarjetaYqr">
-                        <div class="tarjeta" id="tarjetaReserva">
-                            <h3>Nueva Reserva</h3>
-                            <input type="text" id="inputNombre" placeholder="Nombre del Cliente" required>
-                            <input type="number" id="inputComensales" placeholder="Comensales" required>
-                            <input type="text" id="inputObservacion" placeholder="Observación" required>
-                            <button id="btnAgregar" onclick="agregarCliente()">Agregar Cliente</button>
-                        </div>
-
-                        <div class="qr-container">
-                            <canvas id="qrcode"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="menu-container">
-                        <button class="menu-option" onclick="handleOption('reservas')">Reservas</button>
-                        <button class="menu-option" onclick="handleOption('tabla')">Tabla</button>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- Sección FAQ -->
-            <div id="section-faq" class="section">
-                <h2>Preguntas Frecuentes</h2>
-                <div class="faq-container">
-                    <div class="faq-item">
-                        <div class="faq-question">
-                            <span>¿Cómo puedo crear un nuevo usuario?</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </div>
-                        <div class="faq-answer">
-                            <p>Para crear un nuevo usuario, dirígete a la sección "Users" y completa el formulario con
-                                el email, contraseña y rol del nuevo usuario.</p>
-                        </div>
-                    </div>
-                    <div class="faq-item">
-                        <div class="faq-question">
-                            <span>¿Cómo puedo cambiar mi contraseña?</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </div>
-                        <div class="faq-answer">
-                            <p>Puedes cambiar tu contraseña desde la sección "Profile".</p>
-                        </div>
-                    </div>
-                    <div class="faq-item">
-                        <div class="faq-question">
-                            <span>¿Cómo puedo ver las estadísticas?</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </div>
-                        <div class="faq-answer">
-                            <p>Las estadísticas están disponibles en la sección "Dashboard". Allí puedes ver gráficos y
-                                detalles de los usuarios.</p>
-                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Sección Profile -->
-            <div id="section-profile" class="section">
-                <div id="profile-section-container">
-
-                    <!-- Columna izquierda: Información del Usuario -->
-                    <div class="profile-column left-column">
-                        <div class="rect-image">
-                            <div class="rectangle">
-                                <h1 class="titleBox">General</h1>
-                            </div>
+                <!-- Columna Derecha -->
+                <div class="right-column">
+                    <div class="summary-section">
+                        <div class="summary-card">
+                            <div class="summary-title">Caja Efectivo</div>
+                            <div class="summary-amount" id="caja-efectivo-amount">$0.00</div>
                         </div>
-                        <ul class="user-info">
-                            <li><strong>Nombre Usuario:</strong> Juan Pérez</li>
-                            <li><strong>Teléfono / Local:</strong> +54 9 11 1234 5678</li>
-                            <li><strong>Nombre:</strong> Bar La Esquina</li>
-                            <li><strong>Correo Principal:</strong> juan.perez@example.com</li>
-                            <li><strong>Dirección:</strong> Corrientes 123, Buenos Aires</li>
-                        </ul>
-                    </div>
-
-                    <!-- Columna central: Plan Contratado -->
-                    <div class="profile-column center-column">
-                        <div class="rect-image">
-                            <div class="rectangle">
-                                <h1 class="titleBox">Plan</h1>
-                            </div>
-                        </div>
-                        <ul class="plan-info">
-                            <li><strong>Plan Contratado:</strong> Premium</li>
-                            <li><strong>Fecha de renovación:</strong> 24/11/2024</li>
-                            <li><strong>Mensajes restantes:</strong> 34/500</li>
-                        </ul>
-                    </div>
-
-                    <!-- Columna derecha: Información de Facturación -->
-                    <div class="profile-column center-column">
-                        <div class="rect-image">
-                            <div class="rectangle">
-                                <h1 class="titleBox">Facturacion</h1>
-                            </div>
-                        </div>
-                        <ul class="billing-info">
-                            <li><strong>CBU:</strong> 0123456789012345678901</li>
-                            <li><strong>Alias:</strong> mi.alias.bancario</li>
-                            <li><strong>Medio de Pago:</strong> Tarjeta de Crédito</li>
-                        </ul>
-                    </div>
-
-                </div><!-- Tarjeta del Cliente Seleccionado -->
-            </div>
-
-            <!-- Sección VENTAS-->
-            <div id="section-ventas" class="section">
-                <div class="container" id="container-ventas">
-                    <!-- Columna Izquierda -->
-                    <div class="left-column">
-
-                        <div class="cabecera-contenedera">
-                            <!-- Tabs -->
-                            <div class="tabs">
-                                <div id="caja-mayor" class="tab active">Caja Mayor</div>
-                                <div id="caja-menor" class="tab">Caja Menor</div>
-                            </div>
-                            <!-- Opciones -->
-                            <div class="options">
-                                <div id="ventas" class="option disabled">Lavados</div>
-                                <div id="movimientos" class="option">Movimientos</div>
-                                <div id="arqueo" class="option">Arqueos</div>
-                            </div>
-
-                            <!-- Botón para desplegar/ocultar filtros -->
-                            <button id="toggle-filters" class="toggle-button">Ocultar Filtros</button>
-                        </div>
-
-                        <!-- Filtros Lavados -->
-                        <div class="filters" id="filtersLavados">
-                            <!-- Filtro Patente -->
-                            <!-- <label for="patente-lavados">Patente:</label> -->
-                            <input type="text" id="patente-lavados" class="filter-input"
-                                placeholder="Buscar por patente...">
-
-                            <!-- <label for="empresa-lavados">Empresa:</label> -->
-                            <input type="text" id="empresa-lavados" class="filter-input"
-                                placeholder="Buscar por empresa...">
-
-
-                            <!-- Filtro Estado -->
-                            <!-- <label for="estado-lavados">Estado:</label> -->
-                            <select id="estado-lavados" class="filter-select">
-                                <option value="" disabled selected>Estado:</option>
-                                <option value="todos">Todos</option>
-                                <option value="pendiente">Pendiente</option>
-                                <option value="abonado">Abonado</option>
-                                <option value="no-abonado">No Abonado</option>
-                            </select>
-
-                            <!-- Filtro Fecha -->
-                            <!-- <label for="filtro-fecha-lavados">Fecha:</label> -->
-                            <select id="filtro-fecha-lavados" class="filter-select">
-                                <option value="" disabled selected>Por Fecha:</option>
-                                <option value="hoy">Hoy</option>
-                                <option value="determinar">Determinar</option>
-                            </select>
-
-                            <!-- Inputs para fecha personalizada -->
-                            <div id="fecha-personalizada-lavados" class="hidden">
-                                <label for="fecha-desde-lavados">Desde:</label>
-                                <input type="date" id="fecha-desde-lavados" class="datetime-input">
-                                <label for="fecha-hasta-lavados">Hasta:</label>
-                                <input type="date" id="fecha-hasta-lavados" class="datetime-input">
-                            </div>
-
-                            <!-- Botón para limpiar filtros -->
-                            <button id="reset-filters-lavados" class="filter-button">Limpiar Filtros</button>
-                        </div>
-
-
-                        <!-- Filtros Movimientos -->
-                        <div class="filters hidden" id="filtersMovs">
-                            <!-- Filtro Tipo de Ingreso -->
-                            <!-- <label for="tipo-ingreso">Tipo:</label> -->
-                            <select id="tipo-ingreso" class="filter-select">
-                                <option value="" disabled selected>Tipo:</option>
-                                <option value="todos">Todos</option>
-                                <option value="ingreso">Ingreso</option>
-                                <option value="egreso">Egreso</option>
-                            </select>
-
-                            <!-- Filtro Medio de pago -->
-                            <!-- <label for="medio-de-pago">Medio de Pago:</label> -->
-                            <select id="medio-de-pago" class="filter-select">
-                                <option value="" disabled selected>Medio de Pago:</option>
-                                <option value="todos">Todos</option>
-                                <option value="efectivo">efectivo</option>
-                                <option value="mercado-pago">mercado-pago</option>
-                            </select>
-
-                            <!-- Filtro Estado -->
-                            <!-- <label for="estado">Estado:</label> -->
-                            <select id="estado" class="filter-select">
-                                <option value="" disabled selected>Estado:</option>
-                                <option value="todos">Todos</option>
-                                <option value="abonado">Abonado</option>
-                                <option value="no-abonado">No Abonado</option>
-                                <option value="pendiente">Pendiente</option>
-                            </select>
-
-                            <!-- Filtro Fecha -->
-                            <!-- <label for="filtro-fecha">Fecha:</label> -->
-
-                            <select id="filtro-fecha" class="filter-select" onchange="toggleDateInputs(this.value)">
-                                <option value="" disabled selected>Fecha:</option>
-                                <option value="hoy">Hoy</option>
-                                <option value="determinar">Determinar</option>
-                            </select>
-
-                            <!-- Inputs para fecha personalizada -->
-                            <div id="fecha-personalizada" class="hidden">
-                                <label for="fecha-desde">Desde:</label>
-                                <input type="date" id="fecha-desde" class="date-input">
-                                <label for="fecha-hasta">Hasta:</label>
-                                <input type="date" id="fecha-hasta" class="date-input">
-                            </div>
-
-                            <!-- Botón para limpiar filtros -->
-                            <button id="reset-filters-movimientos" class="filter-button">Limpiar Filtros</button>
-                        </div>
-
-                        <!-- Filtros Arqueos -->
-                        <div class="filters hidden" id="filtersArqueos">
-                            <!-- Filtro Tipo de Arqueo -->
-                            <!-- <label for="tipo-arqueo">Tipo:</label> -->
-                            <select id="tipo-arqueo" class="filter-select">
-                                <option value="" disabled selected>Tipo:</option>
-                                <option value="todos">Todos</option>
-                                <option value="efectivo">Efectivo</option>
-                                <option value="mercado-pago">Mercado Pago</option>
-                            </select>
-
-                            <!-- <label for="estado-arqueo">Estado:</label> -->
-                            <select id="estado-arqueo" class="filter-select">
-                                <option value="" disabled selected>Estado:</option>
-                                <option value="todos">Todos</option>
-                                <option value="abierto">Abierto</option>
-                                <option value="cerrado">Cerrado</option>
-                            </select>
-
-                            <!-- Filtro Hora de Apertura -->
-                            <div class="filterFechas">
-                                <label for="hora-apertura">Fecha Apertura:</label>
-                                <input type="datetime-local" id="hora-apertura"
-                                    placeholder="Seleccione hora de apertura">
-                            </div>
-
-                            <!-- Filtro Hora de Cierre -->
-                            <div class="filterFechas">
-                                <label for="hora-cierre">Fecha Cierre:</label>
-                                <input type="datetime-local" id="hora-cierre" placeholder="Seleccione hora de cierre">
-                            </div>
-
-                            <!-- Filtro Estado -->
-
-
-
-                            <!-- Botón para limpiar filtros -->
-                            <button id="reset-filters-arqueos" class="filter-button">Limpiar Filtros</button>
-
-                        </div>
-
-                        <!-- Tabla Dinámica -->
-                        <div class="table-section">
-                            <!-- Tabla Ventas -->
-                            <table id="table-ventas" class="data-table hidden">
-                                <thead>
-                                    <tr>
-                                        <!-- <th>ID</th> -->
-                                        <th>Fecha</th>
-                                        <th>Usuario</th>
-                                        <th>Patente</th>
-                                        <th>Empresa</th>
-                                        <th>Medio Pago</th>
-                                        <th>Estado</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                            <!-- Tabla Movimientos -->
-                            <table id="table-movimientos" class="data-table hidden">
-                                <thead>
-                                    <tr>
-                                        <th>Fecha</th>
-                                        <th>Monto</th>
-                                        <th>Tipo</th>
-                                        <th>Medio Pago</th>
-                                        <th>Descripción</th>
-                                        <th>Estado</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                            <!-- Tabla Arqueo -->
-                            <table id="table-arqueo" class="data-table hidden">
-                                <thead>
-                                    <tr>
-                                        <th>Apertura</th>
-                                        <th>Cierre</th>
-                                        <th>Tipo</th>
-                                        <th>Sistema</th>
-                                        <th>Usuario</th>
-                                        <th>Diferencia</th>
-                                        <th>Estado</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
+                        <div class="summary-card">
+                            <div class="summary-title">Caja Mercado Pago</div>
+                            <div class="summary-amount" id="caja-mp-amount">$0.00</div>
                         </div>
                     </div>
 
-
-                    <!-- Columna Derecha -->
-                    <div class="right-column">
-                        <div id="details">
-                            <h3>Datos dependiendo que toque</h3>
-                            <p>Seleccione una fila para ver más información aquí.</p>
-                        </div>
-
-                        <!-- Botones Específicos -->
-                        <div id="buttons-container">
-                            <button id="btn-nuevo-arqueo" class="action-btn hidden">Nuevo Arqueo</button>
-                            <button id="btn-nuevo-movimiento" class="action-btn hidden">Nuevo Movimiento</button>
-                            <!-- <button id="btn-nueva-venta" class="action-btn hidden">Nuevo Lavado</button> -->
-                        </div>
-
-                        <!-- Formularios Dinámicos -->
-                        <div id="formularios-container">
-                            <!-- Formulario para Nuevo Arqueo -->
-                            <form id="form-arqueo" class="hidden">
-                                <h4>NUEVO ARQUEO</h4>
-
-                                <div class="form-row">
-                                    <label>Hora de Apertura (Actual):</label>
-                                    <input type="datetime-local" id="hora-apertura-arqueo" required />
-
-                                </div>
-
-                                <div class="form-row">
-                                    <label for="tipo-arqueo">Tipo:</label>
-                                    <select id="tipo-arqueo-nuevo">
-                                        <option value="efectivo">Efectivo</option>
-                                        <option value="mercado-pago">Mercado Pago</option>
-                                    </select>
-                                </div>
-
-                                <div class="form-row">
-                                    <label for="monto-inicial">Monto Inicial:</label>
-                                    <input type="number" id="monto-inicial" placeholder="Ej: $50.000" required />
-                                </div>
-
-                                <div class="form-actions">
-                                    <button type="button" class="btn btn-cancel" id="cancel-arqueo">CANCELAR</button>
-                                    <button type="submit" class="btn btn-save">CREAR</button>
-                                </div>
-                            </form>
-
-
-                            <!-- Formulario para Nuevo Movimiento -->
-                            <form id="form-movimiento" class="form-layout">
-                                <h4>NUEVO MOVIMIENTO</h4>
-
-                                <div class="form-row">
-                                    <label for="descripcion-movimiento">Descripción:</label>
-                                    <input type="text" id="descripcion-movimiento" placeholder="Ej: Cafe cortado">
-                                </div>
-
-                                <div class="form-row">
-                                    <label for="monto-movimiento">Monto:</label>
-                                    <input type="number" id="monto-movimiento" placeholder="Ej: $1200">
-                                </div>
-
-                                <div class="form-row">
-                                    <label for="tipo-movimiento">Tipo de Movimiento:</label>
-                                    <select id="tipo-movimiento">
-                                        <option value="">Seleccione un tipo</option>
-                                        <option value="ingreso">Ingreso</option>
-                                        <option value="egreso">Egreso</option>
-                                    </select>
-                                </div>
-
-                                <div class="form-row">
-                                    <label for="medio-pago">Medio de Pago:</label>
-                                    <select id="medio-pago">
-                                        <option value="efectivo">Efectivo</option>
-                                        <option value="mercado-pago">Mercado Pago</option>
-                                    </select>
-                                </div>
-
-                                <div class="form-row">
-                                    <label>Estado de Pago:</label>
-                                    <div class="checkbox-group">
-                                        <label><input type="radio" name="estado-pago" value="abonado">
-                                            Abonado</label>
-                                        <label><input type="radio" name="estado-pago" value="pendiente">
-                                            Pendiente</label>
-                                        <label><input type="radio" name="estado-pago" value="no-abonado"> No
-                                            Abonado</label>
-                                    </div>
-                                </div>
-
-                                <div class="form-actions">
-                                    <button type="button" class="btn btn-cancel">Cancelar</button>
-                                    <button type="submit" class="btn btn-save">Guardar</button>
-                                </div>
-                            </form>
-                        </div>
-
-                        <!-- Detalles dinamicos -->
-                        <div class="details-section"></div>
-                        <div class="movimiento-details" id="movimiento-details">
-                            <h4>EDITAR MOVIMIENTO</h4>
-                            <div class="movimiento-row">
-                                <div class="movimiento-title">Descripción:</div>
-                                <div class="movimiento-detail editable" id="descripcion-detalle"
-                                    placeholder="Ej: Detalle del movimiento"><i class="fas fa-pencil-alt edit-icon"
-                                        onclick="editarDetalle('descripcion-detalle')"></i></div>
-                            </div>
-                            <div class="movimiento-row">
-                                <div class="movimiento-title">Monto:</div>
-                                <div class="movimiento-detail editable" id="monto-detalle" placeholder="Ej: 1200"><i
-                                        class="fas fa-pencil-alt edit-icon"
-                                        onclick="editarDetalle('monto-detalle')"></i></div>
-                            </div>
-                            <div class="movimiento-row">
-                                <div class="movimiento-title">Estado:</div>
-                                <div class="movimiento-detail editable">
-                                    <select id="estado-detalle" class="estado-select">
-                                        <option value="abonado">Abonado</option>
-                                        <option value="no-abonado">No-abonado</option>
-                                        <option value="pendiente">Pendiente</option>
-                                    </select>
-                                </div>
-                            </div>
-
-
-                            <div class="buttons-row">
-                                <button type="button" class="btn btn-cancel" id="delete-button"
-                                    onclick="handleConfirm(this, 'Eliminar', event)">Eliminar</button>
-                                <button type="button" class="btn btn-save" id="modify-button"
-                                    onclick="handleConfirm(this, 'Modificar', event)">Modificar</button>
-                            </div>
-                        </div>
-                        <form id="form-lavado" class="form-layout">
-                            <h4>AGREGAR LAVADO</h4>
-
+                    <!-- Formulario Movimiento -->
+                    <div class="form-section" id="form-movimiento-section">
+                        <form id="form-movimiento" class="form-layout">
+                            <h4>AGREGAR MOVIMIENTO</h4>
                             <div class="form-row">
-                                <label for="usuario-lavado">Usuario:</label>
-                                <input type="text" id="usuario-lavado" value="" readonly>
+                                <label for="descripcion">Descripción:</label>
+                                <input type="text" id="descripcion" placeholder="Ej: Compra de insumos">
                             </div>
-
                             <div class="form-row">
-                                <label for="patente-lavado">Patente:</label>
-                                <input type="text" id="patente-lavado" value="" readonly>
+                                <label for="monto">Monto:</label>
+                                <input type="number" id="monto" placeholder="Ej: 1200">
                             </div>
-
                             <div class="form-row">
-                                <label for="empresa-lavado">Empresa:</label>
-                                <input type="text" id="empresa-lavado" value="" readonly>
-                            </div>
-
-                            <div class="form-row">
-                                <label for="fecha-lavado">Fecha:</label>
-                                <input type="text" id="fecha-lavado" value="" readonly>
-                            </div>
-
-                            <div class="form-row">
-                                <label for="medio-pago-lavado">Medio de Pago:</label>
-                                <select id="medio-pago-lavado">
-                                    <option value="">Seleccione un medio</option>
-                                    <option value="efectivo">Efectivo</option>
-                                    <option value="mercado-pago">Mercado Pago</option>
-                                    <option value="transferencia">Transferencia</option>
+                                <label for="tipo-movimiento">Tipo:</label>
+                                <select id="tipo-movimiento">
+                                    <option value="ingreso">Ingreso</option>
+                                    <option value="egreso">Egreso</option>
                                 </select>
                             </div>
-
+                            <div class="form-row">
+                                <label for="medio-pago">Medio de Pago:</label>
+                                <select id="medio-pago">
+                                    <option value="efectivo">Efectivo</option>
+                                    <option value="mercado-pago">Mercado Pago</option>
+                                </select>
+                            </div>
                             <div class="form-row">
                                 <label>Estado de Pago:</label>
                                 <div class="checkbox-group">
-                                    <label><input type="radio" name="estado-pago-lavado" value="pendiente">
-                                        Pendiente</label>
-                                    <label><input type="radio" name="estado-pago-lavado" value="abonado">
-                                        Abonado</label>
-                                    <label><input type="radio" name="estado-pago-lavado" value="no-abonado"> No
-                                        Abonado</label>
+                                    <label><input type="radio" name="estado-pago" value="abonado"> Abonado</label>
+                                    <label><input type="radio" name="estado-pago" value="pendiente"> Pendiente</label>
+                                    <label><input type="radio" name="estado-pago" value="no-abonado"> No Abonado</label>
                                 </div>
                             </div>
-
-                            <div class="form-row">
-                                <label for="descripcion-lavado">Descripción:</label>
-                                <textarea id="descripcion-lavado"
-                                    placeholder="Ej: Lavado completo, incluye aspirado"></textarea>
-                            </div>
-
-                            <div class="form-row">
-                                <label for="monto-lavado">Monto:</label>
-                                <input type="number" id="monto-lavado" placeholder="Ej: $1500">
-                            </div>
-
                             <div class="form-actions">
                                 <button type="button" class="btn btn-cancel">Cancelar</button>
                                 <button type="submit" class="btn btn-save">Guardar</button>
                             </div>
                         </form>
                     </div>
+
+                    <div class="movimiento-details" id="movimiento-details">
+                        <h4>EDITAR MOVIMIENTO</h4>
+                        <div class="movimiento-row">
+                            <div class="movimiento-title">Descripción:</div>
+                            <div class="movimiento-detail editable" id="descripcion-detalle" placeholder="Ej: Detalle del movimiento">
+                                <i class="fas fa-pencil-alt edit-icon" onclick="editarDetalle('descripcion-detalle')"></i>
+                            </div>
+                        </div>
+                        <div class="movimiento-row">
+                            <div class="movimiento-title">Monto:</div>
+                            <div class="movimiento-detail editable" id="monto-detalle" placeholder="Ej: 1200">
+                                <i class="fas fa-pencil-alt edit-icon" onclick="editarDetalle('monto-detalle')"></i>
+                            </div>
+                        </div>
+                        <div class="movimiento-row">
+                            <div class="movimiento-title">Estado:</div>
+                            <div class="movimiento-detail editable">
+                                <select id="estado-detalle" class="estado-select">
+                                    <option value="abonado">Abonado</option>
+                                    <option value="no-abonado">No-abonado</option>
+                                    <option value="pendiente">Pendiente</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="buttons-row">
+                            <button type="button" class="btn btn-cancel" id="delete-button" onclick="handleConfirm(this, 'Eliminar', event)">Eliminar</button>
+                            <button type="button" class="btn btn-save" id="modify-button" onclick="handleConfirm(this, 'Modificar', event)">Modificar</button>
+                        </div>
+                    </div>
+
+                    <form id="form-lavado" class="form-layout">
+                        <h4>AGREGAR LAVADO</h4>
+                        <div class="form-row">
+                            <label for="usuario-lavado">Usuario:</label>
+                            <input type="text" id="usuario-lavado" value="" readonly>
+                        </div>
+                        <div class="form-row">
+                            <label for="patente-lavado">Patente:</label>
+                            <input type="text" id="patente-lavado" value="" readonly>
+                        </div>
+                        <div class="form-row">
+                            <label for="empresa-lavado">Empresa:</label>
+                            <input type="text" id="empresa-lavado" value="" readonly>
+                        </div>
+                        <div class="form-row">
+                            <label for="fecha-lavado">Fecha:</label>
+                            <input type="text" id="fecha-lavado" value="" readonly>
+                        </div>
+                        <div class="form-row">
+                            <label for="medio-pago-lavado">Medio de Pago:</label>
+                            <select id="medio-pago-lavado">
+                                <option value="">Seleccione un medio</option>
+                                <option value="efectivo">Efectivo</option>
+                                <option value="mercado-pago">Mercado Pago</option>
+                                <option value="transferencia">Transferencia</option>
+                            </select>
+                        </div>
+                        <div class="form-row">
+                            <label>Estado de Pago:</label>
+                            <div class="checkbox-group">
+                                <label><input type="radio" name="estado-pago-lavado" value="pendiente"> Pendiente</label>
+                                <label><input type="radio" name="estado-pago-lavado" value="abonado"> Abonado</label>
+                                <label><input type="radio" name="estado-pago-lavado" value="no-abonado"> No Abonado</label>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <label for="descripcion-lavado">Descripción:</label>
+                            <textarea id="descripcion-lavado" placeholder="Ej: Lavado completo, incluye aspirado"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <label for="monto-lavado">Monto:</label>
+                            <input type="number" id="monto-lavado" placeholder="Ej: $1500">
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-cancel">Cancelar</button>
+                            <button type="submit" class="btn btn-save">Guardar</button>
+                        </div>
+                    </form>
+
+                    <!-- Formulario Arqueo (hidden by default) -->
+                    <div id="formularios-container" class="hidden">
+                        <form id="form-arqueo" class="form-layout hidden">
+                            <h4>NUEVO ARQUEO</h4>
+                            <div class="form-row">
+                                <label for="hora-apertura-arqueo">Hora Apertura:</label>
+                                <input type="datetime-local" id="hora-apertura-arqueo">
+                            </div>
+                            <div class="form-row">
+                                <label for="monto-inicial">Monto Inicial:</label>
+                                <input type="number" id="monto-inicial" placeholder="Ej: 5000">
+                            </div>
+                            <div class="form-row">
+                                <label for="tipo-arqueo-nuevo">Tipo:</label>
+                                <select id="tipo-arqueo-nuevo">
+                                    <option value="efectivo">Efectivo</option>
+                                    <option value="mercado-pago">Mercado Pago</option>
+                                </select>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-cancel" id="cancel-arqueo">Cancelar</button>
+                                <button type="submit" class="btn btn-save">Guardar</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Buttons container for dynamic action buttons -->
+                    <div id="buttons-container">
+                        <button id="btn-nuevo-arqueo" class="btn btn-save action-btn hidden">Nuevo Arqueo</button>
+                        <button id="btn-nuevo-movimiento" class="btn btn-save action-btn hidden">Nuevo Movimiento</button>
+                    </div>
+
+                    <!-- Details section for arqueo details -->
+                    <div class="details-section" style="display:none;"></div>
+                    <div id="details" style="display:none;"></div>
                 </div>
             </div>
-
-
-
         </div>
-    </div>
 
+    </div><!-- end .main-content -->
 
-
-
-    <!-- Cargar los gráficos y el JavaScript principal -->
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="/js/dashboardAdmin/charts.js"></script>
     <script src="/js/dashboardAdmin/faq.js"></script>
@@ -1348,9 +875,7 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/dashboardUser/dashboardUser.js"></script>
     <script type="module" src="/js/messages/mainUser.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
     <script src="/js/qrScan/qrGeneratorReservas.js"></script>
     <script src="/js/qrScan/qrGeneratorLavados.js"></script>
     <script src="/js/dashboardAdmin/topBar.js"></script>
@@ -1362,22 +887,5 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 
-
-    <!-- jQuery and Bootstrap -->
-
-    <script src="/js/landing/jquery-3.2.1.min.js?v=" + VERSION></script>
-    <script src="/js/landing/bootstrap.bundle.min.js?v=" + VERSION></script>
-
-    <!-- Plugins JS -->
-    <script src="/js/landing/owl.carousel.min.js?v=" + VERSION></script>
-
-    <!-- Custom JS -->
-    <script src="/js/landing/script.js?v=" + VERSION></script>
-    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
-
-
-
 </body>
-
 </html>

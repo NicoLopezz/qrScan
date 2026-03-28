@@ -18,18 +18,19 @@ let currentLavadoId = null; // Variable global para almacenar el ID del
 
 
 
-// *** EVENTOS: Selección de Caja Mayor o Chica ***
+// *** EVENTOS: Seleccion de Caja Mayor o Chica ***
+// cajaTipoActivo is updated here; data fetching is handled by switchToOption in ventas.js
 document.querySelectorAll('.tab').forEach((tab) => {
     tab.addEventListener('click', (event) => {
         const selectedCaja = event.target.id === 'caja-mayor' ? 'CajaMayor' : 'CajaChica';
-        cajaTipoActivo = selectedCaja; // Actualizar caja activa
+        cajaTipoActivo = selectedCaja;
         hideAllFormsAndButtons();
-        fetchArqueos(selectedCaja);
     });
 });
 
 function toggleDateInputs(value) {
     const fechaPersonalizada = document.getElementById('fecha-personalizada');
+    if (!fechaPersonalizada) return;
     if (value === 'determinar') {
         fechaPersonalizada.classList.remove('hidden');
     } else {
@@ -56,8 +57,10 @@ document.querySelectorAll('input[name="estado-pago"]').forEach((checkbox) => {
 function hideAllFormsAndButtons() {
     document.querySelectorAll('#buttons-container .action-btn').forEach((button) => (button.style.display = 'none'));
     document.querySelectorAll('#formularios-container form').forEach((form) => (form.style.display = 'none'));
-    document.querySelector('.details-section').style.display = 'none';
-    document.getElementById('details').style.display = 'none';
+    const detailsSection = document.querySelector('.details-section');
+    if (detailsSection) detailsSection.style.display = 'none';
+    const details = document.getElementById('details');
+    if (details) details.style.display = 'none';
 }
 
 
@@ -91,11 +94,18 @@ async function fetchArqueos(cajaTipo) {
 
 // *** FUNCIONES: Renderizar Tablas de Arqueos ***
 function renderArqueosTable(arqueos) {
-    console.trace(); // Muestra el stack trace en la consola
     const tableBody = document.querySelector('#table-arqueo tbody');
+    if (!tableBody) return;
     tableBody.innerHTML = ''; // Limpiar tabla
 
-    // Ordenar arqueos por fecha de apertura (de más reciente a más antigua)
+    if (!arqueos || arqueos.length === 0) {
+        const noDataRow = document.createElement('tr');
+        noDataRow.innerHTML = '<td colspan="7" class="no-data">No hay arqueos disponibles.</td>';
+        tableBody.appendChild(noDataRow);
+        return;
+    }
+
+    // Ordenar arqueos por fecha de apertura (de mas reciente a mas antigua)
     arqueos.sort((a, b) => new Date(b.fechaApertura) - new Date(a.fechaApertura));
 
     // Función para formatear fecha en DD/MM/YY HH:mm
@@ -144,7 +154,8 @@ function renderArqueosTable(arqueos) {
         `;
 
         row.addEventListener('click', () => displayArqueoDetails(arqueo));
-        document.querySelector('.details-section').dataset.arqueoId = arqueo._id; // Almacena el arqueoId
+        const detailsSectionEl = document.querySelector('.details-section');
+        if (detailsSectionEl) detailsSectionEl.dataset.arqueoId = arqueo._id; // Almacena el arqueoId
 
         tableBody.appendChild(row);
 
@@ -162,8 +173,8 @@ function renderArqueosTable(arqueos) {
         });
     });
 
-    document.getElementById('table-arqueo').classList.remove('hidden');
-    document.getElementById('table-movimientos').classList.add('hidden');
+    // Ensure arqueo table is visible (in case called independently of switchToOption)
+    document.getElementById('table-arqueo')?.classList.remove('hidden');
 }
 
 
@@ -183,6 +194,7 @@ function displayArqueoDetails(arqueo) {
     const totalSistema = arqueo.saldoInicial + totalIngresos - totalEgresos;
 
     const detailsSection = document.querySelector('.details-section');
+    if (!detailsSection) return;
     detailsSection.style.display = 'block';
 
     detailsSection.innerHTML = `
@@ -339,9 +351,9 @@ function renderDiferenciaCard(totalSistema) {
         return;
     }
     const totalUsuarioElement = document.getElementById("total-usuario");
-    const totalUsuario = parseFloat(
-        totalUsuarioElement.textContent.replace("$", "").replace(",", "")
-    ) || 0;
+    const totalUsuario = totalUsuarioElement
+        ? (parseFloat(totalUsuarioElement.textContent.replace("$", "").replace(",", "")) || 0)
+        : 0;
 
     let diferencia;
     let diferenciaFormateada;
@@ -400,6 +412,7 @@ function renderDiferenciaCard(totalSistema) {
     diferenciaCard.innerHTML = leftColumn + rightColumn;
 
     const detailsSection = document.querySelector('.details-section');
+    if (!detailsSection) return;
     detailsSection.appendChild(diferenciaCard);
 
     // Cambiar color dinámicamente según la diferencia
@@ -444,7 +457,7 @@ function renderDiferenciaCard(totalSistema) {
     // Agregar evento al botón de Cerrar Arqueo si no está cerrado
     if (currentArqueoEstado !== "cerrado") {
         const cerrarArqueoBtn = diferenciaCard.querySelector("#btn-cerrar-arqueo");
-        cerrarArqueoBtn.addEventListener("click", () => {
+        cerrarArqueoBtn?.addEventListener("click", () => {
             const observacionInput = document.getElementById("observacion2");
             if (!observacionInput) {
                 console.error("El campo de observación no existe en el DOM.");
@@ -523,6 +536,7 @@ function updateDiferencia(totalSistema) {
 // *** Función para renderizar movimientos en la tabla ***
 function renderMovimientosTable(movimientos) {
     const tableBody = document.querySelector("#table-movimientos tbody");
+    if (!tableBody) return;
     tableBody.innerHTML = "";
 
     if (movimientos.length > 0) {
@@ -585,15 +599,17 @@ function actualizarDetallesMovimiento(movimiento) {
     const monto = document.getElementById('monto-detalle');
     const estado = document.getElementById('estado-detalle');
 
-    // Actualizar el contenido de los detalles con la información del movimiento
-    descripcion.innerHTML = `${movimiento.descripcion || "---"} <i class="fas fa-pencil-alt edit-icon" onclick="editarDetalle('descripcion-detalle')"></i>`;
-    monto.innerHTML = `$${movimiento.monto || "---"} <i class="fas fa-pencil-alt edit-icon" onclick="editarDetalle('monto-detalle')"></i>`;
+    // Actualizar el contenido de los detalles con la informacion del movimiento
+    if (descripcion) {
+        descripcion.innerHTML = `${movimiento.descripcion || "---"} <i class="fas fa-pencil-alt edit-icon" onclick="editarDetalle('descripcion-detalle')"></i>`;
+    }
+    if (monto) {
+        monto.innerHTML = `$${movimiento.monto || "---"} <i class="fas fa-pencil-alt edit-icon" onclick="editarDetalle('monto-detalle')"></i>`;
+    }
 
     // Actualizar el valor del select para estado
     if (estado && estado.tagName === "SELECT") {
-        estado.value = movimiento.estadoPago || "pendiente"; // Asegurarte de que coincida con las opciones disponibles
-    } else {
-        console.error("Elemento de estado no encontrado o no es un select.");
+        estado.value = movimiento.estadoPago || "pendiente";
     }
 }
 
@@ -673,9 +689,12 @@ async function guardarCambios() {
         }
 
         // Obtener los valores actuales de los campos editables
-        const descripcion = document.getElementById("descripcion-detalle").textContent.trim();
-        const monto = document.getElementById("monto-detalle").textContent.replace("$", "").trim();
-        const estadoPago = document.getElementById("estado-detalle").value; // Ahora usamos estadoPago desde el <select>
+        const descripcionEl = document.getElementById("descripcion-detalle");
+        const montoEl = document.getElementById("monto-detalle");
+        const estadoPagoEl = document.getElementById("estado-detalle");
+        const descripcion = descripcionEl?.textContent?.trim() || "";
+        const monto = montoEl?.textContent?.replace("$", "")?.trim() || "";
+        const estadoPago = estadoPagoEl?.value || "";
 
         // Validar que al menos un campo tenga cambios
         if (!descripcion || !monto || !estadoPago) {
@@ -710,7 +729,7 @@ async function guardarCambios() {
         }
     } catch (error) {
         console.error("Error al intentar modificar el movimiento:", error);
-        showNotification(`Error al modificar el movimiento: ${data.error || 'Error desconocido'}`, 'error');
+        showNotification(`Error al modificar el movimiento: ${error.message || 'Error desconocido'}`, 'error');
     }
 }
 
@@ -719,14 +738,14 @@ async function guardarCambios() {
 const formMovimiento = document.getElementById('form-movimiento');
 
 //CREAR MOVIMIENTO
-formMovimiento.addEventListener('submit', async (event) => {
+formMovimiento?.addEventListener('submit', async (event) => {
     event.preventDefault(); // Previene el envío tradicional del formulario
 
     // Obtén los valores de los campos del formulario
-    const monto = parseFloat(document.getElementById('monto-movimiento').value);
-    const tipo = document.getElementById('tipo-movimiento').value;
-    const medioPago = document.getElementById('medio-pago').value;
-    const descripcion = document.getElementById('descripcion-movimiento').value;
+    const monto = parseFloat(document.getElementById('monto')?.value);
+    const tipo = document.getElementById('tipo-movimiento')?.value;
+    const medioPago = document.getElementById('medio-pago')?.value;
+    const descripcion = document.getElementById('descripcion')?.value;
     const cajaTipo = document.querySelector('.tab.active').id === 'caja-mayor' ? 'CajaMayor' : 'CajaChica';
 
     // Obtén el estado de pago seleccionado
@@ -791,6 +810,7 @@ document.addEventListener("DOMContentLoaded", fetchAndRenderLavados);
 // *** Función para renderizar lavados en la tabla ***
 function renderLavadosTable(lavados) {
     const tableBody = document.querySelector("#table-ventas tbody");
+    if (!tableBody) return;
 
     // Limpia las filas existentes
     tableBody.innerHTML = "";
@@ -890,6 +910,7 @@ function renderLavadosTable(lavados) {
 
 function editarDetalle(id) {
     const elemento = document.getElementById(id);
+    if (!elemento) return;
     const contenido = elemento.textContent.trim();
     const input = document.createElement('input');
     input.type = id === 'monto-detalle' ? 'number' : 'text';
@@ -913,7 +934,7 @@ document.addEventListener("DOMContentLoaded", () => {
 const formLavado = document.getElementById('form-lavado');
 
 // Manejar el evento submit del formulario de lavados
-formLavado.addEventListener('submit', async (event) => {
+formLavado?.addEventListener('submit', async (event) => {
     event.preventDefault(); // Previene el envío tradicional del formulario
 
     // Obtén los valores de los campos del formulario
@@ -1013,13 +1034,18 @@ async function crearMovimientoDesdeLavado({ monto, medioPago, descripcion, estad
 
 async function actualizarLavadosTable() {
     try {
+        const adminId = getCookie('adminId');
+        if (!adminId) {
+            console.warn("No se encontró adminId en las cookies.");
+            return;
+        }
         // Hacer una solicitud al backend para obtener la lista de lavados actualizada
-        const response = await fetch('/api/lavados'); // Cambia la ruta si es necesario
+        const response = await fetch(`/api/admins/${adminId}/lavados`);
         const data = await response.json();
 
-        if (response.ok && data.success) {
+        if (response.ok && Array.isArray(data)) {
             // Reutilizar la función renderLavadosTable para renderizar la tabla actualizada
-            renderLavadosTable(data.lavados);
+            renderLavadosTable(data);
         } else {
             console.error('Error al obtener la lista de lavados:', data.error || 'Error desconocido');
             showNotification('Error al actualizar la tabla de lavados.', 'error');
@@ -1029,8 +1055,6 @@ async function actualizarLavadosTable() {
         showNotification('Error al conectarse con el servidor.', 'error');
     }
 }
-// *** Llamar a la función al cargar la página ***
-document.addEventListener("DOMContentLoaded", fetchAndRenderLavados);
 
 
 function actualizarDetallesLavado(lavado) {
@@ -1057,10 +1081,10 @@ function actualizarDetallesLavado(lavado) {
     }
 
     // Actualizar los valores del formulario con los datos del lavado
-    usuario.value = lavado.nombre || "---";
-    patente.value = lavado.patente ? lavado.patente.toUpperCase() : "---"; // Convertir patente a mayúsculas
-    empresa.value = lavado.empresa || "---";
-    fecha.value = fechaFormateada || "---";
+    if (usuario) usuario.value = lavado.nombre || "---";
+    if (patente) patente.value = lavado.patente ? lavado.patente.toUpperCase() : "---";
+    if (empresa) empresa.value = lavado.empresa || "---";
+    if (fecha) fecha.value = fechaFormateada || "---";
 
     // Actualizar el select para medio de pago
     if (medioPago) {
@@ -1074,18 +1098,27 @@ function actualizarDetallesLavado(lavado) {
         });
     }
 
-    // Actualizar descripción
-    descripcion.value = lavado.descripcion || "";
+    // Actualizar descripcion
+    if (descripcion) descripcion.value = lavado.descripcion || "";
 
     // Actualizar monto
-    monto.value = lavado.monto || "";
+    if (monto) monto.value = lavado.monto || "";
 }
 
 
 
 async function fetchAndRenderLavados() {
     try {
-        const response = await fetch("http://localhost:3000/api/admins/6760a78e7f72b5a2c6b67e34/lavados");
+        const adminId = getCookie('adminId');
+        if (!adminId) {
+            console.warn("No se encontró adminId en las cookies.");
+            return;
+        }
+        const response = await fetch(`/api/admins/${adminId}/lavados`);
+        if (!response.ok) {
+            console.error("Error al obtener los lavados:", response.status);
+            return;
+        }
         const lavados = await response.json();
 
         renderLavadosTable(lavados);

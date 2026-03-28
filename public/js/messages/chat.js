@@ -11,7 +11,17 @@ export function loadChat(client) {
     const chatHistory = document.getElementById('chatHistory');
     chatHistory.innerHTML = ''; // Limpiar el historial de chat anterior
     const phoneNumber = document.getElementById('phoneNumber');
-    phoneNumber.textContent = client.from || "Número no disponible"; // Mostrar el número del cliente
+    phoneNumber.textContent = client.from || "Número no disponible";
+
+    // Avatar en el header del chat
+    const profilePic = document.getElementById('profilePic');
+    if (profilePic) {
+        const seed = (client.from || client.nombre || '').replace(/\D/g, '');
+        const idx = seed ? (parseInt(seed.slice(-2)) % 70) + 1 : Math.ceil(Math.random() * 70);
+        const gender = idx % 2 === 0 ? 'women' : 'men';
+        profilePic.src = `https://randomuser.me/api/portraits/${gender}/${idx}.jpg`;
+        profilePic.onerror = () => { profilePic.src = '/img/userIcon.png'; };
+    }
 
     // Primero, cargar los mensajes de historialPedidos (mensajes recibidos)
     client.historialPedidos.forEach(pedido => {

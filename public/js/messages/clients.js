@@ -1,14 +1,25 @@
 // Función para renderizar la lista de clientes en `clientList`
-let selectedClients = []; // Arreglo global para almacenar clientes seleccionados
+let selectedClients = [];
+let allClientes = []; // copia completa para filtrar
+let currentHandleClientClick = null;
 
-export function displayClientList(clientes, handleClientClick) {
+// Render interno — no toca allClientes
+function renderClientList(clientes, handleClientClick) {
     const clientList = document.getElementById("clientList");
-    clientList.innerHTML = ""; // Limpiar la lista antes de llenarla
+    clientList.innerHTML = "";
 
     if (clientes.length === 0) {
-        const li = document.createElement('li');
-        li.textContent = 'No se encontraron clientes';
-        clientList.appendChild(li);
+        clientList.innerHTML = `
+            <li style="
+                display:flex;flex-direction:column;align-items:center;
+                justify-content:center;gap:10px;padding:40px 20px;
+                border:none;cursor:default;
+            ">
+                <i class="fas fa-search" style="font-size:28px;color:var(--primary);opacity:0.3"></i>
+                <span style="font-size:13px;color:var(--text-muted);text-align:center;line-height:1.5">
+                    Sin resultados
+                </span>
+            </li>`;
         return;
     }
 
@@ -42,8 +53,21 @@ export function displayClientList(clientes, handleClientClick) {
         clientInfo.appendChild(clientName);
         clientInfo.appendChild(clientNumber);
 
-        // Agregar el checkbox y la información del cliente al elemento de la lista
+        // Avatar
+        const avatar = document.createElement("img");
+        avatar.classList.add("client-avatar");
+        const seed = (cliente.from || cliente.nombre || '').replace(/\D/g, '');
+        const idx = seed ? (parseInt(seed.slice(-2)) % 70) + 1 : Math.ceil(Math.random() * 70);
+        const gender = idx % 2 === 0 ? 'women' : 'men';
+        avatar.src = `https://randomuser.me/api/portraits/thumb/${gender}/${idx}.jpg`;
+        avatar.alt = cliente.nombre || "";
+        avatar.onerror = function() {
+            this.style.display = 'none';
+        };
+
+        // Agregar el checkbox, avatar y la información del cliente al elemento de la lista
         li.appendChild(checkbox);
+        li.appendChild(avatar);
         li.appendChild(clientInfo);
 
         // Evento para seleccionar y deseleccionar clientes usando el checkbox
@@ -67,8 +91,29 @@ export function displayClientList(clientes, handleClientClick) {
             }
         });
 
-        clientList.appendChild(li); // Agregar cada cliente a la lista en el DOM
+        clientList.appendChild(li);
     });
+}
+
+// Wrapper público — guarda la lista completa y renderiza
+export function displayClientList(clientes, handleClientClick) {
+    allClientes = clientes;
+    currentHandleClientClick = handleClientClick;
+    renderClientList(clientes, handleClientClick);
+}
+
+// Filtro — usa renderClientList para no pisar allClientes
+export function filterClients(query, handleClientClick) {
+    const q = query.toLowerCase().trim();
+    if (!q) {
+        renderClientList(allClientes, handleClientClick || currentHandleClientClick);
+        return;
+    }
+    const filtered = allClientes.filter(c => {
+        return (c.nombre || '').toLowerCase().includes(q) ||
+               (c.from   || '').toLowerCase().includes(q);
+    });
+    renderClientList(filtered, handleClientClick || currentHandleClientClick);
 }
 
 // Agregar el MutationObserver
@@ -182,13 +227,6 @@ function mostrarDatosCliente(cliente) {
 
 }
 
-// Función para filtrar los clientes en base a la búsqueda
-export function filterClients(query, handleClientClick) {
-    const filteredClients = clients.filter(client => {
-        return client.name.toLowerCase().includes(query) || client.number.includes(query);
-    });
-    displayClientList(filteredClients, handleClientClick); // Renderizar solo los clientes filtrados
-}
 
 // Función para seleccionar todos los clientes
 export function selectAllClients() {

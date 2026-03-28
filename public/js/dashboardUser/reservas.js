@@ -1,3 +1,18 @@
+// Modal nuevo lavado
+function abrirModalNuevoLavado() {
+    const modal = document.getElementById('modalNuevoLavado');
+    if (!modal) return;
+    modal.classList.add('modal-visible');
+}
+function cerrarModalNuevoLavado() {
+    const modal = document.getElementById('modalNuevoLavado');
+    if (!modal) return;
+    modal.classList.add('modal-closing');
+    modal.addEventListener('animationend', () => {
+        modal.classList.remove('modal-visible', 'modal-closing');
+    }, { once: true });
+}
+
 const tablaClientes = document.getElementById('tablaClientes');
 const nombreCliente = document.getElementById('nombreCliente');
 const comensales = document.getElementById('comensales');
@@ -92,10 +107,39 @@ function seleccionarLavado(lavadoId) {
         if (filaSeleccionada) {
             filaSeleccionada.classList.add('selected');
         }
+
+        // Abrir modal con detalle
+        abrirModalDetalle(lavado);
     } else {
         console.error('Lavado no encontrado:', lavadoId);
     }
 }
+
+function abrirModalDetalle(lavado) {
+    document.getElementById('modalLavadoNombre').textContent = lavado.nombre || 'Sin nombre';
+    document.getElementById('modalLavadoPatente').textContent = (lavado.patente || '—').toUpperCase();
+    document.getElementById('modalLavadoModelo').textContent = lavado.modelo || '—';
+    document.getElementById('modalLavadoTipo').textContent = lavado.tipoDeLavado || '—';
+    document.getElementById('modalLavadoObs').textContent = lavado.observacion || 'Sin observaciones';
+    const modal = document.getElementById('modalDetalleLavado');
+    if (modal) modal.classList.add('modal-visible');
+}
+
+function cerrarModalDetalle() {
+    const modal = document.getElementById('modalDetalleLavado');
+    if (!modal) return;
+    modal.classList.add('modal-closing');
+    modal.addEventListener('animationend', () => {
+        modal.classList.remove('modal-visible', 'modal-closing');
+    }, { once: true });
+}
+
+window.cerrarModalDetalle = cerrarModalDetalle;
+
+// Cerrar modal detalle al clickear el backdrop
+document.getElementById('modalDetalleLavado')?.addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) cerrarModalDetalle();
+});
 
 document.addEventListener("DOMContentLoaded", () => {
     const cumpleText = document.getElementById("cumple-text");
@@ -141,6 +185,16 @@ function agregarFilaTabla(reserva) {
 }
 
 
+function lavadoBadgeClass(tipo) {
+    if (!tipo) return 'badge-gray';
+    const t = tipo.toLowerCase();
+    if (t.includes('exterior'))  return 'badge-blue';
+    if (t.includes('completo'))  return 'badge-green';
+    if (t.includes('detailing')) return 'badge-purple';
+    if (t.includes('encerado'))  return 'badge-orange';
+    return 'badge-gray';
+}
+
 // Función para agregar una fila a la tabla de lavados
 function agregarFilaTablaLavados(lavado) {
     const row = document.createElement('tr');
@@ -152,16 +206,43 @@ function agregarFilaTablaLavados(lavado) {
     const patenteMayuscula = lavado.patente ? lavado.patente.toUpperCase() : '';
 
 
+    const tipoBadge = lavadoBadgeClass(lavado.tipoDeLavado);
+
     row.innerHTML = `
     <td data-modelo="${lavado.modelo}" data-lavado="${lavado.tipoDeLavado}">${lavado.nombre}</td>
     <td>${lavado.modelo}</td>
-    <td>${patenteMayuscula}</td>
-    <td>${lavado.tipoDeLavado}</td>
+    <td><span class="badge badge-gray">${patenteMayuscula}</span></td>
+    <td><span class="badge ${tipoBadge}">${lavado.tipoDeLavado}</span></td>
     <td>${observacion}</td>
+    <td>
+        <button class="btn-whatsapp-row" data-id="${lavado._id}" title="Enviar aviso">
+            <i class="fab fa-whatsapp"></i>
+        </button>
+    </td>
 `;
 
+    // WhatsApp por fila (no propaga el click a seleccionarLavado)
+    row.querySelector('.btn-whatsapp-row').addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const clienteId = lavado._id;
+        try {
+            const res = await fetch('/api/enviarAvisoRetiroLavado', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ clienteId })
+            });
+            const result = await res.json();
+            if (result.success) {
+                showNotification("Aviso enviado por WhatsApp.");
+            } else {
+                showNotification("Error al enviar el aviso.", "error");
+            }
+        } catch (err) {
+            showNotification("Error de conexión.", "error");
+        }
+    });
 
-    // Agregar evento de clic para cargar datos en la tarjeta de lavado
+    // Clic en la fila selecciona el lavado
     row.addEventListener('click', () => seleccionarLavado(lavado._id));
     const tablaLavados = document.getElementById('tablaLavados');
     if (tablaLavados) {
@@ -253,6 +334,7 @@ function agregarLavado() {
         .then(data => {
             if (data.success) {
                 showNotification("Lavado agregado con éxito");
+                cerrarModalNuevoLavado();
 
                 // Verificar si es versión móvil
                 if (window.innerWidth <= 768) {
@@ -365,7 +447,7 @@ async function generarQR() {
 
 async function generarQRlavado() {
     if (!lavadoSeleccionado) {
-        showNotification("No hay un cliente seleccionado.", "error");
+        showNotification("Selecciona un lavado primero.", "error");
         return;
     }
 
@@ -380,23 +462,30 @@ async function generarQRlavado() {
 
         const data = await response.json();
         if (data.success) {
-            showNotification("Por favor escanee el QR", "success");
-
-            // Agrega la clase visible
+            // Cerrar modal de detalle y mostrar QR overlay
+            cerrarModalDetalle();
             const qrOverlay = document.getElementById("qrOverlay");
+            qrOverlay.style.display = "flex";
             qrOverlay.classList.add("visible");
         } else {
-            showNotification("Error al actualizar el cliente seleccionado.", "error");
+            showNotification("Error al generar QR.", "error");
         }
     } catch (error) {
         showNotification("Ocurrió un error al intentar actualizar el cliente.", "error");
     }
 }
 
-// Cerrar el QR al hacer clic en el botón "X"
-document.getElementById("closeQR").addEventListener("click", () => {
+// Cerrar el QR al hacer clic en el botón "X" o en el backdrop
+document.getElementById("closeQR")?.addEventListener("click", () => {
     const qrOverlay = document.getElementById("qrOverlay");
+    qrOverlay.style.display = "none";
     qrOverlay.classList.remove("visible");
+});
+document.getElementById("qrOverlay")?.addEventListener("click", (e) => {
+    if (e.target === e.currentTarget) {
+        e.currentTarget.style.display = "none";
+        e.currentTarget.classList.remove("visible");
+    }
 });
 
 
@@ -525,7 +614,7 @@ window.generarQR = generarQR;
 document.addEventListener('DOMContentLoaded', cargarLavados);
 
 // Modificar el evento del botón para iniciar la cuenta regresiva y aplicar el estilo
-document.getElementById('btnIniciar').addEventListener('click', async () => {
+document.getElementById('btnIniciar')?.addEventListener('click', async () => {
     try {
         const clienteId = clienteSeleccionado; // Asegura que ya tienes el cliente seleccionado
 
@@ -605,7 +694,7 @@ document.getElementById('btnIniciar').addEventListener('click', async () => {
 //     }
 // });
 
-document.getElementById('btnAvisoLavado2').addEventListener('click', async () => {
+document.getElementById('btnAvisoLavado2')?.addEventListener('click', async () => {
     try {
         const clienteId = lavadoSeleccionado; // Asegura que ya tienes el cliente seleccionado
 
@@ -645,7 +734,7 @@ document.getElementById('btnAvisoLavado2').addEventListener('click', async () =>
     }
 });
 
-document.getElementById('btnAvisoLavado3').addEventListener('click', async () => {
+document.getElementById('btnAvisoLavado3')?.addEventListener('click', async () => {
     try {
         const clienteId = lavadoSeleccionado; // Asegura que ya tienes el cliente seleccionado
 
@@ -685,7 +774,7 @@ document.getElementById('btnAvisoLavado3').addEventListener('click', async () =>
     }
 });
 
-document.getElementById('btnAvisoLavado').addEventListener('click', async () => {
+document.getElementById('btnAvisoLavado')?.addEventListener('click', async () => {
     try {
         const clienteId = lavadoSeleccionado; // Asegura que ya tienes el cliente seleccionado
 

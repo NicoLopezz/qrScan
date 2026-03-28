@@ -1,84 +1,175 @@
-/* general.css (archivo principal) */
-:root {
-    --primary-color: #6b00ad;
-    --secondary-color: #ff914d;
-    --background-color: #f3f3f3;
-    --text-color: #000000;
-    --text-muted-color: #6b6b6b;
-    --white-color: #fdfdfd;
-    --shadow-color: rgba(0, 0, 0, 0.1);
+/* ===== LAYOUT ===== */
+.main-content {
+  margin-left: var(--sidebar-width);
+  padding: calc(var(--topbar-height) + 28px) 28px 28px;
+  min-height: 100vh;
+  transition: margin-left 0.25s cubic-bezier(0.4,0,0.2,1);
+  overflow-x: hidden;
+  min-width: 0;
 }
 
-/* Otros estilos globales */
-body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    font-family: 'Montserrat', sans-serif;
-    background-color: rgb(231 231 231) !important;
-}
-
-/* Contenedor principal que contiene todo el contenido */
-.content-container {
-    background-color: var(--white-color);
-    padding: 25px;
-    border-radius: 15px;
-    max-width: 1500px;
-    margin: 40px auto;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-left: 250px;
-    margin-top: 80px;
-    height: fit-content;
-    width: 80%;
-}
-
-/* Estilo de la sección */
+/* Sections */
 .section {
-    display: none; /* Ocultamos todas las secciones por defecto */
+  display: none;
 }
-
 .section.active {
-    display: block; /* Mostramos la sección activa */
+  display: block;
 }
 
-
+/* ===== TABLES ===== */
 .table-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 20px;
+  margin-top: 24px;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.table-section > h2 {
+  padding: 18px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  letter-spacing: -0.01em;
+}
+
+.table-section > h2::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 16px;
+  background: var(--primary);
+  border-radius: 2px;
+  flex-shrink: 0;
 }
 
 .table-container {
-    width: 100%; /* Ajusta el ancho de la tabla según tus preferencias */
-    max-width: 1000px; /* Ancho máximo para que no se extienda demasiado */
-    max-height: 500px;
-    overflow-x: auto; /* Permite scroll horizontal si es necesario */
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 420px;
+}
+
+/* Lavadero overrides this */
+#section-lavaderos .table-container {
+  max-height: calc(100vh - var(--topbar-height) - 180px);
 }
 
 table {
-    width: 100%;
-    border-collapse: collapse;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
 }
 
 thead th {
-    background-color: #6b00ad; /* Fondo violeta para el encabezado */
-    color: #fff;
-    font-weight: bold;
-    padding: 15px;
-    text-align: center;
+  background: #F1F5F9 !important;
+  color: var(--text-secondary) !important;
+  font-weight: 600 !important;
+  padding: 11px 16px !important;
+  text-align: left !important;
+  font-size: 11px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.07em !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1 !important;
+  white-space: nowrap !important;
+  border-bottom: 2px solid var(--border) !important;
+}
+
+thead th:first-child {
+  border-left: 3px solid var(--primary);
 }
 
 tbody td {
-    padding: 10px;
-    text-align: center;
-    border-bottom: 1px solid #ddd;
+  padding: 13px 16px;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-light);
+  vertical-align: middle;
+  transition: background 0.12s ease;
 }
 
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+tbody tr:hover td {
+  background-color: var(--primary-muted);
+}
+
+tbody tr:hover td:first-child {
+  border-left: 3px solid var(--primary);
+  padding-left: 13px;
+}
+
+tbody td:first-child {
+  border-left: 3px solid transparent;
+  font-weight: 500;
+}
+
+/* ===== BADGE ===== */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  font-family: 'Fira Sans', sans-serif;
+}
+
+.badge-blue   { background: var(--primary-muted); color: var(--primary); }
+.badge-green  { background: #D1FAE5; color: #065F46; }
+.badge-orange { background: #FFEDD5; color: #C2410C; }
+.badge-gray   { background: #F1F5F9; color: #475569; font-family: 'Fira Code', monospace; letter-spacing: 0.05em; }
+.badge-purple { background: var(--primary-muted); color: var(--primary-dark); }
 
 .stars {
-    color: #FFD700; /* Color para estrellas brillantes */
-    font-size: 1.2em;
+  color: var(--accent);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+    padding: calc(var(--topbar-height) + 16px) 16px 16px;
+  }
+}
+
+/* ===== LAVADERO — column alignment ===== */
+#section-lavaderos .table-section td:last-child,
+#section-lavaderos .table-section th:last-child {
+  width: 52px;
+  text-align: center;
+  padding: 8px 12px;
+}
+
+.btn-whatsapp-row {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #25D366;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
+  transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+  box-shadow: 0 2px 8px rgba(37,211,102,0.3);
+}
+
+.btn-whatsapp-row:hover {
+  background: #1ebe5a;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(37,211,102,0.4);
 }

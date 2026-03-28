@@ -1,16 +1,18 @@
 import express from 'express';
 import cors from 'cors';
-import { createServer } from 'http'; // Necesario para crear el servidor de HTTP con Socket.IO
-import { Server as SocketServer } from 'socket.io'; // Importar Socket.IO
+import { createServer } from 'http';
+import { Server as SocketServer } from 'socket.io';
+import { rateLimit } from 'express-rate-limit';
 import AuthRoutes from './routes/auth.routes.js';
 import cookieParser from 'cookie-parser';
+import { verifyTokenMiddleware } from './middleware/verifyToken.js';
 
 
 
-// Agregar middleware cookie-parser para gestionar cookies
 // Inicializa Express
 const app = express();
 app.use(cookieParser());
+app.use(verifyTokenMiddleware); // Decodifica JWT en cada request
 
 // Configura el servidor HTTP para usar Socket.IO
 const httpServer = createServer(app); // Crea el servidor HTTP
@@ -31,6 +33,25 @@ app.use(express.urlencoded({ extended: true }));
 
 // Sirve archivos estáticos de la carpeta 'public'
 app.use(express.static('public')); // Esta línea sirve archivos estáticos, incluyendo dashboard.js
+
+// Rate limiting: máx 20 mensajes WhatsApp por IP cada 10 minutos
+const whatsappLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  max: 20,
+  message: { error: 'Demasiadas solicitudes de mensajes. Intentá en unos minutos.' }
+});
+app.use('/api/enviarMensajesTemplates', whatsappLimiter);
+app.use('/api/enviarMensajeCuentaRegresiva', whatsappLimiter);
+app.use('/api/enviarAvisoRetiroLavado', whatsappLimiter);
+app.use('/api/enviarEncuesta', whatsappLimiter);
+
+// Rate limiting general en login: máx 10 intentos por IP cada 15 minutos
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: { error: 'Demasiados intentos de login. Intentá en 15 minutos.' }
+});
+app.use('/api/login', loginLimiter);
 
 // Prefijo para acceder a las rutas API
 app.use('/api', AuthRoutes);
@@ -56,6 +77,12 @@ io.on('connection', (socket) => {
 const PORT = process.env.PORT || 3000;
 httpServer.listen(PORT, () => {
   console.log(`Servidor escuchando en el puerto ${PORT}`);
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error(`[ERROR] ${req.method} ${req.path}:`, err.message);
+  res.status(err.status || 500).json({ error: err.message || 'Error interno del servidor' });
 });
 
 export default app;

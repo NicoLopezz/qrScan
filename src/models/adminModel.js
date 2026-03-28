@@ -14,7 +14,7 @@ const adminSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   localName: { type: String, required: true },
-  localNumber: { type: Number, default: 5491135254661 },
+  localNumber: { type: Number },
   fechaDeAlta: { type: Date, default: Date.now },
   tipoDeLicencia: { type: String, default: '' },
   fechaRenovacion: { type: Date, default: null },
@@ -34,5 +34,10 @@ const adminSchema = new mongoose.Schema({
   cajasMayores: [{ type: mongoose.Schema.Types.ObjectId, ref: 'CajaMayor' }],
   cajasChicas: [{ type: mongoose.Schema.Types.ObjectId, ref: 'CajaChica' }]
 });
+
+// Índices para acelerar las queries más frecuentes
+adminSchema.index({ 'usuarios.email': 1 });   // login de usuarios
+adminSchema.index({ 'lavados.estado': 1 });    // filtros por estado en dashboard
+adminSchema.index({ 'lavados.fechaDeAlta': -1 }); // listados ordenados por fecha
 
 export default mongoose.model('Admin', adminSchema);

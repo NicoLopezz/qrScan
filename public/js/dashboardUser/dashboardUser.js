@@ -345,6 +345,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const mainContent = document.querySelector('.content-container');
   const sectionDashboard = document.getElementById('section-lavaderos');
 
+  if (!mainContent || !sectionDashboard) return;
+
   // Función para actualizar el overflow
   function updateOverflow() {
     if (sectionDashboard.classList.contains('section') && sectionDashboard.classList.contains('active')) {
@@ -360,8 +362,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const observer = new MutationObserver(updateOverflow);
 
   observer.observe(sectionDashboard, {
-    attributes: true, // Observa cambios en los atributos
-    attributeFilter: ['class'] // Específicamente cambios en la clase
+    attributes: true,
+    attributeFilter: ['class']
   });
 
   // Ejecuta al cargar por primera vez

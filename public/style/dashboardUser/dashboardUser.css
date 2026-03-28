@@ -1,369 +1,29 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Montserrat', sans-serif;
-  background-color: #f4f4f4;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 5vh 5vw; /* Borde que ajusta el espacio alrededor del contenedor */
-  height: 100vh;
-  overflow: hidden; /* Evita el desbordamiento de la pantalla */
-}
-
-.nav-menu{
-  display: none;
-}
-
-#qrOverlay{
-  display: none;
-}
-
-#chatMovil{
-  display: none;
-}
-
-#chatDesktop{
-  display: block;
-}
-
-
-
-#btnGenerarQRlavado{
-  padding: 12px 25px;
-  margin-top: 15px;
-  font-size: 1.1em;
-  color: #fff;
-  background-color: #6b00ad;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-  width: 180px;
-}
-
-/* Estilo para la tarjeta */
-#tarjetaCliente {
-  display: flex;
-  flex-direction: column; /* Asegura que los elementos se apilen verticalmente */
-  align-items: flex-start; /* Justifica el texto a la izquierda */
-  text-align: left; /* Asegura que el texto esté alineado a la izquierda */
-  gap: 15px; /* Espaciado entre los elementos */
-  padding: 15px; /* Espaciado interno */
-  border: 1px solid #ccc; /* Borde opcional para la tarjeta */
-  border-radius: 8px; /* Bordes redondeados opcionales */
-  width: 100%; /* Ajusta el ancho de la tarjeta según tu diseño */
-  box-sizing: border-box; /* Incluye padding en el cálculo del tamaño */
-}
-
-/* Estilo para los botones */
-#tarjetaCliente button {
-  align-self: center; /* Centra los botones horizontalmente */
-  padding: 10px 20px; /* Espaciado interno del botón */
-  border: none; /* Sin bordes por defecto */
-  border-radius: 5px; /* Bordes redondeados para los botones */
-  /* background-color: #007bff; Color de fondo del botón */
-  color: white; /* Color del texto del botón */
-  cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
-  font-size: 14px; /* Tamaño de la fuente */
-  text-align: center; /* Centra el texto dentro del botón */
-}
-
-/* Asegúrate de apuntar solo al título dentro de la tarjeta */
-.tarjetaCliente > h3 {
-  text-align: center !important; /* Forzar la alineación centrada */
-  margin-bottom: 20px; /* Espaciado inferior */
-  color: #6b00ad; /* Color del título (opcional) */
-}
-
-
-
-#btnAvisoLavado2{
-  padding: 12px 25px;
-    margin-top: 0px;
-    font-size: 1.1em;
-    color: #fff;
-    background-color: #28a745;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-    width: 180px;
-}
-
-
-.container {
-  display: flex;
-  width: 100vw;
-  justify-content: space-between;
-  gap: 20px; /* Espacio entre secciones */
-  height: calc(100vh - 10vh); /* La altura se ajusta al viewport restando el padding */
-}
-
-/* Contenedor principal que contiene todo el contenido */
-.content-container {
-  background-color: #efefef;
-  padding: 25px;
-  border-radius: 15px;
-  max-width: 1500px;
-  margin: 40px auto;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-left: 12rem;
-  margin-top: 40px;
-  height: 95%;
-  width: 94%;
-}
-
-
-.tags-section {
-  flex: 1;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-  overflow-y: auto; /* Scroll solo en el eje vertical */
-  height: 85%;
-}
-
-#ServicioMasPedido{
-  font-size: 1.3rem !important;
-}
-
-#promoActiva{
-  font-size: 1.3rem !important;
-}
-
-.section-mensajes {
-  display: grid;
-  grid-template-columns: 55% 1fr;
-  gap: 50px;
-  justify-items: center;
-  margin-top: 2rem;
-}
-
-.whatsapp-sidebar-header {
-  display: grid;
-  align-items: center;
-  padding: 10px;
-  background-color: #ededed;
-  border-bottom: 1px solid #ddd;
-  margin-top: -10%;
-}
-
-.client-item {
-  display: flex;
-  align-items: center;
-  padding: 5px;
-  border-bottom: 1px solid #ddd;
-  cursor: pointer;
-  height: 50px;
-}
-
-.whatsapp-simulator-box {
-  display: flex;
-  height: 29rem;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
-  width: 100%;
-  padding-bottom: 1rem;
-}
-
-
-.right-mess-colum {
-  width: 450px;
-  height: 51rem;
-  margin-top: -4%;
-}
-
-.client-number {
-  font-size: 12px;
-  color: #666;
-}
-
-.whatsapp-sidebar {
-  padding: 10px;
-  width: 35%;
-  background-color: #ededed;
-  display: flex;
-  flex-direction: column;
-  border-right: 1px solid #ddd;
-  margin-bottom: -5%;
-}
-
-.client-name {
-  font-size: 13px;
-  font-weight: bold;
-  color: #333;
-}
-
-.whatsapp-sidebar {
-  padding: 10px;
-  width: 35%;
-  background-color: #ededed;
-  display: flex;
-  flex-direction: column;
-  border-right: 1px solid #ddd;
-}
-
-.whatsapp-simulator-box {
-  display: flex;
-  height: 70vh;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
-  width: 100%;
-}
-
-
-.profile-column {
-  justify-items: center;
-  background-color: white;
-  padding: 20px;
-  border-radius: 20px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-  width: 32%;
-  display: grid;
-  height: 29rem;
-}
-
-
-h2 {
-  text-align: center;
-  margin-bottom: 20px;
-  color: #4a4a4a;
-  font-size: 25px;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 800;
-}
-
-.grid-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); /* Se ajustan las columnas dinámicamente */
-  gap: 10px;
-}
-
-.grid-item {
-  border-radius: 10px;
-  background-color: #54a834;
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 80px;
-  cursor: pointer;
-  box-shadow: 4px 5px 5px rgb(0 0 0 / 42%);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  font-size: 30px;
-}
-
-.grid-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-#ordered-tags .grid-item {
-  background-color: #6d01ae;
-}
-
-#pending-tags .grid-item {
-  background-color: #ff914d;
-}
-
-.pop-in {
-  animation: popIn 0.5s ease-out;
-}
-
-
-.confirmation-box {
-  position: absolute;
-  top: 15px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90px;
-  background-color: white;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
-  display: flex;
-  justify-content: space-around;
-  padding: 5px;
-  z-index: 10;
-  height: 50px;
-}
-
-.confirmation-box button {
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 5px;
-  margin: 0 2px;
-  border-radius: 5px;
-  cursor: pointer;
-  width: 35px;
-  font-size: 20px;
-}
-
-.confirmation-box button.no {
-  background-color: #f44336;
-  color: white;
-  border: none;
-  padding: 5px;
-  margin: 0 2px;
-  border-radius: 5px;
-  cursor: pointer;
-  width: 35px;
-  font-size: 20px;
-}
-
-#btnEliminar {
-  background-color: #ff4d4d; /* Color rojo */
-  color: white;
-  border: none;
-  padding: 10px;
-  margin-top: 40px;
-  width: 60%;
-  cursor: pointer;
-  font-weight: bold;
-  border-radius: 5px;
-}
-
-#btnEliminar:hover {
-  background-color: #e60000; /* Color rojo oscuro al pasar el cursor */
-}
-
+/* ===== NOTIFICATIONS (fixed, no layout shift) ===== */
 #notification-container {
   position: fixed;
   top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 10000000;
+  z-index: 99999;
   display: flex;
   flex-direction: column;
-  gap: 10px;
   align-items: center;
+  pointer-events: none;
 }
 
 .notification {
+  pointer-events: auto;
   background-color: #e0f8e9;
   color: #2d6a4f;
   border: 1px solid #95d5b2;
-  border-radius: 5px;
-  padding: 15px 20px;
-  min-width: 250px;
-  max-width: 600px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 10px 20px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  /* animation: fadeIn 0.4s ease, fadeOut 0.4s ease 2.5s forwards; */
-  font-family: Arial, sans-serif;
+  gap: 8px;
 }
 
 .notification.error {
@@ -376,96 +36,504 @@ h2 {
   cursor: pointer;
   font-weight: bold;
   margin-left: 10px;
-  color: inherit;
 }
 
-.menu-container{
+/* ===== MODAL ===== */
+
+.modal-overlay {
   display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(2px);
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
+.modal-overlay.modal-visible {
+  display: flex;
+  animation: modalFadeIn 0.22s ease both;
 }
 
-@keyframes fadeOut {
+.modal-overlay.modal-visible .modal-card {
+  animation: modalSlideIn 0.25s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+.modal-overlay.modal-closing {
+  display: flex;
+  animation: modalFadeOut 0.2s ease both;
+}
+
+.modal-overlay.modal-closing .modal-card {
+  animation: modalSlideOut 0.2s ease both;
+}
+
+.modal-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px 24px 28px;
+  width: 92%;
+  max-width: 440px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.18);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.modal-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.modal-card .modal-close {
+  all: unset;
+  cursor: pointer;
+  color: #aaa;
+  font-size: 20px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: auto;
+  height: auto;
+  padding: 0;
+  background: none;
+  border-radius: 0;
+  transition: color 0.15s;
+}
+
+.modal-card .modal-close:hover {
+  color: #333;
+  opacity: 1;
+  transform: none;
+  background-color: transparent;
+  background: none;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes modalFadeOut {
   from { opacity: 1; }
-  to { opacity: 0; }
+  to   { opacity: 0; }
+}
+@keyframes modalSlideIn {
+  from { opacity: 0; transform: scale(0.92) translateY(16px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes modalSlideOut {
+  from { opacity: 1; transform: scale(1) translateY(0); }
+  to   { opacity: 0; transform: scale(0.92) translateY(16px); }
 }
 
+
+/* ===== LAVADERO — Desktop ===== */
+
+#section-lavaderos .table-section {
+  margin-top: 0;
+  min-height: calc(100vh - var(--topbar-height) - 120px);
+}
+
+#section-lavaderos .table-container {
+  max-height: calc(100vh - var(--topbar-height) - 180px);
+  overflow-y: auto;
+}
+
+/* Botón generar QR */
+#btnGenerarQRlavado {
+  padding: 10px 20px;
+  color: #fff;
+  background-color: var(--primary);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: opacity 0.2s;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Fira Sans', sans-serif;
+}
+
+#btnGenerarQRlavado:hover { opacity: 0.85; }
+
+/* Botón enviar aviso */
+#btnAvisoLavado3 {
+  padding: 10px 20px;
+  color: #fff;
+  background-color: #25D366;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: opacity 0.2s;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Fira Sans', sans-serif;
+}
+
+#btnAvisoLavado3:hover { opacity: 0.85; }
+
+/* QR overlay flotante */
+.qr-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.qr-overlay .qr-container {
+  background: #fff;
+  padding: 24px;
+  border-radius: var(--radius-lg);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.qr-overlay .close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: var(--text-muted);
+}
+
+/* Modal detalle lavado */
+.modal-detalle-lavado {
+  max-width: 480px;
+  width: 90vw;
+}
+
+.modal-detalle-body {
+  padding: 20px 24px 24px;
+}
+
+.detalle-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.detalle-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detalle-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.detalle-value {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.detalle-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-action {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.15s;
+  color: #fff;
+  flex: 1;
+  justify-content: center;
+}
+
+.btn-action:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+.btn-qr { background: var(--primary); }
+.btn-notify { background: #25D366; }
+.btn-survey { background: var(--accent); }
+
+/* Tags grid */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 10px;
+}
+
+.grid-item {
+  border-radius: 10px;
+  background-color: #54a834;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80px;
+  cursor: pointer;
+  box-shadow: 4px 5px 5px rgba(0,0,0,0.42);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  font-size: 30px;
+}
+
+.grid-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 5px 5px 15px rgba(0,0,0,0.2);
+}
+
+#ordered-tags .grid-item  { background-color: var(--primary-dark); }
+#pending-tags .grid-item  { background-color: #ff914d; }
+
+/* Confirmation popup */
+.confirmation-box {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+  display: flex;
+  justify-content: space-around;
+  padding: 5px;
+  z-index: 10;
+  height: 50px;
+}
+
+.confirmation-box button       { background-color: #4caf50; color: white; border: none; padding: 5px; margin: 0 2px; border-radius: 5px; cursor: pointer; width: 35px; font-size: 20px; }
+.confirmation-box button.no    { background-color: #f44336; }
+
+/* Mobile bottom nav — hidden on desktop */
+.menu-container { display: none; }
+
+/* Animations */
+.pop-in { animation: popIn 0.5s ease-out; }
 
 @keyframes popIn {
-  0% {
-    transform: scale(0.5);
-    opacity: 0;
+  0%   { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1);   opacity: 1; }
+}
+
+
+/* ===================================================
+   RESPONSIVE — Mobile (≤768px)
+   =================================================== */
+@media (max-width: 768px) {
+
+  /* ── Lavadero mobile ── */
+  #section-lavaderos {
+    height: auto;
   }
-  100% {
-    transform: scale(1);
-    opacity: 1;
+  #section-lavaderos.active {
+    display: block;
+  }
+  #section-lavaderos .table-section {
+    flex: none;
+  }
+  #section-lavaderos .table-container {
+    max-height: 65vh;
+    flex: none;
+  }
+
+  /* Hide Modelo(2), Lavado(4), Observación(5) columns */
+  #tablaLavados2 thead th:nth-child(2),
+  #tablaLavados2 thead th:nth-child(4),
+  #tablaLavados2 thead th:nth-child(5),
+  #tablaLavados2 tbody td:nth-child(2),
+  #tablaLavados2 tbody td:nth-child(4),
+  #tablaLavados2 tbody td:nth-child(5) {
+    display: none !important;
+  }
+
+  /* Show Modelo · Lavado as subtitle under Nombre */
+  #tablaLavados2 tbody tr td:nth-child(1)::after {
+    content: attr(data-modelo) " · " attr(data-lavado);
+    display: block;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+    font-style: italic;
+  }
+
+  #tablaLavados2 tbody tr td:first-child {
+    font-weight: 600;
+    font-size: 14px;
+    padding-left: 12px;
+  }
+
+  #tablaLavados2 tbody tr td:nth-child(3) {
+    font-weight: 600;
+    text-align: center;
+  }
+
+  /* Bottom action bar */
+  .menu-container {
+    display: flex;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 88%;
+    justify-content: space-evenly;
+    align-items: center;
+    background: #fff;
+    border-radius: 16px;
+    padding: 10px 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    z-index: 200;
+  }
+
+  .menu-option {
+    background: none;
+    border: none;
+    color: var(--primary);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    flex: 1;
+    text-align: center;
+    font-family: 'Fira Sans', sans-serif;
+  }
+
+  .menu-option:hover { opacity: 0.8; }
+
+  .btnsMovil {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btnAction {
+    background: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+
+  .btnAction i {
+    font-size: 22px;
+    color: var(--primary);
+  }
+
+  #btnAvisoLavado2 i { color: #25D366; }
+
+  .btnAction:hover { transform: scale(1.15); }
+
+  /* ── Dashboard ── */
+
+  /* Make dashboard fill the full viewport height */
+  #section-dashboard.active {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - var(--topbar-height) - 24px);
+  }
+
+  .cards {
+    flex: 1;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 0;
+    align-items: stretch;
+  }
+
+  .card {
+    padding: 16px 12px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 100%;
+  }
+
+  .card::after { display: none; } /* remove top accent bar on mobile */
+
+  .icon-container {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 8px;
+  }
+
+  .icon-container i { font-size: 18px; }
+
+  .card-content h3,
+  .card-content .titleCard {
+    font-size: 10px;
+    margin-bottom: 4px;
+  }
+
+  .card-number { font-size: 26px; }
+
+  /* Hide charts on small screens */
+  .charts-and-counter { display: none; }
+
+  /* ── Messages ── */
+
+  /* mensajes.css already handles 600px breakpoint */
+  /* Additional: hide right panel, show only client list */
+  .right-mess-colum { display: none; }
+
+  /* ── Profile ── */
+  #profile-section-container {
+    grid-template-columns: 1fr;
   }
 }
 
-@media (max-width: 768px) {
-  .container {
-    flex-direction: column;
-    align-items: center;
-    height: auto !important;
+
+/* ===================================================
+   RESPONSIVE — Small phone (≤480px)
+   =================================================== */
+@media (max-width: 480px) {
+
+  .card-number { font-size: 22px; }
+
+  .icon-container { width: 36px; height: 36px; }
+  .icon-container i { font-size: 15px; }
+
+  /* Lavadero table compact */
+  #tablaLavados2 tbody tr td:first-child {
+    font-size: 13px;
   }
 
-  .tags-section {
-    width: 100%;
-    margin-bottom: 20px;
+  /* QR overlay full screen */
+  .qr-overlay .qr-container {
+    width: 85vw;
+    padding: 20px;
   }
-
-  .grid-container {
-    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-  }
-
-  .grid-item {
-    height: 60px;
-  }
-
-
-
-  #notification-container {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10000000;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: center;
-  }
-  
-  .notification {
-    background-color: #e0f8e9;
-    color: #2d6a4f;
-    border: 1px solid #95d5b2;
-    border-radius: 5px;
-    padding: 15px 20px;
-    min-width: 250px;
-    max-width: 700px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    animation: fadeIn 0.4s ease, fadeOut 0.4s ease 2.5s forwards;
-    font-family: Arial, sans-serif;
-    width: 125%;
-    gap: 20px;
-  }
-  
-  .notification.error {
-    background-color: #fde2e2;
-    color: #d9534f;
-    border-color: #f5c6cb;
-  }
-
-  
-
-
-
-
 }

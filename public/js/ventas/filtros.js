@@ -6,43 +6,42 @@ let currentFiltroFecha = { tipo: "hoy", desde: null, hasta: null }; // Para Fech
 let currentFiltroMedioPago = "todos"; // Para "Medio de Pago"
 
 
-
-
-
-// Seleccionar el botón de la solapa, contenedores   de filtros y opciones
+// Seleccionar el botón de la solapa, contenedores de filtros y opciones
 const toggleFiltersButton = document.getElementById("toggle-filters");
 const filtersMovs = document.getElementById("filtersMovs");
 const filtersArqueos = document.getElementById("filtersArqueos");
+const filtersLavados = document.getElementById("filtersLavados");
 
 // Función para ocultar todos los filtros
 function hideAllFilters() {
-    filtersMovs.classList.add("hidden");
-    filtersArqueos.classList.add("hidden");
-    filtersLavados.classList.add("hidden");
+    filtersMovs?.classList.add("hidden");
+    filtersArqueos?.classList.add("hidden");
+    filtersLavados?.classList.add("hidden");
 }
 
 // Función para identificar y mostrar dinámicamente el filtro activo
 function updateActiveFilters() {
     const activeOption = document.querySelector(".option.active"); // Identificar opción activa
+    if (!toggleFiltersButton || !activeOption) return;
     const currentText = toggleFiltersButton.textContent.trim();
 
     if (currentText === "Ocultar Filtros") {
         // Mostrar dinámicamente el filtro correspondiente
         if (activeOption.id === "movimientos") {
-            filtersMovs.classList.remove("hidden");
-            filtersArqueos.classList.add("hidden");
+            filtersMovs?.classList.remove("hidden");
+            filtersArqueos?.classList.add("hidden");
             filtersLavados?.classList.add("hidden");
-            
+
         } else if (activeOption.id === "arqueo") {
-            filtersArqueos.classList.remove("hidden");
-            filtersMovs.classList.add("hidden");
+            filtersArqueos?.classList.remove("hidden");
+            filtersMovs?.classList.add("hidden");
             filtersLavados?.classList.add("hidden");
-            
+
         } else if (activeOption.id === "ventas") {
-            filtersLavados.classList.remove("hidden");
-            filtersMovs.classList.add("hidden");
-            filtersArqueos.classList.add("hidden");
-        
+            filtersLavados?.classList.remove("hidden");
+            filtersMovs?.classList.add("hidden");
+            filtersArqueos?.classList.add("hidden");
+
         }
     } else {
         hideAllFilters();
@@ -50,23 +49,23 @@ function updateActiveFilters() {
 }
 
 // Manejar el clic en el botón de la solapa
-toggleFiltersButton.addEventListener("click", () => {
+toggleFiltersButton?.addEventListener("click", () => {
     const currentText = toggleFiltersButton.textContent.trim();
-    const tableBody = document.querySelector("#table-movimientos tbody"); // Seleccionar correctamente el tbody
-    const tableArqueo = document.querySelector("#table-arqueo tbody"); // Seleccionar correctamente el tbody
-    const tableVentas = document.querySelector("#table-ventas tbody"); // Seleccionar correctamente el tbody
+    const tableBody = document.querySelector("#table-movimientos tbody");
+    const tableArqueo = document.querySelector("#table-arqueo tbody");
+    const tableVentas = document.querySelector("#table-ventas tbody");
 
     if (currentText === "Mostrar Filtros") {
         toggleFiltersButton.textContent = "Ocultar Filtros";
-        tableBody.classList.add("filters-visible"); // Agregar clase
-        tableArqueo.classList.add("filters-visible"); // Agregar clase
-        tableVentas.classList.add("filters-visible"); // Agregar clase
+        tableBody?.classList.add("filters-visible");
+        tableArqueo?.classList.add("filters-visible");
+        tableVentas?.classList.add("filters-visible");
         updateActiveFilters(); // Mostrar el filtro activo según la opción activa
     } else {
         toggleFiltersButton.textContent = "Mostrar Filtros";
-        tableBody.classList.remove("filters-visible"); // Quitar clase
-        tableArqueo.classList.remove("filters-visible"); // Agregar clase
-        tableVentas.classList.remove("filters-visible"); // Agregar clase
+        tableBody?.classList.remove("filters-visible");
+        tableArqueo?.classList.remove("filters-visible");
+        tableVentas?.classList.remove("filters-visible");
         hideAllFilters(); // Ocultar todos los filtros
     }
 });
@@ -75,50 +74,50 @@ toggleFiltersButton.addEventListener("click", () => {
 
 
 // *** Evento para manejar el cambio en el filtro Tipo de Ingreso ***
-document.getElementById("tipo-ingreso").addEventListener("change", function (event) {
+document.getElementById("tipo-ingreso")?.addEventListener("change", function (event) {
     currentFiltroIngreso = event.target.value;
-    
+
     fetchMovimientos(); // Ejecutar fetchMovimientos después de cambiar el filtro
 });
 
 // *** Evento para manejar el cambio en el filtro Estado ***
-document.getElementById("estado").addEventListener("change", function (event) {
+document.getElementById("estado")?.addEventListener("change", function (event) {
     currentFiltroEstado = event.target.value;
-    
+
     fetchMovimientos(); // Ejecutar fetchMovimientos después de cambiar el filtro
 });
 
 // *** Evento para manejar el cambio en el filtro Fecha ***
-document.getElementById("filtro-fecha").addEventListener("change", function (event) {
+document.getElementById("filtro-fecha")?.addEventListener("change", function (event) {
     const selectedValue = event.target.value;
 
     if (selectedValue === "hoy") {
         currentFiltroFecha = { tipo: "hoy", desde: null, hasta: null };
-        document.getElementById("fecha-personalizada").classList.add("hidden");
+        document.getElementById("fecha-personalizada")?.classList.add("hidden");
     } else if (selectedValue === "determinar") {
         currentFiltroFecha = { tipo: "determinar", desde: null, hasta: null };
-        document.getElementById("fecha-personalizada").classList.remove("hidden");
+        document.getElementById("fecha-personalizada")?.classList.remove("hidden");
     }
     fetchMovimientos(); // Ejecutar fetchMovimientos después de cambiar el filtro
 });
 
 // *** Eventos para los inputs de Fecha Personalizada ***
-document.getElementById("fecha-desde").addEventListener("change", function (event) {
+document.getElementById("fecha-desde")?.addEventListener("change", function (event) {
     currentFiltroFecha.desde = event.target.value;
-    
+
     fetchMovimientos(); // Ejecutar fetchMovimientos después de cambiar el filtro
 });
 
-document.getElementById("fecha-hasta").addEventListener("change", function (event) {
+document.getElementById("fecha-hasta")?.addEventListener("change", function (event) {
     currentFiltroFecha.hasta = event.target.value;
-    
+
     fetchMovimientos(); // Ejecutar fetchMovimientos después de cambiar el filtro
 });
 
 // *** Evento para manejar el cambio en el filtro Medio de Pago ***
-document.getElementById("medio-de-pago").addEventListener("change", function (event) {
+document.getElementById("medio-de-pago")?.addEventListener("change", function (event) {
     currentFiltroMedioPago = event.target.value;
-    
+
     fetchMovimientos(); // Ejecutar fetchMovimientos después de cambiar el filtro
 });
 
@@ -127,7 +126,7 @@ async function fetchMovimientos() {
     try {
         // Construir la URL base
         let url = `/api/movimientosAbiertos?cajaTipo=${cajaTipoActivo}`;
-        
+
 
         // Hacer la solicitud
         const response = await fetch(url, {
@@ -136,60 +135,58 @@ async function fetchMovimientos() {
         });
 
         const data = await response.json();
-        
+
 
         if (response.ok && data.success) {
             let movimientos = data.data;
 
             // Aplicar filtros
-            
+
             if (currentFiltroMovimiento !== "todos") {
-                
+
                 movimientos = movimientos.filter(mov => mov.medioPago === currentFiltroMovimiento);
-                
+
             }
 
             if (currentFiltroIngreso !== "todos") {
                 movimientos = movimientos.filter(mov => mov.tipo === currentFiltroIngreso);
-                
+
             }
 
             if (currentFiltroEstado === "todos") {
                 movimientos = movimientos.filter(mov =>
                     mov.estadoPago === "abonado" || mov.estadoPago === "no-abonado" || mov.estadoPago === "pendiente"
                 );
-                ;
             } else {
                 movimientos = movimientos.filter(mov => mov.estadoPago === currentFiltroEstado);
-                
+
             }
 
             if (currentFiltroMedioPago !== "todos") {
                 movimientos = movimientos.filter(mov => mov.medioPago === currentFiltroMedioPago);
-                
+
             }
 
             if (currentFiltroFecha.tipo === "hoy") {
                 const hoy = new Date().toISOString().split("T")[0];
-                movimientos = movimientos.filter(mov => mov.fecha.startsWith(hoy));
-                
+                movimientos = movimientos.filter(mov => mov.fecha && mov.fecha.startsWith(hoy));
+
             } else if (currentFiltroFecha.tipo === "determinar") {
                 const { desde, hasta } = currentFiltroFecha;
                 movimientos = movimientos.filter(mov => {
+                    if (!mov.fecha) return false;
                     const fechaMov = new Date(mov.fecha).toISOString().split("T")[0];
                     return (!desde || fechaMov >= desde) && (!hasta || fechaMov <= hasta);
                 });
-                
+
             }
 
-            
+
             // Renderizar los movimientos en la tabla
             renderMovimientosTable(movimientos);
         } else {
-            // console.error("Error al obtener movimientos:", data.message);
-            // showNotification(`Error al obtener movimientos: ${data.message}`, "error");
-            // Renderizar los movimientos en la tabla
-            renderMovimientosTable(movimientos);
+            // No data or error - render empty table
+            renderMovimientosTable([]);
         }
     } catch (error) {
         console.error("Error al realizar el fetch:", error);
@@ -226,45 +223,39 @@ let currentFiltroHoraCierre = { desde: null, hasta: null }; // Para "Hora de Cie
 
 
 // Detectar cambios en el filtro de Hora de Apertura
-document.getElementById("hora-apertura").addEventListener("change", (event) => {
+document.getElementById("hora-apertura")?.addEventListener("change", (event) => {
     currentFiltroHoraApertura.desde = event.target.value
         ? new Date(event.target.value).toISOString()
         : null;
-    
+
     fetchArqueosFilter();
 });
 
 // Detectar cambios en el filtro de Hora de Cierre
-document.getElementById("hora-cierre").addEventListener("change", (event) => {
+document.getElementById("hora-cierre")?.addEventListener("change", (event) => {
     currentFiltroHoraCierre.desde = event.target.value
         ? new Date(event.target.value).toISOString()
         : null;
-    
+
     fetchArqueosFilter();
 });
 
 // Detectar cambios en el filtro de Tipo de Arqueo
-document.getElementById("tipo-arqueo").addEventListener("change", (event) => {
+document.getElementById("tipo-arqueo")?.addEventListener("change", (event) => {
     currentFiltroTipoArqueo = event.target.value;
-    
+
     fetchArqueosFilter();
 });
 
 // Detectar cambios en el filtro de Estado
-document.getElementById("estado-arqueo").addEventListener("change", (event) => {
+document.getElementById("estado-arqueo")?.addEventListener("change", (event) => {
     currentFiltroEstadoArqueo = event.target.value;
-    
+
     fetchArqueosFilter();
 });
 
 // *** Función para obtener y filtrar arqueos según los filtros seleccionados ***
 async function fetchArqueosFilter() {
-    
-    
-    
-    
-    
-
     try {
         // Obtener todos los arqueos desde el backend
         const response = await fetch(`/api/arqueos?cajaTipo=${cajaTipoActivo}`, {
@@ -273,7 +264,7 @@ async function fetchArqueosFilter() {
         });
 
         const data = await response.json();
-        
+
 
         if (response.ok && data.success) {
             let arqueos = data.data;
@@ -281,15 +272,11 @@ async function fetchArqueosFilter() {
             // Filtrar por Tipo de Arqueo
             if (currentFiltroTipoArqueo !== "todos") {
                 arqueos = arqueos.filter((arq) => arq.tipo === currentFiltroTipoArqueo);
-                
-                renderArqueosTable(arqueos);
             }
 
             // Filtrar por Estado
             if (currentFiltroEstadoArqueo !== "todos") {
                 arqueos = arqueos.filter((arq) => arq.estado === currentFiltroEstadoArqueo);
-                
-                renderArqueosTable(arqueos);
             }
 
             // Filtrar por Hora de Apertura
@@ -299,8 +286,6 @@ async function fetchArqueosFilter() {
                     const desdeValido = aperturaArqueo >= new Date(currentFiltroHoraApertura.desde).getTime();
                     return desdeValido;
                 });
-                
-                renderArqueosTable(arqueos);
             }
 
             // Filtrar por Hora de Cierre
@@ -315,18 +300,18 @@ async function fetchArqueosFilter() {
                         : true;
                     return desdeValido && hastaValido;
                 });
-                
-                renderArqueosTable(arqueos);
             }
-            
-            // renderArqueosTable(arqueos);
+
+            // Render once after all filters applied
+            renderArqueosTable(arqueos);
         } else {
             console.error("Error al obtener arqueos:", data.message);
-            showNotification(`Error al obtener arqueos: ${data.message}`, "error");
+            // Render empty table so the user sees the table structure
+            if (typeof renderArqueosTable === 'function') renderArqueosTable([]);
         }
     } catch (error) {
-        console.error("Error al realizar el fetch:", error);
-        showNotification("Error al conectarse con el servidor.", "error");
+        console.error("Error al realizar el fetch de arqueos:", error);
+        if (typeof renderArqueosTable === 'function') renderArqueosTable([]);
     }
 }
 
@@ -338,7 +323,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (resetFiltersButton && arqueoOption) {
         resetFiltersButton.addEventListener("click", () => {
-            
+
 
             // Reiniciar valores globales de filtros
             currentFiltroTipoArqueo = "todos";
@@ -357,13 +342,11 @@ document.addEventListener("DOMContentLoaded", () => {
             if (horaApertura) horaApertura.value = ""; // Vaciar el campo de fecha de apertura
             if (horaCierre) horaCierre.value = "";   // Vaciar el campo de fecha de cierre
 
-            
+
 
             // Simular un clic en la opción "arqueo"
             arqueoOption.click(); // Esto ejecutará toda la lógica asociada al clic de "arqueo"
         });
-    } else {
-        console.error("El botón 'reset-filters-arqueos' o la opción 'arqueo' no se encontró en el DOM.");
     }
 });
 
@@ -374,7 +357,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (resetFiltersMovimientosButton) {
         resetFiltersMovimientosButton.addEventListener("click", () => {
-            
+
 
             // Reiniciar valores globales de filtros
             currentFiltroMovimiento = "abiertos";
@@ -402,17 +385,13 @@ document.addEventListener("DOMContentLoaded", () => {
             if (fechaHasta) fechaHasta.value = ""; // Vaciar el campo de fecha hasta
             if (fechaPersonalizada) fechaPersonalizada.classList.add("hidden"); // Ocultar rango personalizado
 
-            
+
 
             // Ejecutar fetchMovimientos para mostrar todos los movimientos
             fetchMovimientos();
         });
-    } else {
-        console.error("El botón 'reset-filters-movimientos' no se encontró en el DOM.");
     }
 });
-
-
 
 
 
@@ -427,52 +406,50 @@ let tbodyVentas = document.querySelector("#table-ventas tbody");
 
 
 // *** Evento para manejar el filtro de Patente (en vivo) ***
-document.getElementById("patente-lavados").addEventListener("input", function (event) {
+document.getElementById("patente-lavados")?.addEventListener("input", function (event) {
     filtroPatenteLavados = event.target.value.toLowerCase().trim();
-    console.log("Filtro Patente cambiado a:", filtroPatenteLavados);
     cargarLavadosConFiltros(); // Ejecutar al cambiar el filtro
 });
 
 // *** Evento para manejar el filtro de Empresa (en vivo) ***
-document.getElementById("empresa-lavados").addEventListener("input", function (event) {
+document.getElementById("empresa-lavados")?.addEventListener("input", function (event) {
     filtroEmpresaLavados = event.target.value.toLowerCase().trim();
-    console.log("Filtro Empresa cambiado a:", filtroEmpresaLavados);
     cargarLavadosConFiltros(); // Ejecutar al cambiar el filtro
 });
 
 // *** Evento para manejar el cambio en el filtro Estado ***
-document.getElementById("estado-lavados").addEventListener("change", function (event) {
+document.getElementById("estado-lavados")?.addEventListener("change", function (event) {
     filtroEstadoLavados = event.target.value;
-    
+
     cargarLavadosConFiltros(); // Ejecutar al cambiar el filtro
 });
 
 // *** Evento para manejar el cambio en el filtro Fecha ***
-document.getElementById("filtro-fecha-lavados").addEventListener("change", function (event) {
+document.getElementById("filtro-fecha-lavados")?.addEventListener("change", function (event) {
     const selectedValue = event.target.value;
 
     if (selectedValue === "hoy") {
         filtroFechaLavados = { tipo: "hoy", desde: null, hasta: null };
-        document.getElementById("fecha-personalizada-lavados").classList.add("hidden");
+        document.getElementById("fecha-personalizada-lavados")?.classList.add("hidden");
     } else if (selectedValue === "determinar") {
         filtroFechaLavados = { tipo: "determinar", desde: null, hasta: null };
-        document.getElementById("fecha-personalizada-lavados").classList.remove("hidden");
+        document.getElementById("fecha-personalizada-lavados")?.classList.remove("hidden");
     }
 
-    
+
     cargarLavadosConFiltros(); // Ejecutar al cambiar el filtro
 });
 
 // *** Eventos para los inputs de Fecha Personalizada ***
-document.getElementById("fecha-desde-lavados").addEventListener("change", function (event) {
+document.getElementById("fecha-desde-lavados")?.addEventListener("change", function (event) {
     filtroFechaLavados.desde = event.target.value;
-    
+
     cargarLavadosConFiltros(); // Ejecutar al cambiar el filtro
 });
 
-document.getElementById("fecha-hasta-lavados").addEventListener("change", function (event) {
+document.getElementById("fecha-hasta-lavados")?.addEventListener("change", function (event) {
     filtroFechaLavados.hasta = event.target.value;
-    
+
     cargarLavadosConFiltros(); // Ejecutar al cambiar el filtro
 });
 
@@ -509,33 +486,34 @@ async function cargarLavadosConFiltros() {
 
 // // Función para aplicar filtros a los lavados
 function aplicarFiltrosLavados(lavados) {
-    
+
 
     // Filtrar por patente
     if (filtroPatenteLavados) {
         lavados = lavados.filter((lavado) =>
             lavado.patente && lavado.patente.toLowerCase().includes(filtroPatenteLavados)
         );
-        
+
     }
 
     // Filtrar por estado
     if (filtroEstadoLavados !== "todos") {
         lavados = lavados.filter((lavado) => lavado.estado === filtroEstadoLavados);
-        
+
     }
 
     // Filtrar por fecha
     if (filtroFechaLavados.tipo === "hoy") {
-        const hoy = new Date().toISOString().split("T")[0]; // Fecha actual en formato YYYY-MM-DD
-        lavados = lavados.filter((lavado) => lavado.fechaDeAlta.startsWith(hoy));
+        const hoyStr = new Date().toISOString().split("T")[0]; // Fecha actual en formato YYYY-MM-DD
+        lavados = lavados.filter((lavado) => lavado.fechaDeAlta && lavado.fechaDeAlta.startsWith(hoyStr));
     } else if (filtroFechaLavados.tipo === "determinar") {
         const { desde, hasta } = filtroFechaLavados;
         lavados = lavados.filter((lavado) => {
+            if (!lavado.fechaDeAlta) return false;
             const fechaLavado = new Date(lavado.fechaDeAlta).toISOString().split("T")[0];
             return (!desde || fechaLavado >= desde) && (!hasta || fechaLavado <= hasta);
         });
-        
+
     }
 
     // Filtrar por empresa
@@ -552,7 +530,6 @@ function aplicarFiltrosLavados(lavados) {
 function limpiarTablaLavados() {
     const tableBody = document.querySelector("#table-ventas tbody");
     if (!tableBody) {
-        console.error("El tbody de la tabla no existe en el DOM.");
         return;
     }
     tableBody.innerHTML = ""; // Limpia la tabla
@@ -560,7 +537,6 @@ function limpiarTablaLavados() {
 
 function actualizarTabla(lavados, tbody) {
     if (!tbody) {
-        console.error("El tbody de la tabla no existe en el DOM.");
         return;
     }
 
@@ -583,7 +559,6 @@ function actualizarTabla(lavados, tbody) {
 
 function agregarFilaTabla(lavado, tbody) {
     if (!tbody) {
-        console.error("El tbody de la tabla no existe en el DOM.");
         return;
     }
     const fila = document.createElement("tr");
@@ -639,7 +614,9 @@ function agregarFilaTabla(lavado, tbody) {
             currentLavadoId = lavado._id;
 
             // Actualizar los detalles editables
-            actualizarDetallesLavado(lavado);
+            if (typeof actualizarDetallesLavado === 'function') {
+                actualizarDetallesLavado(lavado);
+            }
         });
     }
 
@@ -647,13 +624,14 @@ function agregarFilaTabla(lavado, tbody) {
 }
 
 
-actualizarTabla(ventas, tbodyVentas);
+// Initialize table (don't call with undefined variable)
+// The table will be populated by cargarLavadosConFiltros on DOMContentLoaded
 
 
 
 // //** Función para limpiar los filtros de Lavados ***
-document.getElementById("reset-filters-lavados").addEventListener("click", function () {
-    
+document.getElementById("reset-filters-lavados")?.addEventListener("click", function () {
+
 
     // Reiniciar valores globales
     filtroPatenteLavados = "";
@@ -661,20 +639,30 @@ document.getElementById("reset-filters-lavados").addEventListener("click", funct
     filtroFechaLavados = { tipo: "hoy", desde: null, hasta: null };
 
     // Reiniciar los valores visuales
-    document.getElementById("patente-lavados").value = "";
-    document.getElementById("estado-lavados").value = "todos";
-    document.getElementById("filtro-fecha-lavados").value = "hoy";
-    document.getElementById("fecha-desde-lavados").value = "";
-    document.getElementById("fecha-hasta-lavados").value = "";
-    document.getElementById("fecha-personalizada-lavados").classList.add("hidden");
-    
+    const patenteLavados = document.getElementById("patente-lavados");
+    const estadoLavados = document.getElementById("estado-lavados");
+    const filtroFechaLavadosEl = document.getElementById("filtro-fecha-lavados");
+    const fechaDesdeLavados = document.getElementById("fecha-desde-lavados");
+    const fechaHastaLavados = document.getElementById("fecha-hasta-lavados");
+    const fechaPersonalizadaLavados = document.getElementById("fecha-personalizada-lavados");
+
+    if (patenteLavados) patenteLavados.value = "";
+    if (estadoLavados) estadoLavados.value = "todos";
+    if (filtroFechaLavadosEl) filtroFechaLavadosEl.value = "hoy";
+    if (fechaDesdeLavados) fechaDesdeLavados.value = "";
+    if (fechaHastaLavados) fechaHastaLavados.value = "";
+    if (fechaPersonalizadaLavados) fechaPersonalizadaLavados.classList.add("hidden");
+
     cargarLavadosConFiltros(); // Cargar los datos nuevamente sin filtros
 });
 
 document.addEventListener("DOMContentLoaded", function () {
     // Establecer el filtro por defecto en los elementos del DOM
-    document.getElementById("filtro-fecha-lavados").value = "hoy"; // Seleccionar "hoy" en el filtro de fecha
-    document.getElementById("fecha-personalizada-lavados").classList.add("hidden"); // Ocultar las fechas personalizadas
+    const filtroFechaLavadosEl = document.getElementById("filtro-fecha-lavados");
+    const fechaPersonalizadaLavados = document.getElementById("fecha-personalizada-lavados");
+
+    if (filtroFechaLavadosEl) filtroFechaLavadosEl.value = "hoy";
+    if (fechaPersonalizadaLavados) fechaPersonalizadaLavados.classList.add("hidden");
 
     // Cargar la tabla con el filtro inicial (fecha: hoy)
     cargarLavadosConFiltros();
