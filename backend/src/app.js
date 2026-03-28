@@ -5,6 +5,8 @@ import { Server as SocketServer } from 'socket.io';
 import { rateLimit } from 'express-rate-limit';
 import cookieParser from 'cookie-parser';
 import { verifyTokenMiddleware } from './middleware/verifyToken.js';
+import { verifyToken } from './utils/jwt.js';
+import cookie from 'cookie';
 
 // Route imports
 import authRoutes from './routes/auth.routes.js';
@@ -60,17 +62,27 @@ app.use('/api', cajaRoutes);
 app.use('/api', reservasRoutes);
 app.use('/api', mensajesRoutes);
 
-// Socket.IO
+// Socket.IO auth middleware
+io.use((socket, next) => {
+  try {
+    const cookies = cookie.parse(socket.handshake.headers.cookie || '');
+    const token = cookies.token;
+    if (!token) return next(new Error('No auth token'));
+    const decoded = verifyToken(token);
+    socket.user = decoded;
+    next();
+  } catch (err) {
+    next(new Error('Invalid token'));
+  }
+});
+
+// Socket.IO connection
 io.on('connection', (socket) => {
-  console.log('Nuevo cliente conectado');
+  const { adminId } = socket.user;
+  socket.join(adminId);
 
   socket.on('tagSelected', (tagNumber) => {
-    console.log(`Tag seleccionado: ${tagNumber}`);
-    io.emit('updateQRCode', tagNumber);
-  });
-
-  socket.on('disconnect', () => {
-    console.log('Cliente desconectado');
+    io.to(adminId).emit('updateQRCode', tagNumber);
   });
 });
 
@@ -80,5 +92,5 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).json({ success: false, message: err.message || 'Error interno del servidor' });
 });
 
-export { httpServer };
+export { httpServer, io };
 export default app;

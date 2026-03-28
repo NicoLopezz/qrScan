@@ -1,6 +1,7 @@
 "use client";
 
-import { Menu, Clock } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Menu, Clock, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/providers/AuthProvider";
 
@@ -12,10 +13,25 @@ interface TopbarProps {
 
 export function Topbar({ title, sidebarCollapsed, onMobileMenuToggle }: TopbarProps) {
   const { user } = useAuth();
+  const [dark, setDark] = useState(true);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("theme");
+    const isDark = saved ? saved === "dark" : true;
+    setDark(isDark);
+    document.documentElement.classList.toggle("dark", isDark);
+  }, []);
+
+  const toggleTheme = () => {
+    const next = !dark;
+    setDark(next);
+    document.documentElement.classList.toggle("dark", next);
+    localStorage.setItem("theme", next ? "dark" : "light");
+  };
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-30 flex h-14 items-center justify-between border-b border-white/50 bg-white/60 backdrop-blur-xl px-3 md:left-[var(--sidebar-width,0px)] md:h-14 md:px-6 transition-all duration-300"
+      className="fixed top-0 left-0 right-0 z-30 flex h-14 items-center justify-between border-b border-border/50 bg-white/60 dark:bg-card/60 backdrop-blur-xl px-3 md:left-[var(--sidebar-width,0px)] md:h-14 md:px-6 transition-all duration-300"
     >
       <div className="flex items-center gap-2">
         <Button
@@ -33,12 +49,22 @@ export function Topbar({ title, sidebarCollapsed, onMobileMenuToggle }: TopbarPr
           {user.localName}
         </p>
       )}
-      <div className="flex items-center gap-3">
-        <div className="hidden md:flex items-center gap-1.5 rounded-lg bg-amber-50 px-2.5 py-1 text-amber-700 border border-amber-200/60">
+      <div className="flex items-center gap-2">
+        <button
+          onClick={toggleTheme}
+          className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-muted transition-colors cursor-pointer"
+          title={dark ? "Modo claro" : "Modo oscuro"}
+        >
+          {dark
+            ? <Sun className="h-4 w-4 text-amber-400 transition-transform duration-300" />
+            : <Moon className="h-4 w-4 text-brand-purple transition-transform duration-300" />
+          }
+        </button>
+        <div className="hidden md:flex items-center gap-1.5 rounded-lg bg-amber-50 dark:bg-amber-950/30 px-2.5 py-1 text-amber-700 dark:text-amber-400 border border-amber-200/60 dark:border-amber-800/30">
           <Clock className="h-3 w-3" />
           <span className="text-[11px] font-medium">Trial — 14 dias restantes</span>
         </div>
-        <div className="flex md:hidden items-center gap-1 rounded-md bg-amber-50 px-2 py-0.5 text-amber-700">
+        <div className="flex md:hidden items-center gap-1 rounded-md bg-amber-50 dark:bg-amber-950/30 px-2 py-0.5 text-amber-700 dark:text-amber-400">
           <Clock className="h-3 w-3" />
           <span className="text-[10px] font-medium">14d</span>
         </div>

@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function DashboardPage() {
   const { user } = useAuth();
-  const { data: lavados, isLoading: lavadosLoading } = useLavados(user?.adminId);
+  const { data: lavados, isLoading: lavadosLoading } = useLavados();
 
   const today = new Date().toDateString();
   const lavadosHoy = lavados?.filter(
@@ -70,7 +70,7 @@ export default function DashboardPage() {
       {/* Mobile: status summary + CTA */}
       <div className="md:hidden space-y-3">
         {(pendientes.length > 0 || listos.length > 0 || enProceso.length > 0) ? (
-          <div className="card-elevated rounded-2xl bg-white p-4 space-y-3">
+          <div className="card-elevated rounded-2xl bg-white dark:bg-card p-4 space-y-3">
             <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Estado actual
             </p>
@@ -118,7 +118,7 @@ export default function DashboardPage() {
           </div>
         ) : (
           <Link href="/lavados">
-            <div className="card-elevated rounded-2xl bg-white p-8 text-center cursor-pointer">
+            <div className="card-elevated rounded-2xl bg-white dark:bg-card p-8 text-center cursor-pointer">
               <Droplets className="h-8 w-8 mx-auto text-muted-foreground/20 mb-3" />
               <p className="text-sm text-muted-foreground mb-4">Sin lavados pendientes</p>
               <span className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-purple">
@@ -130,7 +130,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Desktop: data table */}
-      <div className="hidden md:block card-elevated rounded-2xl bg-white">
+      <div className="hidden md:block card-elevated rounded-2xl bg-white dark:bg-card">
         <div className="flex items-center justify-between px-6 pt-5 pb-3">
           <div>
             <h3 className="text-sm font-semibold">Ultimos lavados</h3>

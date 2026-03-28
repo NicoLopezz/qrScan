@@ -17,7 +17,7 @@ const turnoSchema = new mongoose.Schema({
   apertura:     { type: Date, default: Date.now },
   cierre:       { type: Date, default: null },
   arqueo:       { type: arqueoSchema, default: () => ({}) },
-});
+}, { timestamps: true });
 
 turnoSchema.index({ cajaId: 1, estado: 1 });
 turnoSchema.index({ adminId: 1, estado: 1 });

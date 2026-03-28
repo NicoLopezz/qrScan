@@ -69,7 +69,7 @@ export default function TurnoApertura({ caja, onTurnoAbierto }: TurnoAperturaPro
           {caja.mediosPagoHabilitados.map((m) => (
             <div
               key={m}
-              className="card-elevated rounded-2xl bg-white p-4 flex items-center gap-4"
+              className="card-elevated rounded-2xl bg-white dark:bg-card p-4 flex items-center gap-4"
             >
               <div className="flex items-center justify-center h-10 w-10 rounded-xl bg-muted/50">
                 {MEDIO_ICONS[m]}

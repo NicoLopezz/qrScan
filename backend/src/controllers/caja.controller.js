@@ -5,6 +5,7 @@ import Fondo from '../models/Fondo.js';
 import VentaPOS from '../models/VentaPOS.js';
 import PagoPOS from '../models/PagoPOS.js';
 import { ok, created, fail } from '../utils/apiResponse.js';
+import { getVentasConPagos } from '../utils/queryHelpers.js';
 
 // ─── Helpers ───────────────────────────────────────────────
 
@@ -54,7 +55,7 @@ async function calcularBalances(turnoId) {
 
 async function crearCaja(req, res) {
   try {
-    const adminId = req.cookies.adminId;
+    const adminId = req.user.adminId;
     const { nombre, mediosPagoHabilitados } = req.body;
 
     const existe = await Caja.findOne({ adminId, nombre, activa: true });
@@ -75,7 +76,7 @@ async function crearCaja(req, res) {
 
 async function getCajas(req, res) {
   try {
-    const adminId = req.cookies.adminId;
+    const adminId = req.user.adminId;
     const cajas = await Caja.find({ adminId, activa: true }).sort({ nombre: 1 });
     return ok(res, cajas);
   } catch (err) {
@@ -85,7 +86,7 @@ async function getCajas(req, res) {
 
 async function actualizarCaja(req, res) {
   try {
-    const adminId = req.cookies.adminId;
+    const adminId = req.user.adminId;
     const { cajaId } = req.params;
     const { nombre, mediosPagoHabilitados } = req.body;
 
@@ -105,7 +106,7 @@ async function actualizarCaja(req, res) {
 
 async function eliminarCaja(req, res) {
   try {
-    const adminId = req.cookies.adminId;
+    const adminId = req.user.adminId;
     const { cajaId } = req.params;
 
     const caja = await Caja.findOne({ _id: cajaId, adminId, activa: true });
@@ -126,7 +127,7 @@ async function eliminarCaja(req, res) {
 
 async function abrirTurno(req, res) {
   try {
-    const adminId = req.cookies.adminId;
+    const adminId = req.user.adminId;
     const { cajaId, fondos } = req.body;
 
     const caja = await Caja.findOne({ _id: cajaId, adminId, activa: true });
@@ -157,7 +158,7 @@ async function abrirTurno(req, res) {
 
 async function getTurnoActivo(req, res) {
   try {
-    const adminId = req.cookies.adminId;
+    const adminId = req.user.adminId;
     const { cajaId } = req.query;
 
     if (!cajaId) return fail(res, 400, 'Se requiere cajaId.');
@@ -183,8 +184,8 @@ async function getTurnoActivo(req, res) {
 
 async function getTurnos(req, res) {
   try {
-    const adminId = req.cookies.adminId;
-    const { cajaId, estado, desde, hasta } = req.query;
+    const adminId = req.user.adminId;
+    const { cajaId, estado, desde, hasta, page, limit } = req.query;
 
     const filtro = { adminId };
     if (cajaId) filtro.cajaId = cajaId;
@@ -195,8 +196,15 @@ async function getTurnos(req, res) {
       if (hasta) filtro.apertura.$lte = new Date(hasta);
     }
 
-    const turnos = await Turno.find(filtro).sort({ apertura: -1 });
-    return ok(res, turnos);
+    const pageNum = Math.max(1, parseInt(page) || 1);
+    const limitNum = Math.min(200, Math.max(1, parseInt(limit) || 50));
+
+    const [turnos, total] = await Promise.all([
+      Turno.find(filtro).sort({ apertura: -1 }).skip((pageNum - 1) * limitNum).limit(limitNum),
+      Turno.countDocuments(filtro),
+    ]);
+
+    return ok(res, { data: turnos, total, page: pageNum, limit: limitNum });
   } catch (err) {
     return fail(res, 500, err.message);
   }
@@ -204,7 +212,7 @@ async function getTurnos(req, res) {
 
 async function cerrarTurno(req, res) {
   try {
-    const adminId = req.cookies.adminId;
+    const adminId = req.user.adminId;
     const { turnoId } = req.params;
     const { conteoReal, observacion } = req.body;
 
@@ -255,7 +263,7 @@ async function cerrarTurno(req, res) {
 
 async function crearVenta(req, res) {
   try {
-    const adminId = req.cookies.adminId;
+    const adminId = req.user.adminId;
     const { turnoId, monto, descripcion, pagos, tipo = 'ingreso' } = req.body;
 
     const montoAbs = Math.abs(monto);
@@ -303,16 +311,9 @@ async function getVentas(req, res) {
     const { turnoId } = req.query;
     if (!turnoId) return fail(res, 400, 'Se requiere turnoId.');
 
-    const ventas = await VentaPOS.find({ turnoId }).sort({ fecha: -1 });
+    const ventas = await getVentasConPagos(turnoId);
 
-    const ventasConPagos = await Promise.all(
-      ventas.map(async (v) => {
-        const pagos = await PagoPOS.find({ ventaId: v._id });
-        return { ...v.toObject(), pagos };
-      })
-    );
-
-    return ok(res, ventasConPagos);
+    return ok(res, ventas);
   } catch (err) {
     return fail(res, 500, err.message);
   }
@@ -377,7 +378,7 @@ async function anularVenta(req, res) {
 
 async function getTurnoDetalle(req, res) {
   try {
-    const adminId = req.cookies.adminId;
+    const adminId = req.user.adminId;
     const { turnoId } = req.params;
 
     const turno = await Turno.findOne({ _id: turnoId, adminId });
@@ -386,13 +387,7 @@ async function getTurnoDetalle(req, res) {
     const caja = await Caja.findById(turno.cajaId);
     const fondos = await Fondo.find({ turnoId });
 
-    const ventas = await VentaPOS.find({ turnoId }).sort({ fecha: -1 });
-    const ventasConPagos = await Promise.all(
-      ventas.map(async (v) => {
-        const pagos = await PagoPOS.find({ ventaId: v._id });
-        return { ...v.toObject(), pagos };
-      })
-    );
+    const ventasConPagos = await getVentasConPagos(turnoId);
 
     const { balances, ventasPorMedio } = await calcularBalances(turnoId);
 
@@ -421,7 +416,7 @@ async function getTurnoDetalle(req, res) {
 
 async function getResumenTurnos(req, res) {
   try {
-    const adminId = req.cookies.adminId;
+    const adminId = req.user.adminId;
     const { desde, hasta } = req.query;
 
     // Default: current week (Monday to now)
@@ -439,28 +434,24 @@ async function getResumenTurnos(req, res) {
       apertura: { $gte: fechaDesde, $lte: fechaHasta },
     });
 
+    // Single aggregation for all turnos instead of N+1
+    const turnoIds = turnos.map(t => t._id);
+    const ventasAgg = await VentaPOS.aggregate([
+      { $match: { turnoId: { $in: turnoIds } } },
+      { $group: { _id: '$tipo', total: { $sum: '$monto' } } },
+    ]);
+
     let totalIngresos = 0;
     let totalEgresos = 0;
+    for (const r of ventasAgg) {
+      if (r._id === 'ingreso') totalIngresos = r.total;
+      if (r._id === 'egreso') totalEgresos = r.total;
+    }
+
+    // Sum arqueo differences from turnos (already in memory)
     let totalDiferencia = 0;
     let peorDiferencia = 0;
-
     for (const t of turnos) {
-      // Sum ventas for this turno
-      const ventasAgg = await VentaPOS.aggregate([
-        { $match: { turnoId: t._id } },
-        {
-          $group: {
-            _id: '$tipo',
-            total: { $sum: '$monto' },
-          },
-        },
-      ]);
-      for (const r of ventasAgg) {
-        if (r._id === 'ingreso') totalIngresos += r.total;
-        if (r._id === 'egreso') totalEgresos += r.total;
-      }
-
-      // Sum arqueo differences
       if (t.arqueo && t.arqueo.diferencia) {
         const difs = t.arqueo.diferencia instanceof Map
           ? Array.from(t.arqueo.diferencia.values())

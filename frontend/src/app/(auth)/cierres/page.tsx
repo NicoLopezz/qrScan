@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
   Banknote,
   Smartphone,
@@ -14,6 +15,9 @@ import {
   ChevronRight,
   Clock,
   User,
+  Search,
+  X,
+  Car,
 } from "lucide-react";
 import {
   useTurnos,
@@ -21,9 +25,10 @@ import {
   useResumenTurnos,
   useCajas,
 } from "@/hooks/useCaja";
+import { fetchApi } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { Turno, VentaPOS, MedioPago } from "@/types";
+import type { Turno, VentaPOS, Lavado, MedioPago } from "@/types";
 
 const MEDIO_ICONS: Record<string, React.ReactNode> = {
   efectivo: <Banknote className="h-4 w-4" />,
@@ -77,11 +82,21 @@ export default function CierresPage() {
     "cerrado"
   );
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const { data: searchResults, isLoading: searchLoading } = useQuery({
+    queryKey: ["buscarLavados", searchQuery],
+    queryFn: () => fetchApi<Lavado[]>(`/api/lavados/buscar?q=${encodeURIComponent(searchQuery)}`),
+    select: (res) => res.data,
+    enabled: searchQuery.length >= 2,
+  });
 
   const cajaNombres: Record<string, string> = {};
   cajas?.forEach((c) => {
     cajaNombres[c._id] = c.nombre;
   });
+
+  const isSearching = searchQuery.length >= 2;
 
   return (
     <div className="space-y-4">
@@ -94,7 +109,7 @@ export default function CierresPage() {
         </div>
       ) : resumen ? (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="card-elevated rounded-2xl bg-white p-3.5">
+          <div className="card-elevated rounded-2xl bg-white dark:bg-card p-3.5">
             <div className="flex items-center gap-2 mb-1">
               <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-purple-muted text-brand-purple">
                 <ClipboardCheck className="h-4 w-4" />
@@ -108,7 +123,7 @@ export default function CierresPage() {
             </p>
             <p className="text-[10px] text-muted-foreground">esta semana</p>
           </div>
-          <div className="card-elevated rounded-2xl bg-white p-3.5">
+          <div className="card-elevated rounded-2xl bg-white dark:bg-card p-3.5">
             <div className="flex items-center gap-2 mb-1">
               <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
                 <TrendingUp className="h-4 w-4" />
@@ -122,7 +137,7 @@ export default function CierresPage() {
             </p>
             <p className="text-[10px] text-muted-foreground">esta semana</p>
           </div>
-          <div className="card-elevated rounded-2xl bg-white p-3.5">
+          <div className="card-elevated rounded-2xl bg-white dark:bg-card p-3.5">
             <div className="flex items-center gap-2 mb-1">
               <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-50 text-red-500">
                 <TrendingDown className="h-4 w-4" />
@@ -136,7 +151,7 @@ export default function CierresPage() {
             </p>
             <p className="text-[10px] text-muted-foreground">esta semana</p>
           </div>
-          <div className="card-elevated rounded-2xl bg-white p-3.5">
+          <div className="card-elevated rounded-2xl bg-white dark:bg-card p-3.5">
             <div className="flex items-center gap-2 mb-1">
               <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
                 <AlertTriangle className="h-4 w-4" />
@@ -164,37 +179,132 @@ export default function CierresPage() {
         </div>
       ) : null}
 
-      {/* Filter bar */}
-      <div className="flex items-center gap-2">
-        <button
-          onClick={() => setFiltroCaja(null)}
-          className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
-            filtroCaja === null
-              ? "bg-brand-purple-muted text-brand-purple"
-              : "text-muted-foreground hover:bg-muted"
-          }`}
-        >
-          Todas
-        </button>
-        {cajas?.map((c) => (
+      {/* Search results */}
+      {isSearching ? (
+        <div className="card-static rounded-2xl bg-white dark:bg-card overflow-hidden animate-fade-in">
+          <div className="px-4 pt-4 pb-2 flex items-center justify-between">
+            <h3 className="text-sm font-semibold">Historial de lavados</h3>
+            <span className="text-xs text-muted-foreground tabular-nums">{searchResults?.length ?? 0} registros</span>
+          </div>
+          {searchLoading ? (
+            <div className="p-4 space-y-2">
+              {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-10 rounded-lg" />)}
+            </div>
+          ) : searchResults && searchResults.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b text-left">
+                    <th className="px-4 py-3 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Fecha</th>
+                    <th className="px-4 py-3 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Cliente</th>
+                    <th className="px-4 py-3 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Vehiculo</th>
+                    <th className="px-4 py-3 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Patente</th>
+                    <th className="px-4 py-3 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Tipo</th>
+                    <th className="px-4 py-3 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Estado</th>
+                    <th className="px-4 py-3 text-[10px] font-medium uppercase tracking-wider text-muted-foreground text-right">Monto</th>
+                    <th className="px-4 py-3 text-[10px] font-medium uppercase tracking-wider text-muted-foreground text-right">Calidad</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {searchResults.map((l) => {
+                    const estadoStyle: Record<string, string> = {
+                      Pendiente: "bg-amber-50 text-amber-700",
+                      "En Proceso": "bg-blue-50 text-blue-700",
+                      Completado: "bg-emerald-50 text-emerald-700",
+                      Retirado: "bg-muted text-muted-foreground",
+                    };
+                    return (
+                      <tr key={l._id} className="border-b border-border/30 last:border-0 hover:bg-muted/30 transition-colors">
+                        <td className="px-4 py-2.5 text-xs text-muted-foreground tabular-nums whitespace-nowrap">
+                          {new Date(l.fechaDeAlta).toLocaleDateString("es-AR", { day: "2-digit", month: "short", year: "numeric" })}
+                        </td>
+                        <td className="px-4 py-2.5 font-medium text-sm">{l.nombre}</td>
+                        <td className="px-4 py-2.5 text-muted-foreground flex items-center gap-1.5">
+                          <Car className="h-3 w-3" /> {l.modelo}
+                        </td>
+                        <td className="px-4 py-2.5 font-mono text-xs tracking-wide">{l.patente}</td>
+                        <td className="px-4 py-2.5">
+                          <Badge variant="secondary" className="border-0 text-xs font-medium">{l.tipoDeLavado}</Badge>
+                        </td>
+                        <td className="px-4 py-2.5">
+                          <Badge variant="secondary" className={`border-0 text-xs font-medium ${estadoStyle[l.estado] || ""}`}>{l.estado}</Badge>
+                        </td>
+                        <td className="px-4 py-2.5 text-right font-medium tabular-nums text-brand-success">
+                          {l.monto ? `$${l.monto.toLocaleString("es-AR")}` : <span className="text-muted-foreground/30">--</span>}
+                        </td>
+                        <td className="px-4 py-2.5 text-right text-amber-500">
+                          {l.puntuacionCalidad ? "★".repeat(l.puntuacionCalidad) : <span className="text-muted-foreground/30">--</span>}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="px-4 py-12 text-center">
+              <Car className="h-8 w-8 mx-auto text-muted-foreground/20 mb-3" />
+              <p className="text-sm text-muted-foreground">Sin resultados para "{searchQuery}"</p>
+            </div>
+          )}
+        </div>
+      ) : (<>
+
+      {/* Filter bar + search */}
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
           <button
-            key={c._id}
-            onClick={() =>
-              setFiltroCaja(filtroCaja === c._id ? null : c._id)
-            }
+            onClick={() => setFiltroCaja(null)}
             className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
-              filtroCaja === c._id
+              filtroCaja === null
                 ? "bg-brand-purple-muted text-brand-purple"
                 : "text-muted-foreground hover:bg-muted"
             }`}
           >
-            {c.nombre}
+            Todas
           </button>
-        ))}
+          {cajas?.map((c) => (
+            <button
+              key={c._id}
+              onClick={() =>
+                setFiltroCaja(filtroCaja === c._id ? null : c._id)
+              }
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+                filtroCaja === c._id
+                  ? "bg-brand-purple-muted text-brand-purple"
+                  : "text-muted-foreground hover:bg-muted"
+              }`}
+            >
+              {c.nombre}
+            </button>
+          ))}
+        </div>
+        <div className="flex items-center gap-2">
+          {isSearching && (
+            <span className="text-xs text-muted-foreground tabular-nums">
+              {searchLoading ? "Buscando..." : `${searchResults?.length ?? 0} resultados`}
+            </span>
+          )}
+          <div className="relative">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="Buscar patente..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="h-8 w-48 rounded-lg border border-border bg-transparent pl-8 pr-8 text-sm outline-none focus:border-ring focus:ring-2 focus:ring-ring/50 focus:w-64 transition-all placeholder:text-muted-foreground"
+            />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 cursor-pointer">
+                <X className="h-3.5 w-3.5 text-muted-foreground hover:text-foreground" />
+              </button>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Turnos table */}
-      <div className="card-static rounded-2xl bg-white overflow-hidden">
+      <div className="card-static rounded-2xl bg-white dark:bg-card overflow-hidden">
         <div className="px-4 pt-4 pb-2 flex items-center justify-between">
           <h3 className="text-sm font-semibold">Historial de cierres</h3>
           <span className="text-xs text-muted-foreground tabular-nums">
@@ -288,6 +398,7 @@ export default function CierresPage() {
           </div>
         )}
       </div>
+      </>)}
     </div>
   );
 }
@@ -324,7 +435,7 @@ function TurnoExpandido({ turnoId }: { turnoId: string }) {
           {bolsillos.map((b) => (
             <div
               key={b.medioPago}
-              className="rounded-xl bg-white p-3 border border-border/30"
+              className="rounded-xl bg-white dark:bg-card p-3 border border-border/30"
             >
               <div className="flex items-center gap-2 mb-1">
                 <div
@@ -345,7 +456,7 @@ function TurnoExpandido({ turnoId }: { turnoId: string }) {
               </p>
             </div>
           ))}
-          <div className="rounded-xl bg-white p-3 border border-border/30">
+          <div className="rounded-xl bg-white dark:bg-card p-3 border border-border/30">
             <div className="flex items-center gap-2 mb-1">
               <div className="flex h-6 w-6 items-center justify-center rounded-md bg-brand-purple-muted text-brand-purple">
                 <DollarSign className="h-3.5 w-3.5" />
@@ -372,7 +483,7 @@ function TurnoExpandido({ turnoId }: { turnoId: string }) {
             <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground mb-2">
               Arqueo
             </p>
-            <div className="rounded-xl bg-white border border-border/30 overflow-hidden">
+            <div className="rounded-xl bg-white dark:bg-card border border-border/30 overflow-hidden">
               <div className="grid grid-cols-4 gap-2 px-3 py-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground border-b border-border/30">
                 <span>Medio</span>
                 <span className="text-right">Sistema</span>
@@ -433,7 +544,7 @@ function TurnoExpandido({ turnoId }: { turnoId: string }) {
           <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground mb-2">
             Movimientos ({ventas.length})
           </p>
-          <div className="rounded-xl bg-white border border-border/30 overflow-hidden">
+          <div className="rounded-xl bg-white dark:bg-card border border-border/30 overflow-hidden">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border/30">

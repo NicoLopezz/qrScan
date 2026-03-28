@@ -76,7 +76,7 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
                   "flex items-center gap-3 rounded-lg px-3 py-3 text-base font-medium transition-colors",
                   isActive
                     ? "bg-brand-purple text-white"
-                    : "text-white/70 hover:bg-white/10 hover:text-white"
+                    : "text-white/70 hover:bg-white dark:bg-card/10 hover:text-white"
                 )}
               >
                 <item.icon className="h-5 w-5" />
@@ -92,7 +92,7 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
               onOpenChange(false);
               logout();
             }}
-            className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-base font-medium text-white/50 hover:bg-white/10 hover:text-white transition-colors"
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-base font-medium text-white/50 hover:bg-white dark:bg-card/10 hover:text-white transition-colors"
           >
             <LogOut className="h-5 w-5" />
             <span>Salir</span>

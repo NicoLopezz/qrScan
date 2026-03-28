@@ -20,6 +20,15 @@ export const metadata: Metadata = {
   description: "Plataforma de gestion para lavaderos",
 };
 
+// Script that runs before paint to set theme without flash
+const themeScript = `
+(function() {
+  var t = localStorage.getItem('theme');
+  if (t === 'light') document.documentElement.classList.remove('dark');
+  else document.documentElement.classList.add('dark');
+})();
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -28,8 +37,12 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${dmSans.variable} ${dmMono.variable} h-full`}
+      className={`dark ${dmSans.variable} ${dmMono.variable} h-full`}
+      suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body className="min-h-full flex flex-col">
         {children}
         <Toaster position="top-right" richColors />

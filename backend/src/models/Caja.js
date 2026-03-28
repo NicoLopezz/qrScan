@@ -11,7 +11,7 @@ const cajaSchema = new mongoose.Schema({
     default: MEDIOS_PAGO,
   },
   activa: { type: Boolean, default: true },
-});
+}, { timestamps: true });
 
 cajaSchema.index({ adminId: 1, nombre: 1 }, { unique: true });
 

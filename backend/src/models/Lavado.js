@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 const lavadoSchema = new mongoose.Schema({
+  adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin', required: true },
   fechaDeAlta: { type: Date, default: Date.now },
   nombre: { type: String, required: true },
   patente: { type: String, required: true },
@@ -39,10 +40,12 @@ const lavadoSchema = new mongoose.Schema({
   numeroDeFila: { type: Number, default: 0 },
   puntuacionPromedio: { type: Number, default: 0 },
   medioPago: { type: String, enum: ['efectivo', 'debito', 'credito', 'mercado-pago', '---'], default: '---' },
-  cumpleaños: { type: String, default: '' }
+  cumpleaños: { type: String, default: '' },
+}, { timestamps: true });
 
-});
+lavadoSchema.index({ adminId: 1, estado: 1 });
+lavadoSchema.index({ adminId: 1, fechaDeAlta: -1 });
+lavadoSchema.index({ adminId: 1, from: 1 });
+lavadoSchema.index({ adminId: 1, selected: 1 });
 
-
-
-export default lavadoSchema;
+export default mongoose.model('Lavado', lavadoSchema);

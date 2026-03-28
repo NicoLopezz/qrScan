@@ -123,7 +123,7 @@ export default function EquipoPage() {
     <div className="space-y-5 max-w-3xl">
       {/* Owner card */}
       {owner && (
-        <div className="card-elevated rounded-2xl bg-white p-5">
+        <div className="card-elevated rounded-2xl bg-white dark:bg-card p-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-purple text-white text-sm font-bold">
@@ -164,7 +164,7 @@ export default function EquipoPage() {
             return (
               <div
                 key={m._id}
-                className="card-elevated rounded-2xl bg-white p-4 flex items-center justify-between transition-all duration-200"
+                className="card-elevated rounded-2xl bg-white dark:bg-card p-4 flex items-center justify-between transition-all duration-200"
               >
                 <div className="flex items-center gap-3">
                   <div className="flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground text-xs font-bold">
@@ -201,7 +201,7 @@ export default function EquipoPage() {
           })}
         </div>
       ) : (
-        <div className="card-elevated rounded-2xl bg-white p-8 text-center">
+        <div className="card-elevated rounded-2xl bg-white dark:bg-card p-8 text-center">
           <Shield className="h-8 w-8 mx-auto text-muted-foreground/20 mb-3" />
           <p className="text-sm text-muted-foreground mb-1">Sin miembros en el equipo</p>
           <p className="text-xs text-muted-foreground">Agrega empleados para que accedan a Ventas y Lavados</p>
@@ -209,7 +209,7 @@ export default function EquipoPage() {
       )}
 
       {/* Roles info */}
-      <div className="card-elevated rounded-2xl bg-white p-5">
+      <div className="card-elevated rounded-2xl bg-white dark:bg-card p-5">
         <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Permisos por rol</p>
         <div className="space-y-2.5">
           {Object.entries(ROLE_CONFIG).map(([key, config]) => {

@@ -1,5 +1,6 @@
 import Admin from '../models/adminModel.js';
 import { sendWhatsAppMessage } from '../services/twilioService.js';
+import { ok, created, fail } from '../utils/apiResponse.js';
 
 //AGREGAR CLIENTE
 async function agregarCliente(req, res) {
@@ -7,21 +8,17 @@ async function agregarCliente(req, res) {
 
   try {
     // Lógica para agregar el cliente
-    const adminId = req.cookies.adminId; // Obtener el ID del admin desde la cookie, si aplica
+    const adminId = req.user.adminId; // Obtener el ID del admin desde la cookie, si aplica
     const admin = await Admin.findById(adminId);
 
-    if (!admin) {
-      return res.status(404).json({ error: 'Admin no encontrado' });
-    }
+    if (!admin) return fail(res, 404, 'Admin no encontrado');
 
-    // Agregar el cliente a la lista de reservas o clientes
     admin.reservas.push({ nombre, comensales, observacion });
     await admin.save();
 
-    res.status(201).json({ success: true, message: 'Cliente agregado con éxito' });
+    return created(res, null, 'Cliente agregado con éxito');
   } catch (error) {
-    console.error('Error al agregar cliente:', error);
-    res.status(500).json({ success: false, error: 'Error al agregar cliente' });
+    return fail(res, 500, 'Error al agregar cliente');
   }
 }
 
@@ -30,13 +27,10 @@ async function getReservas(req, res) {
 
   try {
     const admin = await Admin.findById(adminId).select('reservas');
-    if (!admin) {
-      return res.status(404).json({ error: 'Admin no encontrado' });
-    }
-    res.json({ success: true, message: 'OK', data: admin.reservas });
+    if (!admin) return fail(res, 404, 'Admin no encontrado');
+    return ok(res, admin.reservas);
   } catch (error) {
-    console.error('Error al obtener las reservas:', error);
-    res.status(500).json({ success: false, message: 'Error al obtener las reservas' });
+    return fail(res, 500, 'Error al obtener las reservas');
   }
 }
 
@@ -51,21 +45,17 @@ async function actualizarSelectedCliente(req, res) {
       { new: true }
     );
 
-    if (!admin) {
-      return res.status(404).json({ success: false, message: 'Cliente no encontrado' });
-    }
+    if (!admin) return fail(res, 404, 'Cliente no encontrado');
 
-    // Luego, establece solo la reserva seleccionada en true
     const updatedAdmin = await Admin.findOneAndUpdate(
       { "reservas._id": clienteId },
-      { $set: { "reservas.$.selected": true } }, // Establece solo la reserva específica en true
+      { $set: { "reservas.$.selected": true } },
       { new: true }
     );
 
-    res.json({ success: true, message: 'Cliente actualizado correctamente', admin: updatedAdmin });
+    return ok(res, updatedAdmin, 'Cliente actualizado correctamente');
   } catch (error) {
-    console.error('Error al actualizar el cliente:', error);
-    res.status(500).json({ success: false, message: 'Error al actualizar el cliente' });
+    return fail(res, 500, 'Error al actualizar el cliente');
   }
 }
 
@@ -80,14 +70,11 @@ async function eliminarCliente(req, res) {
       { new: true }
     );
 
-    if (!admin) {
-      return res.status(404).json({ success: false, message: 'Cliente no encontrado' });
-    }
+    if (!admin) return fail(res, 404, 'Cliente no encontrado');
 
-    res.json({ success: true, message: 'Cliente eliminado correctamente', admin });
+    return ok(res, admin, 'Cliente eliminado correctamente');
   } catch (error) {
-    console.error('Error al eliminar el cliente:', error);
-    res.status(500).json({ success: false, message: 'Error al eliminar el cliente' });
+    return fail(res, 500, 'Error al eliminar el cliente');
   }
 }
 
@@ -98,7 +85,7 @@ async function enviarMensajeCuentaRegresiva(req, res) {
 
     if (!clienteId) {
       console.error("No se recibió clienteId en la solicitud");
-      return res.status(400).json({ success: false, message: "No se recibió clienteId" });
+      return fail(res, 400, 'No se recibió clienteId');
     }
 
     // Buscar el admin que tenga una reserva con el ID del cliente proporcionado
@@ -118,18 +105,15 @@ async function enviarMensajeCuentaRegresiva(req, res) {
         await sendWhatsAppMessage(`whatsapp:${reserva.from}`, mensaje);
 
         console.log(`Mensaje de cuenta regresiva enviado a ${reserva.from} para el cliente ${reserva.nombre}`);
-        res.json({ success: true, message: "Mensaje enviado con éxito" });
+        return ok(res, null, 'Mensaje enviado con éxito');
       } else {
-        console.log("No se encontró la reserva con el ID proporcionado en el documento del admin.");
-        res.status(404).json({ success: false, message: "Reserva no encontrada" });
+        return fail(res, 404, 'Reserva no encontrada');
       }
     } else {
-      console.log("No se encontró ningún admin con una reserva coincidente.");
-      res.status(404).json({ success: false, message: "Admin no encontrado" });
+      return fail(res, 404, 'Admin no encontrado');
     }
   } catch (error) {
-    console.error("Error al enviar el mensaje:", error);
-    res.status(500).json({ success: false, message: "Error al enviar el mensaje" });
+    return fail(res, 500, 'Error al enviar el mensaje');
   }
 }
 

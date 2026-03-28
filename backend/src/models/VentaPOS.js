@@ -9,7 +9,7 @@ const ventaPOSSchema = new mongoose.Schema({
   origen:      { type: String, enum: ['manual', 'lavado'], default: 'manual' },
   origenRef:   { type: mongoose.Schema.Types.ObjectId, default: null },
   fecha:       { type: Date, default: Date.now },
-});
+}, { timestamps: true });
 
 ventaPOSSchema.index({ turnoId: 1 });
 ventaPOSSchema.index({ origenRef: 1 }, { sparse: true });

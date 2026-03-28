@@ -132,7 +132,7 @@ export default function CajaGestion({ onSelectCaja }: CajaGestionProps) {
             <div
               key={caja._id}
               onClick={() => onSelectCaja(caja)}
-              className="card-elevated rounded-2xl bg-white p-4 text-left transition-all hover:ring-2 hover:ring-brand-purple/30 cursor-pointer group"
+              className="card-elevated rounded-2xl bg-white dark:bg-card p-4 text-left transition-all hover:ring-2 hover:ring-brand-purple/30 cursor-pointer group"
             >
               <div className="flex items-start justify-between">
                 <div>

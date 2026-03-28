@@ -66,7 +66,7 @@ export default function BillingPage() {
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
       {/* Current plan status */}
-      <div className="card-elevated rounded-2xl bg-white p-5">
+      <div className="card-elevated rounded-2xl bg-white dark:bg-card p-5">
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50">
@@ -103,7 +103,7 @@ export default function BillingPage() {
               <div
                 key={plan.id}
                 onClick={() => setSelectedPlan(plan.id)}
-                className={`card-elevated rounded-2xl bg-white p-5 cursor-pointer transition-all duration-200 relative ${
+                className={`card-elevated rounded-2xl bg-white dark:bg-card p-5 cursor-pointer transition-all duration-200 relative ${
                   isSelected
                     ? "ring-2 ring-brand-purple"
                     : "hover:ring-1 hover:ring-border"
@@ -154,7 +154,7 @@ export default function BillingPage() {
       </div>
 
       {/* Payment method placeholder */}
-      <div className="card-elevated rounded-2xl bg-white p-5">
+      <div className="card-elevated rounded-2xl bg-white dark:bg-card p-5">
         <h3 className="text-sm font-semibold mb-3">Metodo de pago</h3>
         <div className="flex items-center justify-center py-8">
           <div className="text-center">
@@ -169,7 +169,7 @@ export default function BillingPage() {
       </div>
 
       {/* Invoices placeholder */}
-      <div className="card-elevated rounded-2xl bg-white p-5">
+      <div className="card-elevated rounded-2xl bg-white dark:bg-card p-5">
         <h3 className="text-sm font-semibold mb-3">Historial de facturacion</h3>
         <div className="text-center py-6">
           <p className="text-sm text-muted-foreground">Sin facturas por el momento</p>

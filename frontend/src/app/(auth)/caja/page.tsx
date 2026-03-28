@@ -151,7 +151,7 @@ export default function VentasPage() {
             <button
               key={b.medioPago}
               onClick={() => setFiltroMedio(filtroMedio === b.medioPago ? null : b.medioPago)}
-              className={`card-elevated rounded-2xl bg-white p-3.5 text-left cursor-pointer transition-all duration-200 ${
+              className={`card-elevated rounded-2xl bg-white dark:bg-card p-3.5 text-left cursor-pointer transition-all duration-200 ${
                 filtroMedio === b.medioPago ? "ring-2 ring-brand-purple" : ""
               }`}
             >
@@ -169,7 +169,7 @@ export default function VentasPage() {
           ))}
           <button
             onClick={() => setFiltroMedio(null)}
-            className={`card-elevated rounded-2xl bg-white p-3.5 text-left cursor-pointer transition-all duration-200 ${
+            className={`card-elevated rounded-2xl bg-white dark:bg-card p-3.5 text-left cursor-pointer transition-all duration-200 ${
               filtroMedio === null ? "ring-2 ring-brand-purple" : ""
             }`}
           >
@@ -184,7 +184,7 @@ export default function VentasPage() {
           </button>
         </div>
       ) : !turnoLoading && !hasTurno ? (
-        <div className="card-elevated rounded-2xl bg-white p-8 text-center">
+        <div className="card-elevated rounded-2xl bg-white dark:bg-card p-8 text-center">
           <Lock className="h-8 w-8 mx-auto text-muted-foreground/20 mb-3" />
           <p className="text-sm text-muted-foreground mb-1">No hay turno abierto en esta caja</p>
           <p className="text-xs text-muted-foreground mb-4">Abri un turno para empezar a registrar ventas</p>
@@ -198,7 +198,7 @@ export default function VentasPage() {
       {hasTurno && (
         <div className="flex gap-4">
           {/* Tabla de ventas */}
-          <div className={`card-static rounded-2xl bg-white overflow-hidden flex-1 ${selectedVenta ? "hidden md:block" : ""}`}>
+          <div className={`card-static rounded-2xl bg-white dark:bg-card overflow-hidden flex-1 ${selectedVenta ? "hidden md:block" : ""}`}>
             {(() => {
               const ventasFiltradas = filtroMedio
                 ? ventas?.filter((v) => v.pagos?.some((p) => p.medioPago === filtroMedio)) ?? []
@@ -374,7 +374,7 @@ function VentaDetailPanel({ venta, onClose }: { venta: VentaPOS; onClose: () => 
   };
 
   return (
-    <div className="card-static rounded-2xl bg-white w-80 flex-shrink-0 hidden md:block animate-slide-in-right">
+    <div className="card-static rounded-2xl bg-white dark:bg-card w-80 flex-shrink-0 hidden md:block animate-slide-in-right">
       <div className="flex items-center justify-between p-4 border-b border-border/30">
         <h3 className="text-sm font-semibold">Detalle</h3>
         <button onClick={onClose} className="p-1 rounded-lg hover:bg-muted cursor-pointer">

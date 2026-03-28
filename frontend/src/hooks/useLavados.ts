@@ -4,11 +4,10 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchApi } from "@/lib/api";
 import type { Lavado } from "@/types";
 
-export function useLavados(adminId: string | undefined) {
+export function useLavados() {
   return useQuery({
-    queryKey: ["lavados", adminId],
-    queryFn: () => fetchApi<Lavado[]>(`/api/admins/${adminId}/lavados`),
-    enabled: !!adminId,
+    queryKey: ["lavados"],
+    queryFn: () => fetchApi<Lavado[]>("/api/lavados"),
     select: (res) => res.data,
   });
 }

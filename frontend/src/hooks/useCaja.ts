@@ -30,8 +30,8 @@ export function useTurnos(cajaId?: string, estado?: string) {
   if (estado) params.set("estado", estado);
   return useQuery({
     queryKey: ["turnos", cajaId, estado],
-    queryFn: () => fetchApi<Turno[]>(`/api/turnos?${params.toString()}`),
-    select: (res) => res.data,
+    queryFn: () => fetchApi<{ data: Turno[]; total: number; page: number; limit: number }>(`/api/turnos?${params.toString()}`),
+    select: (res) => res.data?.data,
   });
 }
 

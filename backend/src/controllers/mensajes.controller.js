@@ -1,5 +1,7 @@
 import Admin from '../models/adminModel.js';
+import Lavado from '../models/Lavado.js';
 import { sendWhatsAppMessage, sendWhatsAppTemplateMessage } from '../services/twilioService.js';
+import { ok, fail } from '../utils/apiResponse.js';
 
 // Función para actualizar la encuesta en la base de datos
 async function actualizarEncuestaEnDB(from, palabraClave) {
@@ -18,37 +20,19 @@ async function actualizarEncuestaEnDB(from, palabraClave) {
       return;
     }
 
-    const admin = await Admin.findOne({ 'lavados.from': numeroCliente });
+    const lavado = await Lavado.findOne({ from: numeroCliente }).sort({ fechaDeAlta: -1 });
 
-    if (admin) {
-      const lavado = admin.lavados
-        .filter(l => l.from === numeroCliente)
-        .sort((a, b) => b.fechaDeAlta - a.fechaDeAlta)[0];
+    if (lavado) {
+      lavado.calidad = palabraClave.toLowerCase();
+      lavado.puntuacionCalidad = calidadMap[palabraClave.toLowerCase()];
 
-      if (lavado) {
-        console.log(`Actualizando calidad para el cliente ${lavado.nombre} con la respuesta: ${palabraClave}`);
-
-        // Actualizar lavado principal
-        lavado.calidad = palabraClave.toLowerCase();
-        lavado.puntuacionCalidad = calidadMap[palabraClave.toLowerCase()];
-
-        // Actualizar el primer elemento de historialLavados
-        if (lavado.historialLavados && lavado.historialLavados.length > 0) {
-          lavado.historialLavados[0].calidad = palabraClave.toLowerCase();
-          lavado.historialLavados[0].puntuacionCalidad = calidadMap[palabraClave.toLowerCase()];
-
-          // Marcar como modificado
-          lavado.markModified('historialLavados');
-        }
-
-        // Guardar los cambios
-        await admin.save();
-        console.log("Encuesta actualizada correctamente en la base de datos.");
-      } else {
-        console.log("No se encontró un lavado asociado al cliente.");
+      if (lavado.historialLavados && lavado.historialLavados.length > 0) {
+        lavado.historialLavados[0].calidad = palabraClave.toLowerCase();
+        lavado.historialLavados[0].puntuacionCalidad = calidadMap[palabraClave.toLowerCase()];
+        lavado.markModified('historialLavados');
       }
-    } else {
-      console.log("No se encontró ningún admin con un lavado asociado al cliente.");
+
+      await lavado.save();
     }
   } catch (error) {
     console.error("Error al actualizar la encuesta en la base de datos:", error);
@@ -152,49 +136,26 @@ async function handleLavadoMessage(body, fromWithPrefix) {
 
     console.log("Código extraído:", codigo);
 
-    // Buscar el admin en la base de datos que tenga un lavado con los criterios
-    const admin = await Admin.findOne({
-      'lavados.selected': true
-    });
+    // Buscar lavado seleccionado cuyo ID termine en el código
+    const lavados = await Lavado.find({ selected: true });
+    const lavado = lavados.find(l => l._id.toString().endsWith(codigo));
 
-    if (admin) {
-      console.log("Admin encontrado:", admin._id);
+    if (!lavado) return;
 
-      // Filtrar el lavado específico dentro de `admin.lavados`
-      const lavado = admin.lavados.find(lavado =>
-        lavado.selected === true &&
-        lavado._id.toString().endsWith(codigo) // Comparación con los últimos 5 caracteres del ID
-      );
+    lavado.from = from;
+    lavado.selected = false;
+    lavado.textConfirmation = true;
+    await lavado.save();
 
-      // Validar si se encontró el lavado
-      if (!lavado) {
-        console.log("No se encontró el lavado específico en el documento del admin.");
-        return;
-      }
-
-      // Actualizar los campos del lavado encontrado
-      lavado.from = from; // Guardar el número del cliente
-      lavado.selected = false; // Desmarcar el lavado como seleccionado
-      lavado.textConfirmation = true;
-
-      // Guardar los cambios en la base de datos
-      await admin.save();
-
-      // Crear el mensaje personalizado para confirmación
-      const responseMessage =
-        `*Aquí está el detalle de tu servicio ${lavado.nombre}:*\n
+    const responseMessage =
+      `*Aquí está el detalle de tu servicio ${lavado.nombre}:*\n
       🚗 *Vehículo:* ${lavado.modelo}
       🧼 *Tipo de lavado:* ${lavado.tipoDeLavado}
       📄 *Patente:* ${lavado.patente}
       📝 *Observación:* ${lavado.observacion || 'Sin observaciones'}\n
       Te avisaremos cuando este listo para ser retirado.`.trim();
 
-      // Enviar un mensaje de confirmación al cliente
-      await sendWhatsAppMessage(`whatsapp:${from}`, responseMessage);
-      console.log("Lavado confirmado y mensaje de confirmación enviado al cliente.");
-    } else {
-      console.log("No se encontró ningún admin con un lavado coincidente.");
-    }
+    await sendWhatsAppMessage(`whatsapp:${from}`, responseMessage);
   } catch (error) {
     console.error("Error al manejar el mensaje de lavado:", error);
   }
@@ -377,31 +338,22 @@ async function addMessage(req, res) {
     // Encuentra el admin/local por su ID
     const admin = await Admin.findById(adminId);
 
-    if (!admin) {
-      return res.status(404).json({ message: 'Admin/local no encontrado.' });
-    }
+    if (!admin) return fail(res, 404, 'Admin/local no encontrado.');
 
-    // Encuentra el cliente en la lista de `clientes` cuyo `from` coincida con `to` en el mensaje
     const client = admin.clientes.find(c => c.from === body.to);
+    if (!client) return fail(res, 404, 'Cliente no encontrado.');
 
-    if (!client) {
-      return res.status(404).json({ message: 'Cliente no encontrado.' });
-    }
-
-    // Agrega el nuevo mensaje al array `mensajesEnviados` del cliente
     client.mensajesEnviados.push({
       body: body.body,
       fecha: body.fecha,
       hora: body.hora
     });
 
-    // Guarda los cambios en la base de datos
     await admin.save();
 
-    res.status(200).json({ message: 'Mensaje guardado exitosamente.' });
+    return ok(res, null, 'Mensaje guardado exitosamente.');
   } catch (error) {
-    console.error('Error al guardar el mensaje:', error);
-    res.status(500).json({ message: 'Error al guardar el mensaje.' });
+    return fail(res, 500, 'Error al guardar el mensaje.');
   }
 }
 
@@ -410,34 +362,21 @@ async function enviarMensajesTemplates(req, res) {
     const { clienteId, mensaje } = req.body;
     console.log("en teoria el mensaje enviado es:" + mensaje)
     if (!clienteId) {
-      return res.status(400).json({ success: false, message: "No se recibió clienteId" });
+      return fail(res, 400, 'No se recibió clienteId');
     }
 
     if (!mensaje) {
-      return res.status(400).json({ success: false, message: "No se recibió el mensaje" });
+      return fail(res, 400, 'No se recibió el mensaje');
     }
 
-    // Buscar al admin que tenga un lavado con el ID del cliente proporcionado
-    const admin = await Admin.findOne({ 'lavados._id': clienteId });
+    const lavado = await Lavado.findById(clienteId);
+    if (!lavado) return fail(res, 404, 'Lavado no encontrado');
 
-    if (admin) {
-      const lavado = admin.lavados.find(lavado => lavado._id.toString() === clienteId);
+    await sendWhatsAppMessage(`whatsapp:${lavado.from}`, mensaje);
 
-      if (lavado) {
-        // Enviar el mensaje al número de WhatsApp del cliente
-        await sendWhatsAppMessage(`whatsapp:${lavado.from}`, mensaje);
-
-        console.log(`Mensaje enviado a ${lavado.from} para el cliente ${lavado.nombre}`);
-        res.json({ success: true, message: "Mensaje enviado con éxito" });
-      } else {
-        return res.status(404).json({ success: false, message: "Lavado no encontrado" });
-      }
-    } else {
-      return res.status(404).json({ success: false, message: "Admin no encontrado" });
-    }
+    return ok(res, null, 'Mensaje enviado con éxito');
   } catch (error) {
-    console.error("Error al enviar el mensaje:", error);
-    res.status(500).json({ success: false, message: "Error al enviar el mensaje" });
+    return fail(res, 500, 'Error al enviar el mensaje');
   }
 }
 
@@ -459,44 +398,20 @@ async function updateTagSelected(req, res) {
     const admin = await Admin.findById(idLocal);
     if (!admin) {
       console.error("Admin/local no encontrado con el ID:", idLocal);
-      return res.status(404).json({ error: 'Admin/local no encontrado' });
+      return fail(res, 404, 'Admin/local no encontrado');
     }
 
-    // Imprimir información detallada en la consola antes de la actualización
-    console.log("Detalles del admin encontrado:");
-    console.log(" - Nombre del Local:", admin.localName);
-    console.log(" - Número de Teléfono del Local:", admin.localNumber);
-    console.log(" - Tag Actual:", admin.tagSelected);
-    console.log(" - Usuario que inició sesión:", username);
-
-    // Actualizar el campo tagSelected
     admin.tagSelected = tagSelected;
-    console.log("Tag seleccionado después de la actualización:", admin.tagSelected);  // Verificar si el campo se actualizó
-
-    // Guardar el documento actualizado
     await admin.save();
 
-    // Verificar si el documento se guardó correctamente y recuperar información actualizada
-    const updatedAdmin = await Admin.findById(idLocal);
-
-    // Respuesta JSON con información detallada de la actualización
-    res.status(200).json({
-      message: "Tag seleccionado actualizado",
-      localName: updatedAdmin.localName,
-      tagSelected: updatedAdmin.tagSelected,
-      username: username,  // Nombre del usuario que inició sesión
-      localNumber: updatedAdmin.localNumber  // Número de teléfono del local
-    });
-
-    // Imprimir confirmación final en la consola
-    console.log("Actualización completada:");
-    console.log(" - Nombre del Local:", updatedAdmin.localName);
-    console.log(" - Nuevo Tag Seleccionado:", updatedAdmin.tagSelected);
-    console.log(" - Usuario que inició sesión:", username);
-
+    return ok(res, {
+      localName: admin.localName,
+      tagSelected: admin.tagSelected,
+      username,
+      localNumber: admin.localNumber,
+    }, 'Tag seleccionado actualizado');
   } catch (error) {
-    console.error('Error al actualizar el tag seleccionado:', error);
-    res.status(500).json({ error: 'Error al actualizar el tag seleccionado' });
+    return fail(res, 500, 'Error al actualizar el tag seleccionado');
   }
 }
 
@@ -513,9 +428,7 @@ async function notifyUserForPickUp(req, res) {
     // Buscar el local en función del idLocal
     const localAdmin = await Admin.findById(idLocal);
 
-    if (!localAdmin) {
-      return res.status(404).json({ error: 'No se encontró el local' });
-    }
+    if (!localAdmin) return fail(res, 404, 'No se encontró el local');
 
     // Buscar el cliente que tiene el pedido en espera en función del número de tag
     const cliente = localAdmin.clientes.find(cliente =>
@@ -570,16 +483,15 @@ async function notifyUserForPickUp(req, res) {
         // Guardar nuevamente el local con el promedio actualizado
         await localAdmin.save();
 
-        res.json({ message: 'Notificación enviada y estado actualizado' });
+        return ok(res, null, 'Notificación enviada y estado actualizado');
       } else {
-        res.status(404).json({ error: 'No se encontró el pedido en estado "en espera"' });
+        return fail(res, 404, 'No se encontró el pedido en estado "en espera"');
       }
     } else {
-      res.status(404).json({ error: 'No se encontró el cliente con este número de tag en estado "en espera"' });
+      return fail(res, 404, 'No se encontró el cliente con este número de tag en estado "en espera"');
     }
   } catch (error) {
-    console.error('Error al notificar al usuario:', error.message);
-    res.status(500).json({ error: 'Error al notificar al usuario' });
+    return fail(res, 500, 'Error al notificar al usuario');
   }
 }
 
@@ -589,7 +501,7 @@ async function notifyUserPickedUp(req, res) {
   const localNumber = req.cookies.localNumber; // Aquí obtenemos el localNumber desde la cookie
 
   if (!localNumber) {
-    return res.status(400).json({ error: 'No se proporcionó el número de local (localNumber) en la cookie' });
+    return fail(res, 400, 'No se proporcionó el número de local (localNumber) en la cookie');
   }
 
   try {
@@ -597,7 +509,7 @@ async function notifyUserPickedUp(req, res) {
     const admin = await Admin.findOne({ localNumber });
 
     if (!admin) {
-      return res.status(404).json({ error: 'No se encontró el local/admin con ese número' });
+      return fail(res, 404, 'No se encontró el local/admin con ese número');
     }
 
     // Buscar el cliente que tiene un pedido con el estado "a confirmar retiro" y el número de tag correspondiente
@@ -620,17 +532,15 @@ async function notifyUserPickedUp(req, res) {
         pedido.estadoPorBarra = 'retiro confirmado';
         await admin.save();
 
-        // Responder con éxito
-        res.json({ message: 'Notificación enviada y estado actualizado a "retiro confirmado"' });
+        return ok(res, null, 'Notificación enviada y estado actualizado a "retiro confirmado"');
       } else {
-        res.status(404).json({ error: 'No se encontró un pedido con el estado "a confirmar retiro" para este número de tag' });
+        return fail(res, 404, 'No se encontró un pedido con el estado "a confirmar retiro" para este número de tag');
       }
     } else {
-      res.status(404).json({ error: 'No se encontró un cliente para este número de tag' });
+      return fail(res, 404, 'No se encontró un cliente para este número de tag');
     }
   } catch (error) {
-    console.error('Error al notificar al usuario:', error.message);
-    res.status(500).json({ error: 'Error al notificar al usuario' });
+    return fail(res, 500, 'Error al notificar al usuario');
   }
 }
 
@@ -677,14 +587,10 @@ async function catchDbData(req, res) {
   try {
     const admin = await Admin.findById(adminId); // Busca por ID
 
-    if (admin) {
-      return res.status(200).json({ message: 'Información del usuario', data: admin });
-    } else {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
-    }
+    if (!admin) return fail(res, 404, 'Usuario no encontrado');
+    return ok(res, admin, 'Información del usuario');
   } catch (error) {
-    console.error("Error al acceder a la base de datos:", error);
-    return res.status(500).json({ message: 'Error interno del servidor' });
+    return fail(res, 500, 'Error interno del servidor');
   }
 }
 

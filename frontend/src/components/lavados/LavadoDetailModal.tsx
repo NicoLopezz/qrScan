@@ -92,10 +92,11 @@ export function LavadoDetailModal({ lavado, onClose }: LavadoDetailModalProps) {
         className="p-0 gap-0 overflow-hidden rounded-2xl border-0 shadow-2xl sm:max-w-none"
         style={{ width: "fit-content", maxWidth: "calc(100% - 2rem)" }}
       >
-        <div className="flex">
+        <div className="flex" style={{ minHeight: "32rem" }}>
           {/* LEFT: Lavado detail */}
-          <div className="w-[28rem] flex-shrink-0" style={{ borderRight: showPerfil ? "1px solid var(--border)" : "none" }}>
-            <div className="px-5 pt-5 pb-4 space-y-3">
+          <div className="w-[28rem] flex-shrink-0 flex flex-col" style={{ borderRight: showPerfil ? "1px solid var(--border)" : "none" }}>
+            {/* Info section */}
+            <div className="px-5 pt-5 pb-3 space-y-3">
               <DialogHeader className="space-y-0">
                 <div className="flex items-center gap-2.5 pr-8">
                   <DialogTitle className="text-lg font-semibold tracking-tight truncate">{lavado.nombre}</DialogTitle>
@@ -119,46 +120,59 @@ export function LavadoDetailModal({ lavado, onClose }: LavadoDetailModalProps) {
                 </button>
               )}
 
-              <div className="grid grid-cols-2 gap-2 text-sm">
-                <div className="flex items-center gap-1.5 text-muted-foreground">
-                  <Car className="h-3.5 w-3.5 flex-shrink-0" />
-                  <span className="truncate">{lavado.modelo}</span>
+              {/* Vehicle details card */}
+              <div className="rounded-xl bg-muted/40 dark:bg-white/5 px-4 py-3 space-y-2 text-sm">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Modelo</span>
+                  <div className="flex items-center gap-1.5">
+                    <Car className="h-3.5 w-3.5 text-muted-foreground" />
+                    <span>{lavado.modelo}</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <RectangleHorizontal className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
-                  <span className="font-mono text-xs tracking-wide">{lavado.patente}</span>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Patente</span>
+                  <div className="flex items-center gap-1.5">
+                    <RectangleHorizontal className="h-3.5 w-3.5 text-muted-foreground" />
+                    <span className="font-mono text-xs tracking-wide">{lavado.patente}</span>
+                  </div>
                 </div>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <Badge variant="secondary" className="border-0 text-xs">{lavado.tipoDeLavado}</Badge>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Tipo</span>
+                  <span>{lavado.tipoDeLavado}</span>
+                </div>
                 {lavado.puntuacionCalidad != null && lavado.puntuacionCalidad > 0 && (
-                  <div className="flex items-center gap-1 text-xs">
-                    <Star className="h-3 w-3 text-amber-500" />
-                    <span className="capitalize text-muted-foreground">{lavado.calidad}</span>
-                    <span className="text-muted-foreground/50">({lavado.puntuacionCalidad}/5)</span>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Calidad</span>
+                    <div className="flex items-center gap-1">
+                      <span className="text-amber-500 text-xs">{"★".repeat(lavado.puntuacionCalidad)}</span>
+                      <span className="capitalize text-muted-foreground text-xs">{lavado.calidad}</span>
+                    </div>
+                  </div>
+                )}
+                {lavado.observacion && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Obs.</span>
+                    <span className="text-xs text-muted-foreground italic">{lavado.observacion}</span>
                   </div>
                 )}
               </div>
 
-              {lavado.observacion && <p className="text-xs text-muted-foreground italic">{lavado.observacion}</p>}
-
               {!lavado.textConfirmation && lavado.estado === "Pendiente" && (
-                <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-100 flex items-center gap-2">
-                  <QrCode className="h-4 w-4 text-amber-600 flex-shrink-0" />
-                  <p className="text-[11px] text-amber-700">Pendiente de confirmacion QR</p>
+                <div className="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 flex items-center gap-2">
+                  <QrCode className="h-4 w-4 text-amber-600 dark:text-amber-400 flex-shrink-0" />
+                  <p className="text-[11px] text-amber-700 dark:text-amber-400">Pendiente de confirmacion QR</p>
                 </div>
               )}
             </div>
 
-            <div className="mx-5 h-px bg-border" />
-
-            <div className="px-5 py-4 space-y-3">
-              <div className="grid grid-cols-3 gap-2">
-                <div className="space-y-1">
+            {/* Edit section - takes remaining space */}
+            <div className="flex-1 flex flex-col justify-end px-5 pb-5 space-y-3">
+              <div className="mx-0 h-px bg-border" />
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between">
                   <label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Estado</label>
                   <Select value={estado} onValueChange={(v) => v && setEstado(v)}>
-                    <SelectTrigger className="h-8 rounded-lg text-xs"><SelectValue placeholder={estado} /></SelectTrigger>
+                    <SelectTrigger className="h-9 rounded-xl text-sm w-48"><SelectValue placeholder={estado} /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="Pendiente">Pendiente</SelectItem>
                       <SelectItem value="En Proceso">En Proceso</SelectItem>
@@ -167,22 +181,32 @@ export function LavadoDetailModal({ lavado, onClose }: LavadoDetailModalProps) {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Pago</label>
+                <div className="flex items-center justify-between">
+                  <label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Medio de Pago</label>
                   <Select value={medioPago} onValueChange={(v) => v && setMedioPago(v)}>
-                    <SelectTrigger className="h-8 rounded-lg text-xs"><SelectValue placeholder={medioPago} /></SelectTrigger>
+                    <SelectTrigger className="h-9 rounded-xl text-sm w-48"><SelectValue placeholder={medioPago} /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="---">---</SelectItem>
                       <SelectItem value="efectivo">Efectivo</SelectItem>
                       <SelectItem value="debito">Debito</SelectItem>
                       <SelectItem value="credito">Credito</SelectItem>
-                      <SelectItem value="mercado-pago">MP</SelectItem>
+                      <SelectItem value="mercado-pago">Mercado Pago</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="space-y-1">
+                <div className="flex items-center justify-between">
                   <label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Monto</label>
-                  <Input type="number" className="h-8 rounded-lg text-xs tabular-nums" value={monto} onChange={(e) => setMonto(parseFloat(e.target.value) || 0)} />
+                  <Input
+                    type="text"
+                    inputMode="decimal"
+                    className="h-9 rounded-xl text-sm tabular-nums w-48 [appearance:textfield]"
+                    value={monto || ""}
+                    placeholder="0"
+                    onChange={(e) => {
+                      const v = e.target.value.replace(/[^0-9.]/g, "");
+                      setMonto(v ? parseFloat(v) : 0);
+                    }}
+                  />
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -226,7 +250,7 @@ export function LavadoDetailModal({ lavado, onClose }: LavadoDetailModalProps) {
                   {/* Header */}
                   <div className="px-4 pt-5 pb-4">
                     <div className="flex items-center gap-3 mb-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-purple-muted flex-shrink-0">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-purple-muted dark:bg-brand-purple/15 flex-shrink-0">
                         <User className="h-4 w-4 text-brand-purple" />
                       </div>
                       <div className="min-w-0">
@@ -238,29 +262,29 @@ export function LavadoDetailModal({ lavado, onClose }: LavadoDetailModalProps) {
                       </div>
                     </div>
                     <div className="grid grid-cols-4 gap-1.5">
-                      <div className="rounded-xl bg-brand-purple-muted p-2 text-center">
+                      <div className="rounded-xl bg-brand-purple-muted dark:bg-brand-purple/10 p-2 text-center">
                         <Droplets className="h-3 w-3 mx-auto text-brand-purple mb-0.5" />
                         <p className="text-sm font-semibold tabular-nums">{perfil.totalLavados}</p>
                         <p className="text-[8px] uppercase tracking-wider text-muted-foreground">Lavados</p>
                       </div>
-                      <div className="rounded-xl bg-amber-50 p-2 text-center">
+                      <div className="rounded-xl bg-amber-50 dark:bg-amber-500/10 p-2 text-center">
                         <Star className="h-3 w-3 mx-auto text-amber-500 mb-0.5" />
                         <p className="text-sm font-semibold tabular-nums">{perfil.promedioCalidad || "--"}</p>
                         <p className="text-[8px] uppercase tracking-wider text-muted-foreground">Calidad</p>
                       </div>
-                      <div className="rounded-xl bg-emerald-50 p-2 text-center">
-                        <DollarSign className="h-3 w-3 mx-auto text-emerald-600 mb-0.5" />
+                      <div className="rounded-xl bg-emerald-50 dark:bg-emerald-500/10 p-2 text-center">
+                        <DollarSign className="h-3 w-3 mx-auto text-emerald-600 dark:text-emerald-400 mb-0.5" />
                         <p className="text-[11px] font-semibold tabular-nums">{"$"}{perfil.totalGastado.toLocaleString("es-AR")}</p>
                         <p className="text-[8px] uppercase tracking-wider text-muted-foreground">Gastado</p>
                       </div>
-                      <div className="rounded-xl bg-blue-50 p-2 text-center">
-                        <Calendar className="h-3 w-3 mx-auto text-blue-600 mb-0.5" />
+                      <div className="rounded-xl bg-blue-50 dark:bg-blue-500/10 p-2 text-center">
+                        <Calendar className="h-3 w-3 mx-auto text-blue-600 dark:text-blue-400 mb-0.5" />
                         <p className="text-sm font-semibold tabular-nums">{perfil.primerVisita ? Math.ceil((Date.now() - new Date(perfil.primerVisita).getTime()) / 86400000) : "--"}</p>
                         <p className="text-[8px] uppercase tracking-wider text-muted-foreground">Dias</p>
                       </div>
                     </div>
                     {perfil.totalCompletados >= 3 && (
-                      <div className="mt-2 px-2.5 py-1.5 rounded-lg bg-gradient-to-r from-brand-purple-muted to-purple-50 border border-brand-purple-light">
+                      <div className="mt-2 px-2.5 py-1.5 rounded-lg bg-gradient-to-r from-brand-purple-muted to-purple-50 dark:from-brand-purple/10 dark:to-purple-500/10 border border-brand-purple-light dark:border-brand-purple/20">
                         <span className="text-[11px] font-medium text-brand-purple">
                           {perfil.totalCompletados >= 9 ? "Cliente VIP" : perfil.totalCompletados >= 6 ? "Frecuente" : "Recurrente"} ({perfil.totalCompletados})
                         </span>

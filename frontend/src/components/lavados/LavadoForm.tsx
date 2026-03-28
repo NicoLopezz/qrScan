@@ -165,7 +165,7 @@ export function LavadoForm({ open, onOpenChange }: LavadoFormProps) {
               <p className="text-sm text-muted-foreground text-center">
                 Pedi al cliente que escanee este codigo para confirmar el servicio via WhatsApp
               </p>
-              <div className="p-4 bg-white rounded-2xl border border-border/50 shadow-sm">
+              <div className="p-4 bg-white dark:bg-card rounded-2xl border border-border/50 shadow-sm">
                 {qrUrl && (
                   <QRCodeSVG
                     value={qrUrl}

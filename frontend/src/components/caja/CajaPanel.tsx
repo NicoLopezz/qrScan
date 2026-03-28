@@ -70,7 +70,7 @@ export default function CajaPanel({ caja, turnoId, onTurnoCerrado }: CajaPanelPr
         {turnoActivo.bolsillos.map((bolsillo) => (
           <div
             key={bolsillo.medioPago}
-            className="card-elevated rounded-2xl bg-white p-4"
+            className="card-elevated rounded-2xl bg-white dark:bg-card p-4"
           >
             <div className="flex items-center gap-2 mb-2">
               <div
@@ -96,7 +96,7 @@ export default function CajaPanel({ caja, turnoId, onTurnoCerrado }: CajaPanelPr
       </div>
 
       {/* Total general */}
-      <div className="card-elevated rounded-2xl bg-white p-4 flex items-center justify-between">
+      <div className="card-elevated rounded-2xl bg-white dark:bg-card p-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-brand-purple/10">
             <DollarSign className="h-5 w-5 text-brand-purple" />

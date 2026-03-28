@@ -19,7 +19,7 @@ export function KpiCard({
   accentBg = "bg-brand-purple-muted",
 }: KpiCardProps) {
   return (
-    <div className="card-elevated rounded-2xl bg-white p-4 md:p-5">
+    <div className="card-elevated rounded-2xl bg-white dark:bg-card p-4 md:p-5">
       <div className="flex items-start justify-between">
         <div className="space-y-1">
           <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">

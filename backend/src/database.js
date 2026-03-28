@@ -1,35 +1,21 @@
 import mongoose from 'mongoose';
 import config from './config.js';
 
-(async()=> {
-    const db = await mongoose.connect(config.mongodbURL)
-    console.log('Database is connected to:' , db.connection.name);
-    
-})()
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 3000;
 
-
-// Función para conectar a la base de datos según el localNumber
-// const connectToLocalDB = async (localNumber) => {
-//     console.log("dentro de la fucion conectToLocalDB ")
-//     const dbName = `Local_${localNumber}`;  // Definir el nombre de la base de datos usando localNumber
-//     const mongoURI = `${config.mongodbURL}/${dbName}`;  // Concatenar la base de datos a la URI base
-
-//     try {
-//         const db = await mongoose.connect(mongoURI, {
-//             useNewUrlParser: true,
-//             useUnifiedTopology: true,
-//         });
-//         console.log(`Conectado a la base de datos: ${db.connection.name}`);
-//         return db;
-//     } catch (error) {
-//         console.error("Error al conectar a la base de datos:", error.message);
-//         throw error;
-//     }
-// };
-// export default connectToLocalDB;
-
-// import mongoose from 'mongoose' 
-// import config from './config.js'
-
-// //using .env
-
+export async function connectDB() {
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const db = await mongoose.connect(config.mongodbURL);
+      console.log(`Database connected: ${db.connection.name}`);
+      return db;
+    } catch (err) {
+      console.error(`DB connection attempt ${attempt}/${MAX_RETRIES} failed: ${err.message}`);
+      if (attempt < MAX_RETRIES) {
+        await new Promise(r => setTimeout(r, RETRY_DELAY_MS));
+      }
+    }
+  }
+  throw new Error('Could not connect to database after multiple attempts.');
+}

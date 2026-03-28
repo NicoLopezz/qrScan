@@ -34,7 +34,7 @@ export function LavadoCard({ lavado, onClick }: LavadoCardProps) {
       className={`card-elevated rounded-2xl p-3.5 cursor-pointer group transition-all duration-150 ${
         isRetirado
           ? "bg-muted/60 opacity-60 hover:opacity-80"
-          : "bg-white"
+          : "bg-white dark:bg-card"
       }`}
       onClick={onClick}
     >
