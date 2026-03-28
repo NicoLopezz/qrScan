@@ -88,6 +88,7 @@ export interface VentaPOS {
   monto: number;
   descripcion: string;
   tipo: "ingreso" | "egreso";
+  nota?: string;
   origen: "manual" | "lavado";
   origenRef?: string;
   fecha: string;

@@ -1,4 +1,9 @@
-const BASE_URL = "";
+// En el servidor (SSR) usamos la URL completa del backend.
+// En el cliente dejamos vacío porque el rewrite de Next.js lo resuelve.
+const BASE_URL =
+  typeof window === "undefined"
+    ? (process.env.NEXT_PUBLIC_API_URL ?? "")
+    : "";
 
 interface ApiResponse<T = unknown> {
   success: boolean;

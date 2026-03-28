@@ -355,6 +355,8 @@ function VentaDetailPanel({ venta, onClose }: { venta: VentaPOS; onClose: () => 
   const [editing, setEditing] = useState(false);
   const [editDesc, setEditDesc] = useState(venta.descripcion);
   const [editMonto, setEditMonto] = useState(venta.monto);
+  const [editTipo, setEditTipo] = useState(venta.tipo || "ingreso");
+  const [editNota, setEditNota] = useState(venta.nota || "");
 
   const handleAnular = () => {
     anular.mutate(venta._id, {
@@ -365,7 +367,7 @@ function VentaDetailPanel({ venta, onClose }: { venta: VentaPOS; onClose: () => 
 
   const handleGuardar = () => {
     editar.mutate(
-      { id: venta._id, descripcion: editDesc, monto: editMonto },
+      { id: venta._id, descripcion: editDesc, monto: editMonto, tipo: editTipo, nota: editNota },
       {
         onSuccess: () => { toast.success("Venta actualizada"); setEditing(false); },
         onError: (e) => toast.error(e.message),
@@ -412,15 +414,41 @@ function VentaDetailPanel({ venta, onClose }: { venta: VentaPOS; onClose: () => 
           </div>
           <div className="flex justify-between items-center">
             <span className="text-muted-foreground">Tipo</span>
-            <Badge variant="secondary" className={`border-0 text-[10px] ${venta.tipo === "egreso" ? "bg-red-50 text-red-500" : "bg-emerald-50 text-emerald-600"}`}>
-              {venta.tipo === "egreso" ? "Egreso" : "Ingreso"}
-            </Badge>
+            {editing ? (
+              <Select value={editTipo} onValueChange={(v) => v && setEditTipo(v as "ingreso" | "egreso")}>
+                <SelectTrigger className="h-7 rounded-lg text-xs w-28"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ingreso">Ingreso</SelectItem>
+                  <SelectItem value="egreso">Egreso</SelectItem>
+                </SelectContent>
+              </Select>
+            ) : (
+              <Badge variant="secondary" className={`border-0 text-[10px] ${venta.tipo === "egreso" ? "bg-red-50 text-red-500" : "bg-emerald-50 text-emerald-600"}`}>
+                {venta.tipo === "egreso" ? "Egreso" : "Ingreso"}
+              </Badge>
+            )}
           </div>
           <div className="flex justify-between items-center">
             <span className="text-muted-foreground">Origen</span>
             <Badge variant="secondary" className={`border-0 text-[10px] ${venta.origen === "lavado" ? "bg-blue-50 text-blue-600" : ""}`}>
               {venta.origen}
             </Badge>
+          </div>
+          <div>
+            <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Nota</span>
+            <div className="relative mt-0.5">
+              <div className={`transition-all duration-200 ${editing ? "opacity-0 h-0 overflow-hidden" : "opacity-100"}`}>
+                <p className="text-xs text-muted-foreground italic">{venta.nota || "Sin nota"}</p>
+              </div>
+              <div className={`transition-all duration-200 ${editing ? "opacity-100" : "opacity-0 h-0 overflow-hidden"}`}>
+                <textarea
+                  className="w-full h-16 rounded-lg border border-input bg-transparent px-2.5 py-1.5 text-xs outline-none focus:border-ring focus:ring-2 focus:ring-ring/50 resize-none placeholder:text-muted-foreground"
+                  value={editNota}
+                  onChange={(e) => setEditNota(e.target.value)}
+                  placeholder="Agregar una nota..."
+                />
+              </div>
+            </div>
           </div>
         </div>
 

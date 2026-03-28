@@ -211,13 +211,21 @@ function logout(req, res) {
   return ok(res, null, 'Sesión cerrada');
 }
 
-function getMe(req, res) {
-  return ok(res, {
-    adminId: req.user.adminId,
-    email: req.user.email,
-    localNumber: req.user.localNumber,
-    permiso: req.user.permiso,
-  });
+async function getMe(req, res) {
+  try {
+    const admin = await Admin.findById(req.user.adminId).select('email localNumber localName permiso');
+    if (!admin) return fail(res, 404, 'Admin no encontrado');
+
+    return ok(res, {
+      adminId: req.user.adminId,
+      email: admin.email,
+      localNumber: admin.localNumber,
+      localName: admin.localName,
+      permiso: req.user.permiso,
+    });
+  } catch (err) {
+    return fail(res, 500, err.message);
+  }
 }
 
 async function crearUsuario(req, res) {

@@ -58,27 +58,33 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       {/* Header: logo + collapse toggle */}
       <div className={cn(
         "flex h-14 items-center border-b border-border/40",
-        collapsed ? "justify-center px-0" : "justify-between px-4"
+        collapsed ? "flex-col justify-center gap-1 py-2 px-0" : "justify-between px-4"
       )}>
-        {!collapsed && (
-          <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-brand-purple to-brand-fuchsia">
-              <span className="text-[10px] font-bold text-white">PT</span>
+        {collapsed ? (
+          <button
+            onClick={onToggle}
+            className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-brand-purple to-brand-fuchsia cursor-pointer"
+            title="Expandir"
+          >
+            <span className="text-[10px] font-bold text-white">PT</span>
+          </button>
+        ) : (
+          <>
+            <div className="flex items-center gap-2">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-brand-purple to-brand-fuchsia flex-shrink-0">
+                <span className="text-[10px] font-bold text-white">PT</span>
+              </div>
+              <span className="text-sm font-semibold tracking-tight text-foreground">PickUp Time</span>
             </div>
-            <span className="text-sm font-semibold tracking-tight text-foreground">PickUp Time</span>
-          </div>
+            <button
+              onClick={onToggle}
+              className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
+              title="Colapsar"
+            >
+              <PanelLeftClose className="h-4 w-4" />
+            </button>
+          </>
         )}
-        <button
-          onClick={onToggle}
-          className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
-          title={collapsed ? "Expandir" : "Colapsar"}
-        >
-          {collapsed ? (
-            <PanelLeft className="h-4 w-4" />
-          ) : (
-            <PanelLeftClose className="h-4 w-4" />
-          )}
-        </button>
       </div>
 
       {/* Nav */}

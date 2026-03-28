@@ -162,7 +162,7 @@ export function useCrearVenta() {
 export function useEditarVenta() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, ...body }: { id: string; descripcion?: string; monto?: number }) =>
+    mutationFn: ({ id, ...body }: { id: string; descripcion?: string; monto?: number; tipo?: string; nota?: string }) =>
       fetchApi(`/api/ventas/${id}`, {
         method: "PUT",
         body: JSON.stringify(body),

@@ -6,6 +6,7 @@ const ventaPOSSchema = new mongoose.Schema({
   monto:       { type: Number, required: true },
   descripcion: { type: String, default: '' },
   tipo:        { type: String, enum: ['ingreso', 'egreso'], default: 'ingreso' },
+  nota:        { type: String, default: '' },
   origen:      { type: String, enum: ['manual', 'lavado'], default: 'manual' },
   origenRef:   { type: mongoose.Schema.Types.ObjectId, default: null },
   fecha:       { type: Date, default: Date.now },

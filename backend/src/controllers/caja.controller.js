@@ -322,7 +322,7 @@ async function getVentas(req, res) {
 async function editarVenta(req, res) {
   try {
     const { ventaId } = req.params;
-    const { descripcion, monto, pagos } = req.body;
+    const { descripcion, monto, tipo, nota, pagos } = req.body;
 
     const venta = await VentaPOS.findById(ventaId);
     if (!venta) return fail(res, 404, 'Venta no encontrada.');
@@ -334,6 +334,8 @@ async function editarVenta(req, res) {
 
     if (descripcion !== undefined) venta.descripcion = descripcion;
     if (monto !== undefined) venta.monto = monto;
+    if (tipo !== undefined) venta.tipo = tipo;
+    if (nota !== undefined) venta.nota = nota;
     await venta.save();
 
     if (pagos && pagos.length > 0) {
