@@ -144,11 +144,24 @@
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground antialiased;
-  }
   html {
     @apply font-sans;
+    -webkit-text-size-adjust: 100%;
+    touch-action: manipulation;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    overscroll-behavior: none;
+  }
+
+  /* Prevent iOS zoom on input focus — ensure 16px minimum */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+  @media (min-width: 768px) {
+    input, select, textarea {
+      font-size: inherit !important;
+    }
   }
 
   /* Page background with subtle gradient for glass to work */

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { DM_Sans, DM_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeInit } from "@/components/layout/ThemeInit";
@@ -16,9 +16,22 @@ const dmMono = DM_Mono({
   weight: ["400", "500"],
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
+};
+
 export const metadata: Metadata = {
   title: "PickUp Time",
   description: "Plataforma de gestion para lavaderos",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "PickUp Time",
+  },
 };
 
 export default function RootLayout({

@@ -9,7 +9,7 @@ import { dirname, join } from 'path';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: join(__dirname, '../.env') });
 
-import Admin from '../src/models/adminModel.js';
+import Admin from '../backend/src/models/adminModel.js';
 
 const nombres = [
   'Matías Rodríguez', 'Lucía Fernández', 'Sebastián López', 'Valentina García',

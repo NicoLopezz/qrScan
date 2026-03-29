@@ -691,10 +691,10 @@ function NuevaVentaDialog({ open, onOpenChange, turnoId, medios, tipo: tipoProp 
   const [desc, setDesc] = useState("");
   const [medioPago, setMedioPago] = useState<string>(medios[0] ?? "efectivo");
 
+  const [tipoManual, setTipoManual] = useState<"ingreso" | "egreso">(tipoProp ?? "ingreso");
   const montoStr = String(monto);
   const montoNum = parseFloat(montoStr);
-  const isNeg = montoStr.startsWith("-");
-  const autoTipo = tipoProp ?? (isNeg ? "egreso" : "ingreso");
+  const autoTipo = tipoProp ?? tipoManual;
   const isEgreso = autoTipo === "egreso";
 
   const [nota, setNota] = useState("");
@@ -722,28 +722,41 @@ function NuevaVentaDialog({ open, onOpenChange, turnoId, medios, tipo: tipoProp 
         <DialogHeader className="mb-4">
           <DialogTitle className="text-sm font-semibold tracking-tight">
             Nuevo Movimiento
-            {montoStr.length > 0 && montoStr !== "0" && (
-              <span className={`ml-2 text-xs font-normal ${isEgreso ? "text-red-500" : "text-emerald-600"}`}>
-                {isEgreso ? "egreso" : "ingreso"}
-              </span>
-            )}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-3">
+          {!tipoProp && (
+            <div className="flex rounded-xl bg-muted p-0.5">
+              <button
+                type="button"
+                className={`flex-1 rounded-[10px] py-1.5 text-xs font-semibold transition-all ${!isEgreso ? "bg-white dark:bg-card text-emerald-600 shadow-sm" : "text-muted-foreground"}`}
+                onClick={() => setTipoManual("ingreso")}
+              >
+                Ingreso
+              </button>
+              <button
+                type="button"
+                className={`flex-1 rounded-[10px] py-1.5 text-xs font-semibold transition-all ${isEgreso ? "bg-white dark:bg-card text-red-500 shadow-sm" : "text-muted-foreground"}`}
+                onClick={() => setTipoManual("egreso")}
+              >
+                Egreso
+              </button>
+            </div>
+          )}
           <div className="space-y-1.5">
             <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Monto</Label>
             <input
               type="text"
-              inputMode="numeric"
+              inputMode="decimal"
               className="h-10 w-full rounded-xl border border-input bg-transparent px-2.5 text-sm tabular-nums font-medium outline-none focus:border-ring focus:ring-2 focus:ring-ring/50 placeholder:text-muted-foreground"
               value={monto}
               onChange={(e) => {
-                const v = e.target.value.replace(/[^0-9.\-]/g, "");
+                const v = e.target.value.replace(/[^0-9.]/g, "");
                 setMonto(v);
               }}
               required
               autoFocus
-              placeholder="1500 o -1500 para egreso"
+              placeholder="1500"
             />
           </div>
           <div className="space-y-1.5">

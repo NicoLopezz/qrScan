@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { QRCodeSVG } from "qrcode.react";
-import { ArrowLeft, ArrowRight, Check, Car, Sparkles, QrCode } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Car, QrCode } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -25,8 +25,7 @@ interface MobileWizardProps {
 }
 
 const STEPS = [
-  { label: "Vehiculo", icon: Car },
-  { label: "Servicio", icon: Sparkles },
+  { label: "Datos", icon: Car },
   { label: "QR", icon: QrCode },
 ];
 
@@ -53,10 +52,8 @@ export function MobileWizard({ onComplete, onNextRef }: MobileWizardProps) {
     : "";
 
   const canNext = step === 0
-    ? form.nombre && form.patente && form.modelo
-    : step === 1
-      ? form.tipoDeLavado
-      : true;
+    ? form.nombre && form.patente && form.modelo && form.tipoDeLavado
+    : true;
 
   const handleCreate = async () => {
     setLoading(true);
@@ -73,7 +70,7 @@ export function MobileWizard({ onComplete, onNextRef }: MobileWizardProps) {
       if (lastLavado) {
         await fetchApi(`/api/lavados/${lastLavado._id}/actualizarSelectedLavado`, { method: "PATCH" });
         setCreatedLavadoId(lastLavado._id);
-        goTo(2);
+        goTo(1);
         toast.success("Lavado creado");
       }
     } catch (err) {
@@ -89,8 +86,7 @@ export function MobileWizard({ onComplete, onNextRef }: MobileWizardProps) {
   };
 
   const handleNext = () => {
-    if (step === 1) handleCreate();
-    else if (step < 2) goTo(step + 1);
+    if (step === 0) handleCreate();
   };
 
   const handleBack = () => {
@@ -142,22 +138,19 @@ export function MobileWizard({ onComplete, onNextRef }: MobileWizardProps) {
                 <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Nombre del cliente</Label>
                 <Input value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} className="h-10 rounded-xl mt-1" placeholder="Martin Gonzalez" autoFocus />
               </div>
-              <div>
-                <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Patente</Label>
-                <Input value={form.patente} onChange={(e) => setForm({ ...form, patente: e.target.value.toUpperCase() })} className="h-10 rounded-xl mt-1 uppercase tracking-wider" placeholder="AB 123 CD" />
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Patente</Label>
+                  <Input value={form.patente} onChange={(e) => setForm({ ...form, patente: e.target.value.toUpperCase() })} className="h-10 rounded-xl mt-1 uppercase tracking-wider" placeholder="AB 123 CD" />
+                </div>
+                <div>
+                  <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Modelo</Label>
+                  <Input value={form.modelo} onChange={(e) => setForm({ ...form, modelo: e.target.value })} className="h-10 rounded-xl mt-1" placeholder="Toyota Corolla" />
+                </div>
               </div>
-              <div>
-                <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Modelo</Label>
-                <Input value={form.modelo} onChange={(e) => setForm({ ...form, modelo: e.target.value })} className="h-10 rounded-xl mt-1" placeholder="Toyota Corolla 2022" />
-              </div>
-            </div>
-          )}
-
-          {step === 1 && (
-            <div className="flex flex-col gap-3 pt-2 px-2">
               <div>
                 <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Tipo de lavado</Label>
-                <Input value={form.tipoDeLavado} onChange={(e) => setForm({ ...form, tipoDeLavado: e.target.value })} className="h-10 rounded-xl mt-1" placeholder="Simple, Completo, Premium..." autoFocus />
+                <Input value={form.tipoDeLavado} onChange={(e) => setForm({ ...form, tipoDeLavado: e.target.value })} className="h-10 rounded-xl mt-1" placeholder="Simple, Completo, Premium..." />
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
@@ -185,7 +178,7 @@ export function MobileWizard({ onComplete, onNextRef }: MobileWizardProps) {
             </div>
           )}
 
-          {step === 2 && (
+          {step === 1 && (
             <div className="flex flex-col items-center justify-center h-full gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-950/40">
                 <Check className="h-4 w-4" />
@@ -202,7 +195,7 @@ export function MobileWizard({ onComplete, onNextRef }: MobileWizardProps) {
       </div>
 
       {/* Bottom action — only on QR step */}
-      {step === 2 && (
+      {step === 1 && (
         <div className="pt-1 flex justify-center">
           <Button onClick={onComplete} className="h-10 px-8 rounded-xl bg-gradient-to-r from-brand-purple to-brand-fuchsia text-white font-medium cursor-pointer text-sm">
             Volver a Lista
