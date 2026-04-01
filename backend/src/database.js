@@ -11,7 +11,8 @@ export async function connectDB() {
       console.log(`Database connected: ${db.connection.name}`);
       return db;
     } catch (err) {
-      console.error(`DB connection attempt ${attempt}/${MAX_RETRIES} failed: ${err.message}`);
+      const safeMsg = err.message?.replace(/mongodb(\+srv)?:\/\/[^\s]+/gi, 'mongodb://***');
+      console.error(`DB connection attempt ${attempt}/${MAX_RETRIES} failed: ${safeMsg}`);
       if (attempt < MAX_RETRIES) {
         await new Promise(r => setTimeout(r, RETRY_DELAY_MS));
       }

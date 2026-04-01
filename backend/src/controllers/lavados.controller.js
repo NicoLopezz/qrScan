@@ -1,6 +1,6 @@
 import Lavado from '../models/Lavado.js';
 import Admin from '../models/adminModel.js';
-import { sendWhatsAppMessage, sendWhatsAppTemplateMessage } from '../services/twilioService.js';
+import { sendMessage, sendTemplateMessage, buildQrRedirectUrl } from '../services/messaging/channelRegistry.js';
 import { crearVentaDesdeLavado } from '../services/ventaService.js';
 import { ok, created, fail } from '../utils/apiResponse.js';
 
@@ -30,7 +30,7 @@ async function agregarLavado(req, res) {
 
 // Obtener lavados de un administrador
 async function getLavados(req, res) {
-  const adminId = req.params.adminId || req.user.adminId;
+  const adminId = req.user.adminId;
 
   try {
     const lavados = await Lavado.find({ adminId }).sort({ fechaDeAlta: -1 });
@@ -42,13 +42,14 @@ async function getLavados(req, res) {
 
 async function actualizarSelectedLavado(req, res) {
   const lavadoId = req.params.lavadoId;
+  const adminId = req.user.adminId;
 
   try {
-    const lavado = await Lavado.findById(lavadoId);
+    const lavado = await Lavado.findOne({ _id: lavadoId, adminId });
     if (!lavado) return fail(res, 404, 'Lavado no encontrado');
 
     // Desmarcar todos los lavados del mismo admin
-    await Lavado.updateMany({ adminId: lavado.adminId }, { selected: false });
+    await Lavado.updateMany({ adminId }, { selected: false });
 
     // Marcar el seleccionado
     lavado.selected = true;
@@ -60,7 +61,7 @@ async function actualizarSelectedLavado(req, res) {
   }
 }
 
-// Función para validar el QR y redirigir a WhatsApp para lavados
+// QR scan redirect — usa el canal activo del admin
 async function qrScanUpdateLavados(req, res) {
   const adminId = req.params.localId;
 
@@ -71,13 +72,9 @@ async function qrScanUpdateLavados(req, res) {
     const admin = await Admin.findById(adminId);
     if (!admin) return res.status(404).send('Admin no encontrado');
 
-    const { nombre, _id } = lavado;
-    const code = _id.toString().slice(-5);
-    const message = `${nombre}, confirmo servicio de lavado. Código: ${code}`;
-    const whatsappNumber = admin.localNumber;
-    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-
-    res.redirect(whatsappUrl);
+    const channel = admin.activeChannel || 'telegram';
+    const url = buildQrRedirectUrl(channel, admin, lavado, 'lavado');
+    res.redirect(url);
   } catch (error) {
     res.status(500).send('Error al procesar el QR');
   }
@@ -89,7 +86,7 @@ async function enviarAvisoRetiroLavado(req, res) {
     const { clienteId } = req.body;
     if (!clienteId) return fail(res, 400, 'No se recibió clienteId');
 
-    const lavado = await Lavado.findById(clienteId);
+    const lavado = await Lavado.findOne({ _id: clienteId, adminId: req.user.adminId });
     if (!lavado) return fail(res, 404, 'Lavado no encontrado');
 
     const historialDisponible = lavado.historialLavados.find(h => h.fechaEgreso === null);
@@ -115,7 +112,9 @@ Con este lavado, ya tienes **1 de 3 estrellas** ⭐.
 
 ¡Gracias por tu preferencia y esperamos verte pronto! 🌟`;
 
-    await sendWhatsAppMessage(`whatsapp:${lavado.from}`, mensaje);
+    const channel = lavado.channel || 'whatsapp';
+    const to = channel === 'telegram' ? lavado.telegramChatId : lavado.from;
+    await sendMessage(channel, to, mensaje);
 
     return ok(res, { tiempoEspera: diferenciaMinutos }, 'Mensaje enviado con éxito');
   } catch (error) {
@@ -132,7 +131,7 @@ async function modificarLavado(req, res) {
   }
 
   try {
-    const lavado = await Lavado.findById(lavadoId);
+    const lavado = await Lavado.findOne({ _id: lavadoId, adminId: req.user.adminId });
     if (!lavado) return fail(res, 404, 'No se encontró el lavado con el ID especificado.');
 
     lavado.medioPago = medioPago;
@@ -167,7 +166,7 @@ async function enviarEncuesta(req, res) {
     const { clienteId } = req.body;
     if (!clienteId) return fail(res, 400, 'No se recibió clienteId');
 
-    const lavado = await Lavado.findById(clienteId);
+    const lavado = await Lavado.findOne({ _id: clienteId, adminId: req.user.adminId });
     if (!lavado) return fail(res, 404, 'Lavado no encontrado');
 
     const templateParams = [
@@ -176,7 +175,9 @@ async function enviarEncuesta(req, res) {
       '1 de 3 estrellas',
     ];
 
-    await sendWhatsAppTemplateMessage(`whatsapp:${lavado.from}`, templateParams);
+    const channel = lavado.channel || 'whatsapp';
+    const to = channel === 'telegram' ? lavado.telegramChatId : lavado.from;
+    await sendTemplateMessage(channel, to, templateParams);
 
     return ok(res, null, 'Mensaje de plantilla enviado con éxito');
   } catch (error) {
@@ -257,7 +258,8 @@ async function buscarLavados(req, res) {
 
     if (!q || q.length < 2) return ok(res, []);
 
-    const regex = new RegExp(q.replace(/\s+/g, ''), 'i');
+    const escaped = q.replace(/\s+/g, '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(escaped, 'i');
 
     const resultados = await Lavado.find({
       adminId,

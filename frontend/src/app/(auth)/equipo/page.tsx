@@ -36,7 +36,7 @@ const ROLE_CONFIG: Record<string, { label: string; icon: typeof Shield; color: s
   Admin: {
     label: "Admin",
     icon: ShieldCheck,
-    color: "bg-brand-purple-muted text-brand-purple",
+    color: "bg-muted text-foreground",
     access: "Acceso completo",
   },
   editor: {
@@ -62,14 +62,14 @@ export default function EquipoPage() {
 
   const { data: equipo, isLoading } = useQuery({
     queryKey: ["equipo", user?.adminId],
-    queryFn: () => fetchApi<TeamMember[]>(`/api/admins/${user?.adminId}/usuarios`),
+    queryFn: () => fetchApi<TeamMember[]>(`/api/usuarios`),
     enabled: !!user?.adminId,
     select: (res) => res.data,
   });
 
   const crear = useMutation({
     mutationFn: (body: { email: string; password: string; role: string }) =>
-      fetchApi(`/api/admins/${user?.adminId}/usuarios`, {
+      fetchApi(`/api/usuarios`, {
         method: "POST",
         body: JSON.stringify(body),
       }),
@@ -83,7 +83,7 @@ export default function EquipoPage() {
 
   const editar = useMutation({
     mutationFn: ({ id, ...body }: { id: string; email?: string; password?: string; role?: string }) =>
-      fetchApi(`/api/admins/${user?.adminId}/usuarios/${id}`, {
+      fetchApi(`/api/usuarios/${id}`, {
         method: "PUT",
         body: JSON.stringify(body),
       }),
@@ -97,7 +97,7 @@ export default function EquipoPage() {
 
   const eliminar = useMutation({
     mutationFn: (id: string) =>
-      fetchApi(`/api/admins/${user?.adminId}/usuarios/${id}`, { method: "DELETE" }),
+      fetchApi(`/api/usuarios/${id}`, { method: "DELETE" }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["equipo"] });
       toast.success("Miembro eliminado");
@@ -126,7 +126,7 @@ export default function EquipoPage() {
         <div className="card-elevated rounded-2xl bg-white dark:bg-card p-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-purple text-white text-sm font-bold">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-foreground text-background text-sm font-bold">
                 {owner.email.charAt(0).toUpperCase()}
               </div>
               <div>
@@ -134,7 +134,7 @@ export default function EquipoPage() {
                 <p className="text-xs text-muted-foreground">Propietario de la cuenta</p>
               </div>
             </div>
-            <Badge className="bg-brand-purple-muted text-brand-purple border-0 text-xs">
+            <Badge className="bg-muted text-foreground border-0 text-xs">
               <ShieldCheck className="h-3 w-3 mr-1" /> Admin
             </Badge>
           </div>
@@ -150,7 +150,7 @@ export default function EquipoPage() {
         <Button
           size="sm"
           onClick={() => setShowForm(true)}
-          className="rounded-xl bg-gradient-to-r from-brand-purple to-brand-fuchsia text-white text-xs cursor-pointer"
+          className="rounded-xl bg-foreground text-background hover:bg-foreground/90 text-xs cursor-pointer"
         >
           <Plus className="h-3.5 w-3.5 mr-1" /> Agregar
         </Button>
@@ -317,7 +317,7 @@ function CrearMiembroDialog({
               </SelectContent>
             </Select>
           </div>
-          <Button type="submit" className="w-full h-10 rounded-xl bg-gradient-to-r from-brand-purple to-brand-fuchsia text-white cursor-pointer" disabled={isPending}>
+          <Button type="submit" className="w-full h-10 rounded-xl bg-foreground text-background hover:bg-foreground/90 cursor-pointer" disabled={isPending}>
             {isPending ? "Creando..." : "Agregar miembro"}
           </Button>
         </form>
@@ -384,7 +384,7 @@ function EditarMiembroDialog({
               </SelectContent>
             </Select>
           </div>
-          <Button type="submit" className="w-full h-10 rounded-xl bg-gradient-to-r from-brand-purple to-brand-fuchsia text-white cursor-pointer" disabled={isPending}>
+          <Button type="submit" className="w-full h-10 rounded-xl bg-foreground text-background hover:bg-foreground/90 cursor-pointer" disabled={isPending}>
             {isPending ? "Guardando..." : "Guardar cambios"}
           </Button>
         </form>

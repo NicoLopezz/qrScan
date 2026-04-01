@@ -1,5 +1,5 @@
 import Admin from '../models/adminModel.js';
-import { sendWhatsAppMessage } from '../services/twilioService.js';
+import { sendMessage, buildQrRedirectUrl } from '../services/messaging/channelRegistry.js';
 import { ok, created, fail } from '../utils/apiResponse.js';
 
 //AGREGAR CLIENTE
@@ -23,7 +23,7 @@ async function agregarCliente(req, res) {
 }
 
 async function getReservas(req, res) {
-  const { adminId } = req.params;
+  const adminId = req.user.adminId;
 
   try {
     const admin = await Admin.findById(adminId).select('reservas');
@@ -39,16 +39,17 @@ async function actualizarSelectedCliente(req, res) {
 
   try {
     // Primero, busca el admin que contiene la reserva con el clienteId y establece todas las reservas en false
+    const adminId = req.user.adminId;
     const admin = await Admin.findOneAndUpdate(
-      { "reservas._id": clienteId },
-      { $set: { "reservas.$[].selected": false } }, // Establece todas las reservas como false
+      { _id: adminId, "reservas._id": clienteId },
+      { $set: { "reservas.$[].selected": false } },
       { new: true }
     );
 
     if (!admin) return fail(res, 404, 'Cliente no encontrado');
 
     const updatedAdmin = await Admin.findOneAndUpdate(
-      { "reservas._id": clienteId },
+      { _id: adminId, "reservas._id": clienteId },
       { $set: { "reservas.$.selected": true } },
       { new: true }
     );
@@ -63,10 +64,10 @@ async function eliminarCliente(req, res) {
   const clienteId = req.params.clienteId;
 
   try {
-    // Encuentra el cliente dentro del array de reservas y lo elimina
+    const adminId = req.user.adminId;
     const admin = await Admin.findOneAndUpdate(
-      { "reservas._id": clienteId }, // Busca dentro del array de reservas
-      { $pull: { reservas: { _id: clienteId } } }, // Elimina la reserva que coincide con el clienteId
+      { _id: adminId, "reservas._id": clienteId },
+      { $pull: { reservas: { _id: clienteId } } },
       { new: true }
     );
 
@@ -101,8 +102,9 @@ async function enviarMensajeCuentaRegresiva(req, res) {
         // Crear el mensaje con el nombre del cliente
         const mensaje = `Hola, ${reserva.nombre}, te pedimos que te acerques a tomar la reserva. Recuerda que tienes 5 minutos para efectivizarla. Gracias ☺️`;
 
-        // Enviar el mensaje al número de WhatsApp almacenado en el campo `from`
-        await sendWhatsAppMessage(`whatsapp:${reserva.from}`, mensaje);
+        const channel = reserva.channel || 'whatsapp';
+        const to = channel === 'telegram' ? reserva.telegramChatId : reserva.from;
+        await sendMessage(channel, to, mensaje);
 
         console.log(`Mensaje de cuenta regresiva enviado a ${reserva.from} para el cliente ${reserva.nombre}`);
         return ok(res, null, 'Mensaje enviado con éxito');
@@ -130,29 +132,12 @@ async function qrScanUpdateReservas(req, res) {
       return res.status(404).send('Admin no encontrado');
     }
 
-    // Buscar la reserva donde selected sea true
-    const reservaSeleccionada = admin.reservas.find(reserva => reserva.selected === true);
+    const reservaSeleccionada = admin.reservas.find(r => r.selected === true);
+    if (!reservaSeleccionada) return res.status(404).send('No se encontró ninguna reserva seleccionada');
 
-    if (!reservaSeleccionada) {
-      console.error("No se encontró ninguna reserva seleccionada.");
-      return res.status(404).send('No se encontró ninguna reserva seleccionada');
-    }
-
-    // Obtener los datos de la reserva seleccionada
-    const { nombre, comensales, observacion, _id } = reservaSeleccionada;
-
-    // Extraer los últimos 5 caracteres del ObjectId
-    const code = _id.toString().slice(-5);
-
-    // Construir el mensaje personalizado
-    const message = `Hola! ${nombre}, vamos a validar la reserva para ${comensales} comensales, con la observación: "${observacion}". Código: ${code}`;
-
-    // Construir la URL de WhatsApp con el mensaje detallado
-    const whatsappNumber = 5491135254661;  // Número de WhatsApp (puedes reemplazarlo según corresponda)
-    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-
-    // Redirigir instantáneamente al cliente a la URL de WhatsApp
-    res.redirect(whatsappUrl);
+    const channel = admin.activeChannel || 'telegram';
+    const url = buildQrRedirectUrl(channel, admin, reservaSeleccionada, 'reserva');
+    res.redirect(url);
 
   } catch (error) {
     console.error('Error al obtener el admin:', error);

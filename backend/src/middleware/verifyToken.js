@@ -1,6 +1,17 @@
 import { verifyToken as verify } from '../utils/jwt.js';
 
-const PUBLIC_PATHS = ['/api/login', '/api/webhook', '/api/newLocal', '/api/qrScanUpdate', '/api/qrScanUpdateReservas', '/api/qrScanUpdateLavados'];
+const PUBLIC_PATHS = [
+  '/api/login',
+  '/api/logout',
+  '/api/webhook',
+  '/api/telegram/webhook',
+  '/api/newLocal',
+  '/api/send-code',
+  '/api/verify-code',
+  '/api/qrScanUpdate',
+  '/api/qrScanUpdateReservas',
+  '/api/qrScanUpdateLavados',
+];
 
 export function verifyTokenMiddleware(req, res, next) {
   if (PUBLIC_PATHS.some(p => req.path.startsWith(p))) return next();

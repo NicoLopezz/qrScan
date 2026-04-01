@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PatenteInput } from "@/components/lavados/PatenteInput";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -74,7 +75,7 @@ export function LavadoForm({ open, onOpenChange }: LavadoFormProps) {
       queryClient.invalidateQueries({ queryKey: ["lavados"] });
 
       // Get the last lavado to select it for QR
-      const lavadosRes = await fetchApi<Array<{ _id: string }>>(`/api/admins/${user?.adminId}/lavados`);
+      const lavadosRes = await fetchApi<Array<{ _id: string }>>(`/api/lavados`);
       const lastLavado = lavadosRes.data?.[lavadosRes.data.length - 1];
 
       if (lastLavado) {
@@ -103,17 +104,17 @@ export function LavadoForm({ open, onOpenChange }: LavadoFormProps) {
               <DialogTitle className="text-lg tracking-tight">Nuevo Lavado</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-3">
+              {/* Patente — visual plate */}
+              <div className="space-y-1">
+                <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Patente</Label>
+                <PatenteInput value={form.patente} onChange={(v) => setForm({ ...form, patente: v })} required />
+              </div>
+
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Nombre</Label>
                   <Input value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} className="h-10 rounded-xl text-sm" required />
                 </div>
-                <div className="space-y-1">
-                  <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Patente</Label>
-                  <Input value={form.patente} onChange={(e) => setForm({ ...form, patente: e.target.value })} className="h-10 rounded-xl text-sm" required />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Modelo</Label>
                   <Input value={form.modelo} onChange={(e) => setForm({ ...form, modelo: e.target.value })} className="h-10 rounded-xl text-sm" required />
@@ -150,7 +151,7 @@ export function LavadoForm({ open, onOpenChange }: LavadoFormProps) {
                 <Button type="button" variant="outline" onClick={() => handleClose(false)} className="flex-1 h-10 rounded-xl cursor-pointer">
                   Cancelar
                 </Button>
-                <Button type="submit" className="flex-1 h-10 rounded-xl bg-gradient-to-r from-brand-purple to-brand-fuchsia text-white font-medium shadow-md shadow-brand-purple/15 cursor-pointer" disabled={loading}>
+                <Button type="submit" className="flex-1 h-10 rounded-xl bg-foreground text-background hover:bg-foreground/90 font-medium cursor-pointer" disabled={loading}>
                   {loading ? "Creando..." : "Crear y Generar QR"}
                 </Button>
               </div>
@@ -184,9 +185,19 @@ export function LavadoForm({ open, onOpenChange }: LavadoFormProps) {
                   {form.tipoDeLavado}
                 </p>
               </div>
+              {qrUrl && window.location.hostname === "localhost" && (
+                <a
+                  href={qrUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[11px] text-foreground underline break-all text-center max-w-[280px]"
+                >
+                  {qrUrl}
+                </a>
+              )}
               <Button
                 onClick={() => handleClose(false)}
-                className="w-full h-10 rounded-xl bg-gradient-to-r from-brand-purple to-brand-fuchsia text-white cursor-pointer"
+                className="w-full h-10 rounded-xl bg-foreground text-background hover:bg-foreground/90 cursor-pointer"
               >
                 <Check className="h-4 w-4 mr-1" /> Listo
               </Button>

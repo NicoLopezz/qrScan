@@ -1,21 +1,31 @@
 import Admin from '../models/adminModel.js';
 import Caja from '../models/Caja.js';
+import VerificationCode from '../models/VerificationCode.js';
 import bcrypt from 'bcryptjs';
-import { faker } from '@faker-js/faker';
 import { signToken } from '../utils/jwt.js';
 import { ok, created, fail } from '../utils/apiResponse.js';
+import { sendVerificationCode } from '../services/emailService.js';
 
 const COOKIE_OPTS = {
   httpOnly: true,
-  sameSite: 'Lax',
+  sameSite: 'Strict',
   maxAge: 7 * 24 * 60 * 60 * 1000,
   secure: process.env.NODE_ENV === 'production',
 };
 
 async function newLocal(req, res) {
-  const { email, password, localName } = req.body;
+  const { email, password, localName, rubro, activeChannel, horariosDeOperacion } = req.body;
 
   try {
+    // Verificar que el email fue validado con código
+    const verification = await VerificationCode.findOne({ email, verified: true });
+    if (!verification) {
+      return fail(res, 400, 'Debes verificar tu email antes de crear la cuenta');
+    }
+    await VerificationCode.deleteOne({ _id: verification._id });
+
+    const { faker } = await import('@faker-js/faker');
+
     const randomUser = {
       name: faker.person.fullName(),
       password: faker.internet.password(),
@@ -92,7 +102,9 @@ async function newLocal(req, res) {
         alias: faker.finance.iban()
       },
       tipoDeLicencia: 'premium',
-      horariosDeOperacion: '8 a 17hs',
+      horariosDeOperacion: horariosDeOperacion || '8 a 17hs',
+      activeChannel: activeChannel || 'telegram',
+      rubro: rubro || '',
       reservas: randomReservations
     });
 
@@ -101,35 +113,64 @@ async function newLocal(req, res) {
     // Crear caja por defecto para el nuevo local
     await Caja.create({ nombre: 'Mostrador', adminId: newAdmin._id });
 
-    return created(res, { adminId: newAdmin._id }, 'Administrador agregado con éxito');
+    return created(res, { adminId: newAdmin._id }, 'Cuenta creada con éxito');
   } catch (error) {
     console.error('Error al agregar administrador:', error.message);
-    return fail(res, 500, 'Error al agregar administrador');
+    // Generic error: don't reveal if it's a duplicate email (unique constraint)
+    return fail(res, 500, 'No se pudo crear la cuenta. Intenta nuevamente.');
   }
 }
 
-async function getLocales(req, res) {
-  try {
-    const locales = await Admin.find();
-    return ok(res, locales);
-  } catch (error) {
-    console.error('Error al obtener locales:', error.message);
-    return fail(res, 500, 'Error al obtener locales');
-  }
-}
-
-async function getLocalDetails(req, res) {
-  const { id } = req.params;
+async function sendCode(req, res) {
+  const { email } = req.body;
+  if (!email) return fail(res, 400, 'Email requerido');
 
   try {
-    const local = await Admin.findById(id);
-    if (!local) return fail(res, 404, 'Local no encontrado');
-    return ok(res, local);
+    // Rate limit: don't send if code was sent less than 30s ago
+    const existing = await VerificationCode.findOne({ email });
+    if (existing && (Date.now() - existing.createdAt.getTime()) < 30000) {
+      return fail(res, 429, 'Espera unos segundos antes de reenviar');
+    }
+
+    // Always respond with same message to prevent email enumeration.
+    const exists = await Admin.findOne({ email }).select('_id').lean();
+
+    let previewUrl = null;
+    if (!exists) {
+      const code = String(Math.floor(100000 + Math.random() * 900000));
+      await VerificationCode.findOneAndUpdate(
+        { email },
+        { code, verified: false, createdAt: new Date() },
+        { upsert: true }
+      );
+
+      const result = await sendVerificationCode(email, code);
+      previewUrl = result.previewUrl || null;
+    }
+
+    return ok(res, { sent: true, previewUrl }, 'Si el email es valido, recibiras un codigo');
   } catch (error) {
-    console.error('Error al obtener los detalles del local:', error);
-    return fail(res, 500, 'Error al obtener los detalles del local');
+    console.error('Error sending verification code:', error.message);
+    return fail(res, 500, 'Error al enviar el codigo');
   }
 }
+
+async function verifyCode(req, res) {
+  const { email, code } = req.body;
+  if (!email || !code) return fail(res, 400, 'Email y codigo requeridos');
+
+  const genericError = 'Codigo incorrecto o expirado';
+  const stored = await VerificationCode.findOne({ email });
+  if (!stored) return fail(res, 400, genericError);
+  if (stored.code !== code.trim()) return fail(res, 400, genericError);
+
+  stored.verified = true;
+  await stored.save();
+
+  return ok(res, { verified: true }, 'Email verificado');
+}
+
+// getLocales y getLocalDetails eliminados — exponían datos sensibles sin auth
 
 async function login(req, res) {
   const { email, password } = req.body;
@@ -138,17 +179,11 @@ async function login(req, res) {
     const admin = await Admin.findOne({ email });
 
     if (admin) {
-      const isHashed = admin.password.startsWith('$2');
-      const isPasswordValid = isHashed
-        ? await bcrypt.compare(password, admin.password)
-        : password === admin.password;
+      const isPasswordValid = await bcrypt.compare(password, admin.password);
 
-      if (!isPasswordValid) return fail(res, 401, 'Contraseña incorrecta');
+      const INVALID_CREDENTIALS = 'Email o contraseña incorrectos';
 
-      if (!isHashed) {
-        admin.password = await bcrypt.hash(password, 10);
-        await admin.save();
-      }
+      if (!isPasswordValid) return fail(res, 401, INVALID_CREDENTIALS);
 
       const token = signToken({
         adminId: admin._id.toString(),
@@ -157,7 +192,6 @@ async function login(req, res) {
         permiso: admin.permiso,
       });
       res.cookie('token', token, COOKIE_OPTS);
-      res.cookie('adminId', admin._id.toString(), { ...COOKIE_OPTS, httpOnly: false });
 
       return ok(res, {
         adminId: admin._id,
@@ -167,21 +201,15 @@ async function login(req, res) {
       }, 'Inicio de sesión exitoso');
     }
 
+    const INVALID_CREDENTIALS = 'Email o contraseña incorrectos';
+
     const adminConUsuario = await Admin.findOne({ 'usuarios.email': email });
-    if (!adminConUsuario) return fail(res, 401, 'Usuario no encontrado');
+    if (!adminConUsuario) return fail(res, 401, INVALID_CREDENTIALS);
 
     const usuario = adminConUsuario.usuarios.find(u => u.email === email);
-    const isHashed = usuario.password.startsWith('$2');
-    const isPasswordValid = isHashed
-      ? await bcrypt.compare(password, usuario.password)
-      : password === usuario.password;
+    const isPasswordValid = await bcrypt.compare(password, usuario.password);
 
-    if (!isPasswordValid) return fail(res, 401, 'Contraseña incorrecta');
-
-    if (!isHashed) {
-      usuario.password = await bcrypt.hash(password, 10);
-      await adminConUsuario.save();
-    }
+    if (!isPasswordValid) return fail(res, 401, INVALID_CREDENTIALS);
 
     const token = signToken({
       adminId: adminConUsuario._id.toString(),
@@ -190,7 +218,6 @@ async function login(req, res) {
       permiso: usuario.permiso,
     });
     res.cookie('token', token, COOKIE_OPTS);
-    res.cookie('adminId', adminConUsuario._id.toString(), { ...COOKIE_OPTS, httpOnly: false });
 
     return ok(res, {
       adminId: adminConUsuario._id,
@@ -207,13 +234,12 @@ async function login(req, res) {
 
 function logout(req, res) {
   res.clearCookie('token');
-  res.clearCookie('adminId');
   return ok(res, null, 'Sesión cerrada');
 }
 
 async function getMe(req, res) {
   try {
-    const admin = await Admin.findById(req.user.adminId).select('email localNumber localName permiso');
+    const admin = await Admin.findById(req.user.adminId).select('email localNumber localName permiso tourCompleted');
     if (!admin) return fail(res, 404, 'Admin no encontrado');
 
     return ok(res, {
@@ -222,14 +248,15 @@ async function getMe(req, res) {
       localNumber: admin.localNumber,
       localName: admin.localName,
       permiso: req.user.permiso,
+      tourCompleted: admin.tourCompleted ?? false,
     });
   } catch (err) {
-    return fail(res, 500, err.message);
+    return fail(res, 500, 'Error al obtener datos del usuario');
   }
 }
 
 async function crearUsuario(req, res) {
-  const { adminId } = req.params;
+  const adminId = req.user.adminId;
   const { email, password, role } = req.body;
 
   try {
@@ -251,7 +278,7 @@ async function crearUsuario(req, res) {
 }
 
 async function listarUsuarios(req, res) {
-  const { adminId } = req.params;
+  const adminId = req.user.adminId;
 
   try {
     const admin = await Admin.findById(adminId);
@@ -276,7 +303,8 @@ async function listarUsuarios(req, res) {
 }
 
 async function editarUsuario(req, res) {
-  const { adminId, usuarioId } = req.params;
+  const adminId = req.user.adminId;
+  const { usuarioId } = req.params;
   const { email, password, role } = req.body;
 
   try {
@@ -306,7 +334,8 @@ async function editarUsuario(req, res) {
 }
 
 async function eliminarUsuario(req, res) {
-  const { adminId, usuarioId } = req.params;
+  const adminId = req.user.adminId;
+  const { usuarioId } = req.params;
 
   try {
     const admin = await Admin.findById(adminId);
@@ -324,10 +353,20 @@ async function eliminarUsuario(req, res) {
   }
 }
 
+async function updateTourStatus(req, res) {
+  const { completed } = req.body;
+  try {
+    await Admin.findByIdAndUpdate(req.user.adminId, { tourCompleted: !!completed });
+    return ok(res, { tourCompleted: !!completed });
+  } catch (error) {
+    return fail(res, 500, 'Error al actualizar tour');
+  }
+}
+
 export const methods = {
   newLocal,
-  getLocales,
-  getLocalDetails,
+  sendCode,
+  verifyCode,
   login,
   logout,
   getMe,
@@ -335,4 +374,5 @@ export const methods = {
   listarUsuarios,
   editarUsuario,
   eliminarUsuario,
+  updateTourStatus,
 };

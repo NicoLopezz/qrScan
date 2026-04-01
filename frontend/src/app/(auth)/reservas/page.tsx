@@ -31,7 +31,7 @@ export default function ReservasPage() {
 
   const { data: reservas, isLoading } = useQuery({
     queryKey: ["reservas", user?.adminId],
-    queryFn: () => fetchApi<Reserva[]>(`/api/admins/${user?.adminId}/reservas`),
+    queryFn: () => fetchApi<Reserva[]>(`/api/reservas`),
     enabled: !!user?.adminId,
     select: (res) => res.data,
   });
@@ -96,7 +96,7 @@ export default function ReservasPage() {
         </h2>
         <Button
           onClick={() => setShowForm(true)}
-          className="bg-brand-purple hover:bg-brand-purple-dark text-white"
+          className="bg-foreground text-background hover:bg-foreground/90"
         >
           <Plus className="h-4 w-4 mr-1" /> Nueva Reserva
         </Button>
@@ -186,7 +186,7 @@ export default function ReservasPage() {
             </div>
             <Button
               type="submit"
-              className="w-full bg-brand-purple hover:bg-brand-purple-dark text-white"
+              className="w-full bg-foreground text-background hover:bg-foreground/90"
               disabled={loading}
             >
               {loading ? "Guardando..." : "Agregar"}

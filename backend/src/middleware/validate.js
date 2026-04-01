@@ -17,15 +17,20 @@ export const loginSchema = z.object({
   password: z.string().min(1, 'Password requerida'),
 });
 
+const passwordSchema = z.string()
+  .min(8, 'Mínimo 8 caracteres')
+  .regex(/[A-Z]/, 'Debe contener al menos una mayúscula')
+  .regex(/[0-9]/, 'Debe contener al menos un número');
+
 export const newLocalSchema = z.object({
   email:     z.string().email('Email inválido'),
-  password:  z.string().min(6, 'Mínimo 6 caracteres'),
+  password:  passwordSchema,
   localName: z.string().min(1, 'Nombre del local requerido'),
 });
 
 export const crearUsuarioSchema = z.object({
   email:    z.string().email('Email inválido'),
-  password: z.string().min(4, 'Mínimo 4 caracteres'),
+  password: passwordSchema,
   role:     z.enum(['Admin', 'editor', 'viewer', 'user'], { message: 'Rol inválido' }),
 });
 
@@ -66,5 +71,49 @@ export const crearVentaSchema = z.object({
 
 export const cerrarTurnoSchema = z.object({
   conteoReal: z.record(z.string(), z.number()),
+  observacion: z.string().optional(),
+});
+
+// ── Automatizaciones ──────────────────────────────────────────
+
+export const crearAutomatizacionSchema = z.object({
+  nombre:       z.string().min(1, 'Nombre requerido'),
+  trigger:      z.string().min(1, 'Trigger requerido'),
+  triggerValor: z.union([z.string(), z.number()]).optional(),
+  mensaje:      z.string().min(1, 'Mensaje requerido'),
+  destino:      z.string().optional(),
+});
+
+export const actualizarAutomatizacionSchema = z.object({
+  nombre:       z.string().min(1).optional(),
+  trigger:      z.string().min(1).optional(),
+  triggerValor: z.union([z.string(), z.number()]).optional(),
+  mensaje:      z.string().min(1).optional(),
+  destino:      z.string().optional(),
+  activa:       z.boolean().optional(),
+}).strict();
+
+// ── Lavados (modificar) ───────────────────────────────────────
+
+export const modificarLavadoSchema = z.object({
+  lavadoId:  z.string().min(1, 'lavadoId requerido'),
+  medioPago: z.string().min(1, 'medioPago requerido'),
+  estado:    z.string().min(1, 'estado requerido'),
+  monto:     z.union([z.number(), z.string()]).refine(v => !isNaN(parseFloat(String(v))), 'monto inválido'),
+  patente:   z.string().optional(),
+});
+
+// ── Broadcast ─────────────────────────────────────────────────
+
+export const broadcastSchema = z.object({
+  mensaje:   z.string().min(1, 'Mensaje requerido'),
+  segmento:  z.enum(['todos', 'activos', 'inactivos', 'vip']).optional(),
+});
+
+// ── Reservas ──────────────────────────────────────────────────
+
+export const agregarClienteSchema = z.object({
+  nombre:      z.string().min(1, 'Nombre requerido'),
+  comensales:  z.number().int().positive().optional(),
   observacion: z.string().optional(),
 });

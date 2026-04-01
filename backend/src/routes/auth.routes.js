@@ -8,16 +8,18 @@ const router = express.Router();
 
 // Públicas
 router.post('/login', validate(loginSchema), auth.login);
-router.get('/logout', auth.logout);
+router.post('/logout', auth.logout);
 router.post('/newLocal', validate(newLocalSchema), auth.newLocal);
-router.get('/locales', auth.getLocales);
-router.get('/locales/:id', auth.getLocalDetails);
+router.post('/send-code', auth.sendCode);
+router.post('/verify-code', auth.verifyCode);
+// /locales y /locales/:id eliminados — exponían datos sensibles sin auth
 
 // Protegidas
-router.get('/admins/:adminId/usuarios', requireAuth, requireRole('Admin'), auth.listarUsuarios);
-router.post('/admins/:adminId/usuarios', requireAuth, requireRole('Admin'), validate(crearUsuarioSchema), auth.crearUsuario);
-router.put('/admins/:adminId/usuarios/:usuarioId', requireAuth, requireRole('Admin'), auth.editarUsuario);
-router.delete('/admins/:adminId/usuarios/:usuarioId', requireAuth, requireRole('Admin'), auth.eliminarUsuario);
+router.get('/usuarios', requireAuth, requireRole('Admin'), auth.listarUsuarios);
+router.post('/usuarios', requireAuth, requireRole('Admin'), validate(crearUsuarioSchema), auth.crearUsuario);
+router.put('/usuarios/:usuarioId', requireAuth, requireRole('Admin'), auth.editarUsuario);
+router.delete('/usuarios/:usuarioId', requireAuth, requireRole('Admin'), auth.eliminarUsuario);
 router.get('/me', requireAuth, auth.getMe);
+router.patch('/tour-status', requireAuth, auth.updateTourStatus);
 
 export default router;
