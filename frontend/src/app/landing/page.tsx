@@ -175,10 +175,33 @@ const plans = [
 ];
 
 const industries = [
-  { name: "Lavaderos", img: "https://images.unsplash.com/photo-1607860108855-64acf2078ed9?w=400&h=300&fit=crop&q=80" },
-  { name: "Talleres", img: "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=400&h=300&fit=crop&q=80" },
-  { name: "Veterinarias", img: "https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?w=400&h=300&fit=crop&q=80" },
-  { name: "Peluquerias", img: "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400&h=300&fit=crop&q=80" },
+  { name: "Lavaderos", desc: "QR + aviso de retiro", img: "https://images.unsplash.com/photo-1607860108855-64acf2078ed9?w=400&h=300&fit=crop&q=80" },
+  { name: "Talleres", desc: "Seguimiento en tiempo real", img: "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=400&h=300&fit=crop&q=80" },
+  { name: "Veterinarias", desc: "Turnos y recordatorios", img: "https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?w=400&h=300&fit=crop&q=80" },
+  { name: "Peluquerias", desc: "Reservas automaticas", img: "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400&h=300&fit=crop&q=80" },
+  { name: "Tintorerías", desc: "Entrega y retiro", img: "https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=400&h=300&fit=crop&q=80" },
+  { name: "Cerrajerías", desc: "Estado del servicio", img: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400&h=300&fit=crop&q=80" },
+];
+
+const testimonials = [
+  {
+    quote: "Redujimos un 80% las llamadas de clientes preguntando si el auto esta listo. Ahora les llega el aviso automatico.",
+    name: "Martin Gonzalez",
+    role: "Dueño de AutoSpa Belgrano",
+    img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&q=80&crop=faces",
+  },
+  {
+    quote: "Mis clientes aman recibir el WhatsApp cuando su mascota esta lista. Nos dejaron 5 estrellas en Google solo por eso.",
+    name: "Lucia Fernandez",
+    role: "Veterinaria Patitas",
+    img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&q=80&crop=faces",
+  },
+  {
+    quote: "La caja integrada fue un game changer. Antes usabamos una planilla de Excel que siempre tenia errores.",
+    name: "Diego Ramirez",
+    role: "Taller Ramirez e Hijos",
+    img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&q=80&crop=faces",
+  },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -526,6 +549,20 @@ export default function LandingPage() {
       </section>
 
       {/* ============================================================ */}
+      {/*  TRUSTED BY — Logo strip                                     */}
+      {/* ============================================================ */}
+      <section className="py-12 border-b border-gray-100">
+        <div className="mx-auto max-w-5xl px-5 lg:px-8">
+          <p className="text-center text-xs font-medium text-gray-400 uppercase tracking-wider mb-8">Negocios que ya confian en PickUp Time</p>
+          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6 opacity-40">
+            {["AutoSpa", "Taller Central", "VetCare", "CleanPro", "LavaExpress", "PetHouse"].map((name) => (
+              <span key={name} className="text-lg sm:text-xl font-bold text-gray-900 tracking-tight">{name}</span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
       {/*  FEATURES — Bento Grid                                       */}
       {/* ============================================================ */}
       <section id="features" className="py-24 sm:py-32">
@@ -546,24 +583,145 @@ export default function LandingPage() {
             </p>
           </div>
 
-          {/* Bento grid */}
+          {/* Bento grid with visual mockups */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {features.map((f, i) => (
-              <div
-                key={f.title}
-                data-animate="fade-up"
-                className={`group rounded-2xl border border-gray-100 bg-white p-6 sm:p-8 hover:border-gray-300 hover:shadow-lg hover:shadow-black/5 transition-all duration-500 ${
-                  f.size === "large" ? "sm:col-span-2 lg:col-span-2" : ""
-                }`}
-                style={{ transitionDelay: `${i * 60}ms` }}
-              >
-                <div className="mb-4 inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gray-100 text-gray-700 group-hover:bg-gray-200 transition-colors">
-                  <f.icon className="h-5 w-5" />
+            {/* QR Codes — large card with visual */}
+            <div data-animate="fade-up" className="sm:col-span-2 lg:col-span-2 group rounded-2xl border border-gray-100 bg-white hover:border-gray-300 hover:shadow-lg hover:shadow-black/5 transition-all duration-500 overflow-hidden">
+              <div className="grid sm:grid-cols-2">
+                <div className="p-6 sm:p-8">
+                  <div className="mb-4 inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gray-100 text-gray-700 group-hover:bg-gray-200 transition-colors">
+                    <QrCode className="h-5 w-5" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Codigos QR</h3>
+                  <p className="text-sm text-gray-500 leading-relaxed">Tu cliente escanea, confirma el servicio al instante y queda conectado para recibir avisos.</p>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{f.title}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed max-w-md">{f.desc}</p>
+                <div className="relative h-48 sm:h-auto bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-6">
+                  <div className="w-32 h-32 rounded-2xl bg-white border-2 border-gray-200 shadow-lg p-3 rotate-3 group-hover:rotate-0 transition-transform duration-500">
+                    <div className="w-full h-full rounded-lg bg-gray-900 grid grid-cols-5 grid-rows-5 gap-0.5 p-2">
+                      {Array.from({ length: 25 }).map((_, i) => (
+                        <div key={i} className={`rounded-sm ${Math.random() > 0.4 ? 'bg-white' : 'bg-gray-900'}`} />
+                      ))}
+                    </div>
+                  </div>
+                  <div className="absolute bottom-4 right-4 bg-white rounded-lg shadow-md px-3 py-2 text-[10px] font-medium text-gray-600 border border-gray-100">
+                    <span className="text-emerald-500 mr-1">&#10003;</span> Escaneado
+                  </div>
+                </div>
               </div>
-            ))}
+            </div>
+
+            {/* WhatsApp — small card with chat preview */}
+            <div data-animate="fade-up" className="group rounded-2xl border border-gray-100 bg-white p-6 sm:p-8 hover:border-gray-300 hover:shadow-lg hover:shadow-black/5 transition-all duration-500" style={{ transitionDelay: '60ms' }}>
+              <div className="mb-4 inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gray-100 text-gray-700 group-hover:bg-gray-200 transition-colors">
+                <MessageCircle className="h-5 w-5" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">WhatsApp y Telegram</h3>
+              <p className="text-sm text-gray-500 leading-relaxed mb-4">Mensajes automaticos de confirmacion, aviso de retiro y encuestas.</p>
+              <div className="rounded-xl bg-[#ECE5DD] p-3 space-y-2">
+                <div className="bg-white rounded-lg p-2 shadow-sm max-w-[85%]">
+                  <p className="text-[9px] text-gray-700">Tu vehiculo esta listo para retirar!</p>
+                </div>
+                <div className="bg-[#DCF8C6] rounded-lg p-2 shadow-sm ml-auto max-w-[70%]">
+                  <p className="text-[9px] text-gray-700">Perfecto, ya voy!</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Caja — small card */}
+            <div data-animate="fade-up" className="group rounded-2xl border border-gray-100 bg-white p-6 sm:p-8 hover:border-gray-300 hover:shadow-lg hover:shadow-black/5 transition-all duration-500" style={{ transitionDelay: '120ms' }}>
+              <div className="mb-4 inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gray-100 text-gray-700 group-hover:bg-gray-200 transition-colors">
+                <Wallet className="h-5 w-5" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Caja y cobros</h3>
+              <p className="text-sm text-gray-500 leading-relaxed mb-4">Multi-caja, turnos, arqueo diario, split payments. Todo el flujo de dinero en un solo lugar.</p>
+              <div className="space-y-2">
+                {[{ label: "Efectivo", val: "$84,200", pct: 55 }, { label: "Debito", val: "$62,300", pct: 35 }, { label: "MercadoPago", val: "$38,000", pct: 20 }].map((m) => (
+                  <div key={m.label}>
+                    <div className="flex justify-between text-[10px] mb-1">
+                      <span className="text-gray-500">{m.label}</span>
+                      <span className="font-medium text-gray-700">{m.val}</span>
+                    </div>
+                    <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-gray-400 rounded-full" style={{ width: `${m.pct}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Reservas — small card */}
+            <div data-animate="fade-up" className="group rounded-2xl border border-gray-100 bg-white p-6 sm:p-8 hover:border-gray-300 hover:shadow-lg hover:shadow-black/5 transition-all duration-500" style={{ transitionDelay: '180ms' }}>
+              <div className="mb-4 inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gray-100 text-gray-700 group-hover:bg-gray-200 transition-colors">
+                <CalendarCheck className="h-5 w-5" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Reservas online</h3>
+              <p className="text-sm text-gray-500 leading-relaxed mb-4">Tus clientes reservan desde WhatsApp o la web. Confirmacion automatica y recordatorios.</p>
+              <div className="rounded-xl border border-gray-100 bg-gray-50 p-3 space-y-1.5">
+                {[{ t: "10:00", n: "Juan P.", s: "Confirmado" }, { t: "10:30", n: "Maria L.", s: "Pendiente" }, { t: "11:00", n: "Carlos R.", s: "Confirmado" }].map((r) => (
+                  <div key={r.t} className="flex items-center gap-2 text-[10px]">
+                    <span className="text-gray-400 w-8">{r.t}</span>
+                    <span className="text-gray-700 font-medium flex-1">{r.n}</span>
+                    <span className={`px-1.5 py-0.5 rounded text-[8px] font-medium ${r.s === "Confirmado" ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600"}`}>{r.s}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Equipo — small card */}
+            <div data-animate="fade-up" className="group rounded-2xl border border-gray-100 bg-white p-6 sm:p-8 hover:border-gray-300 hover:shadow-lg hover:shadow-black/5 transition-all duration-500" style={{ transitionDelay: '240ms' }}>
+              <div className="mb-4 inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gray-100 text-gray-700 group-hover:bg-gray-200 transition-colors">
+                <Users className="h-5 w-5" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Gestion de equipo</h3>
+              <p className="text-sm text-gray-500 leading-relaxed mb-4">Asigna roles y permisos. Cada empleado ve solo lo que necesita para trabajar.</p>
+              <div className="flex -space-x-2">
+                {["bg-gray-900", "bg-gray-600", "bg-gray-400", "bg-gray-300"].map((bg, i) => (
+                  <div key={i} className={`w-8 h-8 rounded-full ${bg} border-2 border-white flex items-center justify-center text-white text-[9px] font-bold`}>
+                    {["MG", "LF", "DR", "AP"][i]}
+                  </div>
+                ))}
+                <div className="w-8 h-8 rounded-full bg-gray-100 border-2 border-white flex items-center justify-center text-gray-400 text-[9px] font-bold">+3</div>
+              </div>
+            </div>
+
+            {/* Metricas — large card with chart visual */}
+            <div data-animate="fade-up" className="sm:col-span-2 lg:col-span-2 group rounded-2xl border border-gray-100 bg-white hover:border-gray-300 hover:shadow-lg hover:shadow-black/5 transition-all duration-500 overflow-hidden" style={{ transitionDelay: '300ms' }}>
+              <div className="grid sm:grid-cols-2">
+                <div className="p-6 sm:p-8">
+                  <div className="mb-4 inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gray-100 text-gray-700 group-hover:bg-gray-200 transition-colors">
+                    <BarChart3 className="h-5 w-5" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Metricas en tiempo real</h3>
+                  <p className="text-sm text-gray-500 leading-relaxed">Dashboard con los numeros que importan: servicios del dia, ingresos, tiempos de espera.</p>
+                  <div className="mt-5 grid grid-cols-2 gap-3">
+                    <div className="rounded-lg bg-gray-50 p-3">
+                      <p className="text-[9px] text-gray-400 uppercase">Hoy</p>
+                      <p className="text-xl font-bold text-gray-900">42</p>
+                      <p className="text-[10px] text-emerald-600">+12%</p>
+                    </div>
+                    <div className="rounded-lg bg-gray-50 p-3">
+                      <p className="text-[9px] text-gray-400 uppercase">Ingresos</p>
+                      <p className="text-xl font-bold text-gray-900">$184k</p>
+                      <p className="text-[10px] text-emerald-600">+8%</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="relative bg-gradient-to-br from-gray-50 to-gray-100 p-6 flex items-end gap-1.5 min-h-[200px]">
+                  {[35, 55, 40, 70, 50, 85, 60, 90, 65, 80, 75, 95].map((h, i) => (
+                    <div key={i} className="flex-1 flex flex-col justify-end">
+                      <div
+                        className="rounded-t bg-gray-300 group-hover:bg-gray-400 transition-colors duration-500"
+                        style={{ height: `${h}%`, transitionDelay: `${i * 50}ms` }}
+                      />
+                    </div>
+                  ))}
+                  <div className="absolute top-4 right-4 bg-white rounded-lg shadow-md px-3 py-2 text-[10px] border border-gray-100">
+                    <span className="text-emerald-500 font-bold">&#8593; 23%</span>
+                    <span className="text-gray-400 ml-1">vs. mes anterior</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -589,21 +747,32 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {industries.map((ind, i) => (
               <div
                 key={ind.name}
                 data-animate="fade-up"
-                className="group relative rounded-2xl overflow-hidden h-64 cursor-pointer shadow-sm"
+                className="group relative rounded-2xl overflow-hidden h-72 cursor-pointer shadow-sm"
                 style={{ transitionDelay: `${i * 80}ms` }}
               >
                 <Image src={ind.img} alt={ind.name} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-5">
-                  <h3 className="text-lg font-semibold text-white">{ind.name}</h3>
-                  <div className="flex items-center gap-2 mt-1 text-white/70 text-xs">
-                    <CheckCircle2 className="h-3 w-3 text-gray-300" />
-                    WhatsApp + QR
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-6">
+                  <h3 className="text-xl font-semibold text-white">{ind.name}</h3>
+                  <p className="text-sm text-white/70 mt-1">{ind.desc}</p>
+                  <div className="flex items-center gap-3 mt-3">
+                    <span className="flex items-center gap-1.5 text-white/60 text-xs">
+                      <CheckCircle2 className="h-3 w-3" />
+                      WhatsApp
+                    </span>
+                    <span className="flex items-center gap-1.5 text-white/60 text-xs">
+                      <CheckCircle2 className="h-3 w-3" />
+                      QR
+                    </span>
+                    <span className="flex items-center gap-1.5 text-white/60 text-xs">
+                      <CheckCircle2 className="h-3 w-3" />
+                      Caja
+                    </span>
                   </div>
                 </div>
               </div>
@@ -632,25 +801,38 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {steps.map((step, i) => (
-              <div
-                key={step.num}
-                data-animate="fade-up"
-                className="relative text-center"
-                style={{ transitionDelay: `${i * 100}ms` }}
-              >
-                {/* Connector line */}
-                {i < steps.length - 1 && (
-                  <div className="hidden md:block absolute top-10 left-[60%] w-[80%] h-px bg-gradient-to-r from-gray-300 to-transparent" />
-                )}
-                <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gray-100 border border-gray-200 mb-6">
-                  <span className="text-2xl font-bold text-gray-700">{step.num}</span>
+          <div className="grid md:grid-cols-3 gap-6">
+            {steps.map((step, i) => {
+              const imgs = [
+                "https://images.unsplash.com/photo-1556741533-411cf82e4e2d?w=400&h=250&fit=crop&q=80",
+                "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&h=250&fit=crop&q=80",
+                "https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=400&h=250&fit=crop&q=80",
+              ];
+              return (
+                <div
+                  key={step.num}
+                  data-animate="fade-up"
+                  className="group relative rounded-2xl border border-gray-100 bg-white overflow-hidden hover:shadow-lg hover:shadow-black/5 transition-all"
+                  style={{ transitionDelay: `${i * 100}ms` }}
+                >
+                  {/* Connector line */}
+                  {i < steps.length - 1 && (
+                    <div className="hidden md:block absolute top-1/2 -right-3 w-6 h-px bg-gray-300 z-10" />
+                  )}
+                  <div className="relative h-40 overflow-hidden">
+                    <Image src={imgs[i]} alt={step.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent" />
+                    <div className="absolute top-3 left-3 w-10 h-10 rounded-xl bg-white/90 backdrop-blur flex items-center justify-center shadow-sm">
+                      <span className="text-sm font-bold text-gray-700">{step.num}</span>
+                    </div>
+                  </div>
+                  <div className="p-5">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{step.title}</h3>
+                    <p className="text-sm text-gray-500 leading-relaxed">{step.desc}</p>
+                  </div>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{step.title}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed max-w-xs mx-auto">{step.desc}</p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -689,14 +871,84 @@ export default function LandingPage() {
                 ))}
               </div>
             </div>
-            <div data-animate="slide-left" className="relative rounded-2xl overflow-hidden h-[350px] shadow-lg">
-              <Image
-                src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&h=600&fit=crop&q=80"
-                alt="Equipo de trabajo satisfecho"
-                fill
-                className="object-cover"
-              />
+            <div data-animate="slide-left" className="grid grid-cols-2 gap-3">
+              <div className="relative rounded-2xl overflow-hidden h-[220px] shadow-lg">
+                <Image
+                  src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=400&h=300&fit=crop&q=80"
+                  alt="Equipo de trabajo"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div className="relative rounded-2xl overflow-hidden h-[220px] shadow-lg mt-8">
+                <Image
+                  src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=300&fit=crop&q=80"
+                  alt="Cliente satisfecho"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div className="relative rounded-2xl overflow-hidden h-[220px] shadow-lg -mt-4">
+                <Image
+                  src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&h=300&fit=crop&q=80"
+                  alt="Dashboard en uso"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div className="relative rounded-2xl overflow-hidden h-[220px] shadow-lg mt-4">
+                <Image
+                  src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=400&h=300&fit=crop&q=80"
+                  alt="Negocio organizado"
+                  fill
+                  className="object-cover"
+                />
+              </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/*  TESTIMONIALS                                                */}
+      {/* ============================================================ */}
+      <section className="py-24 sm:py-32">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
+          <div data-animate="fade-up" className="text-center mb-16">
+            <p className="text-sm font-medium text-gray-700 tracking-wide uppercase mb-3">
+              Testimonios
+            </p>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900">
+              Lo que dicen{" "}
+              <span className="text-gray-900">nuestros clientes</span>
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {testimonials.map((t, i) => (
+              <div
+                key={t.name}
+                data-animate="fade-up"
+                className="rounded-2xl border border-gray-100 bg-white p-7 hover:shadow-lg hover:shadow-black/5 transition-all duration-500"
+                style={{ transitionDelay: `${i * 100}ms` }}
+              >
+                <div className="flex gap-1 mb-5">
+                  {Array.from({ length: 5 }).map((_, j) => (
+                    <Star key={j} className="h-4 w-4 text-amber-400 fill-amber-400" />
+                  ))}
+                </div>
+                <p className="text-sm text-gray-600 leading-relaxed mb-6">&ldquo;{t.quote}&rdquo;</p>
+                <div className="flex items-center gap-3 pt-5 border-t border-gray-100">
+                  <div className="relative w-10 h-10 rounded-full overflow-hidden">
+                    <Image src={t.img} alt={t.name} fill className="object-cover" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900">{t.name}</p>
+                    <p className="text-xs text-gray-400">{t.role}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -887,8 +1139,8 @@ export default function LandingPage() {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 border-t border-gray-200">
             <p className="text-xs text-gray-400">&copy; 2026 PickUp Time. Todos los derechos reservados.</p>
             <div className="flex items-center gap-6 text-xs text-gray-400">
-              <a href="#" className="hover:text-gray-600 transition-colors">Terminos</a>
-              <a href="#" className="hover:text-gray-600 transition-colors">Privacidad</a>
+              <a href="/terminos" className="hover:text-gray-600 transition-colors">Terminos</a>
+              <a href="/privacidad" className="hover:text-gray-600 transition-colors">Privacidad</a>
             </div>
           </div>
         </div>
