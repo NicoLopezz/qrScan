@@ -8,16 +8,18 @@ async function getTransporter() {
 
   if (process.env.SMTP_HOST) {
     isEthereal = process.env.SMTP_HOST.includes('ethereal');
+    const port = parseInt(process.env.SMTP_PORT || '587');
     transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
-      port: parseInt(process.env.SMTP_PORT || '587'),
+      port,
+      secure: port === 465,
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
     });
+    console.log(`[Email] SMTP: ${process.env.SMTP_HOST}:${port}`);
     if (isEthereal) {
-      console.log(`[Email] Using Ethereal: ${process.env.SMTP_USER}`);
       console.log(`[Email] Inbox: https://ethereal.email/messages`);
     }
   } else {
@@ -31,17 +33,24 @@ async function getTransporter() {
         pass: testAccount.pass,
       },
     });
-    console.log(`[Email] Ethereal test account: ${testAccount.user} / ${testAccount.pass}`);
+    console.log(`[Email] Ethereal: ${testAccount.user} / ${testAccount.pass}`);
   }
 
   return transporter;
+}
+
+// Use SMTP_FROM env var, fallback to onboarding@resend.dev for Resend, or noreply for others
+function getFromAddress() {
+  if (process.env.SMTP_FROM) return process.env.SMTP_FROM;
+  if (process.env.SMTP_HOST?.includes('resend')) return '"PickUp Time" <onboarding@resend.dev>';
+  return '"PickUp Time" <noreply@pickuptime.app>';
 }
 
 export async function sendVerificationCode(to, code) {
   const t = await getTransporter();
 
   const info = await t.sendMail({
-    from: '"PickUp Time" <noreply@pickuptime.app>',
+    from: getFromAddress(),
     to,
     subject: `Tu codigo de verificacion: ${code}`,
     html: `
@@ -66,7 +75,6 @@ export async function sendVerificationCode(to, code) {
     `,
   });
 
-  // Build preview URL for Ethereal
   let previewUrl = nodemailer.getTestMessageUrl(info) || null;
   if (!previewUrl && isEthereal) {
     previewUrl = 'https://ethereal.email/messages';
