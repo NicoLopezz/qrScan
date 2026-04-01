@@ -61,7 +61,7 @@ const MEDIO_LABELS: Record<string, string> = {
 const MEDIO_COLORS: Record<string, string> = {
   efectivo: "text-emerald-600 bg-emerald-50",
   "mercado-pago": "text-blue-600 bg-blue-50",
-  tarjeta: "text-purple-600 bg-purple-50",
+  tarjeta: "text-foreground bg-muted",
 };
 
 export default function VentasPage() {
@@ -107,7 +107,7 @@ export default function VentasPage() {
                 onClick={() => setSelectedCajaId(c._id)}
                 className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors duration-200 cursor-pointer ${
                   effectiveCajaId === c._id
-                    ? "bg-brand-purple-muted text-brand-purple"
+                    ? "bg-muted text-foreground"
                     : "text-muted-foreground hover:bg-muted"
                 }`}
               >
@@ -143,32 +143,32 @@ export default function VentasPage() {
               <button
                 key={b.medioPago}
                 onClick={() => setFiltroMedio(filtroMedio === b.medioPago ? null : b.medioPago)}
-                className={`card-elevated rounded-2xl bg-white dark:bg-card p-3 text-left cursor-pointer transition-all duration-200 ${
-                  filtroMedio === b.medioPago ? "ring-2 ring-brand-purple" : ""
+                className={`flex items-center gap-3 card-elevated rounded-2xl bg-white dark:bg-card px-3 py-2.5 text-left cursor-pointer transition-all duration-200 ${
+                  filtroMedio === b.medioPago ? "ring-2 ring-ring" : ""
                 }`}
               >
-                <div className="flex items-center gap-2 mb-1">
-                  <div className={`flex h-6 w-6 items-center justify-center rounded-lg ${MEDIO_COLORS[b.medioPago]}`}>
-                    {MEDIO_ICONS[b.medioPago]}
-                  </div>
-                  <span className="text-xs font-medium text-muted-foreground">{MEDIO_LABELS[b.medioPago]}</span>
+                <div className={`flex h-8 w-8 items-center justify-center rounded-xl flex-shrink-0 ${MEDIO_COLORS[b.medioPago]}`}>
+                  {MEDIO_ICONS[b.medioPago]}
                 </div>
-                <p className="text-lg font-semibold tabular-nums">${b.total.toLocaleString("es-AR")}</p>
+                <div className="min-w-0">
+                  <p className="text-lg font-semibold tabular-nums leading-tight">${b.total.toLocaleString("es-AR")}</p>
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{MEDIO_LABELS[b.medioPago]}</p>
+                </div>
               </button>
             ))}
             <button
               onClick={() => setFiltroMedio(null)}
-              className={`card-elevated rounded-2xl bg-white dark:bg-card p-3 text-left cursor-pointer transition-all duration-200 ${
-                filtroMedio === null ? "ring-2 ring-brand-purple" : ""
+              className={`flex items-center gap-3 card-elevated rounded-2xl bg-white dark:bg-card px-3 py-2.5 text-left cursor-pointer transition-all duration-200 ${
+                filtroMedio === null ? "ring-2 ring-ring" : ""
               }`}
             >
-              <div className="flex items-center gap-2 mb-1">
-                <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-brand-purple-muted text-brand-purple">
-                  <DollarSign className="h-4 w-4" />
-                </div>
-                <span className="text-xs font-medium text-muted-foreground">Todo</span>
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl flex-shrink-0 bg-muted">
+                <DollarSign className="h-4 w-4 text-foreground" />
               </div>
-              <p className="text-lg font-semibold tabular-nums">${turnoActivo.totalGeneral.toLocaleString("es-AR")}</p>
+              <div className="min-w-0">
+                <p className="text-lg font-semibold tabular-nums leading-tight">${turnoActivo.totalGeneral.toLocaleString("es-AR")}</p>
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Todo</p>
+              </div>
             </button>
           </div>
         ) : !turnoLoading && !hasTurno ? (
@@ -176,7 +176,7 @@ export default function VentasPage() {
             <Lock className="h-8 w-8 mx-auto text-muted-foreground/20 mb-3" />
             <p className="text-sm text-muted-foreground mb-1">No hay turno abierto</p>
             <p className="text-xs text-muted-foreground mb-4">Abri un turno para registrar ventas</p>
-            <Button size="sm" className="rounded-xl bg-gradient-to-r from-brand-purple to-brand-fuchsia text-white cursor-pointer" onClick={() => setShowApertura(true)}>
+            <Button size="sm" className="rounded-xl bg-foreground text-background hover:bg-foreground/90 cursor-pointer" onClick={() => setShowApertura(true)}>
               Abrir Turno
             </Button>
           </div>
@@ -193,7 +193,7 @@ export default function VentasPage() {
                 </p>
                 <button
                   onClick={() => setFiltroMedio(null)}
-                  className="text-xs text-brand-purple font-medium cursor-pointer"
+                  className="text-xs text-foreground font-medium cursor-pointer"
                 >
                   Ver todos
                 </button>
@@ -263,7 +263,7 @@ export default function VentasPage() {
         <FloatingButton
           onClick={() => setShowNuevaVenta(true)}
           hidden={showNuevaVenta || showApertura || showCierre || showConfig}
-          className="bg-gradient-to-br from-brand-purple to-brand-fuchsia text-white shadow-brand-purple/25"
+          className="bg-foreground text-background shadow-black/10"
         >
           <Plus className="h-6 w-6" />
         </FloatingButton>
@@ -272,7 +272,7 @@ export default function VentasPage() {
         <FloatingButton
           onClick={() => setShowApertura(true)}
           hidden={showApertura}
-          className="bg-gradient-to-br from-brand-purple to-brand-fuchsia text-white shadow-brand-purple/25"
+          className="bg-foreground text-background shadow-black/10"
         >
           <Lock className="h-6 w-6" />
         </FloatingButton>
@@ -293,7 +293,7 @@ export default function VentasPage() {
                     onClick={() => setSelectedCajaId(c._id)}
                     className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
                       effectiveCajaId === c._id
-                        ? "bg-brand-purple-muted text-brand-purple"
+                        ? "bg-muted text-foreground"
                         : "text-muted-foreground hover:bg-muted"
                     }`}
                   >
@@ -315,11 +315,11 @@ export default function VentasPage() {
           </div>
           <div className="flex items-center gap-2">
             {!hasTurno ? (
-              <Button size="sm" className="rounded-xl bg-gradient-to-r from-brand-purple to-brand-fuchsia text-white text-xs cursor-pointer" onClick={() => setShowApertura(true)}>
+              <Button size="sm" className="rounded-xl bg-foreground text-background hover:bg-foreground/90 text-xs cursor-pointer" onClick={() => setShowApertura(true)}>
                 <Lock className="h-3.5 w-3.5 mr-1" /> Abrir Turno
               </Button>
             ) : (
-              <Button size="sm" className="rounded-xl bg-gradient-to-r from-brand-purple to-brand-fuchsia text-white text-xs cursor-pointer" onClick={() => setShowNuevaVenta(true)}>
+              <Button size="sm" className="rounded-xl bg-foreground text-background hover:bg-foreground/90 text-xs cursor-pointer" onClick={() => setShowNuevaVenta(true)}>
                 <Plus className="h-3.5 w-3.5 mr-1" /> Nuevo Movimiento
               </Button>
             )}
@@ -338,7 +338,7 @@ export default function VentasPage() {
                 key={b.medioPago}
                 onClick={() => setFiltroMedio(filtroMedio === b.medioPago ? null : b.medioPago)}
                 className={`card-elevated rounded-2xl bg-white dark:bg-card p-3.5 text-left cursor-pointer transition-all duration-200 ${
-                  filtroMedio === b.medioPago ? "ring-2 ring-brand-purple" : ""
+                  filtroMedio === b.medioPago ? "ring-2 ring-ring" : ""
                 }`}
               >
                 <div className="flex items-center gap-2 mb-1">
@@ -356,11 +356,11 @@ export default function VentasPage() {
             <button
               onClick={() => setFiltroMedio(null)}
               className={`card-elevated rounded-2xl bg-white dark:bg-card p-3.5 text-left cursor-pointer transition-all duration-200 ${
-                filtroMedio === null ? "ring-2 ring-brand-purple" : ""
+                filtroMedio === null ? "ring-2 ring-ring" : ""
               }`}
             >
               <div className="flex items-center gap-2 mb-1">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-purple-muted text-brand-purple">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-muted text-foreground">
                   <DollarSign className="h-4 w-4" />
                 </div>
                 <span className="text-xs font-medium text-muted-foreground">Todo</span>
@@ -374,7 +374,7 @@ export default function VentasPage() {
             <Lock className="h-8 w-8 mx-auto text-muted-foreground/20 mb-3" />
             <p className="text-sm text-muted-foreground mb-1">No hay turno abierto en esta caja</p>
             <p className="text-xs text-muted-foreground mb-4">Abri un turno para empezar a registrar ventas</p>
-            <Button size="sm" className="rounded-xl bg-gradient-to-r from-brand-purple to-brand-fuchsia text-white cursor-pointer" onClick={() => setShowApertura(true)}>
+            <Button size="sm" className="rounded-xl bg-foreground text-background hover:bg-foreground/90 cursor-pointer" onClick={() => setShowApertura(true)}>
               Abrir Turno
             </Button>
           </div>
@@ -411,7 +411,7 @@ export default function VentasPage() {
                           onClick={() => setSelectedVenta(v)}
                           className={`border-b border-border/30 last:border-0 cursor-pointer transition-all duration-200 ${
                             selectedVenta?._id === v._id
-                              ? "bg-brand-purple-muted"
+                              ? "bg-muted"
                               : "hover:bg-muted/30"
                           }`}
                         >
@@ -654,7 +654,7 @@ function VentaDetailPanel({ venta, onClose }: { venta: VentaPOS; onClose: () => 
               <Button size="sm" variant="outline" className="flex-1 rounded-xl text-xs cursor-pointer" onClick={() => setEditing(false)}>
                 Cancelar
               </Button>
-              <Button size="sm" className="flex-1 rounded-xl text-xs bg-gradient-to-r from-brand-purple to-brand-fuchsia text-white cursor-pointer" onClick={handleGuardar} disabled={editar.isPending}>
+              <Button size="sm" className="flex-1 rounded-xl text-xs bg-foreground text-background hover:bg-foreground/90 cursor-pointer" onClick={handleGuardar} disabled={editar.isPending}>
                 {editar.isPending ? "Guardando..." : "Guardar"}
               </Button>
             </div>
@@ -783,7 +783,7 @@ function NuevaVentaDialog({ open, onOpenChange, turnoId, medios, tipo: tipoProp 
               </SelectContent>
             </Select>
           </div>
-          <Button type="submit" className={`w-full h-10 rounded-xl text-white cursor-pointer ${isEgreso ? "bg-red-500 hover:bg-red-600" : "bg-gradient-to-r from-brand-purple to-brand-fuchsia"}`} disabled={crear.isPending}>
+          <Button type="submit" className={`w-full h-10 rounded-xl text-white cursor-pointer ${isEgreso ? "bg-red-500 hover:bg-red-600" : "bg-foreground text-background hover:bg-foreground/90"}`} disabled={crear.isPending}>
             {crear.isPending ? "Registrando..." : isEgreso ? "Registrar Egreso" : "Registrar Ingreso"}
           </Button>
         </form>
@@ -831,7 +831,7 @@ function AperturaTurnoDialog({ open, onOpenChange, cajaId, medios }: { open: boo
               />
             </div>
           ))}
-          <Button type="submit" className="w-full h-10 rounded-xl bg-gradient-to-r from-brand-purple to-brand-fuchsia text-white cursor-pointer" disabled={abrir.isPending}>
+          <Button type="submit" className="w-full h-10 rounded-xl bg-foreground text-background hover:bg-foreground/90 cursor-pointer" disabled={abrir.isPending}>
             {abrir.isPending ? "Abriendo..." : "Abrir Turno"}
           </Button>
         </form>

@@ -3,7 +3,9 @@ import mongoose from 'mongoose';
 const clienteSchema = new mongoose.Schema({
   nombre: { type: String, required: false },
   solicitudBaja: { type: Boolean, default: false },
-  from: { type: String, required: true },
+  from: { type: String, required: false, default: '' },
+  channel: { type: String, enum: ['whatsapp', 'telegram', ''], default: '' },
+  telegramChatId: { type: String, default: '' },
   historialPedidos: [{
     tagNumber: { type: Number, default: null },
     fechaPedido: { type: Date, default: null },
@@ -17,6 +19,7 @@ const clienteSchema = new mongoose.Schema({
     }]
   }],
   promedioTiempo: { type: Number, default: 0 },
+  notas: { type: String, default: '' },
   mensajesEnviados: [{
     fecha: { type: String, required: true },
     body: { type: String, required: true }

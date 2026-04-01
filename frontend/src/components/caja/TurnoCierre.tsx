@@ -25,7 +25,7 @@ const MEDIO_LABELS: Record<MedioPago, string> = {
 const MEDIO_ICONS: Record<MedioPago, React.ReactNode> = {
   efectivo: <Banknote className="h-4 w-4 text-emerald-600" />,
   "mercado-pago": <Smartphone className="h-4 w-4 text-blue-600" />,
-  tarjeta: <CreditCard className="h-4 w-4 text-violet-600" />,
+  tarjeta: <CreditCard className="h-4 w-4 text-foreground" />,
 };
 
 interface TurnoCierreProps {

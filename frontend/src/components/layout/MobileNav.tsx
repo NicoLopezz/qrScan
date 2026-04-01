@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   Sheet,
   SheetContent,
@@ -19,22 +20,24 @@ import {
   User,
   HelpCircle,
   LogOut,
+  Contact,
 } from "lucide-react";
 import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/providers/AuthProvider";
 
 const mobileNavItems = [
-  { href: "/dashboard", label: "Inicio", icon: LayoutDashboard },
-  { href: "/lavados", label: "Lavados", icon: Droplets },
-  { href: "/caja", label: "Ventas", icon: Wallet },
-  { href: "/cierres", label: "Cierres", icon: ClipboardCheck },
-  { href: "/reservas", label: "Reservas", icon: CalendarCheck },
-  { href: "/mensajes", label: "Mensajes", icon: WhatsAppIcon },
-  { href: "/equipo", label: "Equipo", icon: Users },
-  { href: "/billing", label: "Billing", icon: CreditCard },
-  { href: "/perfil", label: "Perfil", icon: User },
-  { href: "/faq", label: "FAQ", icon: HelpCircle },
+  { href: "/dashboard", labelKey: "dashboard", icon: LayoutDashboard },
+  { href: "/lavados", labelKey: "lavados", icon: Droplets },
+  { href: "/caja", labelKey: "ventas", icon: Wallet },
+  { href: "/cierres", labelKey: "arqueos", icon: ClipboardCheck },
+  { href: "/reservas", labelKey: "reservas", icon: CalendarCheck },
+  { href: "/mensajes", labelKey: "mensajes", icon: WhatsAppIcon },
+  { href: "/clientes", labelKey: "clientes", icon: Contact },
+  { href: "/equipo", labelKey: "equipo", icon: Users },
+  { href: "/billing", labelKey: "billing", icon: CreditCard },
+  { href: "/perfil", labelKey: "perfil", icon: User },
+  { href: "/faq", labelKey: "faq", icon: HelpCircle },
 ];
 
 interface MobileNavProps {
@@ -45,13 +48,14 @@ interface MobileNavProps {
 export function MobileNav({ open, onOpenChange }: MobileNavProps) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const t = useTranslations("nav");
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="left"
         showCloseButton={false}
-        className="!w-64 !gap-0 bg-white dark:bg-[#15131F] !border-0 !p-0 flex flex-col"
+        className="!w-64 !gap-0 bg-white dark:bg-sidebar !border-0 !p-0 flex flex-col"
       >
         {/* Header */}
         <SheetHeader className="flex h-14 items-center justify-center border-b border-border/40 px-4 !gap-0">
@@ -81,12 +85,12 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
                 className={cn(
                   "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                   isActive
-                    ? "bg-brand-purple-muted text-brand-purple"
+                    ? "bg-muted text-foreground"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 )}
               >
                 <item.icon className="h-[18px] w-[18px] flex-shrink-0" />
-                <span>{item.label}</span>
+                <span>{t(item.labelKey)}</span>
               </Link>
             );
           })}
@@ -102,7 +106,7 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
             className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
           >
             <LogOut className="h-[18px] w-[18px] flex-shrink-0" />
-            <span>Salir</span>
+            <span>{t("exit")}</span>
           </button>
         </div>
       </SheetContent>

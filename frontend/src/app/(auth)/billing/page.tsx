@@ -28,7 +28,7 @@ const PLANS = [
     price: 19900,
     period: "/mes",
     icon: Crown,
-    color: "text-brand-purple bg-brand-purple-muted",
+    color: "text-foreground bg-muted",
     popular: true,
     features: [
       "Hasta 3 sucursales",
@@ -105,12 +105,12 @@ export default function BillingPage() {
                 onClick={() => setSelectedPlan(plan.id)}
                 className={`card-elevated rounded-2xl bg-white dark:bg-card p-5 cursor-pointer transition-all duration-200 relative ${
                   isSelected
-                    ? "ring-2 ring-brand-purple"
+                    ? "ring-2 ring-ring"
                     : "hover:ring-1 hover:ring-border"
                 }`}
               >
                 {plan.popular && (
-                  <Badge className="absolute -top-2.5 right-4 bg-gradient-to-r from-brand-purple to-brand-fuchsia text-white border-0 text-[10px]">
+                  <Badge className="absolute -top-2.5 right-4 bg-foreground text-background border-0 text-[10px]">
                     Popular
                   </Badge>
                 )}
@@ -139,7 +139,7 @@ export default function BillingPage() {
                 <Button
                   className={`w-full mt-5 rounded-xl text-xs cursor-pointer ${
                     isSelected
-                      ? "bg-gradient-to-r from-brand-purple to-brand-fuchsia text-white"
+                      ? "bg-foreground text-background hover:bg-foreground/90"
                       : ""
                   }`}
                   variant={isSelected ? "default" : "outline"}
@@ -161,7 +161,7 @@ export default function BillingPage() {
             <CreditCard className="h-8 w-8 mx-auto text-muted-foreground/20 mb-3" />
             <p className="text-sm text-muted-foreground mb-1">No hay metodo de pago configurado</p>
             <p className="text-xs text-muted-foreground mb-4">Agrega una tarjeta para activar tu suscripcion</p>
-            <Button size="sm" className="rounded-xl bg-gradient-to-r from-brand-purple to-brand-fuchsia text-white cursor-pointer">
+            <Button size="sm" className="rounded-xl bg-foreground text-background hover:bg-foreground/90 cursor-pointer">
               Agregar tarjeta
             </Button>
           </div>

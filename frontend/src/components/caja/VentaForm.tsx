@@ -187,7 +187,7 @@ export default function VentaForm({
                     setPagos([{ medioPago: mediosHabilitados[0] || "efectivo", monto }]);
                   }
                 }}
-                className="flex items-center gap-1 text-[11px] font-medium text-brand-purple hover:text-brand-fuchsia cursor-pointer transition-colors"
+                className="flex items-center gap-1 text-[11px] font-medium text-foreground/70 hover:text-foreground cursor-pointer transition-colors"
               >
                 <Split className="h-3 w-3" />
                 {dividir ? "Pago simple" : "Dividir pago"}
@@ -296,7 +296,7 @@ export default function VentaForm({
           <Button
             type="submit"
             disabled={crearVenta.isPending || monto <= 0}
-            className="w-full h-10 rounded-xl bg-gradient-to-r from-brand-purple to-brand-fuchsia text-white cursor-pointer"
+            className="w-full h-10 rounded-xl bg-foreground text-background hover:bg-foreground/90 cursor-pointer"
           >
             {crearVenta.isPending ? "Registrando..." : "Registrar Venta"}
           </Button>

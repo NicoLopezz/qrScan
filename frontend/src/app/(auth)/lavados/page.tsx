@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
-import { Plus, Droplets, Clock, CheckCircle, LayoutGrid, List, Search, X } from "lucide-react";
+import { useState, useRef, useCallback, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import { Plus, Droplets, Clock, CheckCircle, LayoutGrid, List, Search, X, QrCode } from "lucide-react";
 import { DragDropContext, Droppable, Draggable, type DropResult } from "@hello-pangea/dnd";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -29,13 +30,24 @@ const COLUMNS = [
 
 export default function LavadosPage() {
   const { user } = useAuth();
+  const searchParams = useSearchParams();
   const { data: lavados, isLoading } = useLavados();
   const [showForm, setShowForm] = useState(false);
   const [selectedLavado, setSelectedLavado] = useState<Lavado | null>(null);
+
+  // Deep link: /lavados?lavadoId=xxx
+  useEffect(() => {
+    const lavadoId = searchParams.get("lavadoId");
+    if (lavadoId && lavados) {
+      const found = lavados.find((l) => l._id === lavadoId);
+      if (found) setSelectedLavado(found);
+    }
+  }, [searchParams, lavados]);
   const [mobileFilter, setMobileFilter] = useState<string | null>(null);
   const [mobileTab, setMobileTab] = useState<MobileTab>("lista");
-  const [viewMode, setViewMode] = useState<"kanban" | "table">("kanban");
+  const [viewMode, setViewMode] = useState<"kanban" | "table">("table");
   const wizardNextRef = useRef<(() => void) | null>(null);
+  const [wizardCanNext, setWizardCanNext] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const normalize = (s: string) => s.toLowerCase().replace(/\s+/g, "");
@@ -100,7 +112,7 @@ export default function LavadosPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Buscar por nombre, patente..."
-                className="w-full h-9 pl-9 pr-8 rounded-xl bg-white dark:bg-card border border-border/40 text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-brand-purple/30"
+                className="w-full h-9 pl-9 pr-8 rounded-xl bg-white dark:bg-card border border-border/40 text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring/30"
               />
               {searchQuery && (
                 <button onClick={() => setSearchQuery("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 cursor-pointer">
@@ -156,7 +168,7 @@ export default function LavadosPage() {
                 </p>
                 <button
                   onClick={() => setMobileFilter(null)}
-                  className="text-xs text-brand-purple font-medium cursor-pointer"
+                  className="text-xs text-foreground font-medium cursor-pointer"
                 >
                   Ver todos
                 </button>
@@ -173,11 +185,14 @@ export default function LavadosPage() {
                     className="w-full flex items-center gap-3 rounded-xl bg-white dark:bg-card p-3 text-left cursor-pointer active:scale-[0.98] transition-transform shadow-sm"
                   >
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">{lavado.nombre}</p>
-                      <p className="text-[11px] text-muted-foreground truncate">
+                      <p className="text-sm font-medium truncate uppercase">{lavado.nombre}</p>
+                      <p className="text-[11px] text-muted-foreground truncate uppercase">
                         {lavado.modelo} — <span className="font-mono tracking-wide">{lavado.patente}</span>
                       </p>
                     </div>
+                    {lavado.textConfirmation && (
+                      <QrCode className="h-4 w-4 text-emerald-500 flex-shrink-0" />
+                    )}
                     <Badge variant="secondary" className={`text-[10px] border-0 font-medium flex-shrink-0 ${
                       lavado.estado === "Pendiente" ? "bg-amber-50 text-amber-700 dark:bg-amber-950/30" :
                       lavado.estado === "En Proceso" ? "bg-blue-50 text-blue-700 dark:bg-blue-950/30" :
@@ -204,7 +219,7 @@ export default function LavadosPage() {
 
         {mobileTab === "nuevo" && (
           <div key="nuevo" className="animate-fade-in">
-            <MobileWizard onComplete={() => setMobileTab("lista")} onNextRef={(fn) => { wizardNextRef.current = fn; }} />
+            <MobileWizard onComplete={() => setMobileTab("lista")} onNextRef={(fn) => { wizardNextRef.current = fn; }} onCanNextChange={setWizardCanNext} />
           </div>
         )}
 
@@ -222,6 +237,7 @@ export default function LavadosPage() {
           onTabChange={setMobileTab}
           listosCount={listos.length}
           onCenterAction={() => wizardNextRef.current?.()}
+          centerDisabled={mobileTab === "nuevo" && !wizardCanNext}
         />
       </div>
 
@@ -229,7 +245,7 @@ export default function LavadosPage() {
       <div className="hidden md:block space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="relative">
+            <div data-tour="lavados-search" className="relative">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
               <input
                 type="text"
@@ -256,23 +272,24 @@ export default function LavadosPage() {
             )}
           </div>
           <div className="flex items-center gap-2">
-            <div className="flex rounded-lg border border-border p-0.5">
+            <div data-tour="lavados-view-toggle" className="flex rounded-lg border border-border p-0.5">
               <button
                 onClick={() => setViewMode("kanban")}
-                className={`p-1.5 rounded-md transition-colors cursor-pointer ${viewMode === "kanban" ? "bg-brand-purple-muted text-brand-purple" : "text-muted-foreground hover:text-foreground"}`}
+                className={`p-1.5 rounded-md transition-colors cursor-pointer ${viewMode === "kanban" ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"}`}
               >
                 <LayoutGrid className="h-4 w-4" />
               </button>
               <button
                 onClick={() => setViewMode("table")}
-                className={`p-1.5 rounded-md transition-colors cursor-pointer ${viewMode === "table" ? "bg-brand-purple-muted text-brand-purple" : "text-muted-foreground hover:text-foreground"}`}
+                className={`p-1.5 rounded-md transition-colors cursor-pointer ${viewMode === "table" ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"}`}
               >
                 <List className="h-4 w-4" />
               </button>
             </div>
             <Button
+              data-tour="new-lavado-btn"
               onClick={() => setShowForm(true)}
-              className="rounded-xl bg-gradient-to-r from-brand-purple to-brand-fuchsia hover:from-brand-purple-dark hover:to-brand-purple text-white shadow-md shadow-brand-purple/15 transition-all duration-200 cursor-pointer"
+              className="rounded-xl bg-foreground text-background hover:bg-foreground/90 shadow-md shadow-black/10 transition-all duration-200 cursor-pointer"
             >
               <Plus className="h-4 w-4 mr-1" />
               Nuevo Lavado
@@ -320,10 +337,10 @@ export default function LavadosPage() {
                         {new Date(l.fechaDeAlta).toLocaleDateString("es-AR", { day: "2-digit", month: "short" })}
                       </td>
                       <td className="px-4 py-2.5">
-                        <p className="font-medium text-sm">{l.nombre}</p>
+                        <p className="font-medium text-sm uppercase">{l.nombre}</p>
                       </td>
-                      <td className="px-4 py-2.5 text-muted-foreground">{l.modelo}</td>
-                      <td className="px-4 py-2.5 font-mono text-xs tracking-wide">{l.patente}</td>
+                      <td className="px-4 py-2.5 text-muted-foreground uppercase">{l.modelo}</td>
+                      <td className="px-4 py-2.5 font-mono text-xs tracking-wide uppercase">{l.patente}</td>
                       <td className="px-4 py-2.5">
                         <Badge variant="secondary" className="border-0 text-xs font-medium">
                           {l.tipoDeLavado}
@@ -396,7 +413,7 @@ function KanbanBoard({ lavados, onSelectLavado }: { lavados: Lavado[]; onSelectL
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="grid grid-cols-4 gap-4">
+      <div data-tour="lavados-kanban" className="grid grid-cols-4 gap-4">
         {COLUMNS.map((col) => {
           const items = getByEstado(col.key);
           return (
@@ -406,7 +423,7 @@ function KanbanBoard({ lavados, onSelectLavado }: { lavados: Lavado[]; onSelectL
                   ref={provided.innerRef}
                   {...provided.droppableProps}
                   className={`glass-card rounded-2xl p-3 min-h-[200px] transition-colors duration-200 ${
-                    snapshot.isDraggingOver ? "ring-2 ring-brand-purple/40 bg-brand-purple-muted/20" : ""
+                    snapshot.isDraggingOver ? "ring-2 ring-ring/40 bg-muted/20" : ""
                   }`}
                 >
                   <div className="flex items-center gap-2 mb-3">
@@ -425,7 +442,7 @@ function KanbanBoard({ lavados, onSelectLavado }: { lavados: Lavado[]; onSelectL
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                             style={provided.draggableProps.style}
-                            className={snapshot.isDragging ? "rotate-[2deg] scale-[1.03] z-50 shadow-xl shadow-brand-purple/15 ring-2 ring-brand-purple/20 rounded-2xl" : ""}
+                            className={snapshot.isDragging ? "rotate-[2deg] scale-[1.03] z-50 shadow-xl shadow-black/10 ring-2 ring-ring/20 rounded-2xl" : ""}
                           >
                             <LavadoCard lavado={lavado} onClick={() => onSelectLavado(lavado)} />
                           </div>

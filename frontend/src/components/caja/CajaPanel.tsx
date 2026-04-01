@@ -27,13 +27,13 @@ const MEDIO_LABELS: Record<MedioPago, string> = {
 const MEDIO_ICONS: Record<MedioPago, React.ReactNode> = {
   efectivo: <Banknote className="h-5 w-5 text-emerald-600" />,
   "mercado-pago": <Smartphone className="h-5 w-5 text-blue-600" />,
-  tarjeta: <CreditCard className="h-5 w-5 text-violet-600" />,
+  tarjeta: <CreditCard className="h-5 w-5 text-foreground" />,
 };
 
 const MEDIO_BG: Record<MedioPago, string> = {
   efectivo: "bg-emerald-50",
   "mercado-pago": "bg-blue-50",
-  tarjeta: "bg-violet-50",
+  tarjeta: "bg-muted",
 };
 
 interface CajaPanelProps {
@@ -98,8 +98,8 @@ export default function CajaPanel({ caja, turnoId, onTurnoCerrado }: CajaPanelPr
       {/* Total general */}
       <div className="card-elevated rounded-2xl bg-white dark:bg-card p-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-brand-purple/10">
-            <DollarSign className="h-5 w-5 text-brand-purple" />
+          <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-muted">
+            <DollarSign className="h-5 w-5 text-foreground" />
           </div>
           <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
             Total General
@@ -113,7 +113,7 @@ export default function CajaPanel({ caja, turnoId, onTurnoCerrado }: CajaPanelPr
       {/* Action buttons */}
       <div className="flex gap-2">
         <Button
-          className="flex-1 h-10 rounded-xl bg-gradient-to-r from-brand-purple to-brand-fuchsia text-white cursor-pointer"
+          className="flex-1 h-10 rounded-xl bg-foreground text-background hover:bg-foreground/90 cursor-pointer"
           onClick={() => setShowVenta(true)}
         >
           <Plus className="h-4 w-4 mr-1.5" /> Nueva Venta

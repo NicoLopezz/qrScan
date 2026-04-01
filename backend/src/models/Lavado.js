@@ -8,6 +8,8 @@ const lavadoSchema = new mongoose.Schema({
   empresa: { type: String, required: false },
   solicitudBaja: { type: Boolean, default: false },
   from: { type: String, default: '' },
+  channel: { type: String, enum: ['whatsapp', 'telegram', ''], default: '' },
+  telegramChatId: { type: String, default: '' },
   calidad: { type: String, default: '' },
   puntuacionCalidad: { type: Number, default: 0 },
   historialLavados: [{
@@ -41,6 +43,7 @@ const lavadoSchema = new mongoose.Schema({
   puntuacionPromedio: { type: Number, default: 0 },
   medioPago: { type: String, enum: ['efectivo', 'debito', 'credito', 'mercado-pago', '---'], default: '---' },
   cumpleaños: { type: String, default: '' },
+  referidoPor: { type: String, default: '' },
 }, { timestamps: true });
 
 lavadoSchema.index({ adminId: 1, estado: 1 });

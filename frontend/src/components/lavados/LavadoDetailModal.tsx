@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Send, Star, Car, Phone, RectangleHorizontal, QrCode, ChevronRight, User, Calendar, DollarSign, Droplets, ExternalLink, ArrowLeft } from "lucide-react";
+import { Send, Star, Car, Phone, RectangleHorizontal, QrCode, ChevronRight, User, Calendar, DollarSign, Droplets, ExternalLink, ArrowLeft, X } from "lucide-react";
 import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 import {
   Dialog,
@@ -22,6 +23,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { QRCodeSVG } from "qrcode.react";
+import { useAuth } from "@/providers/AuthProvider";
 import { fetchApi } from "@/lib/api";
 import type { Lavado } from "@/types";
 
@@ -38,12 +41,25 @@ const estadoColor: Record<string, string> = {
 };
 
 export function LavadoDetailModal({ lavado, onClose }: LavadoDetailModalProps) {
+  const router = useRouter();
   const queryClient = useQueryClient();
-  const [estado, setEstado] = useState(lavado?.estado ?? "");
-  const [medioPago, setMedioPago] = useState(lavado?.medioPago ?? "---");
-  const [monto, setMonto] = useState(lavado?.monto ?? 0);
+  const { user } = useAuth();
+  const [estado, setEstado] = useState("");
+  const [medioPago, setMedioPago] = useState("---");
+  const [monto, setMonto] = useState(0);
   const [saving, setSaving] = useState(false);
   const [showPerfil, setShowPerfil] = useState(false);
+  const [showQr, setShowQr] = useState(false);
+
+  useEffect(() => {
+    if (lavado) {
+      setEstado(lavado.estado ?? "");
+      setMedioPago(lavado.medioPago ?? "---");
+      setMonto(lavado.monto ?? 0);
+      setShowPerfil(false);
+      setShowQr(false);
+    }
+  }, [lavado]);
 
   const { data: perfil, isLoading: perfilLoading } = useQuery({
     queryKey: ["clientePerfil", lavado?.from],
@@ -89,16 +105,16 @@ export function LavadoDetailModal({ lavado, onClose }: LavadoDetailModalProps) {
   return (
     <Dialog open={!!lavado} onOpenChange={(open) => { if (!open) { setShowPerfil(false); onClose(); } }}>
       <DialogContent
-        className="p-0 gap-0 overflow-hidden border-0 shadow-2xl rounded-2xl sm:max-w-none w-[calc(100%-1.5rem)] max-h-[85vh] sm:max-h-[90vh] sm:h-auto max-w-full sm:max-w-[calc(100%-2rem)]"
+        className={`p-0 gap-0 overflow-hidden border-0 shadow-2xl rounded-2xl w-[calc(100%-1.5rem)] max-h-[85vh] sm:max-h-[90vh] sm:h-auto ${showPerfil ? "sm:max-w-[56rem]" : "sm:max-w-[30rem]"} transition-[max-width] duration-300`}
       >
         <div className="flex h-full sm:max-h-[90vh]">
           {/* LEFT: Lavado detail */}
-          <div className="w-full sm:w-[28rem] flex-shrink-0 flex flex-col overflow-y-auto" style={{ borderRight: showPerfil ? "1px solid var(--border)" : "none" }}>
+          <div className="w-full sm:w-[30rem] flex-shrink-0 flex flex-col overflow-y-auto" style={{ borderRight: showPerfil ? "1px solid var(--border)" : "none" }}>
             {/* Info section */}
             <div className="px-5 pt-5 pb-3 space-y-3">
               <DialogHeader className="space-y-0">
                 <div className="flex items-center gap-2.5 pr-8">
-                  <DialogTitle className="text-lg font-semibold tracking-tight truncate">{lavado.nombre}</DialogTitle>
+                  <DialogTitle className="text-lg font-semibold tracking-tight truncate uppercase">{lavado.nombre}</DialogTitle>
                   <Badge variant="secondary" className={`border-0 text-[10px] font-medium flex-shrink-0 ${estadoColor[lavado.estado] || ""}`}>{lavado.estado}</Badge>
                 </div>
               </DialogHeader>
@@ -106,13 +122,13 @@ export function LavadoDetailModal({ lavado, onClose }: LavadoDetailModalProps) {
               {lavado.from && (
                 <button
                   onClick={() => setShowPerfil(!showPerfil)}
-                  className="flex items-center justify-between w-full rounded-xl bg-muted/50 px-3 py-2 hover:bg-brand-purple-muted transition-colors cursor-pointer group"
+                  className="flex items-center justify-between w-full rounded-xl bg-muted/50 px-3 py-2 hover:bg-muted transition-colors cursor-pointer group"
                 >
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <Phone className="h-3 w-3" />
                     <span>{lavado.from}</span>
                   </div>
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground group-hover:text-brand-purple transition-colors">
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground group-hover:text-foreground transition-colors">
                     <span>{showPerfil ? "Ocultar" : "Ver perfil"}</span>
                     <ChevronRight className={`h-3 w-3 transition-transform duration-200 ${showPerfil ? "rotate-180" : ""}`} />
                   </div>
@@ -125,19 +141,19 @@ export function LavadoDetailModal({ lavado, onClose }: LavadoDetailModalProps) {
                   <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Modelo</span>
                   <div className="flex items-center gap-1.5">
                     <Car className="h-3.5 w-3.5 text-muted-foreground" />
-                    <span>{lavado.modelo}</span>
+                    <span className="uppercase">{lavado.modelo}</span>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Patente</span>
                   <div className="flex items-center gap-1.5">
                     <RectangleHorizontal className="h-3.5 w-3.5 text-muted-foreground" />
-                    <span className="font-mono text-xs tracking-wide">{lavado.patente}</span>
+                    <span className="font-mono text-xs tracking-wide uppercase">{lavado.patente}</span>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Tipo</span>
-                  <span>{lavado.tipoDeLavado}</span>
+                  <span className="uppercase">{lavado.tipoDeLavado}</span>
                 </div>
                 {lavado.puntuacionCalidad != null && lavado.puntuacionCalidad > 0 && (
                   <div className="flex items-center justify-between">
@@ -157,16 +173,57 @@ export function LavadoDetailModal({ lavado, onClose }: LavadoDetailModalProps) {
               </div>
 
               {!lavado.textConfirmation && lavado.estado === "Pendiente" && (
-                <div className="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 flex items-center gap-2">
-                  <QrCode className="h-4 w-4 text-amber-600 dark:text-amber-400 flex-shrink-0" />
-                  <p className="text-[11px] text-amber-700 dark:text-amber-400">Pendiente de confirmacion QR</p>
-                </div>
+                <>
+                  <button
+                    onClick={() => setShowQr(!showQr)}
+                    className="w-full p-2.5 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 flex items-center justify-between cursor-pointer hover:bg-amber-100/50 dark:hover:bg-amber-500/15 transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <QrCode className="h-4 w-4 text-amber-600 dark:text-amber-400 flex-shrink-0" />
+                      <p className="text-[11px] text-amber-700 dark:text-amber-400">Pendiente de confirmacion QR</p>
+                    </div>
+                    <span className="text-[11px] font-medium text-amber-600 dark:text-amber-400">
+                      Ver QR
+                    </span>
+                  </button>
+                  {user && (
+                    <div
+                      className={`fixed inset-0 z-[100] flex items-center justify-center transition-all duration-300 ${showQr ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+                    >
+                      <div className={`absolute inset-0 bg-black/30 transition-[backdrop-filter] duration-300 ${showQr ? "backdrop-blur-sm" : "backdrop-blur-0"}`} onClick={() => setShowQr(false)} />
+                      <div className={`relative bg-white dark:bg-card rounded-2xl shadow-2xl p-8 flex flex-col items-center gap-4 transition-all duration-300 ${showQr ? "scale-100 opacity-100" : "scale-90 opacity-0"}`}>
+                        <button onClick={() => setShowQr(false)} className="absolute top-3 right-3 text-muted-foreground hover:text-foreground cursor-pointer">
+                          <X className="h-4 w-4" />
+                        </button>
+                        <QRCodeSVG
+                          value={`${process.env.NEXT_PUBLIC_BACKEND_URL || `http://${window.location.hostname}:4000`}/api/qrScanUpdateLavados/${user.adminId}`}
+                          size={200}
+                        />
+                        <p className="text-sm text-muted-foreground text-center">
+                          Pedi al cliente que escanee este codigo
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
             </div>
 
-            {/* Edit section - takes remaining space */}
+            {/* Edit section or finalized view */}
             <div className="flex-1 flex flex-col justify-end px-5 pb-5 space-y-3">
               <div className="mx-0 h-px bg-border" />
+              {lavado.estado === "Completado" || lavado.estado === "Retirado" ? (
+                <div className="rounded-xl bg-muted/50 px-4 py-5 text-center space-y-1">
+                  <p className="text-sm font-medium text-muted-foreground">
+                    {lavado.estado === "Retirado" ? "Lavado finalizado" : "Lavado completado"}
+                  </p>
+                  <div className="flex items-center justify-center gap-3 text-xs text-muted-foreground">
+                    {lavado.medioPago && lavado.medioPago !== "---" && <span className="capitalize">{lavado.medioPago}</span>}
+                    {lavado.monto ? <span className="font-medium text-foreground">${lavado.monto.toLocaleString("es-AR")}</span> : null}
+                  </div>
+                </div>
+              ) : (
+              <>
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between">
                   <label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Estado</label>
@@ -209,16 +266,18 @@ export function LavadoDetailModal({ lavado, onClose }: LavadoDetailModalProps) {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Button onClick={handleUpdateLavado} disabled={saving} size="sm" className="flex-1 h-9 rounded-xl bg-gradient-to-r from-brand-purple to-brand-fuchsia hover:from-brand-purple-dark hover:to-brand-purple text-white text-xs font-medium shadow-md shadow-brand-purple/15 cursor-pointer">
+                <Button onClick={handleUpdateLavado} disabled={saving} size="sm" className="flex-1 h-9 rounded-xl bg-foreground text-background hover:bg-foreground/90 text-xs font-medium cursor-pointer">
                   {saving ? "Guardando..." : "Guardar"}
                 </Button>
-                <Button variant="outline" size="sm" onClick={handleEnviarAviso} disabled={!lavado.from} className="h-9 w-9 rounded-xl p-0 cursor-pointer" title="Aviso de retiro">
+                <Button variant="outline" size="sm" onClick={handleEnviarAviso} disabled={!lavado.from || lavado.estado === "Retirado"} className="h-9 w-9 rounded-xl p-0 cursor-pointer" title="Aviso de retiro">
                   <WhatsAppIcon className="h-4 w-4" />
                 </Button>
                 <Button variant="outline" size="sm" onClick={handleEnviarEncuesta} disabled={!lavado.from} className="h-9 w-9 rounded-xl p-0 cursor-pointer" title="Enviar encuesta">
                   <Send className="h-4 w-4" />
                 </Button>
               </div>
+              </>
+              )}
             </div>
           </div>
 
@@ -232,7 +291,7 @@ export function LavadoDetailModal({ lavado, onClose }: LavadoDetailModalProps) {
             }}
           >
             {showPerfil && (
-            <div className="w-full sm:w-[24rem]">
+            <div className="w-full sm:w-[26rem]">
               {perfilLoading ? (
                 <div className="p-4 space-y-3">
                   <div className="flex items-center gap-3">
@@ -248,49 +307,50 @@ export function LavadoDetailModal({ lavado, onClose }: LavadoDetailModalProps) {
                   {/* Back button on mobile */}
                   <button
                     onClick={() => setShowPerfil(false)}
-                    className="sm:hidden flex items-center gap-1.5 px-4 pt-4 pb-2 text-xs text-brand-purple font-medium cursor-pointer"
+                    className="sm:hidden flex items-center gap-1.5 px-4 pt-4 pb-2 text-xs text-foreground font-medium cursor-pointer"
                   >
                     <ChevronRight className="h-3 w-3 rotate-180" /> Volver al detalle
                   </button>
                   {/* Header */}
                   <div className="px-4 pt-3 sm:pt-5 pb-4">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-purple-muted dark:bg-brand-purple/15 flex-shrink-0">
-                        <User className="h-4 w-4 text-brand-purple" />
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-full bg-muted flex-shrink-0">
+                        <User className="h-5 w-5 text-foreground" />
                       </div>
-                      <div className="min-w-0">
-                        <p className="text-sm font-semibold truncate">{perfil.nombre}</p>
-                        <div className="flex items-center gap-1">
-                          <Phone className="h-2.5 w-2.5 text-muted-foreground" />
-                          <span className="text-[11px] text-muted-foreground">{perfil.telefono}</span>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-base font-semibold truncate">{perfil.nombre}</p>
+                        <div className="flex items-center gap-1.5">
+                          <Phone className="h-3 w-3 text-muted-foreground" />
+                          <span className="text-xs text-muted-foreground">{perfil.telefono}</span>
                         </div>
                       </div>
+                      <button
+                        onClick={() => {
+                          onClose();
+                          router.push(`/clientes?telefono=${encodeURIComponent(perfil.telefono)}`);
+                        }}
+                        className="text-[11px] text-foreground hover:underline cursor-pointer flex-shrink-0"
+                      >
+                        Ver perfil
+                      </button>
                     </div>
-                    <div className="grid grid-cols-4 gap-1.5">
-                      <div className="rounded-xl bg-brand-purple-muted dark:bg-brand-purple/10 p-2 text-center">
-                        <Droplets className="h-3 w-3 mx-auto text-brand-purple mb-0.5" />
-                        <p className="text-sm font-semibold tabular-nums">{perfil.totalLavados}</p>
-                        <p className="text-[8px] uppercase tracking-wider text-muted-foreground">Lavados</p>
-                      </div>
-                      <div className="rounded-xl bg-amber-50 dark:bg-amber-500/10 p-2 text-center">
-                        <Star className="h-3 w-3 mx-auto text-amber-500 mb-0.5" />
-                        <p className="text-sm font-semibold tabular-nums">{perfil.promedioCalidad || "--"}</p>
-                        <p className="text-[8px] uppercase tracking-wider text-muted-foreground">Calidad</p>
-                      </div>
-                      <div className="rounded-xl bg-emerald-50 dark:bg-emerald-500/10 p-2 text-center">
-                        <DollarSign className="h-3 w-3 mx-auto text-emerald-600 dark:text-emerald-400 mb-0.5" />
-                        <p className="text-[11px] font-semibold tabular-nums">{"$"}{perfil.totalGastado.toLocaleString("es-AR")}</p>
-                        <p className="text-[8px] uppercase tracking-wider text-muted-foreground">Gastado</p>
-                      </div>
-                      <div className="rounded-xl bg-blue-50 dark:bg-blue-500/10 p-2 text-center">
-                        <Calendar className="h-3 w-3 mx-auto text-blue-600 dark:text-blue-400 mb-0.5" />
-                        <p className="text-sm font-semibold tabular-nums">{perfil.primerVisita ? Math.ceil((Date.now() - new Date(perfil.primerVisita).getTime()) / 86400000) : "--"}</p>
-                        <p className="text-[8px] uppercase tracking-wider text-muted-foreground">Dias</p>
-                      </div>
+                    <div className="grid grid-cols-4 gap-2">
+                      {[
+                        { icon: Droplets, color: "text-foreground", bg: "bg-muted", value: perfil.totalLavados, label: "Lavados" },
+                        { icon: Star, color: "text-amber-500", bg: "bg-amber-50 dark:bg-amber-500/10", value: perfil.promedioCalidad || "--", label: "Calidad" },
+                        { icon: DollarSign, color: "text-emerald-600 dark:text-emerald-400", bg: "bg-emerald-50 dark:bg-emerald-500/10", value: `$${perfil.totalGastado.toLocaleString("es-AR")}`, label: "Gastado" },
+                        { icon: Calendar, color: "text-blue-600 dark:text-blue-400", bg: "bg-blue-50 dark:bg-blue-500/10", value: perfil.primerVisita ? Math.ceil((Date.now() - new Date(perfil.primerVisita).getTime()) / 86400000) : "--", label: "Dias" },
+                      ].map((kpi) => (
+                        <div key={kpi.label} className={`rounded-xl ${kpi.bg} p-2.5 text-center flex flex-col items-center`}>
+                          <kpi.icon className={`h-4 w-4 ${kpi.color} mb-1`} />
+                          <p className="text-base font-semibold tabular-nums leading-tight">{kpi.value}</p>
+                          <p className="text-[10px] uppercase tracking-wider text-muted-foreground mt-0.5">{kpi.label}</p>
+                        </div>
+                      ))}
                     </div>
                     {perfil.totalCompletados >= 3 && (
-                      <div className="mt-2 px-2.5 py-1.5 rounded-lg bg-gradient-to-r from-brand-purple-muted to-purple-50 dark:from-brand-purple/10 dark:to-purple-500/10 border border-brand-purple-light dark:border-brand-purple/20">
-                        <span className="text-[11px] font-medium text-brand-purple">
+                      <div className="mt-2 px-2.5 py-1.5 rounded-lg bg-muted border border-border">
+                        <span className="text-[11px] font-medium text-foreground">
                           {perfil.totalCompletados >= 9 ? "Cliente VIP" : perfil.totalCompletados >= 6 ? "Frecuente" : "Recurrente"} ({perfil.totalCompletados})
                         </span>
                       </div>
@@ -298,43 +358,43 @@ export function LavadoDetailModal({ lavado, onClose }: LavadoDetailModalProps) {
                   </div>
 
                   {/* Historial */}
-                  <div className="px-4 py-3">
-                    <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground mb-2">Historial</p>
+                  <div className="px-4 py-4">
+                    <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-3">Historial</p>
                     {perfil.lavados.length > 0 ? (
-                      <div className="space-y-0.5">
+                      <div className="space-y-1">
                         {[...perfil.lavados].reverse().slice(0, 6).map((l: any) => (
-                          <div key={l._id} className="flex items-center gap-2 py-1.5 border-b border-border/15 last:border-0">
+                          <div key={l._id} className="flex items-center gap-2 py-2 border-b border-border/15 last:border-0">
                             <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-1.5">
-                                <span className="text-xs font-medium">{l.tipoDeLavado}</span>
-                                <Badge variant="secondary" className={`border-0 text-[8px] px-1 py-0 ${estadoColor[l.estado] || ""}`}>{l.estado}</Badge>
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-medium">{l.tipoDeLavado}</span>
+                                <Badge variant="secondary" className={`border-0 text-[10px] px-1.5 py-0 ${estadoColor[l.estado] || ""}`}>{l.estado}</Badge>
                               </div>
-                              <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                                <RectangleHorizontal className="h-2.5 w-2.5" />
+                              <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
+                                <RectangleHorizontal className="h-3 w-3" />
                                 <span className="font-mono">{l.patente}</span>
                               </div>
                             </div>
                             <div className="text-right flex-shrink-0">
-                              <p className="text-xs font-medium tabular-nums">{l.monto > 0 ? `$${l.monto.toLocaleString("es-AR")}` : "--"}</p>
-                              <p className="text-[9px] text-muted-foreground">{new Date(l.fecha).toLocaleDateString("es-AR", { day: "2-digit", month: "short" })}</p>
+                              <p className="text-sm font-medium tabular-nums">{l.monto > 0 ? `$${l.monto.toLocaleString("es-AR")}` : "--"}</p>
+                              <p className="text-[11px] text-muted-foreground">{new Date(l.fecha).toLocaleDateString("es-AR", { day: "2-digit", month: "short" })}</p>
                             </div>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <p className="text-xs text-muted-foreground text-center py-3">Sin historial</p>
+                      <p className="text-sm text-muted-foreground text-center py-3">Sin historial</p>
                     )}
                   </div>
 
                   {/* Mensajes */}
                   {perfil.mensajes.length > 0 && (
-                    <div className="px-4 py-3">
-                      <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground mb-2">Mensajes</p>
-                      <div className="space-y-1 max-h-24 overflow-y-auto">
+                    <div className="px-4 py-4">
+                      <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-3">Mensajes</p>
+                      <div className="space-y-1.5 max-h-32 overflow-y-auto">
                         {perfil.mensajes.slice(-3).reverse().map((m: any, i: number) => (
-                          <div key={i} className="text-[11px] rounded-lg bg-muted/30 px-2.5 py-1.5">
+                          <div key={i} className="text-sm rounded-lg bg-muted/30 px-3 py-2">
                             <p className="text-foreground line-clamp-1">{m.body}</p>
-                            <p className="text-muted-foreground text-[9px]">{m.fecha}</p>
+                            <p className="text-muted-foreground text-[11px] mt-0.5">{m.fecha}</p>
                           </div>
                         ))}
                       </div>
@@ -342,9 +402,9 @@ export function LavadoDetailModal({ lavado, onClose }: LavadoDetailModalProps) {
                   )}
 
                   {/* Reviews */}
-                  <div className="px-4 py-3">
-                    <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground mb-1">Reviews</p>
-                    <p className="text-[11px] text-muted-foreground">Sin reviews externas</p>
+                  <div className="px-4 py-4">
+                    <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">Reviews</p>
+                    <p className="text-sm text-muted-foreground">Sin reviews externas</p>
                   </div>
                 </div>
               ) : null}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Banknote,
@@ -18,6 +18,7 @@ import {
   Search,
   X,
   Car,
+  CalendarDays,
 } from "lucide-react";
 import {
   useTurnos,
@@ -43,7 +44,7 @@ const MEDIO_LABELS: Record<string, string> = {
 const MEDIO_COLORS: Record<string, string> = {
   efectivo: "text-emerald-600 bg-emerald-50",
   "mercado-pago": "text-blue-600 bg-blue-50",
-  tarjeta: "text-purple-600 bg-purple-50",
+  tarjeta: "text-foreground bg-muted",
 };
 
 function formatDate(d: string) {
@@ -73,16 +74,41 @@ function sumArqueo(map: Record<string, number> | undefined): number {
   return Object.values(map).reduce((a, v) => a + v, 0);
 }
 
-export default function CierresPage() {
+type DatePreset = "all" | "today" | "week" | "month";
+
+const DATE_PRESETS: { key: DatePreset; label: string }[] = [
+  { key: "all", label: "Todo" },
+  { key: "today", label: "Hoy" },
+  { key: "week", label: "Última semana" },
+  { key: "month", label: "Último mes" },
+];
+
+function getDateFrom(preset: DatePreset): Date | null {
+  if (preset === "all") return null;
+  const now = new Date();
+  if (preset === "today") return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  if (preset === "week") { const d = new Date(now); d.setDate(d.getDate() - 7); return d; }
+  const d = new Date(now); d.setMonth(d.getMonth() - 1); return d;
+}
+
+export default function ArqueosPage() {
   const { data: cajas } = useCajas();
   const [filtroCaja, setFiltroCaja] = useState<string | null>(null);
   const { data: resumen, isLoading: resumenLoading } = useResumenTurnos();
   const { data: turnos, isLoading: turnosLoading } = useTurnos(
-    filtroCaja ?? undefined,
-    "cerrado"
+    filtroCaja ?? undefined
   );
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [datePreset, setDatePreset] = useState<DatePreset>("all");
+  const [showDateFilter, setShowDateFilter] = useState(false);
+
+  const filteredTurnos = useMemo(() => {
+    if (!turnos) return [];
+    const from = getDateFrom(datePreset);
+    if (!from) return turnos;
+    return turnos.filter((t) => new Date(t.apertura) >= from);
+  }, [turnos, datePreset]);
 
   const { data: searchResults, isLoading: searchLoading } = useQuery({
     queryKey: ["buscarLavados", searchQuery],
@@ -109,72 +135,43 @@ export default function CierresPage() {
         </div>
       ) : resumen ? (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="card-elevated rounded-2xl bg-white dark:bg-card p-3.5">
-            <div className="flex items-center gap-2 mb-1">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-purple-muted text-brand-purple">
-                <ClipboardCheck className="h-4 w-4" />
-              </div>
-              <span className="text-xs font-medium text-muted-foreground">
-                Turnos
-              </span>
+          <div className="flex items-center gap-3 card-elevated rounded-2xl bg-white dark:bg-card px-4 py-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl flex-shrink-0 bg-muted">
+              <ClipboardCheck className="h-4 w-4 text-foreground" />
             </div>
-            <p className="text-lg font-semibold tabular-nums">
-              {resumen.totalTurnos}
-            </p>
-            <p className="text-[10px] text-muted-foreground">esta semana</p>
+            <div className="min-w-0">
+              <p className="text-lg font-semibold tabular-nums leading-tight">{resumen.totalTurnos}</p>
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Turnos</p>
+            </div>
           </div>
-          <div className="card-elevated rounded-2xl bg-white dark:bg-card p-3.5">
-            <div className="flex items-center gap-2 mb-1">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
-                <TrendingUp className="h-4 w-4" />
-              </div>
-              <span className="text-xs font-medium text-muted-foreground">
-                Ingresos
-              </span>
+          <div className="flex items-center gap-3 card-elevated rounded-2xl bg-white dark:bg-card px-4 py-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl flex-shrink-0 bg-emerald-50">
+              <TrendingUp className="h-4 w-4 text-emerald-600" />
             </div>
-            <p className="text-lg font-semibold tabular-nums">
-              ${resumen.totalIngresos.toLocaleString("es-AR")}
-            </p>
-            <p className="text-[10px] text-muted-foreground">esta semana</p>
+            <div className="min-w-0">
+              <p className="text-lg font-semibold tabular-nums leading-tight">${resumen.totalIngresos.toLocaleString("es-AR")}</p>
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Ingresos</p>
+            </div>
           </div>
-          <div className="card-elevated rounded-2xl bg-white dark:bg-card p-3.5">
-            <div className="flex items-center gap-2 mb-1">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-50 text-red-500">
-                <TrendingDown className="h-4 w-4" />
-              </div>
-              <span className="text-xs font-medium text-muted-foreground">
-                Egresos
-              </span>
+          <div className="flex items-center gap-3 card-elevated rounded-2xl bg-white dark:bg-card px-4 py-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl flex-shrink-0 bg-red-50">
+              <TrendingDown className="h-4 w-4 text-red-500" />
             </div>
-            <p className="text-lg font-semibold tabular-nums">
-              ${resumen.totalEgresos.toLocaleString("es-AR")}
-            </p>
-            <p className="text-[10px] text-muted-foreground">esta semana</p>
+            <div className="min-w-0">
+              <p className="text-lg font-semibold tabular-nums leading-tight">${resumen.totalEgresos.toLocaleString("es-AR")}</p>
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Egresos</p>
+            </div>
           </div>
-          <div className="card-elevated rounded-2xl bg-white dark:bg-card p-3.5">
-            <div className="flex items-center gap-2 mb-1">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
-                <AlertTriangle className="h-4 w-4" />
-              </div>
-              <span className="text-xs font-medium text-muted-foreground">
-                Diferencias
-              </span>
+          <div className="flex items-center gap-3 card-elevated rounded-2xl bg-white dark:bg-card px-4 py-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl flex-shrink-0 bg-amber-50">
+              <AlertTriangle className="h-4 w-4 text-amber-600" />
             </div>
-            <p
-              className={`text-lg font-semibold tabular-nums ${
-                resumen.totalDiferencia === 0
-                  ? "text-muted-foreground"
-                  : resumen.totalDiferencia > 0
-                    ? "text-emerald-600"
-                    : "text-red-500"
-              }`}
-            >
-              {resumen.totalDiferencia >= 0 ? "+" : ""}$
-              {resumen.totalDiferencia.toLocaleString("es-AR")}
-            </p>
-            <p className="text-[10px] text-muted-foreground">
-              arqueo acumulado
-            </p>
+            <div className="min-w-0">
+              <p className={`text-lg font-semibold tabular-nums leading-tight ${resumen.totalDiferencia === 0 ? "text-muted-foreground" : resumen.totalDiferencia > 0 ? "text-emerald-600" : "text-red-500"}`}>
+                {resumen.totalDiferencia >= 0 ? "+" : ""}${resumen.totalDiferencia.toLocaleString("es-AR")}
+              </p>
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Diferencias</p>
+            </div>
           </div>
         </div>
       ) : null}
@@ -251,33 +248,70 @@ export default function CierresPage() {
       ) : (<>
 
       {/* Filter bar + search */}
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => setFiltroCaja(null)}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
-              filtroCaja === null
-                ? "bg-brand-purple-muted text-brand-purple"
-                : "text-muted-foreground hover:bg-muted"
-            }`}
-          >
-            Todas
-          </button>
-          {cajas?.map((c) => (
+          <div className="flex items-center gap-2 overflow-x-auto">
             <button
-              key={c._id}
-              onClick={() =>
-                setFiltroCaja(filtroCaja === c._id ? null : c._id)
-              }
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
-                filtroCaja === c._id
-                  ? "bg-brand-purple-muted text-brand-purple"
+              onClick={() => setFiltroCaja(null)}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer whitespace-nowrap ${
+                filtroCaja === null
+                  ? "bg-muted text-foreground"
                   : "text-muted-foreground hover:bg-muted"
               }`}
             >
-              {c.nombre}
+              Todas
             </button>
-          ))}
+            {cajas?.map((c) => (
+              <button
+                key={c._id}
+                onClick={() =>
+                  setFiltroCaja(filtroCaja === c._id ? null : c._id)
+                }
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer whitespace-nowrap ${
+                  filtroCaja === c._id
+                    ? "bg-muted text-foreground"
+                    : "text-muted-foreground hover:bg-muted"
+                }`}
+              >
+                {c.nombre}
+              </button>
+            ))}
+          </div>
+
+          {/* Date filter */}
+          <div className="relative flex-shrink-0">
+            <button
+              onClick={() => setShowDateFilter(!showDateFilter)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer whitespace-nowrap ${
+                datePreset !== "all"
+                  ? "bg-muted text-foreground"
+                  : "text-muted-foreground hover:bg-muted"
+              }`}
+            >
+              <CalendarDays className="h-3.5 w-3.5" />
+              {datePreset !== "all" && (
+                <span>{DATE_PRESETS.find((p) => p.key === datePreset)?.label}</span>
+              )}
+            </button>
+            {showDateFilter && (<>
+              <div className="fixed inset-0 z-10" onClick={() => setShowDateFilter(false)} />
+              <div className="absolute top-full right-0 md:left-0 mt-1 z-20 bg-white dark:bg-card border border-border rounded-xl shadow-lg py-1 min-w-[160px] animate-fade-in">
+                {DATE_PRESETS.map((p) => (
+                  <button
+                    key={p.key}
+                    onClick={() => { setDatePreset(p.key); setShowDateFilter(false); }}
+                    className={`w-full text-left px-3 py-2 text-sm transition-colors cursor-pointer ${
+                      datePreset === p.key
+                        ? "bg-muted text-foreground font-medium"
+                        : "text-muted-foreground hover:bg-muted/50"
+                    }`}
+                  >
+                    {p.label}
+                  </button>
+                ))}
+              </div>
+            </>)}
+          </div>
         </div>
         <div className="flex items-center gap-2">
           {isSearching && (
@@ -285,14 +319,14 @@ export default function CierresPage() {
               {searchLoading ? "Buscando..." : `${searchResults?.length ?? 0} resultados`}
             </span>
           )}
-          <div className="relative">
+          <div className="relative flex-1 md:flex-none">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
             <input
               type="text"
               placeholder="Buscar patente..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-8 w-48 rounded-lg border border-border bg-transparent pl-8 pr-8 text-sm outline-none focus:border-ring focus:ring-2 focus:ring-ring/50 focus:w-64 transition-all placeholder:text-muted-foreground"
+              className="h-8 w-full md:w-48 rounded-lg border border-border bg-transparent pl-8 pr-8 text-sm outline-none focus:border-ring focus:ring-2 focus:ring-ring/50 md:focus:w-64 transition-all placeholder:text-muted-foreground"
             />
             {searchQuery && (
               <button onClick={() => setSearchQuery("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 cursor-pointer">
@@ -306,9 +340,9 @@ export default function CierresPage() {
       {/* Turnos table */}
       <div className="card-static rounded-2xl bg-white dark:bg-card overflow-hidden">
         <div className="px-4 pt-4 pb-2 flex items-center justify-between">
-          <h3 className="text-sm font-semibold">Historial de cierres</h3>
+          <h3 className="text-sm font-semibold">Historial de arqueos</h3>
           <span className="text-xs text-muted-foreground tabular-nums">
-            {turnos?.length ?? 0} turnos
+            {filteredTurnos.length} turnos
           </span>
         </div>
 
@@ -318,10 +352,10 @@ export default function CierresPage() {
               <Skeleton key={i} className="h-12 rounded-xl" />
             ))}
           </div>
-        ) : turnos && turnos.length > 0 ? (
+        ) : filteredTurnos.length > 0 ? (
           <div>
-            {/* Header */}
-            <div className="grid grid-cols-[24px_1fr_1fr_1fr_1fr_1fr_1fr] gap-2 px-4 pb-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+            {/* Desktop header */}
+            <div className="hidden md:grid grid-cols-[24px_1fr_1fr_1fr_1fr_1fr_1fr] gap-2 px-4 pb-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
               <span />
               <span>Fecha</span>
               <span>Caja</span>
@@ -331,23 +365,60 @@ export default function CierresPage() {
               <span className="text-right">Diferencia</span>
             </div>
 
-            {turnos.map((t) => {
+            {filteredTurnos.map((t) => {
               const dif = sumArqueo(t.arqueo?.diferencia);
+              const total = sumArqueo(t.arqueo?.esperado);
               const isExpanded = expandedId === t._id;
+              const isOpen = t.estado === "abierto";
               return (
                 <div key={t._id}>
+                  {/* Mobile row */}
                   <button
-                    onClick={() =>
-                      setExpandedId(isExpanded ? null : t._id)
-                    }
-                    className={`w-full grid grid-cols-[24px_1fr_1fr_1fr_1fr_1fr_1fr] gap-2 items-center px-4 py-3 text-sm border-t border-border/30 transition-all duration-200 cursor-pointer ${
-                      isExpanded
-                        ? "bg-brand-purple-muted"
-                        : "hover:bg-muted/30"
+                    onClick={() => setExpandedId(isExpanded ? null : t._id)}
+                    className={`md:hidden w-full flex items-center gap-3 px-4 py-3 border-t border-border/30 transition-all duration-200 cursor-pointer ${
+                      isExpanded ? "bg-muted" : "hover:bg-muted/30"
                     }`}
                   >
                     {isExpanded ? (
-                      <ChevronDown className="h-4 w-4 text-brand-purple" />
+                      <ChevronDown className="h-4 w-4 text-foreground flex-shrink-0" />
+                    ) : (
+                      <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    )}
+                    <div className="flex-1 min-w-0 text-left">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium tabular-nums">{formatDate(t.apertura)}</span>
+                        <span className="text-xs text-muted-foreground">{cajaNombres[t.cajaId] || "—"}</span>
+                        <span className={`text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded ${
+                          isOpen ? "bg-emerald-50 text-emerald-600" : "bg-muted text-muted-foreground"
+                        }`}>
+                          {isOpen ? "Abierto" : "Cerrado"}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5 mt-0.5 text-xs text-muted-foreground tabular-nums">
+                        <span>{formatTime(t.apertura)}</span>
+                        <span>→</span>
+                        <span>{isOpen ? "ahora" : formatTime(t.cierre!)}</span>
+                      </div>
+                    </div>
+                    <div className="text-right flex-shrink-0">
+                      <p className="text-sm font-semibold tabular-nums">${total.toLocaleString("es-AR")}</p>
+                      {dif !== 0 && (
+                        <p className={`text-xs tabular-nums font-medium ${dif > 0 ? "text-emerald-600" : "text-red-500"}`}>
+                          {dif >= 0 ? "+" : ""}${dif.toLocaleString("es-AR")}
+                        </p>
+                      )}
+                    </div>
+                  </button>
+
+                  {/* Desktop row */}
+                  <button
+                    onClick={() => setExpandedId(isExpanded ? null : t._id)}
+                    className={`hidden md:grid w-full grid-cols-[24px_1fr_1fr_1fr_1fr_1fr_1fr] gap-2 items-center px-4 py-3 text-sm border-t border-border/30 transition-all duration-200 cursor-pointer ${
+                      isExpanded ? "bg-muted" : "hover:bg-muted/30"
+                    }`}
+                  >
+                    {isExpanded ? (
+                      <ChevronDown className="h-4 w-4 text-foreground" />
                     ) : (
                       <ChevronRight className="h-4 w-4 text-muted-foreground" />
                     )}
@@ -369,7 +440,7 @@ export default function CierresPage() {
                       {formatDuration(t.apertura, t.cierre)}
                     </span>
                     <span className="text-right tabular-nums font-medium">
-                      ${sumArqueo(t.arqueo?.esperado).toLocaleString("es-AR")}
+                      ${total.toLocaleString("es-AR")}
                     </span>
                     <span
                       className={`text-right tabular-nums font-medium ${
@@ -427,50 +498,30 @@ function TurnoExpandido({ turnoId }: { turnoId: string }) {
   return (
     <div className="border-t border-border/30 bg-muted/20">
       {/* Bolsillos summary */}
-      <div className="px-6 pt-4 pb-3">
+      <div className="px-4 md:px-6 pt-4 pb-3">
         <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground mb-2">
           Balance por medio de pago
         </p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
           {bolsillos.map((b) => (
-            <div
-              key={b.medioPago}
-              className="rounded-xl bg-white dark:bg-card p-3 border border-border/30"
-            >
-              <div className="flex items-center gap-2 mb-1">
-                <div
-                  className={`flex h-6 w-6 items-center justify-center rounded-md ${MEDIO_COLORS[b.medioPago]}`}
-                >
-                  {MEDIO_ICONS[b.medioPago]}
-                </div>
-                <span className="text-xs font-medium text-muted-foreground">
-                  {MEDIO_LABELS[b.medioPago]}
-                </span>
+            <div key={b.medioPago} className="flex items-center gap-2 md:gap-3 rounded-xl bg-white dark:bg-card px-2.5 md:px-3 py-2 md:py-2.5 border border-border/30">
+              <div className={`flex h-7 w-7 md:h-8 md:w-8 items-center justify-center rounded-lg md:rounded-xl flex-shrink-0 ${MEDIO_COLORS[b.medioPago]}`}>
+                {MEDIO_ICONS[b.medioPago]}
               </div>
-              <p className="text-base font-semibold tabular-nums">
-                ${b.total.toLocaleString("es-AR")}
-              </p>
-              <p className="text-[10px] text-muted-foreground tabular-nums">
-                Fondo: ${b.fondo.toLocaleString("es-AR")} + Ventas: $
-                {b.ingresos.toLocaleString("es-AR")}
-              </p>
+              <div className="min-w-0">
+                <p className="text-sm md:text-base font-semibold tabular-nums leading-tight">${b.total.toLocaleString("es-AR")}</p>
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{MEDIO_LABELS[b.medioPago]}</p>
+              </div>
             </div>
           ))}
-          <div className="rounded-xl bg-white dark:bg-card p-3 border border-border/30">
-            <div className="flex items-center gap-2 mb-1">
-              <div className="flex h-6 w-6 items-center justify-center rounded-md bg-brand-purple-muted text-brand-purple">
-                <DollarSign className="h-3.5 w-3.5" />
-              </div>
-              <span className="text-xs font-medium text-muted-foreground">
-                Total
-              </span>
+          <div className="flex items-center gap-2 md:gap-3 rounded-xl bg-white dark:bg-card px-2.5 md:px-3 py-2 md:py-2.5 border border-border/30">
+            <div className="flex h-7 w-7 md:h-8 md:w-8 items-center justify-center rounded-lg md:rounded-xl flex-shrink-0 bg-muted">
+              <DollarSign className="h-3.5 w-3.5 text-foreground" />
             </div>
-            <p className="text-base font-semibold tabular-nums">
-              ${totalGeneral.toLocaleString("es-AR")}
-            </p>
-            <p className="text-[10px] text-muted-foreground">
-              {ventas.length} movimientos
-            </p>
+            <div className="min-w-0">
+              <p className="text-sm md:text-base font-semibold tabular-nums leading-tight">${totalGeneral.toLocaleString("es-AR")}</p>
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Total</p>
+            </div>
           </div>
         </div>
       </div>

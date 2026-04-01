@@ -8,6 +8,7 @@ import { ArrowLeft, ArrowRight, Check, Car, QrCode } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { PatenteInput } from "@/components/lavados/PatenteInput";
 import {
   Select,
   SelectContent,
@@ -22,6 +23,7 @@ import { cn } from "@/lib/utils";
 interface MobileWizardProps {
   onComplete: () => void;
   onNextRef?: (fn: (() => void) | null) => void;
+  onCanNextChange?: (canNext: boolean) => void;
 }
 
 const STEPS = [
@@ -29,7 +31,7 @@ const STEPS = [
   { label: "QR", icon: QrCode },
 ];
 
-export function MobileWizard({ onComplete, onNextRef }: MobileWizardProps) {
+export function MobileWizard({ onComplete, onNextRef, onCanNextChange }: MobileWizardProps) {
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const [step, setStep] = useState(0);
@@ -52,8 +54,12 @@ export function MobileWizard({ onComplete, onNextRef }: MobileWizardProps) {
     : "";
 
   const canNext = step === 0
-    ? form.nombre && form.patente && form.modelo && form.tipoDeLavado
+    ? !!(form.nombre.trim() && form.patente.length >= 6 && form.modelo.trim() && form.tipoDeLavado.trim())
     : true;
+
+  useEffect(() => {
+    onCanNextChange?.(canNext);
+  }, [canNext, onCanNextChange]);
 
   const handleCreate = async () => {
     setLoading(true);
@@ -65,7 +71,8 @@ export function MobileWizard({ onComplete, onNextRef }: MobileWizardProps) {
       queryClient.invalidateQueries({ queryKey: ["lavados"] });
 
       const lavadosRes = await fetchApi<Array<{ _id: string }>>("/api/lavados");
-      const lastLavado = lavadosRes.data?.[0];
+      const lavados = Array.isArray(lavadosRes.data) ? lavadosRes.data : [];
+      const lastLavado = lavados[lavados.length - 1];
 
       if (lastLavado) {
         await fetchApi(`/api/lavados/${lastLavado._id}/actualizarSelectedLavado`, { method: "PATCH" });
@@ -86,6 +93,7 @@ export function MobileWizard({ onComplete, onNextRef }: MobileWizardProps) {
   };
 
   const handleNext = () => {
+    if (!canNext) return;
     if (step === 0) handleCreate();
   };
 
@@ -113,16 +121,16 @@ export function MobileWizard({ onComplete, onNextRef }: MobileWizardProps) {
               <div className="flex flex-col items-center gap-0.5">
                 <div className={cn(
                   "flex h-8 w-8 items-center justify-center rounded-full transition-all duration-300",
-                  isActive ? "bg-brand-purple text-white scale-110"
-                    : isDone ? "bg-brand-purple/20 text-brand-purple"
+                  isActive ? "bg-foreground text-background scale-110"
+                    : isDone ? "bg-muted text-foreground"
                     : "bg-muted text-muted-foreground"
                 )}>
                   {isDone ? <Check className="h-3.5 w-3.5" /> : <Icon className="h-3.5 w-3.5" />}
                 </div>
-                <span className={cn("text-[9px] font-medium", isActive ? "text-brand-purple" : isDone ? "text-brand-purple" : "text-muted-foreground")}>{s.label}</span>
+                <span className={cn("text-[9px] font-medium", isActive ? "text-foreground" : isDone ? "text-foreground" : "text-muted-foreground")}>{s.label}</span>
               </div>
               {i < STEPS.length - 1 && (
-                <div className={cn("w-10 h-0.5 mx-1 mb-3 rounded-full transition-colors duration-500", i < step ? "bg-brand-purple" : "bg-muted")} />
+                <div className={cn("w-10 h-0.5 mx-1 mb-3 rounded-full transition-colors duration-500", i < step ? "bg-foreground" : "bg-muted")} />
               )}
             </div>
           );
@@ -136,21 +144,19 @@ export function MobileWizard({ onComplete, onNextRef }: MobileWizardProps) {
             <div className="flex flex-col gap-3 pt-2 px-2">
               <div>
                 <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Nombre del cliente</Label>
-                <Input value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} className="h-10 rounded-xl mt-1" placeholder="Martin Gonzalez" autoFocus />
+                <Input value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} className="h-10 rounded-xl mt-1" placeholder="Ej: Martin Gonzalez" autoFocus />
               </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Patente</Label>
-                  <Input value={form.patente} onChange={(e) => setForm({ ...form, patente: e.target.value.toUpperCase() })} className="h-10 rounded-xl mt-1 uppercase tracking-wider" placeholder="AB 123 CD" />
-                </div>
-                <div>
-                  <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Modelo</Label>
-                  <Input value={form.modelo} onChange={(e) => setForm({ ...form, modelo: e.target.value })} className="h-10 rounded-xl mt-1" placeholder="Toyota Corolla" />
-                </div>
+              <div className="space-y-1">
+                <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Patente</Label>
+                <PatenteInput value={form.patente} onChange={(v) => setForm({ ...form, patente: v })} />
+              </div>
+              <div>
+                <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Modelo</Label>
+                <Input value={form.modelo} onChange={(e) => setForm({ ...form, modelo: e.target.value })} className="h-10 rounded-xl mt-1" placeholder="Ej: Toyota Corolla" />
               </div>
               <div>
                 <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Tipo de lavado</Label>
-                <Input value={form.tipoDeLavado} onChange={(e) => setForm({ ...form, tipoDeLavado: e.target.value })} className="h-10 rounded-xl mt-1" placeholder="Simple, Completo, Premium..." />
+                <Input value={form.tipoDeLavado} onChange={(e) => setForm({ ...form, tipoDeLavado: e.target.value })} className="h-10 rounded-xl mt-1" placeholder="Ej: Simple, Completo..." />
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
@@ -173,7 +179,7 @@ export function MobileWizard({ onComplete, onNextRef }: MobileWizardProps) {
               </div>
               <div>
                 <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Observacion</Label>
-                <Input value={form.observacion} onChange={(e) => setForm({ ...form, observacion: e.target.value })} className="h-10 rounded-xl mt-1" placeholder="Notas adicionales..." />
+                <Input value={form.observacion} onChange={(e) => setForm({ ...form, observacion: e.target.value })} className="h-10 rounded-xl mt-1" placeholder="Ej: Tapizados sucios..." />
               </div>
             </div>
           )}
@@ -189,6 +195,11 @@ export function MobileWizard({ onComplete, onNextRef }: MobileWizardProps) {
               </div>
               <p className="text-sm font-semibold">{form.nombre}</p>
               <p className="text-[11px] text-muted-foreground">{form.patente} — {form.tipoDeLavado}</p>
+              {qrUrl && typeof window !== "undefined" && window.location.hostname === "localhost" && (
+                <a href={qrUrl} target="_blank" rel="noopener noreferrer" className="text-[11px] text-foreground underline break-all text-center max-w-[260px]">
+                  {qrUrl}
+                </a>
+              )}
             </div>
           )}
         </div>
@@ -197,7 +208,7 @@ export function MobileWizard({ onComplete, onNextRef }: MobileWizardProps) {
       {/* Bottom action — only on QR step */}
       {step === 1 && (
         <div className="pt-1 flex justify-center">
-          <Button onClick={onComplete} className="h-10 px-8 rounded-xl bg-gradient-to-r from-brand-purple to-brand-fuchsia text-white font-medium cursor-pointer text-sm">
+          <Button onClick={onComplete} className="h-10 px-8 rounded-xl bg-foreground text-background hover:bg-foreground/90 font-medium cursor-pointer text-sm">
             Volver a Lista
           </Button>
         </div>

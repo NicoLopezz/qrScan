@@ -18,7 +18,7 @@ const MEDIO_LABELS: Record<MedioPago, string> = {
 const MEDIO_ICONS: Record<MedioPago, React.ReactNode> = {
   efectivo: <Banknote className="h-5 w-5 text-emerald-600" />,
   "mercado-pago": <Smartphone className="h-5 w-5 text-blue-600" />,
-  tarjeta: <CreditCard className="h-5 w-5 text-violet-600" />,
+  tarjeta: <CreditCard className="h-5 w-5 text-foreground" />,
 };
 
 interface TurnoAperturaProps {
@@ -102,7 +102,7 @@ export default function TurnoApertura({ caja, onTurnoAbierto }: TurnoAperturaPro
         <Button
           type="submit"
           disabled={abrirTurno.isPending}
-          className="w-full h-11 rounded-xl bg-gradient-to-r from-brand-purple to-brand-fuchsia text-white cursor-pointer text-sm font-medium"
+          className="w-full h-11 rounded-xl bg-foreground text-background hover:bg-foreground/90 cursor-pointer text-sm font-medium"
         >
           <Play className="h-4 w-4 mr-1.5" />
           {abrirTurno.isPending ? "Abriendo..." : "Abrir Turno"}

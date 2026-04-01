@@ -12,9 +12,10 @@ interface MobileTabBarProps {
   onTabChange: (tab: MobileTab) => void;
   listosCount: number;
   onCenterAction?: () => void;
+  centerDisabled?: boolean;
 }
 
-export function MobileTabBar({ activeTab, onTabChange, listosCount, onCenterAction }: MobileTabBarProps) {
+export function MobileTabBar({ activeTab, onTabChange, listosCount, onCenterAction, centerDisabled }: MobileTabBarProps) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
@@ -28,36 +29,37 @@ export function MobileTabBar({ activeTab, onTabChange, listosCount, onCenterActi
         >
           <div className={cn(
             "flex h-8 w-8 items-center justify-center rounded-full transition-all duration-200",
-            activeTab === "lista" && "bg-brand-purple-muted"
+            activeTab === "lista" && "bg-muted"
           )}>
             <Droplets className={cn(
               "h-[22px] w-[22px] transition-colors",
-              activeTab === "lista" ? "text-brand-purple" : "text-muted-foreground/50"
+              activeTab === "lista" ? "text-foreground" : "text-muted-foreground/50"
             )} />
           </div>
           <span className={cn(
             "text-[10px] font-medium",
-            activeTab === "lista" ? "text-brand-purple" : "text-muted-foreground/50"
+            activeTab === "lista" ? "text-foreground" : "text-muted-foreground/50"
           )}>Lista</span>
         </button>
 
         {/* + Nuevo / → Siguiente */}
         <button
+          disabled={activeTab === "nuevo" && centerDisabled}
           onClick={() => {
             if (activeTab === "nuevo" && onCenterAction) onCenterAction();
             else onTabChange("nuevo");
           }}
           className={cn(
-            "flex items-center justify-center h-14 w-14 -mt-4 rounded-2xl cursor-pointer transition-all duration-200 active:scale-95",
-            activeTab === "nuevo"
-              ? "bg-brand-purple shadow-lg shadow-brand-purple/25"
-              : "bg-gradient-to-br from-brand-purple to-brand-fuchsia shadow-md shadow-brand-purple/20"
+            "flex items-center justify-center h-14 w-14 -mt-4 rounded-2xl transition-all duration-200 active:scale-95",
+            activeTab === "nuevo" && centerDisabled
+              ? "bg-muted-foreground/30 shadow-none cursor-not-allowed"
+              : "bg-foreground shadow-md shadow-black/10 cursor-pointer"
           )}
         >
           {activeTab === "nuevo" ? (
-            <ArrowRight className="h-6 w-6 text-white" />
+            <ArrowRight className={cn("h-6 w-6", centerDisabled ? "text-muted-foreground/50" : "text-background")} />
           ) : (
-            <Plus className="h-6 w-6 text-white" />
+            <Plus className="h-6 w-6 text-background" />
           )}
         </button>
 
@@ -68,16 +70,16 @@ export function MobileTabBar({ activeTab, onTabChange, listosCount, onCenterActi
         >
           <div className={cn(
             "flex h-8 w-8 items-center justify-center rounded-full transition-all duration-200",
-            activeTab === "listos" && "bg-brand-purple-muted"
+            activeTab === "listos" && "bg-muted"
           )}>
             <Bell className={cn(
               "h-[22px] w-[22px] transition-colors",
-              activeTab === "listos" ? "text-brand-purple" : "text-muted-foreground/50"
+              activeTab === "listos" ? "text-foreground" : "text-muted-foreground/50"
             )} />
           </div>
           <span className={cn(
             "text-[10px] font-medium",
-            activeTab === "listos" ? "text-brand-purple" : "text-muted-foreground/50"
+            activeTab === "listos" ? "text-foreground" : "text-muted-foreground/50"
           )}>Listos</span>
         </button>
       </div>

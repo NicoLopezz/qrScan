@@ -9,5 +9,6 @@ export function useLavados() {
     queryKey: ["lavados"],
     queryFn: () => fetchApi<Lavado[]>("/api/lavados"),
     select: (res) => res.data,
+    refetchInterval: 15000,
   });
 }

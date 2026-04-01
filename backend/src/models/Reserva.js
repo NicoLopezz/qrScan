@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 const reservaSchema = new mongoose.Schema({
   solicitudBaja: { type: Boolean, default: false },
   from: { type: String, default: '' },
+  channel: { type: String, enum: ['whatsapp', 'telegram', ''], default: '' },
+  telegramChatId: { type: String, default: '' },
   historialPedidos: [{
     tagNumber: { type: Number, default: null },
     fechaPedido: { type: Date, default: null },

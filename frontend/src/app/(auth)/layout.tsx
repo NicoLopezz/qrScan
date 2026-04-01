@@ -2,28 +2,20 @@
 
 import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { AuthProvider, useAuth } from "@/providers/AuthProvider";
 import { QueryProvider } from "@/providers/QueryProvider";
+import { TourProvider } from "@/providers/TourProvider";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Topbar } from "@/components/layout/Topbar";
 import { MobileNav } from "@/components/layout/MobileNav";
-
-const pageTitles: Record<string, string> = {
-  "/dashboard": "Dashboard",
-  "/lavados": "Lavados",
-  "/caja": "Ventas",
-  "/reservas": "Reservas",
-  "/mensajes": "Mensajes",
-  "/equipo": "Equipo",
-  "/billing": "Billing",
-  "/perfil": "Perfil",
-  "/faq": "FAQ",
-};
 
 function AuthenticatedShell({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const t = useTranslations("pageTitles");
+  const tc = useTranslations("common");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
@@ -43,20 +35,13 @@ function AuthenticatedShell({ children }: { children: React.ReactNode }) {
   }, [isLoading, user, router]);
 
   if (isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-brand-page">
-        <div className="flex flex-col items-center gap-3">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-brand-purple border-t-transparent" />
-          <p className="text-sm text-muted-foreground">Cargando...</p>
-        </div>
-      </div>
-    );
+    return <div className="min-h-screen page-bg" />;
   }
 
   if (!user) return null;
 
   const sidebarWidth = sidebarCollapsed ? 52 : 224;
-  const title = pageTitles[pathname] || "PickUp Time";
+  const title = t.has(pathname) ? t(pathname) : "PickUp Time";
 
   return (
     <div
@@ -86,7 +71,9 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
   return (
     <QueryProvider>
       <AuthProvider>
-        <AuthenticatedShell>{children}</AuthenticatedShell>
+        <TourProvider>
+          <AuthenticatedShell>{children}</AuthenticatedShell>
+        </TourProvider>
       </AuthProvider>
     </QueryProvider>
   );

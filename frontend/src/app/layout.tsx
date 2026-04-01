@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { DM_Sans, DM_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeInit } from "@/components/layout/ThemeInit";
+import { LocaleProvider } from "@/providers/LocaleProvider";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -50,8 +51,10 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col">
         <ThemeInit />
-        {children}
-        <Toaster position="top-right" richColors />
+        <LocaleProvider>
+          {children}
+          <Toaster position="top-right" richColors />
+        </LocaleProvider>
       </body>
     </html>
   );

@@ -4,6 +4,7 @@ export interface User {
   localNumber: number;
   permiso: string;
   localName?: string;
+  tourCompleted?: boolean;
 }
 
 export interface Lavado {
@@ -141,6 +142,53 @@ export interface Cliente {
   historialPedidos: Pedido[];
   promedioTiempo: number;
   mensajesEnviados: Mensaje[];
+}
+
+export type Segmento = 'Nuevo' | 'Recurrente' | 'Frecuente' | 'VIP';
+
+export interface ClienteResumen {
+  _id: string; // teléfono
+  nombre: string;
+  totalLavados: number;
+  completados: number;
+  totalGastado: number;
+  promedioCalidad: number;
+  ultimaVisita: string;
+  primerVisita: string;
+  vehiculos: string[];
+  channel: string;
+  segmento: Segmento;
+}
+
+export interface ClienteDetalle {
+  telefono: string;
+  nombre: string;
+  totalLavados: number;
+  totalCompletados: number;
+  segmento: Segmento;
+  promedioCalidad: number;
+  totalGastado: number;
+  vehiculos: string[];
+  channel: string;
+  telegramChatId: string;
+  primerVisita: string | null;
+  ultimaVisita: string | null;
+  referidoPor: string;
+  referidoPorNombre: string;
+  referidos: number;
+  notas: string;
+  lavados: Array<{
+    _id: string;
+    fecha: string;
+    modelo: string;
+    patente: string;
+    tipoDeLavado: string;
+    estado: string;
+    monto: number;
+    calidad: string;
+    puntuacionCalidad: number;
+  }>;
+  mensajes: Array<{ body: string; fecha: string }>;
 }
 
 export interface Pedido {

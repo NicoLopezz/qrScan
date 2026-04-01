@@ -16,6 +16,9 @@ const adminSchema = new mongoose.Schema({
   mensajesRestantes: { type: String, default: '0/500' },
   horariosDeOperacion: { type: String, default: '' },
   permiso: { type: String, default: 'Admin' },
+  activeChannel: { type: String, enum: ['whatsapp', 'telegram'], default: 'telegram' },
+  rubro: { type: String, default: '' },
+  tourCompleted: { type: Boolean, default: false },
 
   // Subesquemas existentes
   usuarios: { type: [usuarioSchema], default: [] },

@@ -40,12 +40,12 @@ export function LavadoCard({ lavado, onClick }: LavadoCardProps) {
     >
       <div className="flex items-start justify-between mb-2">
         <div>
-          <p className={`font-medium text-sm group-hover:text-brand-purple transition-colors ${isRetirado ? "text-muted-foreground" : ""}`}>
+          <p className={`font-medium text-sm group-hover:text-foreground transition-colors uppercase ${isRetirado ? "text-muted-foreground" : ""}`}>
             {lavado.nombre}
           </p>
           <div className="flex items-center gap-1.5 mt-0.5">
             <Car className="h-3 w-3 text-muted-foreground/50" />
-            <span className="text-xs text-muted-foreground">{lavado.modelo}</span>
+            <span className="text-xs text-muted-foreground uppercase">{lavado.modelo}</span>
           </div>
         </div>
         <div className="flex items-center gap-1.5">
@@ -63,7 +63,7 @@ export function LavadoCard({ lavado, onClick }: LavadoCardProps) {
       </div>
       <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2.5">
         <RectangleHorizontal className="h-3.5 w-3.5" />
-        <span className="font-mono tracking-wide">{lavado.patente}</span>
+        <span className="font-mono tracking-wide uppercase">{lavado.patente}</span>
       </div>
       {lavado.observacion && (
         <p className="text-[11px] text-muted-foreground mb-2 line-clamp-1 italic">

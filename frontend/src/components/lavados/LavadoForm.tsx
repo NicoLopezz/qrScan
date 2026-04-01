@@ -121,7 +121,7 @@ export function LavadoForm({ open, onOpenChange }: LavadoFormProps) {
                 </div>
                 <div className="space-y-1">
                   <Label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Tipo de Lavado</Label>
-                  <Input value={form.tipoDeLavado} onChange={(e) => setForm({ ...form, tipoDeLavado: e.target.value })} placeholder="Completo, Simple..." className="h-10 rounded-xl text-sm" required />
+                  <Input value={form.tipoDeLavado} onChange={(e) => setForm({ ...form, tipoDeLavado: e.target.value })} placeholder="Ej: Simple, Completo..." className="h-10 rounded-xl text-sm" required />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">

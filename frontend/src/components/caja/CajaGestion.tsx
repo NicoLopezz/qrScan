@@ -113,7 +113,7 @@ export default function CajaGestion({ onSelectCaja }: CajaGestionProps) {
         </div>
         <Button
           size="sm"
-          className="rounded-xl bg-gradient-to-r from-brand-purple to-brand-fuchsia text-white cursor-pointer"
+          className="rounded-xl bg-foreground text-background hover:bg-foreground/90 cursor-pointer"
           onClick={openCreate}
         >
           <Plus className="h-4 w-4 mr-1" /> Nueva Caja
@@ -132,7 +132,7 @@ export default function CajaGestion({ onSelectCaja }: CajaGestionProps) {
             <div
               key={caja._id}
               onClick={() => onSelectCaja(caja)}
-              className="card-elevated rounded-2xl bg-white dark:bg-card p-4 text-left transition-all hover:ring-2 hover:ring-brand-purple/30 cursor-pointer group"
+              className="card-elevated rounded-2xl bg-white dark:bg-card p-4 text-left transition-all hover:ring-2 hover:ring-border cursor-pointer group"
             >
               <div className="flex items-start justify-between">
                 <div>
@@ -223,7 +223,7 @@ export default function CajaGestion({ onSelectCaja }: CajaGestionProps) {
                       onClick={() => toggleMedio(m)}
                       className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer border ${
                         selected
-                          ? "bg-brand-purple/10 border-brand-purple/30 text-brand-purple"
+                          ? "bg-muted border-border text-foreground"
                           : "bg-muted/50 border-transparent text-muted-foreground hover:bg-muted"
                       }`}
                     >
@@ -237,7 +237,7 @@ export default function CajaGestion({ onSelectCaja }: CajaGestionProps) {
             <Button
               type="submit"
               disabled={crearCaja.isPending || actualizarCaja.isPending}
-              className="w-full h-10 rounded-xl bg-gradient-to-r from-brand-purple to-brand-fuchsia text-white cursor-pointer"
+              className="w-full h-10 rounded-xl bg-foreground text-background hover:bg-foreground/90 cursor-pointer"
             >
               {editCaja ? "Guardar Cambios" : "Crear Caja"}
             </Button>
